@@ -18,6 +18,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// Routes
+const authRouter = require('./routes/auth-router')
+app.use('/auth', authRouter)
+
 // Database
 const db = require("./db");
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
