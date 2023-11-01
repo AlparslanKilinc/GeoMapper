@@ -3,7 +3,7 @@ import LandingPage from './components/LandingPage';
 import RegisterPage from './components/RegisterPage';
 import LoginPage from './components/LoginPage';
 import ProfilePage from './components/ProfilePage';
-import NavBar from './components/NavBar';
+import NavBar from "./components/NavigationBar/NavBar";
 import MapCreationWrapper from "./components/MapCreationWrapper";
 import ExplorePage from "./components/ExplorePage";
 
