@@ -1,9 +1,9 @@
 :root {
-  --main-color:#40E0D0;
-  --dark-color:#006666;
+  --main-color: #40e0d0;
+  --dark-color: #006666;
   --light-color: #1db954;
-  --black:#191414;
-  --white:#FFFFFF;
+  --black: #191414;
+  --white: #ffffff;
   --bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
 
   font-family: 'Outfit', sans-serif;
@@ -17,7 +17,9 @@
   -webkit-text-size-adjust: 100%;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
   width: 100%;

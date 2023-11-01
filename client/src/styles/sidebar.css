@@ -1,0 +1,29 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  margin-top: 100px;
+  gap: 1rem;
+  font-family: 'Outfit', sans-serif;
+  line-height: 0.3;
+}
+
+.personal-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 18px;
+  gap: 1rem;
+}
+
+.editProfileButton {
+  font-size: 16px;
+  font-family: 'Outfit', sans-serif;
+  width: 85%;
+  height: auto;
+  padding: 1rem;
+  background-color: transparent;
+  color: var(--main-color);
+  border: 1.5px solid var(--main-color);
+  border-radius: 8px;
+}

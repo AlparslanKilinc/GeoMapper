@@ -1,16 +1,16 @@
-import { useEffect } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import { Link } from "react-router-dom";
-import { Divider } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { registerUser } from "../redux-slices/authSlice";
+import { useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import { Link } from 'react-router-dom';
+import { Divider } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { registerUser } from '../redux-slices/authSlice';
 
 export default function RegisterPage() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
@@ -19,7 +19,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (loggedIn) {
-      navigate("/explore");
+      navigate('/explore');
     }
   }, [loggedIn, navigate]);
 
@@ -28,12 +28,12 @@ export default function RegisterPage() {
     const formData = new FormData(event.currentTarget);
     dispatch(
       registerUser({
-        userName: formData.get("userName"),
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-        passwordVerify: formData.get("passwordVerify"),
+        userName: formData.get('userName'),
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        passwordVerify: formData.get('passwordVerify')
       })
     );
   };
@@ -43,10 +43,10 @@ export default function RegisterPage() {
       <CssBaseline />
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "0.5rem",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.5rem'
         }}
       >
         <h1>Register</h1>
@@ -126,15 +126,15 @@ export default function RegisterPage() {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2, backgroundColor: "#40E0D0" }}
+            sx={{ mt: 3, mb: 2, backgroundColor: '#40E0D0' }}
           >
             Register
           </Button>
           <Grid container justifyContent="flex-end"></Grid>
         </Box>
         <Divider className="divider"> OR </Divider>
-        <Link className="link" to={"/login"}>
-          <Button style={{ backgroundColor: "#40E0D0" }} variant="contained">
+        <Link className="link" to={'/login'}>
+          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained">
             Login
           </Button>
         </Link>

@@ -1,16 +1,16 @@
-.navigationBar{
-    display: flex;
-    background-color: var(--white);
-    color: var(--main-color);
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  
-  .iconContainer {
-    display: flex;
-    align-items: center;
-  }
-  
-  .link{
-    color: var(--main-color);
-  }
+.navigationBar {
+  display: flex;
+  background-color: var(--white);
+  color: var(--main-color);
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+}
+
+.link {
+  color: var(--main-color);
+}

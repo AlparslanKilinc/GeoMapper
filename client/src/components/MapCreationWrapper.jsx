@@ -1,7 +1,5 @@
-import React from 'react'
+import React from 'react';
 
 export default function MapCreationWrapper() {
-  return (
-    <div>MapCreationWrapper</div>
-  )
+  return <div>MapCreationWrapper</div>;
 }
