@@ -2,7 +2,7 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 const api = axios.create({
-  baseURL: 'https://geomapper-api.onrender.com/auth'
+  baseURL: 'https://geomapper-ylm6.onrender.com/auth'
 });
 export const getLoggedIn = () => api.get(`/loggedIn/`);
 export const loginUser = (userName, password) => {

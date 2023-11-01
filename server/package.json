@@ -20,5 +20,10 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "vite-plugin-inspect": "0.7.38"
+    }
   }
 }
