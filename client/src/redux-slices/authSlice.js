@@ -17,8 +17,8 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
-  async ({email, password}) => {
-    const response = await api.loginUser(email, password);
+  async ({userName, password}) => {
+    const response = await api.loginUser(userName, password);
     return response.data;
   }
 );
@@ -61,7 +61,7 @@ export const authSlice = createSlice({
         state.user = null;
       })
       .addMatcher((action) => action.type.endsWith("/rejected"), (state, action) => {
-        state.message = action.error.message || "An error occurred";
+        state.message = action.payload ? action.payload.errorMessage : "An error occurred";
       });
   }
 });
