@@ -1,15 +1,15 @@
-import "../styles/loginPage.css";
-import { useEffect } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import GeoMapperImage from "../assets/GeoMapperLogo.svg";
-import { Divider } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { loginUser } from "../redux-slices/authSlice";
+import '../styles/loginPage.css';
+import { useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import GeoMapperImage from '../assets/GeoMapperLogo.svg';
+import { Divider } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { loginUser } from '../redux-slices/authSlice';
 
 export default function LoginPage() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
@@ -18,31 +18,33 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (loggedIn) {
-      navigate("/explore");
+      navigate('/explore');
     }
   }, [loggedIn, navigate]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    dispatch(loginUser({
-      userName: formData.get("userName"),
-      password: formData.get("password")
-    }));
+    dispatch(
+      loginUser({
+        userName: formData.get('userName'),
+        password: formData.get('password')
+      })
+    );
   };
 
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1rem",
-        gap: "0.5rem",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem',
+        gap: '0.5rem'
       }}
     >
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
         <h1>Log into GeoMapper</h1>
       </div>
@@ -70,19 +72,14 @@ export default function LoginPage() {
           id="password"
           autoComplete="current-password"
         />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          style={{ backgroundColor: "#40E0D0" }}
-        >
+        <Button type="submit" fullWidth variant="contained" style={{ backgroundColor: '#40E0D0' }}>
           Login
         </Button>
       </Box>
 
       <Divider className="divider">OR</Divider>
-      <Link className="link" to={"/register"}>
-        <Button style={{ backgroundColor: "#40E0D0" }} variant="contained">
+      <Link className="link" to={'/register'}>
+        <Button style={{ backgroundColor: '#40E0D0' }} variant="contained">
           Register
         </Button>
       </Link>
