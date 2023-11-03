@@ -22,6 +22,8 @@ app.use(cookieParser());
 const authRouter = require('./routes/auth-router');
 app.use('/auth', authRouter);
 
+const apiRouter = require('./routes/api-router');
+app.use('/api', apiRouter);
 // Database
 const db = require('./db');
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
