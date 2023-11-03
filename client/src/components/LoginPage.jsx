@@ -1,7 +1,7 @@
 import '../styles/loginPage.css';
 import { useEffect } from 'react';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { LoadingButton } from '@mui/lab';
 import TextField from '@mui/material/TextField';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import { Divider } from '@mui/material';
@@ -11,8 +11,11 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { loginUser } from '../redux-slices/authSlice';
 
+import Box from '@mui/material/Box';
+
 export default function LoginPage() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const isLoading = useSelector((state) => state.auth.isLoading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -72,9 +75,16 @@ export default function LoginPage() {
           id="password"
           autoComplete="current-password"
         />
-        <Button type="submit" fullWidth variant="contained" style={{ backgroundColor: '#40E0D0' }}>
+        <LoadingButton
+          type="submit"
+          loading={isLoading}
+          fullWidth
+          loadingPosition="center"
+          variant="contained"
+          style={{ backgroundColor: '#40E0D0' }}
+        >
           Login
-        </Button>
+        </LoadingButton>
       </Box>
 
       <Divider className="divider">OR</Divider>

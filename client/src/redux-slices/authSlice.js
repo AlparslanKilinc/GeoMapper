@@ -4,7 +4,8 @@ import api from '../auth-request-api/index';
 const initialState = {
   user: null,
   loggedIn: false,
-  message: ''
+  message: '',
+  isLoading: false
 };
 
 export const registerUser = createAsyncThunk(
@@ -54,27 +55,39 @@ export const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
+        state.isLoading = false;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
+        state.isLoading = false;
       })
       .addCase(getLoggedIn.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
+        state.isLoading = false;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.loggedIn = false;
         state.user = null;
+        state.isLoading = false;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
+        state.isLoading = false;
+      })
+      .addCase(loginUser.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(registerUser.pending, (state, action) => {
+        state.isLoading = true;
       })
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
           state.message = action.payload ? action.payload.errorMessage : 'An error occurred';
+          state.isLoading = false;
         }
       );
   }
