@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
+import { LoadingButton } from '@mui/lab';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
@@ -11,9 +11,11 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { registerUser } from '../redux-slices/authSlice';
+import Box from '@mui/material/Box';
 
 export default function RegisterPage() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const isLoading = useSelector((state) => state.auth.isLoading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -122,14 +124,16 @@ export default function RegisterPage() {
               />
             </Grid>
           </Grid>
-          <Button
+          <LoadingButton
             type="submit"
+            loading={isLoading}
             fullWidth
+            loadingPosition="center"
             variant="contained"
             sx={{ mt: 3, mb: 2, backgroundColor: '#40E0D0' }}
           >
             Register
-          </Button>
+          </LoadingButton>
           <Grid container justifyContent="flex-end"></Grid>
         </Box>
         <Divider className="divider"> OR </Divider>
