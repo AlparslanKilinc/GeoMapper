@@ -1,20 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
   points: [],
   regions: [],
-  colorByProperty: "",
-  sizeByProperty: "",
-  propertyNames: [],
+  colorByProperty: '',
+  sizeByProperty: '',
+  propertyNames: []
 };
 
 const mapGraphicsDataSlice = createSlice({
-  name: "mapGraphicsData",
+  name: 'mapGraphics',
   initialState,
   reducers: {
     // TODO: add reducers
-  },
+  }
 });
 
 // Export the actions and the reducer
