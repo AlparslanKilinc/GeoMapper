@@ -31,3 +31,5 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 app.listen(Port, () => {
   console.log('listen on port: ', Port);
 });
+
+module.exports = app;
