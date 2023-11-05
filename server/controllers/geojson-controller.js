@@ -2,7 +2,7 @@ const Geo = require('../models/geojson-model.js');
 
 const getGeojsonIdNamePairs = async (req, res) => {
   // retreive all geojson documents from the database but select only the _id and name fields
-  const geojson = await Geo.find({}, '_id name');
+  const geojson = await Geo.find({}, '_id name').sort('name');
   // send the geojson documents back to the client
   res.json(geojson);
 };
