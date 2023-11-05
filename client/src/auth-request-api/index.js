@@ -1,8 +1,13 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
+const baseURL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://geomapper-ylm6.onrender.com/auth'
+    : 'http://localhost:5001/auth';
+
 const api = axios.create({
-  baseURL: 'https://geomapper-ylm6.onrender.com/auth'
+  baseURL: baseURL
 });
 export const getLoggedIn = () => api.get(`/loggedIn/`);
 export const loginUser = (userName, password) => {
