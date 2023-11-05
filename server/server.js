@@ -11,7 +11,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.NODE_ENV === 'production' ? process.env.CORS_ORIGIN_PROD : true,
+    origin: process.env.NODE_ENV === 'production' ? 'https://geomapper-c6jr.onrender.com' : true,
     credentials: true
   })
 );
