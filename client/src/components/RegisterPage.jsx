@@ -138,7 +138,7 @@ export default function RegisterPage() {
         </Box>
         <Divider className="divider"> OR </Divider>
         <Link className="link" to={'/login'}>
-          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained">
+          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id = "loginButton">
             Login
           </Button>
         </Link>

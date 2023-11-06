@@ -35,16 +35,16 @@ export default function NavBar() {
         <Logo />
         <div className={'iconContainer'}>
           <Link className="link" to={'/explore'}>
-            <IconButton color="inherit" aria-label="explore">
+            <IconButton id = "exploreButton" color="inherit" aria-label="explore">
               <ExploreIcon />
             </IconButton>
           </Link>
           <Link className="link" to={'/mapCreation'}>
-            <IconButton color="inherit" aria-label="add">
+            <IconButton id = 'mapCreation' color="inherit" aria-label="add">
               <AddIcon />
             </IconButton>
           </Link>
-          <AuthButton loggedIn={loggedIn} />
+          <AuthButton id = "loginButton" loggedIn={loggedIn} />
         </div>
       </Toolbar>
     </AppBar>
