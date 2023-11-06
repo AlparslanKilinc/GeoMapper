@@ -18,6 +18,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Routes
 const authRouter = require('./routes/auth-router');
 app.use('/auth', authRouter);
@@ -32,4 +36,4 @@ const server = app.listen(Port, () => {
   console.log('listen on port: ', Port);
 });
 
-module.exports = {app, server};
+module.exports = { app, server };
