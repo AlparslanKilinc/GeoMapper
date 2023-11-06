@@ -1,0 +1,20 @@
+name: Frontend Test Workflow
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: cd client && npm install
+
+    - name: Run tests
+      env:
+        PORT: 5000
+        MONG_URI: 'mongodb+srv://AlparslanK:tassak416@geomapper.5kkfhvh.mongodb.net/'
+        JWT_SECRET: 'p3SsB9AYqFUHEPHs0KqCj6XORt/9V0a53/cqRgnTaxQ='
+        run: cd client && npm test
