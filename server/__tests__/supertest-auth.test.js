@@ -1,7 +1,13 @@
 const request = require('supertest');
-const app = require('../server');
+const { app, server } = require('../server');
+const mongoose = require('mongoose');
 
 const TIMEOUT = 10000;
+
+afterAll(async () => {
+  await new Promise((resolve) => server.close(resolve));
+  await mongoose.disconnect();
+});
 
 describe('Authentication Service', () => {
     let newUserDetails;
