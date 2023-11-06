@@ -14,27 +14,37 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
 
-    - name: Wait for Deployment
+    - name: Wait for Deployment and Check Services
       run: |
-        # Wait for deployment to finish on onrender
+        # Wait for deployment to complete on onrender
         echo "Waiting for deployment to complete on onrender..."
         sleep 180 # Initial 3 minutes sleep
 
-        # Check status with retries
-        max_attempts=5
-        attempt=1
-        while [ $attempt -le $max_attempts ]; do
-          status_code=$(curl --write-out '%{http_code}' --silent --output /dev/null https://geomapper-c6jr.onrender.com/)
-          if [ "$status_code" -eq 200 ] ; then
-            echo "Deployment successful. Website is up and returned status code $status_code"
-            exit 0
-          else
-            echo "Attempt $attempt: Website returned status code $status_code"
-            if [ $attempt -eq $max_attempts ]; then
-              echo "Deployment failed after $max_attempts attempts."
-              exit 1
+        # Function to check a URL with retry logic
+        check_service() {
+          url=$1
+          service_name=$2
+          max_attempts=5
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            status_code=$(curl --write-out '%{http_code}' --silent --output /dev/null $url)
+            if [ "$status_code" -eq 200 ] ; then
+              echo "$service_name is up and returned status code $status_code"
+              return 0
+            else
+              echo "Attempt $attempt for $service_name: Service returned status code $status_code"
+              if [ $attempt -eq $max_attempts ]; then
+                echo "$service_name failed to respond after $max_attempts attempts."
+                return 1
+              fi
+              sleep 30 # Sleep for 30 seconds before retrying
+              attempt=$(( $attempt + 1 ))
             fi
-            sleep 30 # Sleep for 30 seconds before retrying
-            attempt=$(( $attempt + 1 ))
-          fi
-        done
+          done
+        }
+
+        # Check the static website
+        check_service "https://geomapper-c6jr.onrender.com/" "Static Website" || exit 1
+
+        # Check the server
+        check_service "https://geomapper-c6jr.onrender.com/health" "API Server" || exit 1
