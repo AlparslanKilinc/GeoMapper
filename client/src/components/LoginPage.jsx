@@ -89,7 +89,7 @@ export default function LoginPage() {
 
       <Divider className="divider">OR</Divider>
       <Link className="link" to={'/register'}>
-        <Button style={{ backgroundColor: '#40E0D0' }} variant="contained">
+        <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id = "register">
           Register
         </Button>
       </Link>

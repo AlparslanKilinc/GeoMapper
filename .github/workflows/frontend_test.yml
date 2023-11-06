@@ -1,0 +1,21 @@
+name: Frontend Test Workflow
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./client
+
+    - name: Run Cypress tests
+      uses: cypress-io/github-action@v6
+      with:
+        start: npm run dev
+        browser: chrome
+        working-directory: ./client
