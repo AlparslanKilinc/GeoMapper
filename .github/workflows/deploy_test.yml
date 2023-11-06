@@ -1,0 +1,40 @@
+name: Deploy Test Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Wait for Deployment
+      run: |
+        # Wait for deployment to finish on onrender
+        echo "Waiting for deployment to complete on onrender..."
+        sleep 180 # Initial 3 minutes sleep
+
+        # Check status with retries
+        max_attempts=5
+        attempt=1
+        while [ $attempt -le $max_attempts ]; do
+          status_code=$(curl --write-out '%{http_code}' --silent --output /dev/null https://geomapper-c6jr.onrender.com/)
+          if [ "$status_code" -eq 200 ] ; then
+            echo "Deployment successful. Website is up and returned status code $status_code"
+            exit 0
+          else
+            echo "Attempt $attempt: Website returned status code $status_code"
+            if [ $attempt -eq $max_attempts ]; then
+              echo "Deployment failed after $max_attempts attempts."
+              exit 1
+            fi
+            sleep 30 # Sleep for 30 seconds before retrying
+            attempt=$(( $attempt + 1 ))
+          fi
+        done
