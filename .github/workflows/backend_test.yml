@@ -9,6 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: server/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: cd server && npm install
 
