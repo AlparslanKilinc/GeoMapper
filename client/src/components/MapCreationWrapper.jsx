@@ -7,7 +7,7 @@ import { styled } from '@mui/material/styles';
 import TempleSelection from './MapCreation/TemplateSelection';
 import MapDataEditing from './MapCreation/MapDataEditing';
 import OutlineSelectionPage from './MapCreation/OutlineSelectionPage';
-import OutlineSelectionPage from './MapCreation/OutlineSelectionPage';
+import MapGraphicsEditing from './MapCreation/MapGraphicsEditing';
 
 export default function MapCreationWrapper() {
   const stages = [
@@ -56,7 +56,7 @@ export default function MapCreationWrapper() {
           Next
         </NavigationButton>
       </div>
-      <div>{stages[currentStage]}</div>
+      {stages[currentStage]}
     </div>
   );
 }
