@@ -5,7 +5,7 @@ import { LoadingButton } from '@mui/lab';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
-import '../../styles/OutlineSelectionPage.css';
+import '../../styles/outlineSelectionPage.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import GeoJsonMap from './GeoJsonMap';
 import { useDispatch } from 'react-redux';
