@@ -2,8 +2,7 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 const api = axios.create({
-  //   baseURL: 'https://geomapper-ylm6.onrender.com/auth'
-  baseURL: 'http://localhost:5000/api/geojson'
+  baseURL: 'https://geomapper-ylm6.onrender.com/api/geojson'
 });
 
 export const getGeojson = () => {
