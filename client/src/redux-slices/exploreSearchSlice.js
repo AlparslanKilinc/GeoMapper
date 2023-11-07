@@ -31,7 +31,7 @@ const initialState = {
 };
 
 const exploreSlice = createSlice({
-  name: 'explore',
+  name: 'exploreSearch',
   initialState,
   reducers: {}
 });
