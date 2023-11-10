@@ -34,10 +34,8 @@
 .content{
     width:100%;
     background-color: white;
-    border-radius: 5px;
-    border-left-style: solid;
-    border-left-width: thin;
-    border-left-color: darkgrey;
+    filter: drop-shadow(0px -4px 12px #d1d1d1);
+    border-radius:7px
 }
 
 .comment{
@@ -51,6 +49,7 @@
     text-decoration:none;
     margin-right:5px;
     margin-left: 10px;
+
 }
 
 .post-comment{

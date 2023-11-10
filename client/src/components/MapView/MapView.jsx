@@ -10,7 +10,6 @@ import {useSelector} from "react-redux";
 import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
 
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
