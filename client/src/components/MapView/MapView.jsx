@@ -6,17 +6,15 @@ import ShareIcon from '@mui/icons-material/Share';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Divider from '@mui/material/Divider';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
-
+import { addComment } from '../../redux-slices/commentsSlice'
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [commentText, setCommentText] = useState("");
-    const handleCommentChange = (event) => {
-        setCommentText(event.target.value);
-    };
+
 
     return (
         <div className = "mapview-container">
@@ -45,13 +43,12 @@ export default function MapView() {
                                         placeholder="Post a comment"
                                         inputProps={{ 'aria-label': 'Post a comment' }}
                                     />
-                                    <Button variant="contained"
+                                    <Button variant="contained" onClick={handlePostComment}
                                             sx = {{backgroundColor: "var(--main-color)",
                                                     '&:hover': 'var(--dark-color)'}}
                                     >Post</Button>
                                 </Paper>
                             </div>
-
                         ) : (
                             <p>
                                 <a className="login-link" href="/login">
