@@ -1,12 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apis from '../store-request-api/geojsonRequestApi';
+import geobuf from 'geobuf';
+import Pbf from 'pbf';
 
 export const fetchGeojsonById = createAsyncThunk(
   'geojson/fetchGeojsonById',
   async (id, { rejectWithValue }) => {
     try {
       const response = await apis.getGeojsonById(id);
-      return response.data;
+      const geojson = geobuf.decode(new Pbf(response.data));
+
+      return { geoJSON: geojson };
     } catch (error) {
       return rejectWithValue(error.response.data);
     }

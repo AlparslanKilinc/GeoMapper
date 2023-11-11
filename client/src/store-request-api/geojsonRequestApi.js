@@ -14,8 +14,25 @@ export const getGeojson = () => {
 };
 
 export const getGeojsonById = (id) => {
-  return api.get(`/${id}`);
+  return api.get(`/${id}`, { responseType: 'arraybuffer' });
 };
 
-const apis = { getGeojson, getGeojsonById };
+export const createGeojson = (compressedGeoJSON, ownerId, isPrivate, name) => {
+  // Configure the request to include binary data and additional parameters
+  const config = {
+    params: {
+      ownerId: ownerId,
+      isPrivate: isPrivate,
+      name: name
+    },
+    headers: {
+      'Content-Type': 'application/octet-stream'
+    },
+    responseType: 'arraybuffer'
+  };
+
+  return api.post(baseURL, compressedGeoJSON, config);
+};
+
+const apis = { getGeojson, getGeojsonById, createGeojson };
 export default apis;
