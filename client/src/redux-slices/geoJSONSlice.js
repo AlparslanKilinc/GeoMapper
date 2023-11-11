@@ -9,7 +9,7 @@ export const fetchGeojsonById = createAsyncThunk(
     try {
       const response = await apis.getGeojsonById(id);
       const geojson = geobuf.decode(new Pbf(response.data));
-
+      console.log(geojson);
       return { geoJSON: geojson };
     } catch (error) {
       return rejectWithValue(error.response.data);
