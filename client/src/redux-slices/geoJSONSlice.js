@@ -8,6 +8,7 @@ export const fetchGeojsonById = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await apis.getGeojsonById(id);
+      console.log(response.data);
       const geojson = geobuf.decode(new Pbf(response.data));
       console.log(geojson);
       return { geoJSON: geojson };
