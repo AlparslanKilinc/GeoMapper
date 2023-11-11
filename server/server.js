@@ -8,6 +8,13 @@ const Port = process.env.PORT;
 const app = express();
 
 // Middleware
+
+app.use(
+  express.raw({
+    type: 'application/octet-stream',
+    limit: '50mb' // Example: increase the limit to 50MB
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({

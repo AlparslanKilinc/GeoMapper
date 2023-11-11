@@ -2,7 +2,15 @@ const express = require('express');
 const router = express.Router();
 const GeojsonController = require('../controllers/geojson-controller.js');
 
+// Middleware for parsing raw binary data
+const rawBodyParser = express.raw({
+  type: 'application/octet-stream',
+  limit: '50mb' // Example: increase the limit to 50MB
+});
 router.get('/', GeojsonController.getGeojsonIdNamePairs);
 router.get('/:id', GeojsonController.getGeojsonById);
+
+// Use the rawBodyParser middleware only for the POST route
+router.post('/', rawBodyParser, GeojsonController.createGeojson);
 
 module.exports = router;
