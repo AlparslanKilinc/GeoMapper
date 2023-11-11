@@ -13,6 +13,7 @@ export const fetchGeojsonById = createAsyncThunk(
       console.log(geojson);
       return { geoJSON: geojson };
     } catch (error) {
+      console.log(error);
       return rejectWithValue(error.response.data);
     }
   }
