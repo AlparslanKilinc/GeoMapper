@@ -1,26 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 // Map Metadata Slice
 const mapMetadataInitialState = {
   mapId: null,
   likes: 0,
   forks: 0,
-  author: { id: null, username: "" },
+  author: { id: null, username: '' },
   dateCreated: null,
-  description: "",
+  description: '',
   forkedFrom: { isForked: false, originalMapId: null },
   tags: [],
   comments: [],
-  mapGraphicsType: "",
-  publishDate: null,
+  mapGraphicsType: 'Symbol Map',
+  publishDate: null
 };
 
 const metaDataSlice = createSlice({
-  name: "mapMetadata",
+  name: 'mapMetadata',
   initialState: mapMetadataInitialState,
   reducers: {
     //TODO add reducers
-  },
+  }
 });
 
 export default metaDataSlice.reducer;

@@ -1,0 +1,58 @@
+/* creating a two column layout where left column takes 30% and right 70% */
+#outline-page {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* let the outline-page-right have the remaining space */
+#outline-page-right {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* the page is white so we will give the left section right border similar color to twitter's border like a greyish blackish subtle border  */
+#outline-page-left {
+  flex: 0.3;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  /* a little darker */
+  border-right: 1px solid rgb(230, 236, 250);
+  border-right: 1px solid grey;
+  display: flex;
+  flex-direction: column;
+  /* center */
+  align-items: center;
+  gap: 2em;
+}
+
+h2 {
+  margin-bottom: 0.5em;
+}
+/* bottom border grey */
+.secondary-title {
+  border-bottom: 1px solid grey;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+.header-primary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* OutlineSelectionPage.css */

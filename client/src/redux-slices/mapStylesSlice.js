@@ -11,7 +11,7 @@ const initialState = {
 };
 
 const mapStylesDataSlice = createSlice({
-  name: 'mapStylesData',
+  name: 'mapStyles',
   initialState,
   reducers: {}
 });

@@ -6,11 +6,16 @@ import '../styles/mapCreationWrapper.css';
 import { styled } from '@mui/material/styles';
 import TempleSelection from './MapCreation/TemplateSelection';
 import MapDataEditing from './MapCreation/MapDataEditing';
-import MapUpload from './MapCreation/MapUpload';
+import OutlineSelectionPage from './MapCreation/OutlineSelectionPage';
 import MapGraphicsEditing from './MapCreation/MapGraphicsEditing';
 
 export default function MapCreationWrapper() {
-  const stages = [<TempleSelection />, <MapUpload />, <MapDataEditing />, <MapGraphicsEditing />];
+  const stages = [
+    <TempleSelection />,
+    <OutlineSelectionPage />,
+    <MapDataEditing />,
+    <MapGraphicsEditing />
+  ];
   const [currentStage, setCurrentStage] = useState(0);
 
   const NavigationButton = styled(Button)(({ theme }) => ({
@@ -51,7 +56,7 @@ export default function MapCreationWrapper() {
           Next
         </NavigationButton>
       </div>
-      <div>{stages[currentStage]}</div>
+      {stages[currentStage]}
     </div>
   );
 }
