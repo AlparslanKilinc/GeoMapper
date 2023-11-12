@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import '../styles/explorePage.css'
-import MapCard from './MapCard.jsx'
+import MapCard from './MapCard'
 import Button from '@mui/material/Button';
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
