@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../styles/mapCard.css'
+import '../styles/mapCard.css'
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -37,7 +37,7 @@ export default function MapCard () {
                         alt="green iguana"
                     />
                     <CardContent>
-                        <Link href = "#" underline = "hover" sx = {{color: 'var(--dark-color)', fontSize:'10px'}}>
+                        <Link href = "ExplorePage#" underline = "hover" sx = {{color: 'var(--dark-color)', fontSize:'10px'}}>
                             @john123
                         </Link>
                         <Typography gutterBottom variant="h5">
