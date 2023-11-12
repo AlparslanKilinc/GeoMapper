@@ -17,6 +17,13 @@ export const mapDataEditorSlice = createSlice({
             state.columnNames.push(action.payload);
             state.data = state.data.map(row => ({ ...row, [action.payload]: '' }));
         },
+        addRow: (state) => {
+            const newRow = state.columnNames.reduce((acc, columnName) => {
+                acc[columnName] = '';
+                return acc;
+            }, {});
+            state.data.push(newRow);
+        },
         modifyCell: (state, action) => {
             const { rowIndex, columnName, value } = action.payload;
             state.data[rowIndex][columnName] = value;
@@ -27,6 +34,6 @@ export const mapDataEditorSlice = createSlice({
     },
 });
 
-export const { setInitialColumnNames, addColumn, modifyCell, checkMatch } = mapDataEditorSlice.actions;
+export const { setInitialColumnNames, addColumn, addRow, modifyCell, checkMatch } = mapDataEditorSlice.actions;
 
 export default mapDataEditorSlice.reducer;

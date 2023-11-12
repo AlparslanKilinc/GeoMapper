@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setInitialColumnNames, addColumn, modifyCell, checkMatch } from '../../redux-slices/mapDataEditorSlice';
+import { setInitialColumnNames, addColumn, addRow, modifyCell, checkMatch } from '../../redux-slices/mapDataEditorSlice';
 import { Table, TableBody, TableCell, TableHead, TableRow, TextField, Divider, List, ListItem, FormControl, Select, MenuItem } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -31,6 +31,10 @@ const BaseMapDataEditor = (config) => {
       }
     };
 
+    const handleAddRow = () => {
+      dispatch(addRow());
+    };
+
     const handleCellChange = (rowIndex, columnName, value) => {
       dispatch(modifyCell({ rowIndex, columnName, value }));
     };
@@ -38,6 +42,27 @@ const BaseMapDataEditor = (config) => {
     const handleCheck = () => {
       dispatch(checkMatch());
     };
+
+    const handleDelete = () => { };
+
+    const renderDefaultTableButtons = () => (
+      <div id="table-buttons">
+        <LoadingButton
+          variant="outlined"
+          style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
+          onClick={handleAddColumn}
+        >
+          Add Column
+        </LoadingButton>
+        <LoadingButton
+          variant="outlined"
+          style={{ color: 'red', borderColor: 'red' }}
+          onClick={handleDelete}
+        >
+          Delete
+        </LoadingButton>
+      </div>
+    );
 
     const renderTable = () => (
       <div id="table-container">
@@ -69,21 +94,9 @@ const BaseMapDataEditor = (config) => {
             ))}
           </TableBody>
         </Table>
-        <div id="table-buttons">
-          <LoadingButton
-            variant="outlined"
-            style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
-            onClick={handleAddColumn}
-          >
-            Add Column
-          </LoadingButton>
-          <LoadingButton
-            variant="outlined"
-            style={{ color: 'red', borderColor: 'red' }}
-          >
-            Delete
-          </LoadingButton>
-        </div>
+        {config.renderCustomizedTableButtons
+          ? config.renderCustomizedTableButtons()(handleAddColumn, handleAddRow, handleDelete)
+          : renderDefaultTableButtons()}
       </div >
     );
 
