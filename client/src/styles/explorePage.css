@@ -29,7 +29,6 @@
     width:100%;
     overflow:scroll;
 }
-
-.MapCard{
-
+.MuiAutocomplete-root .MuiAutocomplete-popupIndicator {
+    display: none;
 }
