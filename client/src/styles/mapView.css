@@ -1,0 +1,70 @@
+.map-render{
+    height:500px;
+    width: 1100px;
+    border-radius: 10px;
+    margin-top:80px;
+    display:flex;
+    filter: drop-shadow(-1px 6px 12px #d1d1d1);
+}
+.map-info{
+    margin-bottom:-75px;
+    font-family: 'Outfit', sans-serif;
+
+}
+
+
+.map-info h1{
+    margin-bottom:-5px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.map-info p{
+    margin:2px;
+    font-family: 'Outfit', sans-serif;
+    font-size:12px;
+    color: dimgrey;
+}
+
+.map-render img{
+    height: 500px;
+    width: 800px;
+    border-radius: 10px;
+    object-fit: cover;
+ }
+.content{
+    width:100%;
+    background-color: white;
+    filter: drop-shadow(0px -4px 12px #d1d1d1);
+    border-radius:7px
+}
+
+.comment{
+    display:flex;
+    height:440px;
+    overflow-y: scroll;
+}
+
+.login-link{
+    color: var(--main-color);
+    text-decoration:none;
+    margin-right:5px;
+    margin-left: 10px;
+
+}
+
+.post-comment{
+    display:flex;
+    color: darkgrey;
+}
+
+.comment-form{
+    display:flex;
+}
+
+.actions{
+    display:flex;
+    padding:15px;
+}
+.export, .bookmarks, .share{
+    padding-left:10px;
+}
