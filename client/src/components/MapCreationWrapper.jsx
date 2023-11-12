@@ -5,7 +5,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../styles/mapCreationWrapper.css';
 import { styled } from '@mui/material/styles';
 import TempleSelection from './MapCreation/TemplateSelection';
-import MapDataEditing from './MapCreation/MapDataEditing';
+import MapDataEditorSelector from './MapDataEditing/MapDataEditorSelector';
 import OutlineSelectionPage from './MapCreation/OutlineSelectionPage';
 import MapGraphicsEditing from './MapCreation/MapGraphicsEditing';
 
@@ -13,7 +13,7 @@ export default function MapCreationWrapper() {
   const stages = [
     <TempleSelection />,
     <OutlineSelectionPage />,
-    <MapDataEditing />,
+    <MapDataEditorSelector />,
     <MapGraphicsEditing />
   ];
   const [currentStage, setCurrentStage] = useState(0);
