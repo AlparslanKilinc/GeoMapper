@@ -12,7 +12,6 @@
 
 }
 
-
 .map-info h1{
     margin-bottom:-5px;
     font-family: 'Outfit', sans-serif;
@@ -31,7 +30,7 @@
     border-radius: 10px;
     object-fit: cover;
  }
-.content{
+.map-view-content{
     width:100%;
     background-color: white;
     filter: drop-shadow(0px -4px 12px #d1d1d1);

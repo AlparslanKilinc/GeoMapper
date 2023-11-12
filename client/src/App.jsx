@@ -6,7 +6,7 @@ import ProfilePage from './components/UserProfile/ProfilePage';
 import NavBar from './components/NavigationBar/NavBar';
 import MapCreationWrapper from './components/MapCreationWrapper';
 import ExplorePage from './components/ExplorePage';
-
+import MapView from './components/MapView/MapView'
 function App() {
   return (
     <Router>
@@ -18,6 +18,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/mapCreation" element={<MapCreationWrapper />} />
+          <Route path = "/mapView" element={<MapView/>} />
       </Routes>
     </Router>
   );

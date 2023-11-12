@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // Map Metadata Slice
 const commentsInitialState = {
-    comments: [];
+    comments: []
 };
 
 const commentsDataSlice = createSlice({

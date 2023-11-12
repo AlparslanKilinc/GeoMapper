@@ -10,10 +10,8 @@ import {useDispatch, useSelector} from "react-redux";
 import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
-import { addComment } from '../../redux-slices/commentsSlice'
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
-    const [commentText, setCommentText] = useState("");
 
 
     return (
@@ -25,8 +23,8 @@ export default function MapView() {
             </div>
             <div className = "map-render">
                 <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png"/>
-                <div className="content">
-                  <div class = "comment">
+                <div className="map-view-content">
+                  <div className = "comment">
                       <div className = "comment-section">
                           <Comment/>
                       </div>
@@ -43,7 +41,7 @@ export default function MapView() {
                                         placeholder="Post a comment"
                                         inputProps={{ 'aria-label': 'Post a comment' }}
                                     />
-                                    <Button variant="contained" onClick={handlePostComment}
+                                    <Button variant="contained"
                                             sx = {{backgroundColor: "var(--main-color)",
                                                     '&:hover': 'var(--dark-color)'}}
                                     >Post</Button>
