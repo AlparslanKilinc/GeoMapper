@@ -1,5 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableRow, TextField, Paper, Divider, List, ListItem, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setInitialColumnNames, addColumn, modifyCell, checkMatch } from '../../redux-slices/mapDataEditorSlice';
+import { Table, TableBody, TableCell, TableHead, TableRow, TextField, Divider, List, ListItem, FormControl, Select, MenuItem } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
@@ -11,36 +13,30 @@ import '../../styles/mapDataEditingPage.css';
 
 const BaseMapDataEditor = (config) => {
   return (props) => {
-    const [columnNames, setColumnNames] = useState(config.initialColumnNames);
-    const [isMatchSuccessful, setIsMatchSuccessful] = useState(false);
-    const [data, setData] = useState([{}]);
+    const dispatch = useDispatch();
+    const columnNames = useSelector(state => state.mapDataEditor.columnNames);
+    const data = useSelector(state => state.mapDataEditor.data);
+    const isMatchSuccessful = useSelector(state => state.mapDataEditor.isMatchSuccessful);
+
+    useEffect(() => {
+      if (config.initialColumnNames) {
+        dispatch(setInitialColumnNames(config.initialColumnNames));
+      }
+    }, []);
 
     const handleAddColumn = () => {
       const newColumnName = window.prompt('Enter new column name');
       if (newColumnName) {
-        setColumnNames(prevColumns => [...prevColumns, newColumnName]);
-        setData(currentData =>
-          currentData.map(row => ({
-            ...row,
-            [newColumnName]: '',
-          }))
-        );
+        dispatch(addColumn(newColumnName));
       }
     };
 
-    const handleCellChange = useCallback((rowIndex, columnName, value) => {
-      setData(currentData => {
-        const newData = [...currentData];
-        newData[rowIndex] = {
-          ...newData[rowIndex],
-          [columnName]: value,
-        };
-        return newData;
-      });
-    }, []);
+    const handleCellChange = (rowIndex, columnName, value) => {
+      dispatch(modifyCell({ rowIndex, columnName, value }));
+    };
 
     const handleCheck = () => {
-      setIsMatchSuccessful(true);
+      dispatch(checkMatch());
     };
 
     const renderTable = () => (

@@ -6,6 +6,7 @@ import mapStyleReducer from './redux-slices/mapStylesSlice';
 import mapReducer from './redux-slices/mapSlice';
 import exploreSearchReducer from './redux-slices/exploreSearchSlice';
 import geojsonReducer from './redux-slices/geoJSONSlice';
+import mapDataEditorReducer from './redux-slices/mapDataEditorSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ export const store = configureStore({
     mapStyles: mapStyleReducer,
     map: mapReducer,
     exploreSearch: exploreSearchReducer,
-    geojson: geojsonReducer
+    geojson: geojsonReducer,
+    mapDataEditor: mapDataEditorReducer,
   },
   devTools: false
 });
