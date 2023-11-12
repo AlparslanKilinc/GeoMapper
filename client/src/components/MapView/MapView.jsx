@@ -10,6 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
+import IconButton from '@mui/material/IconButton';
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
 
@@ -58,10 +59,21 @@ export default function MapView() {
                 </div>
             </div>
             <div className = "actions">
-                <ThumbUpOffAltIcon className = "like"/>
-                <ShareIcon className = "export"/>
-                <IosShareIcon className = "share"/>
-                <BookmarkBorderIcon className = "bookmarks"/>
+                <IconButton>
+                    <ThumbUpOffAltIcon className = "like"/>
+                 </IconButton>
+
+                 <IconButton>
+                    <ShareIcon className = "export"/>
+                </IconButton>
+
+                <IconButton>
+                    <IosShareIcon className = "share"/>
+                </IconButton>
+                 <IconButton>
+                     <BookmarkBorderIcon className = "bookmarks"/>
+                 </IconButton>
+
         </div>
         </div>
 );
