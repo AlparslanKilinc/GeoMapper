@@ -1,5 +1,5 @@
 =import React from 'react'
-import ExplorePage from './ExplorePage'
+import ExplorePage from './ExplorePage.jsx'
 
 describe('<ExplorePage />', () => {
   it('renders', () => {
