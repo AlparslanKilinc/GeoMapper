@@ -62,7 +62,6 @@ export default function MapView() {
                 <IconButton>
                     <ThumbUpOffAltIcon className = "like"/>
                  </IconButton>
-
                  <IconButton>
                     <ShareIcon className = "export"/>
                 </IconButton>

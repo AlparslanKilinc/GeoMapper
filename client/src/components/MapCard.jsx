@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -12,13 +12,40 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Chip from '@mui/material/Chip';
 import { Link as RouterLink } from 'react-router-dom'
+import {useSelector} from "react-redux";
+import PopUp from './PopUp.jsx';
 
 
 export default function MapCard () {
+    const loggedIn = useSelector((state) => state.auth.loggedIn);
+    const [isPopupOpen, setPopupOpen] = useState(false);
+    const [popUpTitle, setPopUpTitle] = useState("");
+    const openPopup = () => {
+        setPopupOpen(true);
+    };
 
+    const closePopup = () => {
+        setPopupOpen(false);
+    };
 
     const handleTagClick = () =>{
         console.log("tag was clicked")
+    }
+
+    const handleLike = () =>{
+        console.log("map was liked")
+        if(!loggedIn){
+            setPopUpTitle("To like a map, please create an account");
+            openPopup();
+            return;
+        }
+    }
+    const handleFork = () =>{
+        if(!loggedIn){
+            setPopUpTitle("To fork a map, please create an account");
+            openPopup();
+            return;
+        }
     }
 
     return(
@@ -52,10 +79,10 @@ export default function MapCard () {
                 </CardActionArea>
                 <CardActions>
                     <IconButton>
-                        <ThumbUpOffAltIcon className = "like"/>
+                        <ThumbUpOffAltIcon className = "like" onClick = {handleLike}/>
                     </IconButton>
                     <IconButton>
-                        <ShareIcon className = "export"/>
+                        <ShareIcon className = "export"  onClick = {handleFork}/>
                     </IconButton>
                     <IconButton>
                         <IosShareIcon className = "share"/>
@@ -65,6 +92,7 @@ export default function MapCard () {
                     </IconButton>
                 </CardActions>
             </Card>
+            {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
         </div>
     );
 }
