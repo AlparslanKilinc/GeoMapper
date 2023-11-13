@@ -88,11 +88,18 @@ export default function LoginPage() {
       </Box>
 
       <Divider className="divider">OR</Divider>
-      <Link className="link" to={'/register'}>
-        <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id = "register">
-          Register
-        </Button>
-      </Link>
+      <div className="login-button-group">
+        <Link className="link" to={'/register'}>
+          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+            Register
+          </Button>
+        </Link>
+        <Link className="link" to={'/forgotPassword'}>
+          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+            Forgot Password
+          </Button>
+        </Link>
+      </div>
     </Box>
   );
 }

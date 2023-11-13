@@ -6,3 +6,8 @@
 .divider {
   width: 100%;
 }
+
+.login-button-group {
+  display: flex;
+  gap: 1rem;
+}
