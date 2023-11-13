@@ -8,6 +8,7 @@ import TabMenu from './TabMenu';
 import StylesMenu from './StylesMenus';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
+import TabularEditorSelector from './TabularEditorSelector';
 import MapTitleEditor from './MapTitleEditor';
 import UndoRedoButtonGroup from './UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -22,11 +23,65 @@ const stylesToolboxConfig = [
 
 const dataEditingToolboxConfig = [
   { label: 'Region', content: <RegionEditing /> },
-  { label: 'Tabular', content: 'Tabular' }
+  { label: 'Tabular', content: <TabularEditorSelector /> }
 ];
 
-export default function PermanentDrawerLeft() {
+function MapBox(props) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
+
+  return (
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        bgcolor: 'background.default',
+        p: 3,
+        display: 'flex',
+        flexDirection: 'row'
+      }}
+    >
+      <UndoRedoButtonGroup />
+
+      {isLoadingGeojson ? (
+        <CircularProgress />
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            width: '100%'
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <MapTitleEditor />
+            {/* make the buttons a square */}
+
+            <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
+              <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
+                <SaveOutlinedIcon />
+              </Button>
+
+              <Button
+                variant="outlined"
+                aria-label="publish"
+                sx={{ height: '50px', width: '50px' }}
+              >
+                <PublishOutlinedIcon />
+              </Button>
+            </Box>
+          </Box>
+
+          {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={true} />}
+        </div>
+      )}
+    </Box>
+  );
+}
+
+export default function PermanentDrawerLeft() {
+  let isTabularOpened = useSelector(state => state.mapGraphics.isTabularOpened);
+
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
       <CssBaseline />
@@ -47,52 +102,8 @@ export default function PermanentDrawerLeft() {
       >
         <TabMenu tabsConfig={stylesToolboxConfig} />
       </Drawer>
-      <UndoRedoButtonGroup />
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: 'background.default',
-          p: 3,
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
-        {isLoadingGeojson ? (
-          <CircularProgress />
-        ) : (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              width: '100%'
-            }}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <MapTitleEditor />
-              {/* make the buttons a square */}
-
-              <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
-                <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
-                  <SaveOutlinedIcon />
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  aria-label="publish"
-                  sx={{ height: '50px', width: '50px' }}
-                >
-                  <PublishOutlinedIcon />
-                </Button>
-              </Box>
-            </Box>
-
-            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={true} />}
-          </div>
-        )}
-      </Box>
+      {!isTabularOpened && (<MapBox />)}
 
       <Drawer
         sx={{

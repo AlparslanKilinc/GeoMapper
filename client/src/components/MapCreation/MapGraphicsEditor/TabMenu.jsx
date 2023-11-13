@@ -1,5 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { toggleTabular } from '../../../redux-slices/mapGraphicsDataSlice';
 import { Tabs, Tab, Typography, Box } from '@mui/material';
 
 function CustomTabPanel(props) {
@@ -36,8 +38,15 @@ function a11yProps(index) {
 }
 
 export default function TabMenu({ tabsConfig }) {
+  const dispatch = useDispatch();
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
+    // TODO: Use enum
+    if (newValue === 1) {
+      dispatch(toggleTabular());
+    } else {
+      dispatch(toggleTabular());
+    }
     setValue(newValue);
   };
 
