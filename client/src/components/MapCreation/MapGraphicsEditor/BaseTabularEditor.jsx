@@ -142,38 +142,36 @@ const BaseTabularEditor = (config) => {
 
         return (
             <div id="tabular-page">
-                <div id="data-editing-page">
-                    <div id="data-editing-page-mid">
-                        {renderTable()}
+                <div id="data-editing-page-mid">
+                    {renderTable()}
+                </div>
+                <div id="data-editing-page-right">
+                    <div className="header-primary">
+                        <h2>match</h2>
+                        <Divider style={{ width: '50%' }} />
                     </div>
-                    <div id="data-editing-page-right">
-                        <div className="header-primary">
-                            <h2>match</h2>
-                            <Divider style={{ width: '50%' }} />
-                        </div>
-                        {renderMatchPanel()}
+                    {renderMatchPanel()}
+                    <Box sx={{ display: 'flex', alignItems: 'center', padding: '0.5em', fontSize: '0.8em' }}>
+                        <ReportProblemIcon color="action" />
+                        <Typography variant="body2" className="normalText">
+                            You can set number, date, and text columns using the menu in the column header.
+                        </Typography>
+                    </Box>
+                    <LoadingButton
+                        variant="outlined"
+                        style={{ color: 'black', borderColor: 'black' }}
+                        onClick={handleCheck}
+                    >
+                        check
+                    </LoadingButton>
+                    {isMatchSuccessful && (
                         <Box sx={{ display: 'flex', alignItems: 'center', padding: '0.5em', fontSize: '0.8em' }}>
-                            <ReportProblemIcon color="action" />
-                            <Typography variant="body2" className="normalText">
-                                You can set number, date, and text columns using the menu in the column header.
+                            <Typography variant="body2" className="normalText" color="#40e0d0">
+                                √ All map regions were matched!
                             </Typography>
                         </Box>
-                        <LoadingButton
-                            variant="outlined"
-                            style={{ color: 'black', borderColor: 'black' }}
-                            onClick={handleCheck}
-                        >
-                            check
-                        </LoadingButton>
-                        {isMatchSuccessful && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', padding: '0.5em', fontSize: '0.8em' }}>
-                                <Typography variant="body2" className="normalText" color="#40e0d0">
-                                    √ All map regions were matched!
-                                </Typography>
-                            </Box>
-                        )}
-                    </div>
-                </div >
+                    )}
+                </div>
             </div >
         );
     };
