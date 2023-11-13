@@ -1,13 +1,13 @@
 import React from 'react';
 import Sidebar from './SideBar';
-import UserMapContent from './UserMapContent';
 import '../../styles/profilePage.css';
+import ProfileNavBar from './ProfileNavBar';
 
 export default function ProfilePage() {
   return (
     <div className="profile">
       <Sidebar />
-      <UserMapContent />
+      <ProfileNavBar />
     </div>
   );
 }
