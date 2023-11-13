@@ -11,9 +11,69 @@ import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
+import PopUp from '../PopUp';
+import SharePopUp from '../SharePopUp'
+import ForkForm from '../ForkForm'
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
+    const [isPopupOpen, setPopupOpen] = useState(false);
+    const [isShareOpen, setShareOpen] = useState(false);
+    const [popUpTitle, setPopUpTitle] = useState("");
+    const [forkForm, setForkForm] = useState(false);
+    const openPopup = () => {
+        setPopupOpen(true);
+    };
+    const openShare = () => {
+        setShareOpen(true);
+    };
+    const closeShare = () => {
+        setShareOpen(false);
+    };
+    const closePopup = () => {
+        setPopupOpen(false);
+    };
 
+    const openForkForm = () => {
+        setForkForm(true);
+    }
+    const closeForkForm = () => {
+        setForkForm(false);
+    }
+
+    const handleTagClick = () =>{
+        console.log("tag was clicked")
+    }
+
+    const handleLike = () =>{
+        console.log("map was liked")
+        if(!loggedIn){
+            setPopUpTitle("To like a map, please create an account");
+            openPopup();
+            return;
+        }
+    }
+    const handleShare = () =>{
+        openShare();
+        return;
+    }
+    const handleFork = () =>{
+        console.log(loggedIn)
+        if(!loggedIn){
+            setPopUpTitle("To fork a map, please create an account");
+            openPopup();
+            return;
+        }
+        else{
+            openForkForm();
+        }
+    }
+    const handleBookmark = () =>{
+        if(!loggedIn){
+            setPopUpTitle("To bookmark, please create an account");
+            openPopup();
+            return;
+        }
+    }
 
     return (
         <div className = "mapview-container">
@@ -60,20 +120,23 @@ export default function MapView() {
             </div>
             <div className = "actions">
                 <IconButton>
-                    <ThumbUpOffAltIcon className = "like"/>
+                    <ThumbUpOffAltIcon className = "like"onClick = {handleLike}/>
                  </IconButton>
                  <IconButton>
-                    <ShareIcon className = "export"/>
+                    <ShareIcon className = "export" onClick = {handleFork}/>
                 </IconButton>
 
                 <IconButton>
-                    <IosShareIcon className = "share"/>
+                    <IosShareIcon className = "share" onClick = {handleShare}/>
                 </IconButton>
                  <IconButton>
-                     <BookmarkBorderIcon className = "bookmarks"/>
+                     <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
                  </IconButton>
 
         </div>
+            {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
+            {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}
+            {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
         </div>
 );
 }
