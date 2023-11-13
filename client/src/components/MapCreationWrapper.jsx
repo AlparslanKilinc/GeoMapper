@@ -9,10 +9,13 @@ import TempleSelection from './MapCreation/TemplateSelection';
 import MapDataEditorSelector from './MapDataEditing/MapDataEditorSelector';
 import OutlineSelectionPage from './MapCreation/OutlineSelectionPage';
 import MapGraphicsEditing from './MapCreation/MapGraphicsEditing';
+import { useSelector } from 'react-redux';
 
 export default function MapCreationWrapper() {
   const [currentStage, setCurrentStage] = useState(0);
   const location = useLocation();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
     color: '#40e0d0',
@@ -59,7 +62,7 @@ export default function MapCreationWrapper() {
           variant="outlined"
           endIcon={<ArrowForwardIcon />}
           onClick={goForward}
-          disabled={currentStage === stages.length - 1}
+          disabled={!mapGraphicsType || currentStage === stages.length - 1}
         >
           Next
         </NavigationButton>
