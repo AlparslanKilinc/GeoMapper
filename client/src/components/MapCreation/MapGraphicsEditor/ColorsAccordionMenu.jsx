@@ -2,28 +2,20 @@ import React from 'react';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
-import {
-  Autocomplete,
-  Divider,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-  TextField,
-  Slider
-} from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
-import { changeColorByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import ColorRange from './ColorRange';
+import ColorsSymbolAccordionMenu from './ColorsSymbolAccordionMenu';
+import ColorsDotDensityAccordionMenu from './ColorsDotDensityAccordionMenu';
+import { useSelector } from 'react-redux';
 
 export default function ColorsAccordionMenu() {
-  const dispatch = useDispatch();
+  const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
+  let accordionDetails = <ColorsSymbolAccordionMenu />;
 
-  const { propertyNames, colorByProperty } = useSelector((state) => state.mapGraphics);
-  const handleColorByPropertyChange = (event, newValue) => {
-    dispatch(changeColorByProperty(newValue));
-  };
+  if (mapGraphicsType === 'Dot Density Map') {
+    accordionDetails = <ColorsDotDensityAccordionMenu />;
+  }
+
   return (
     <Accordion>
       <AccordionSummary
@@ -38,79 +30,7 @@ export default function ColorsAccordionMenu() {
         </Typography>
         {/* Emoji included */}
       </AccordionSummary>
-      <AccordionDetails>
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ gap: 2 }}
-        >
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ width: '100%' }}
-          >
-            <Typography variant="subtitle2">color by property</Typography>
-            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <Autocomplete
-              value={colorByProperty}
-              onChange={handleColorByPropertyChange}
-              options={propertyNames}
-              fullWidth
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            />
-          </Box>
-
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ width: '100%' }}
-          >
-            <Typography variant="subtitle2">steps</Typography>
-            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <TextField type="number" defaultValue={3} fullWidth />
-          </Box>
-
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ width: '100%' }}
-          >
-            <Typography variant="subtitle2">range</Typography>
-            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <ColorRange
-              lower="min"
-              upper={100}
-              disableUpper={false}
-              disableLower={true}
-              intialColor="#ADD8E6"
-            />
-
-            <ColorRange
-              lower={101}
-              upper={200}
-              disableUpper={false}
-              disableLower={false}
-              intialColor="#0000CD"
-            />
-
-            <ColorRange
-              lower={201}
-              upper={'max'}
-              disableUpper={true}
-              disableLower={false}
-              intialColor="#00008B"
-            />
-          </Box>
-        </Box>
-      </AccordionDetails>
+      <AccordionDetails>{accordionDetails}</AccordionDetails>
     </Accordion>
   );
 }
