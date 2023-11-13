@@ -14,7 +14,7 @@ export default function ForkForm ({ open, onClose, title}) {
         <div id = "fork-form">
             <Dialog open={open} onClose={onClose}>
                 <IconButton sx = {{
-                    ml:'350px',
+                    ml:'400px',
                 }}>
                     <CloseIcon onClick={onClose} />
                 </IconButton>
