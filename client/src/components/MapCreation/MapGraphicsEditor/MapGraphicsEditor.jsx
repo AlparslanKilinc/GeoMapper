@@ -7,14 +7,14 @@ import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
 import GeoJsonMap from '../GeoJsonMap/';
 import TabMenu from './TabMenu';
-import SimpleAccordion from './SimpleAccordion';
+import StylesMenu from './StylesMenus';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
 import MapTitleEditor from './MapTitleEditor';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
-  { label: 'Styles', content: <SimpleAccordion /> },
+  { label: 'Styles', content: <StylesMenu /> },
   { label: 'Annotate', content: <AnnotateContent /> }
 ];
 

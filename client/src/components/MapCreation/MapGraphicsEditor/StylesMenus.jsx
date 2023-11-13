@@ -4,7 +4,7 @@ import ColorsAccordionMenu from './ColorsAccordionMenu';
 import ShapeAccordionMenu from './ShapeAccordionMenu';
 import BorderAccordionMenu from './BorderAccordionMenu';
 
-export default function SimpleAccordion() {
+export default function StylesMenus() {
   return (
     <div>
       <ColorsAccordionMenu />
