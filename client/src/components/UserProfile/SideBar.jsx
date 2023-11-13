@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser, getLoggedIn } from '../../redux-slices/authSlice';
+import { Link } from 'react-router-dom';
 
 export default function Sidebar() {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ export default function Sidebar() {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     userName: user?.userName || '',
-    bio: user?.bio || ''
+    bio: user?.bio || 'add bio here'
   };
   const [editMode, setEditMode] = useState(false);
   const [tempUserData, setTempUserData] = useState(defaultData);
@@ -73,6 +74,9 @@ export default function Sidebar() {
                 <button className="editProfileButton" onClick={() => setEditMode(true)}>
                   Edit Profile
                 </button>
+                <Link className="link" to={'/ChangePassword'}>
+                  Change Password
+                </Link>
               </>
             ) : (
               <>

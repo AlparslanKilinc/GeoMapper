@@ -30,11 +30,17 @@ body,
   min-height: 100vh;
 }
 
+p,
+h1 {
+  margin: 0;
+  padding: 0;
+}
+
 *::-webkit-scrollbar {
-  width: 0.5rem;
+  width: 8px;
 }
 *::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3);
 }
 *::-webkit-scrollbar-thumb {
   background-color: var(--light-color);
@@ -44,3 +50,4 @@ body,
 input {
   font-family: 'Outfit', sans-serif;
 }
+
