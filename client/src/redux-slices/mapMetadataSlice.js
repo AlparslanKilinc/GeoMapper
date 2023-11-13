@@ -11,7 +11,6 @@ const mapMetadataInitialState = {
   forkedFrom: { isForked: false, originalMapId: null },
   tags: [],
   comments: [],
-
   mapGraphicsType: 'Symbol Map',
   publishDate: null,
   title: 'US population Density'
@@ -35,5 +34,5 @@ const metaDataSlice = createSlice({
   }
 });
 
-export const { changeMapTitle, changeMapDescription,setMapGraphicsType } = metaDataSlice.actions;
+export const { changeMapTitle, changeMapDescription, setMapGraphicsType } = metaDataSlice.actions;
 export default metaDataSlice.reducer;

@@ -6,7 +6,8 @@ const initialState = {
   regions: [],
   colorByProperty: 'team',
   sizeByProperty: 'population',
-  propertyNames: ['population', 'team']
+  propertyNames: ['population', 'team'],
+  isTabularOpened: false,
 };
 
 const mapGraphicsDataSlice = createSlice({
@@ -19,9 +20,13 @@ const mapGraphicsDataSlice = createSlice({
 
     changeColorByProperty: (state, action) => {
       state.colorByProperty = action.payload;
+    },
+
+    toggleTabular: (state) => {
+      state.isTabularOpened = !state.isTabularOpened;
     }
   }
 });
 
-export const { changeSizeByProperty, changeColorByProperty } = mapGraphicsDataSlice.actions;
+export const { changeSizeByProperty, changeColorByProperty, toggleTabular } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
