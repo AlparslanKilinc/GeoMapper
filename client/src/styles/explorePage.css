@@ -1,0 +1,34 @@
+.explorePage{
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* 100% of the viewport height */
+  width: 100%; /* 100% of the viewport width */
+  justify-content: center;
+  overflow: scroll;
+}
+
+
+.explore-title{
+  align-self:center;
+}
+
+.filter-sort-buttons{
+  display:flex;
+  margin-left:100px;
+  width: 12%;
+  gap:10px;
+}
+
+.map-card-container{
+  display:flex;
+  margin-top:50px;
+  padding-left:100px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 30px 30px;
+  width:100%;
+  overflow:scroll;
+}
+.MuiAutocomplete-root .MuiAutocomplete-popupIndicator {
+  display: none;
+}

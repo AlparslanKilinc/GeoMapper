@@ -1,0 +1,27 @@
+.comment-container img {
+    min-width:36px;
+    min-height: 36px;
+    max-width:36px;
+    max-height: 36px;
+    border-radius: 50%;
+    margin-right:10px;
+    margin-left:10px;
+    padding-top:5px;
+}
+
+.comment-container{
+    display:flex;
+    margin-bottom: 20px;
+}
+
+.username{
+    font-weight: bold;
+    margin-right:10px;
+}
+
+.reply{
+    margin-top:5px;
+    color: darkgrey;
+}
+
+
