@@ -11,7 +11,7 @@ const mapMetadataInitialState = {
   forkedFrom: { isForked: false, originalMapId: null },
   tags: [],
   comments: [],
-  mapGraphicsType: 'Symbol Map',
+  mapGraphicsType: null,
   publishDate: null
 };
 
@@ -19,8 +19,11 @@ const metaDataSlice = createSlice({
   name: 'mapMetadata',
   initialState: mapMetadataInitialState,
   reducers: {
-    //TODO add reducers
+    setMapGraphicsType: (state, action) => {
+      state.mapGraphicsType = action.payload;
+    }
   }
 });
 
+export const { setMapGraphicsType } = metaDataSlice.actions;
 export default metaDataSlice.reducer;
