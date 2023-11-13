@@ -9,10 +9,9 @@ import { useSelector } from 'react-redux';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import '../styles/loginPage.css';
 
-export default function ForgotPassword() {
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
+export default function RecoveryCode() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [recoveryCode, setRecoveryCode] = useState('');
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -24,21 +23,16 @@ export default function ForgotPassword() {
     }
   }));
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+  const handleRecoveryCodeChange = (event) => {
+    setRecoveryCode(event.target.value);
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    navigate('/RecoveryCode');
+   navigate('/SetNewPassword');
   };
 
   const goBack = () => {
-    if (loggedIn) {
-      navigate('/profile');
-    } else {
-      navigate('/login');
-    }
+    navigate('/ForgotPassword');
   };
 
   return (
@@ -62,20 +56,20 @@ export default function ForgotPassword() {
           <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
           <h1>Forgot Password</h1>
         </div>
-        <p>Input your email address and we'll dispatch a recovery code to you.</p>
+        <p>Enter the recovery code sent to your email to proceed with password reset.</p>
         <Box component="form" noValidate onSubmit={handleSubmit}>
           <TextField
             size="small"
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            autoComplete="email"
+            id="recoveryCode"
+            label="Recovery Code"
+            name="recovery code"
+            type="text"
+            value={recoveryCode}
+            onChange={handleRecoveryCodeChange}
+            autoComplete="recovery code"
           />
           <Button
             type="submit"
