@@ -4,20 +4,24 @@ const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
   points: [],
   regions: [],
-  colorByProperty: '',
-  sizeByProperty: '',
-  propertyNames: []
+  colorByProperty: 'team',
+  sizeByProperty: 'population',
+  propertyNames: ['population', 'team']
 };
 
 const mapGraphicsDataSlice = createSlice({
   name: 'mapGraphics',
   initialState,
   reducers: {
-    // TODO: add reducers
+    changeSizeByProperty: (state, action) => {
+      state.sizeByProperty = action.payload;
+    },
+
+    changeColorByProperty: (state, action) => {
+      state.colorByProperty = action.payload;
+    }
   }
 });
 
-// Export the actions and the reducer
-// You can uncomment the below line when you add reducers
-// export const { yourAction1, yourAction2 } = mapGraphicsDataSlice.actions;
+export const { changeSizeByProperty, changeColorByProperty } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
