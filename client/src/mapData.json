@@ -1,0 +1,34 @@
+{
+  "mapData": [
+    {
+      "imgSrc": "choroplethMap",
+      "alt": "Choropleth Map",
+      "title": "Choropleth Map",
+      "description": "A choropleth map uses colors or patterns to show how a single data variable varies across a region. For example, a choropleth map could vividly illustrate which states in the U.S. have the highest unemployment rates, with darker shades indicating higher percentages."
+    },
+    {
+      "imgSrc": "symbolMap",
+      "alt": "Symbol Map",
+      "title": "Symbol Map",
+      "description": "A shape map displays data on a map using varying shapes, like circles. For example, a city planner could represent parks with circles, where size indicates park area and color shows visitor count, providing a quick overview of park distribution and popularity."
+    },
+    {
+      "imgSrc": "dotDensityMap",
+      "alt": "Dot Density Map",
+      "title": "Dot Density Map",
+      "description": "A dot density map uses dots to represent data values in specific areas, with each dot signifying a set quantity. For example, on a map showing population, one dot might represent 1,000 people, allowing for a visual grasp of population distribution across regions."
+    },
+    {
+      "imgSrc": "heatMap",
+      "alt": "Heat Map",
+      "title": "Heat Map",
+      "description": "A heat map employs gradients of color to indicate the intensity or concentration of a specific data variable in a given area. For example, a heat map might effectively showcase the areas of a city with the most signifying heavier traffic flow."
+    },
+    {
+      "imgSrc": "spikeMap",
+      "alt": "Spike Map",
+      "title": "Spike Map",
+      "description": "A spike map displays data using vertical lines or 'spikes' protruding from specific locations on a map. The height of each spike corresponds to the data's magnitude. For instance, in a map showing annual rainfall, taller spikes could represent regions with more precipitation, offering a clear visual of rainfall distribution."
+    }
+  ]
+}

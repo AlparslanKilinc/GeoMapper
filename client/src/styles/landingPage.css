@@ -1,0 +1,67 @@
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  padding: 1rem;
+  padding-bottom: 0;
+  max-width: 90vw;
+}
+
+.intro-box {
+  display: flex;
+  gap: 0.3rem;
+  padding: 1rem;
+}
+
+.intro-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.maps-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.maps {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+.outer-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem;
+  margin: 1rem;
+  border: 1px solid whitesmoke;
+  border-radius: 5px;
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+    rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+}
+.info-box {
+  width: 325px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 350px;
+}
+
+.image {
+  border-radius: 5px;
+  width: 300px;
+  height: 200px;
+}
+
+.button-group {
+  display: flex;
+}

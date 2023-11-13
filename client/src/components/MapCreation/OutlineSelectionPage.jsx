@@ -41,12 +41,6 @@ export default function OutlineSelectionPage() {
 
         <h3 className="secondary-title">select map</h3>
 
-        {/* <Divider textAlign="center" style={{ width: '80%', margin: '20px 0' }}>
-          <Typography variant="caption" style={{ padding: '0 10px', backgroundColor: '#fff' }}>
-          OR
-          </Typography>
-        </Divider> */}
-
         <LoadingButton
           startIcon={<CloudUploadIcon />}
           variant="outlined"
@@ -87,8 +81,8 @@ export default function OutlineSelectionPage() {
         {isLoadingGeojson ? (
           <CircularProgress />
         ) : (
-          <div style={{ height: '500px', width: '90%' }}>
-            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} />}
+          <div style={{ height: '100%', width: '100%', display: 'flex' }}>
+            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={false} />}
           </div>
         )}
       </div>
