@@ -14,19 +14,35 @@ import Chip from '@mui/material/Chip';
 import { Link as RouterLink } from 'react-router-dom'
 import {useSelector} from "react-redux";
 import PopUp from './PopUp.jsx';
+import SharePopUp from './SharePopUp'
+import ForkForm from './ForkForm'
 
 
 export default function MapCard () {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
+    const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
+    const [forkForm, setForkForm] = useState(false);
     const openPopup = () => {
         setPopupOpen(true);
     };
-
+    const openShare = () => {
+        setShareOpen(true);
+    };
+    const closeShare = () => {
+        setShareOpen(false);
+    };
     const closePopup = () => {
         setPopupOpen(false);
     };
+
+    const openForkForm = () => {
+        setForkForm(true);
+    }
+    const closeForkForm = () => {
+        setForkForm(false);
+    }
 
     const handleTagClick = () =>{
         console.log("tag was clicked")
@@ -40,9 +56,24 @@ export default function MapCard () {
             return;
         }
     }
+    const handleShare = () =>{
+        openShare();
+        return;
+    }
     const handleFork = () =>{
+        console.log(loggedIn)
         if(!loggedIn){
             setPopUpTitle("To fork a map, please create an account");
+            openPopup();
+            return;
+        }
+        else{
+            openForkForm();
+        }
+    }
+    const handleBookmark = () =>{
+        if(!loggedIn){
+            setPopUpTitle("To bookmark, please create an account");
             openPopup();
             return;
         }
@@ -85,14 +116,17 @@ export default function MapCard () {
                         <ShareIcon className = "export"  onClick = {handleFork}/>
                     </IconButton>
                     <IconButton>
-                        <IosShareIcon className = "share"/>
+                        <IosShareIcon className = "share" onClick = {handleShare}/>
                     </IconButton>
                     <IconButton>
-                        <BookmarkBorderIcon className = "bookmarks"/>
+                        <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
                     </IconButton>
                 </CardActions>
             </Card>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
+            {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}
+            {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
+
         </div>
     );
 }
