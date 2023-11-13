@@ -56,6 +56,13 @@ const BaseMapDataEditor = (config) => {
         </LoadingButton>
         <LoadingButton
           variant="outlined"
+          style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
+          onClick={handleAddRow}
+        >
+          Add Row
+        </LoadingButton>
+        <LoadingButton
+          variant="outlined"
           style={{ color: 'red', borderColor: 'red' }}
           onClick={handleDelete}
         >
@@ -95,7 +102,7 @@ const BaseMapDataEditor = (config) => {
           </TableBody>
         </Table>
         {config.renderCustomizedTableButtons
-          ? config.renderCustomizedTableButtons()(handleAddColumn, handleAddRow, handleDelete)
+          ? config.renderCustomizedTableButtons()(handleAddColumn, handleDelete)
           : renderDefaultTableButtons()}
       </div >
     );
