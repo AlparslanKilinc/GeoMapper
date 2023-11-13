@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { Drawer, Typography, TextField } from '@mui/material';
-import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
+import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
 import GeoJsonMap from '../GeoJsonMap/';
@@ -11,6 +9,10 @@ import StylesMenu from './StylesMenus';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
 import MapTitleEditor from './MapTitleEditor';
+import UndoRedoButtonGroup from './UndoRedoButtonGroup';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
+import IconButton from '@mui/material/IconButton';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -45,14 +47,14 @@ export default function PermanentDrawerLeft() {
       >
         <TabMenu tabsConfig={stylesToolboxConfig} />
       </Drawer>
+      <UndoRedoButtonGroup />
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           bgcolor: 'background.default',
           p: 3,
-          alignContent: 'flex-start',
-          justifyContent: 'flex-start',
           display: 'flex',
           flexDirection: 'column'
         }}
@@ -68,7 +70,25 @@ export default function PermanentDrawerLeft() {
               width: '100%'
             }}
           >
-            <MapTitleEditor />
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <MapTitleEditor />
+              {/* make the buttons a square */}
+
+              <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
+                <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
+                  <SaveOutlinedIcon />
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  aria-label="publish"
+                  sx={{ height: '50px', width: '50px' }}
+                >
+                  <PublishOutlinedIcon />
+                </Button>
+              </Box>
+            </Box>
+
             {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={true} />}
           </div>
         )}
