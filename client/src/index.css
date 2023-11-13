@@ -30,6 +30,12 @@ body,
   min-height: 100vh;
 }
 
+p,
+h1 {
+  margin: 0;
+  padding: 0;
+}
+
 *::-webkit-scrollbar {
   width: 8px;
 }

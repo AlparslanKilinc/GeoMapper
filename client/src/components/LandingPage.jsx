@@ -6,52 +6,44 @@ import spikeMap from '../assets/spike_map.png';
 import symbolMap from '../assets/symbol_map.png';
 import choroplethMap from '../assets/choropleth_map.png';
 import dotDensityMap from '../assets/dot_density_map.png';
+import mapDataJson from '../mapData.json';
 import { Divider, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import CopyRight from './CopyRight';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setMapGraphicsType } from '../redux-slices/mapMetadataSlice';
 
 export default function LandingPage() {
   const scrollContainer = useRef(null);
-  const mapData = [
-    {
-      imgSrc: choroplethMap,
-      alt: 'Choropleth Map',
-      title: 'Choropleth Maps',
-      description:
-        'A choropleth map uses colors or patterns to show how a single data variable varies across a region. For example, a choropleth map could vividly illustrate which states in the U.S. have the highest unemployment rates, with darker shades indicating higher percentages.'
-    },
-    {
-      imgSrc: symbolMap,
-      alt: 'Symbol Map',
-      title: 'Symbol Maps',
-      description:
-        'A shape map displays data on a map using varying shapes, like circles. For example, a city planner could represent parks with circles, where size indicates park area and color shows visitor count, providing a quick overview of park distribution and popularity.'
-    },
-    {
-      imgSrc: dotDensityMap,
-      alt: 'Dot Density Map',
-      title: 'Dot Density Maps',
-      description:
-        'A dot density map uses dots to represent data values in specific areas, with each dot signifying a set quantity. For example, on a map showing population, one dot might represent 1,000 people, allowing for a visual grasp of population distribution across regions.'
-    },
-    {
-      imgSrc: heatMap,
-      alt: 'Heat Map',
-      title: 'Heat Maps',
-      description:
-        'A heat map employs gradients of color to indicate the intensity or concentration of a specific data variable in a given area. For example, a heat map might effectively showcase the areas of a city with the most signifying heavier traffic flow.'
-    },
-    {
-      imgSrc: spikeMap,
-      alt: 'Spike Map',
-      title: 'Spike Maps',
-      description:
-        "A spike map displays data using vertical lines or 'spikes' protruding from specific locations on a map. The height of each spike corresponds to the data's magnitude. For instance, in a map showing annual rainfall, taller spikes could represent regions with more precipitation, offering a clear visual of rainfall distribution."
-    }
-  ];
+  const mapData = mapDataJson.mapData;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const scroll = (scrollOffset) => {
     scrollContainer.current.scrollLeft += scrollOffset;
+  };
+
+  const getImageSrc = (title) => {
+    switch (title) {
+      case 'Heat Map':
+        return heatMap;
+      case 'Spike Map':
+        return spikeMap;
+      case 'Symbol Map':
+        return symbolMap;
+      case 'Choropleth Map':
+        return choroplethMap;
+      case 'Dot Density Map':
+        return dotDensityMap;
+      default:
+        return null;
+    }
+  };
+
+  const handleCreateClick = (mapTitle) => {
+    dispatch(setMapGraphicsType(mapTitle));
+    navigate('/mapCreation', { state: { stage: 1 } });
   };
 
   return (
@@ -77,7 +69,7 @@ export default function LandingPage() {
             </Link>
           </div>
         </div>
-        <img className="image" src={GeoMapperImage} alt="explore guy" />
+        <img className="image" src={GeoMapperImage} alt="logo" />
       </div>
 
       <Divider className="divider">Choose from diverse templates and start mapping!</Divider>
@@ -86,15 +78,19 @@ export default function LandingPage() {
         <div className="maps" ref={scrollContainer}>
           {mapData.map((map, index) => (
             <div key={index} className="outer-box">
-              <img className="image" src={map.imgSrc} alt={map.alt} />
+              <img className="image" src={getImageSrc(map.title)} alt={map.alt} />
+              <Divider />
               <div className="info-box">
                 <h2>{map.title}</h2>
                 <p>{map.description}</p>
-                <Link className="link" to={'/mapCreation'}>
-                  <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
-                    Create
-                  </Button>
-                </Link>
+                <Button
+                  onClick={() => handleCreateClick(map.title)}
+                  style={{ backgroundColor: '#40E0D0' }}
+                  variant="contained"
+                  id="register"
+                >
+                  Create
+                </Button>
               </div>
             </div>
           ))}
