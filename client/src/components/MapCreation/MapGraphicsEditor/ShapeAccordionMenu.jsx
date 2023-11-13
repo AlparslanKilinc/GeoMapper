@@ -16,6 +16,7 @@ import Slider from '@mui/material/Slider';
 
 export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
+  const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const { propertyNames, sizeByProperty } = useSelector((state) => state.mapGraphics);
 
   const handleSizeByPropertyChange = (event, newValue) => {
@@ -54,7 +55,7 @@ export default function ShapeAccordionMenu() {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            sx={{ width: '100%' }}
+            sx={{ width: '100%', display: mapGraphicsType === 'Dot Density Map' ? 'none' : 'flex' }}
           >
             <Typography variant="subtitle2">size by property</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
