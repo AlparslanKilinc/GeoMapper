@@ -81,8 +81,8 @@ export default function OutlineSelectionPage() {
         {isLoadingGeojson ? (
           <CircularProgress />
         ) : (
-          <div style={{ height: '500px', width: '90%' }}>
-            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} />}
+          <div style={{ height: '100%', width: '100%', display: 'flex' }}>
+            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={false} />}
           </div>
         )}
       </div>

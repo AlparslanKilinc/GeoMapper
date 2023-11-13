@@ -10,6 +10,7 @@ import TabMenu from './TabMenu';
 import SimpleAccordion from './SimpleAccordion';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
+import MapTitleEditor from './MapTitleEditor';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -44,12 +45,31 @@ export default function PermanentDrawerLeft() {
       >
         <TabMenu tabsConfig={stylesToolboxConfig} />
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: 'background.default',
+          p: 3,
+          alignContent: 'flex-start',
+          justifyContent: 'flex-start',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
         {isLoadingGeojson ? (
           <CircularProgress />
         ) : (
-          <div style={{ height: '100%', width: '100%' }}>
-            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} />}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              width: '100%'
+            }}
+          >
+            <MapTitleEditor />
+            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={true} />}
           </div>
         )}
       </Box>

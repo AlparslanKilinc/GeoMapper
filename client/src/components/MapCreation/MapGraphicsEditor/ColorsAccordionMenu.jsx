@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeColorByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
-import { MuiColorInput } from 'mui-color-input';
 import Box from '@mui/material/Box';
 import ColorRange from './ColorRange';
 

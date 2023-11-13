@@ -6,8 +6,24 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BorderStyleOutlinedIcon from '@mui/icons-material/BorderStyleOutlined';
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import { MuiColorInput } from 'mui-color-input';
+import { useSelector, useDispatch } from 'react-redux';
+import { changeBorderColor, changeBorderWidth } from '../../../redux-slices/mapStylesSlice';
+import SubMenuTitle from './SubMenuTitle';
+import { Slider } from '@mui/material';
 
 export default function BorderAccordionMenu() {
+  const dispatch = useDispatch();
+  const { borderColor, borderWidth } = useSelector((state) => state.mapStyles);
+
+  const handleBorderColorChange = (color) => {
+    dispatch(changeBorderColor(color));
+  };
+
+  const handleChangeBorderWidth = (event, newValue) => {
+    dispatch(changeBorderWidth(newValue));
+  };
   return (
     <Accordion>
       <AccordionSummary
@@ -23,10 +39,42 @@ export default function BorderAccordionMenu() {
         {/* Emoji included */}
       </AccordionSummary>
       <AccordionDetails>
-        <Typography>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-          sit amet blandit leo lobortis eget.
-        </Typography>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ gap: 2 }}
+        >
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ width: '100%' }}
+          >
+            <Typography variant="subtitle2">border color</Typography>
+            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+            <MuiColorInput format="hex" value={borderColor} onChange={handleBorderColorChange} />
+          </Box>
+
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ width: '100%' }}
+          >
+            <SubMenuTitle title="border width" />
+            <Slider
+              min={0}
+              max={10}
+              value={borderWidth}
+              onChange={handleChangeBorderWidth}
+              style={{ width: '100%' }}
+            />
+          </Box>
+        </Box>
       </AccordionDetails>
     </Accordion>
   );
