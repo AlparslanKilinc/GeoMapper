@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { loginUser } from '../redux-slices/authSlice';
+import GoogleIcon from '@mui/icons-material/Google';
+import CopyRight from './CopyRight';
 
 import Box from '@mui/material/Box';
 
@@ -37,69 +39,76 @@ export default function LoginPage() {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem',
-        gap: '0.5rem'
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
-        <h1>Log into GeoMapper</h1>
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+          alignItems: 'center',
+          padding: '1rem',
+          gap: '0.5rem'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
+          <h1>Log into GeoMapper</h1>
+        </div>
 
-      <Box component="form" noValidate onSubmit={handleSubmit}>
-        <TextField
-          size="small"
-          margin="normal"
-          required
-          fullWidth
-          id="userName"
-          label="User Name"
-          name="userName"
-          autoComplete="User Name"
-          autoFocus
-        />
-        <TextField
-          size="small"
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-        />
-        <LoadingButton
-          type="submit"
-          loading={isLoading}
-          fullWidth
-          loadingPosition="center"
-          variant="contained"
-          style={{ backgroundColor: '#40E0D0' }}
-        >
-          Login
-        </LoadingButton>
+        <Box component="form" noValidate onSubmit={handleSubmit}>
+          <TextField
+            size="small"
+            margin="normal"
+            required
+            fullWidth
+            id="userName"
+            label="User Name"
+            name="userName"
+            autoComplete="User Name"
+            autoFocus
+          />
+          <TextField
+            size="small"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+          />
+          <LoadingButton
+            type="submit"
+            loading={isLoading}
+            fullWidth
+            loadingPosition="center"
+            variant="contained"
+            style={{ backgroundColor: '#40E0D0' }}
+          >
+            Login
+          </LoadingButton>
+        </Box>
+
+        <Divider className="divider">OR</Divider>
+        <div className="login-button-group">
+          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+            <GoogleIcon />
+            Sign in
+          </Button>
+          <Link className="link" to={'/register'}>
+            <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+              Register
+            </Button>
+          </Link>
+          <Link className="link" to={'/forgotPassword'}>
+            <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+              Forgot Password
+            </Button>
+          </Link>
+        </div>
       </Box>
-
-      <Divider className="divider">OR</Divider>
-      <div className="login-button-group">
-        <Link className="link" to={'/register'}>
-          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
-            Register
-          </Button>
-        </Link>
-        <Link className="link" to={'/forgotPassword'}>
-          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
-            Forgot Password
-          </Button>
-        </Link>
-      </div>
-    </Box>
+      <CopyRight />
+    </div>
   );
 }
