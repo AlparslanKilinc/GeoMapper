@@ -41,12 +41,6 @@ export default function OutlineSelectionPage() {
 
         <h3 className="secondary-title">select map</h3>
 
-        {/* <Divider textAlign="center" style={{ width: '80%', margin: '20px 0' }}>
-          <Typography variant="caption" style={{ padding: '0 10px', backgroundColor: '#fff' }}>
-          OR
-          </Typography>
-        </Divider> */}
-
         <LoadingButton
           startIcon={<CloudUploadIcon />}
           variant="outlined"

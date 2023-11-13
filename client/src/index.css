@@ -41,3 +41,6 @@ body,
   outline: 0.5px solid slategrey;
   border-radius: 20px;
 }
+input {
+  font-family: 'Outfit', sans-serif;
+}
