@@ -43,9 +43,9 @@ export default function TabMenu({ tabsConfig }) {
   const handleChange = (event, newValue) => {
     // TODO: Use enum
     if (newValue === 1) {
-      dispatch(toggleTabular());
+      dispatch(toggleTabular(true));
     } else {
-      dispatch(toggleTabular());
+      dispatch(toggleTabular(false));
     }
     setValue(newValue);
   };

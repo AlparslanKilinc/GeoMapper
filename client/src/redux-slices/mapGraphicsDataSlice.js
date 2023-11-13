@@ -22,8 +22,8 @@ const mapGraphicsDataSlice = createSlice({
       state.colorByProperty = action.payload;
     },
 
-    toggleTabular: (state) => {
-      state.isTabularOpened = !state.isTabularOpened;
+    toggleTabular: (state, action) => {
+      state.isTabularOpened = action.payload;
     }
   }
 });

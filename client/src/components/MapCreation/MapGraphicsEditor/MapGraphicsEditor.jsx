@@ -8,11 +8,13 @@ import TabMenu from './TabMenu';
 import StylesMenu from './StylesMenus';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
-import TabularEditorSelector from './TabularEditorSelector';
+import TabularSelector from './TabularSelector';
 import MapTitleEditor from './MapTitleEditor';
 import UndoRedoButtonGroup from './UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
+import { useDispatch } from 'react-redux';
+import { toggleTabular } from '../../../redux-slices/mapGraphicsDataSlice';
 import IconButton from '@mui/material/IconButton';
 
 const drawerWidth = 240;
@@ -23,7 +25,7 @@ const stylesToolboxConfig = [
 
 const dataEditingToolboxConfig = [
   { label: 'Region', content: <RegionEditing /> },
-  { label: 'Tabular', content: <TabularEditorSelector /> }
+  { label: 'Tabular', content: <TabularSelector /> }
 ];
 
 function MapBox(props) {
