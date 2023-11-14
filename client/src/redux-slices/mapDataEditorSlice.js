@@ -2,7 +2,26 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     columnNames: [],
-    data: [{}],
+    data: [{
+        Name: "New York",
+        Lat: 40.146543,
+        Long: -74.243512,
+        Population: 20,
+        Value: 300,
+        Radius: 10,
+        Height: 90,
+        Size: 140,
+    },
+    {
+        Name: "California",
+        Lat: 64.88653,
+        Long: 14.743342,
+        Population: 60,
+        Value: 900,
+        Radius: 30,
+        Height: 70,
+        Size: 220,
+    }],
     isMatchSuccessful: false,
 };
 
