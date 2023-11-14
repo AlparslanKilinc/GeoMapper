@@ -82,7 +82,7 @@ function MapBox(props) {
 }
 
 export default function PermanentDrawerLeft() {
-  let isTabularOpened = useSelector(state => state.mapGraphics.isTabularOpened);
+  const isTabularOpened = useSelector(state => state.mapGraphics.isTabularOpened);
 
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
@@ -109,10 +109,11 @@ export default function PermanentDrawerLeft() {
 
       <Drawer
         sx={{
-          width: drawerWidth,
+          // TODO: Fix the layout, now it's just using a hacky way
+          maxWidth: "80vw",
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            maxWidth: "80vw",
             boxSizing: 'border-box',
             position: 'relative',
             // remove the top borders
