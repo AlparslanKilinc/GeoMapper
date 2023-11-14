@@ -21,13 +21,14 @@
 
 .map-card-container{
   display:flex;
-  margin-top:50px;
+  margin-top:10px;
+  padding-bottom: 20px;
   padding-left:100px;
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 30px 30px;
   width:100%;
-  overflow:scroll;
+  overflow: scroll;
 }
 .MuiAutocomplete-root .MuiAutocomplete-popupIndicator {
   display: none;

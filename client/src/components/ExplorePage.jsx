@@ -9,6 +9,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
 import Popover from '@mui/material/Popover';
+import CopyRight from './CopyRight';
 
 
 
@@ -38,6 +39,9 @@ export default function ExplorePage() {
 
   const handleFilterMenuClose = () => {
     setFilterAnchor(null)
+  }
+  const handleSearchBar = () =>{
+
   }
   return (
       <div className = "explorePage">
@@ -117,7 +121,6 @@ export default function ExplorePage() {
                 )}
             />
             <div style={{ marginTop: '10px' }}>
-
               {tags.map((tag) => (
                   <Chip
                       key={tag.id}
@@ -132,11 +135,7 @@ export default function ExplorePage() {
             </div>
           </div>
         </Popover>
-
-
-
-
-
+          <CopyRight/>
       </div>
   );
 }

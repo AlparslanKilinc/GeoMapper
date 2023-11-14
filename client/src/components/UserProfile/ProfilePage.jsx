@@ -9,9 +9,9 @@ export default function ProfilePage() {
     <div className='profile-page'>
       <div className="profile">
         <Sidebar />
-        <ProfileNavBar />
+        <ProfileNavBar/>
       </div>
-      <CopyRight />
+      <CopyRight/>
     </div>
   );
 }
