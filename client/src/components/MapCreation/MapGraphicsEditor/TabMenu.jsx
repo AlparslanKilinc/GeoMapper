@@ -39,7 +39,7 @@ export default function TabMenu({ tabsConfig, handleTabularOpen }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     // TODO: Use enum
-    if (newValue === 1) {
+    if (tabsConfig[newValue].label === 'Tabular') {
       handleTabularOpen(true);
     } else {
       handleTabularOpen(false);
