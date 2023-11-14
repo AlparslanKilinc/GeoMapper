@@ -13,9 +13,6 @@ import MapTitleEditor from './MapTitleEditor';
 import UndoRedoButtonGroup from './UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
-import { useDispatch } from 'react-redux';
-import { toggleTabular } from '../../../redux-slices/mapGraphicsDataSlice';
-import IconButton from '@mui/material/IconButton';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -82,7 +79,10 @@ function MapBox(props) {
 }
 
 export default function PermanentDrawerLeft() {
-  const isTabularOpened = useSelector(state => state.mapGraphics.isTabularOpened);
+  const [isTabularOpened, setIsTabularOpened] = React.useState(false);
+  const handleTabularOpen = (newState) => {
+    setIsTabularOpened(newState);
+  };
 
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
@@ -124,7 +124,7 @@ export default function PermanentDrawerLeft() {
         variant="permanent"
         anchor="right"
       >
-        <TabMenu tabsConfig={dataEditingToolboxConfig} />
+        <TabMenu tabsConfig={dataEditingToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
     </Box>
   );
