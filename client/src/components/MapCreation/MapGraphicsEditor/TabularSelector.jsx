@@ -1,26 +1,26 @@
 import { useSelector } from 'react-redux';
-import SymbolmapTabular from './SymbolmapTabular';
-import ChoroplethmapTabular from './ChoroplethmapTabular';
-import HeatmapTabular from './HeatmapTabular';
-import DotdensitymapTabular from './DotdensitymapTabular';
-import SpikemapTabular from './SpikemapTabular';
+import SymbolmapDataEditor from '../../MapDataEditing/SymbolmapDataEditor';
+import ChoroplethmapDataEditor from '../../MapDataEditing/ChoroplethmapDataEditor';
+import HeatmapDataEditor from '../../MapDataEditing/HeatmapDataEditor';
+import DotdensitymapDataEditor from '../../MapDataEditing/DotdensitymapDataEditor';
+import SpikemapDataEditor from '../../MapDataEditing/SpikemapDataEditor';
 
 const TabularSelector = () => {
     const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
     switch (mapGraphicsType) {
         case "Symbol Map":
-            return <SymbolmapTabular />;
+            return <SymbolmapDataEditor isTabularTab={true} />;
         case "Choropleth Map":
-            return <ChoroplethmapTabular />;
+            return <ChoroplethmapDataEditor isTabularTab={true} />;
         case "Heat Map":
-            return <HeatmapTabular />;
+            return <HeatmapDataEditor isTabularTab={true} />;
         case "Dot Density Map":
-            return <DotdensitymapTabular />;
+            return <DotdensitymapDataEditor isTabularTab={true} />;
         case "Spike Map":
-            return <SpikemapTabular />;
+            return <SpikemapDataEditor isTabularTab={true} />;
         default:
-            return null; // or some default component or behavior
+            return null;
     }
 };
 
