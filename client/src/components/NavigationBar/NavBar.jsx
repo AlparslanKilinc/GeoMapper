@@ -31,7 +31,6 @@ export default function NavBar() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const location = useLocation();
   const isExplorePage = location.pathname == '/explore';
-  console.log(isExplorePage);
   return (
     <AppBar position="static">
       <Toolbar className={'navigationBar'}>

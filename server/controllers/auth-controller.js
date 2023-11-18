@@ -26,12 +26,12 @@ loginUser = async (req, res) => {
 
     const existingUser = await User.findOne({ userName });
     if (!existingUser) {
-      return res.status(401).json({ errorMessage: 'Wrong User Name or password provided' });
+      return res.status(401).json({ errorMessage: 'Wrong username or password provided' });
     }
 
     const passwordCorrect = await bcrypt.compare(password, existingUser.passwordHash);
     if (!passwordCorrect) {
-      return res.status(401).json({ errorMessage: 'Wrong email or password provided' });
+      return res.status(401).json({ errorMessage: 'Wrong username or password provided' });
     }
 
     const token = auth.signToken(existingUser._id);
@@ -80,7 +80,7 @@ registerUser = async (req, res) => {
       console.log('An account with this User Name already exists');
       return res
         .status(400)
-        .json({ errorMessage: 'An account with this User Name already exists' });
+        .json({ errorMessage: 'An account with this username already exists' });
     }
 
     const salt = await bcrypt.genSalt(10);
