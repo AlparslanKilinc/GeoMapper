@@ -39,7 +39,7 @@ export default function TemplateSelection({ onSelectionComplete }) {
 
   return (
     <div className="template-selection">
-      <div className="intro">
+      <div className="template-intro">
         <h1>What type of map do you want to create ?</h1>
         <p>Choose the map type that fits your data</p>
       </div>
