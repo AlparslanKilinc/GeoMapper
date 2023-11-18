@@ -10,7 +10,10 @@ const initialState = {
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async ({ userName, firstName, lastName, email, password, passwordVerify },{ rejectWithValue }) => {
+  async (
+    { userName, firstName, lastName, email, password, passwordVerify },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await api.registerUser(
         userName,
@@ -27,13 +30,17 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-export const loginUser = createAsyncThunk('auth/loginUser', async ({ userName, password },{ rejectWithValue }) => {
-  try{const response = await api.loginUser(userName, password);
-  return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response.data);
+export const loginUser = createAsyncThunk(
+  'auth/loginUser',
+  async ({ userName, password }, { rejectWithValue }) => {
+    try {
+      const response = await api.loginUser(userName, password);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
   }
-});
+);
 
 export const getLoggedIn = createAsyncThunk('auth/getLoggedIn', async () => {
   const response = await api.getLoggedIn();
@@ -106,7 +113,7 @@ export const authSlice = createSlice({
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
-          state.message = action.payload.errorMessage;
+          state.message = action.payload?.errorMessage || 'An error occurred';
           state.isLoading = false;
         }
       );
