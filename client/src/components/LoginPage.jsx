@@ -18,7 +18,7 @@ import Box from '@mui/material/Box';
 export default function LoginPage() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isLoading = useSelector((state) => state.auth.isLoading);
-  const errorMessage = useSelector((state) => state.auth.message);
+  const errorMessage = useSelector((state) => state.auth?.message);
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
