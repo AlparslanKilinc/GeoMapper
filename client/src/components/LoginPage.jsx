@@ -9,10 +9,9 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { loginUser } from '../redux-slices/authSlice';
+import { loginUser, resetErrorMessage } from '../redux-slices/authSlice';
 import GoogleIcon from '@mui/icons-material/Google';
 import CopyRight from './CopyRight';
-
 import Box from '@mui/material/Box';
 
 export default function LoginPage() {
@@ -21,24 +20,38 @@ export default function LoginPage() {
   const errorMessage = useSelector((state) => state.auth.message);
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [formErrors, setFormErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // reset on component mount
+    dispatch(resetErrorMessage());
     if (loggedIn) {
       navigate('/explore');
     }
-  }, [loggedIn, navigate]);
+    // Reset error message when leaving page
+    return () => {
+      dispatch(resetErrorMessage());
+    };
+  }, [loggedIn, navigate, dispatch]);
+
+  const validateForm = () => {
+    let errors = {};
+    if (!userName) errors.userName = 'Username is required';
+    if (!password) errors.password = 'Password is required';
+    return errors;
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    dispatch(
-      loginUser({
-        userName: formData.get('userName'),
-        password: formData.get('password')
-      })
-    );
+    const errors = validateForm();
+    if (Object.keys(errors).length === 0) {
+      dispatch(resetErrorMessage());
+      dispatch(loginUser({ userName, password }));
+    } else {
+      setFormErrors(errors);
+    }
   };
 
   return (
@@ -78,8 +91,9 @@ export default function LoginPage() {
             onChange={(e) => setUserName(e.target.value)}
             size="small"
             margin="normal"
-            required
             fullWidth
+            error={!!formErrors.userName}
+            helperText={formErrors.userName}
           />
           <TextField
             name="password"
@@ -90,8 +104,9 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             size="small"
-            required
             fullWidth
+            error={!!formErrors.password}
+            helperText={formErrors.password}
           />
           <div style={{ minHeight: '12px', color: 'red', margin: '5px' }}>
             {errorMessage && <span>{errorMessage}</span>}

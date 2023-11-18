@@ -76,7 +76,11 @@ export const forgotPassword = createAsyncThunk('auth/forgotPassword', async ({ e
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    resetErrorMessage: (state) => {
+      state.message = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.fulfilled, (state, action) => {
@@ -120,4 +124,5 @@ export const authSlice = createSlice({
   }
 });
 
+export const { resetErrorMessage } = authSlice.actions;
 export default authSlice.reducer;
