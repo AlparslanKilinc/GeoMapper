@@ -1,5 +1,5 @@
 import '../styles/loginPage.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { LoadingButton } from '@mui/lab';
 import TextField from '@mui/material/TextField';
@@ -18,6 +18,9 @@ import Box from '@mui/material/Box';
 export default function LoginPage() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isLoading = useSelector((state) => state.auth.isLoading);
+  const errorMessage = useSelector((state) => state.auth.message);
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -39,15 +42,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        width: '100%',
+        alignItems: 'center'
+      }}
+    >
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           flex: 1,
           alignItems: 'center',
+          marginTop: '5rem',
           padding: '1rem',
-          gap: '0.5rem'
+          gap: '0.2rem'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -57,27 +69,34 @@ export default function LoginPage() {
 
         <Box component="form" noValidate onSubmit={handleSubmit}>
           <TextField
-            size="small"
-            margin="normal"
-            required
-            fullWidth
             id="userName"
             label="User Name"
             name="userName"
             autoComplete="User Name"
             autoFocus
-          />
-          <TextField
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
             size="small"
             margin="normal"
             required
             fullWidth
+          />
+          <TextField
             name="password"
             label="Password"
             type="password"
             id="password"
             autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            size="small"
+            margin="small"
+            required
+            fullWidth
           />
+          <div style={{ minHeight: '12px', color: 'red', margin: '5px' }}>
+            {errorMessage && <span>{errorMessage}</span>}
+          </div>
           <LoadingButton
             type="submit"
             loading={isLoading}

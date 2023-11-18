@@ -92,7 +92,7 @@ describe('Authentication Service', () => {
         registrationUserDetails.email = `new${Date.now()}@gmail.com`;
         const response = await request(app).post('/auth/register').send(registrationUserDetails).expect(400);
         expect(response.status).toBe(400);
-        expect(response.body.errorMessage).toBe('An account with this User Name already exists');
+        expect(response.body.errorMessage).toBe('An account with this username already exists');
       },
       TIMEOUT
     );
@@ -138,7 +138,7 @@ describe('Authentication Service', () => {
       'should fail with incorrect username',
       async () => {
         const response = await request(app).post('/auth/login').send({ userName: 'nonexistentUser', password: loginTestUser.password }).expect(401);
-        expect(response.body.errorMessage).toBe('Wrong User Name or password provided');
+        expect(response.body.errorMessage).toBe('Wrong username or password provided');
       },
       TIMEOUT
     );
@@ -147,7 +147,7 @@ describe('Authentication Service', () => {
       'should fail with incorrect password',
       async () => {
         const response = await request(app).post('/auth/login').send({ userName: loginTestUser.userName, password: 'incorrectPassword' }).expect(401);
-        expect(response.body.errorMessage).toBe('Wrong email or password provided');
+        expect(response.body.errorMessage).toBe('Wrong username or password provided');
       },
       TIMEOUT
     );

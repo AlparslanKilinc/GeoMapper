@@ -4,28 +4,35 @@ import api from '../auth-request-api/index';
 const initialState = {
   user: null,
   loggedIn: false,
-  message: '',
+  message: null,
   isLoading: false
 };
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async ({ userName, firstName, lastName, email, password, passwordVerify }) => {
-    const response = await api.registerUser(
-      userName,
-      firstName,
-      lastName,
-      email,
-      password,
-      passwordVerify
-    );
-    return response.data;
+  async ({ userName, firstName, lastName, email, password, passwordVerify },{ rejectWithValue }) => {
+    try {
+      const response = await api.registerUser(
+        userName,
+        firstName,
+        lastName,
+        email,
+        password,
+        passwordVerify
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
   }
 );
 
-export const loginUser = createAsyncThunk('auth/loginUser', async ({ userName, password }) => {
-  const response = await api.loginUser(userName, password);
+export const loginUser = createAsyncThunk('auth/loginUser', async ({ userName, password },{ rejectWithValue }) => {
+  try{const response = await api.loginUser(userName, password);
   return response.data;
+  } catch (err) {
+    return rejectWithValue(err.response.data);
+  }
 });
 
 export const getLoggedIn = createAsyncThunk('auth/getLoggedIn', async () => {
@@ -99,7 +106,7 @@ export const authSlice = createSlice({
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
-          state.message = action.payload ? action.payload.errorMessage : 'An error occurred';
+          state.message = action.payload.errorMessage;
           state.isLoading = false;
         }
       );
