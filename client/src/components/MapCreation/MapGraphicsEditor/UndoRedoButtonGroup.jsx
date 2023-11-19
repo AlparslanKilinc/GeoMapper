@@ -25,13 +25,13 @@ function UndoRedoButtonGroup() {
         aria-label="vertical contained button group"
         variant="contained"
       >
-        <Button onClick={handleUndo}>
+        <Button onClick={handleUndo} className = "undo-redo-buttons">
           <UndoIcon />
         </Button>
-        <Button onClick={handleRedo}>
+        <Button onClick={handleRedo} className = "undo-redo-buttons">
           <RedoIcon />
         </Button>
-        <Button onClick={handleExport}>
+        <Button onClick={handleExport} className = "undo-redo-buttons">
           <SaveAltIcon />
         </Button>
       </ButtonGroup>

@@ -225,5 +225,13 @@ input {
   color:white !important;
 }
 
+.dark-mode .template-selection-buttons{
+  background-color: #006666 !important;
+  color: white !important;
+}
 
+.dark-mode .undo-redo-buttons{
+  background-color: #006666 !important;
+
+}
 

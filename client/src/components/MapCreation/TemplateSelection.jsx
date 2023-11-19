@@ -53,7 +53,7 @@ export default function TemplateSelection({ onSelectionComplete }) {
               <div className="info-box">
                 <h2>{map.title}</h2>
                 <p>{map.description}</p>
-                <Button
+                <Button  className = "template-selection-buttons"
                   onClick={() => {
                     handleSelection(map.title);
                   }}
