@@ -12,11 +12,7 @@ import ChangePassword from './components/ChangePassword';
 import ForgotPassword from './components/ForgotPassword';
 import RecoveryCode from './components/RecoveryCode';
 import SetNewPassword from './components/SetNewPassword';
-import {useState} from "react";
-import ToggleDarkMode from './components/ToggleDarkMode'
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import IconButton from '@mui/material/IconButton';
+import React, {useState} from "react";
 
 function App() {
   const [isDark, setIsDark] = useState(false)

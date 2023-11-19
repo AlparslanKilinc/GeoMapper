@@ -44,7 +44,7 @@ export default function ExplorePage() {
 
   }
   return (
-      <div className = "explorePage">
+      <div className = "explore-page">
         <div className = "explore-title"><h1>Explore</h1></div>
         <div className = "filter-sort-buttons">
           <div className = "filter"><Button
@@ -76,12 +76,13 @@ export default function ExplorePage() {
           <div className = "MapCard">
             <MapCard></MapCard>
           </div>
-          <div className = "MapCard">
-            <MapCard></MapCard>
-          </div>
-          <div className = "MapCard">
-            <MapCard></MapCard>
-          </div>
+            <div className = "MapCard">
+                <MapCard></MapCard>
+            </div>
+            <div className = "MapCard">
+                <MapCard></MapCard>
+            </div>
+
         </div>
           <div className='sort-menu'>
               <Menu anchorEl={anchorEl} open={isSortOpen} onClose={handleSortMenuClose}>
@@ -145,7 +146,7 @@ export default function ExplorePage() {
             </div>
           </div>
         </Popover>
-          <CopyRight/>
+          <CopyRight className/>
       </div>
   );
 }

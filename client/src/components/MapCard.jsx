@@ -109,21 +109,21 @@ export default function MapCard () {
 
                 </CardActionArea>
                 <CardActions>
-                    <IconButton>
-                        <ThumbUpOffAltIcon className = "like" onClick = {handleLike}/>
+                    <IconButton >
+                        <ThumbUpOffAltIcon  onClick = {handleLike}/>
                     </IconButton>
                     <IconButton>
-                        <ShareIcon className = "export"  onClick = {handleFork}/>
+                        <ShareIcon  onClick = {handleFork}/>
                     </IconButton>
                     <IconButton>
-                        <IosShareIcon className = "share" onClick = {handleShare}/>
+                        <IosShareIcon onClick = {handleShare}/>
                     </IconButton>
                     <IconButton>
-                        <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
+                        <BookmarkBorderIcon  onClick = {handleBookmark}/>
                     </IconButton>
                 </CardActions>
             </Card>
-            {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
+            {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle} className="custom-popup"/>}
             {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}
             {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
 

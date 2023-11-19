@@ -62,16 +62,25 @@ input {
 .dark-mode .MuiCard-root {
   background-color:#333333;
 }
-
-.dark-mode .explore-title .sort-menu .MuiMenu-paper .newest {
-  background-color: black !important;
-  color: white !important;
+.dark-mode .explore-page{
+background-color: #212121;
 }
 
 
 .dark-mode .landing-page{
   background-color: #212121;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  padding: 1rem;
+  padding-bottom: 0;
+  max-width: 100%;
+  box-sizing: border-box
 }
+
+
 
 .dark-mode .map-card-user-link{
   color: #40e0d0;
@@ -232,6 +241,15 @@ input {
 
 .dark-mode .undo-redo-buttons{
   background-color: #006666 !important;
+}
 
+.dark-mode .heat-map-editor{
+  background-color:  #212121;
+  color:white;
+}
+
+.heat-map-buttons{
+  background-color: #006666 !important;
+  color: white !important;
 }
 

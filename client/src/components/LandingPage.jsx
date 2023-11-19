@@ -104,7 +104,6 @@ export default function LandingPage() {
         </div>
         <Button onClick={() => scroll(400)}>&gt;</Button>
       </div>
-
       <CopyRight />
     </div>
   );

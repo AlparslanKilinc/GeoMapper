@@ -34,11 +34,11 @@ export default function HeatmapStylesMenu() {
     };
 
     return (
-        <Paper gap={1}>
+        <Paper gap={1} className = "heat-map-editor">
             <FormGroup>
                 <FormControlLabel
                     control={<Switch checked={state.checkedA} onChange={handleSwitchChange} name="checkedA" />}
-                    label="Display Markers"
+                    label="Display Markers" className = "heat-map-editor"
                 />
             </FormGroup>
 
@@ -101,7 +101,7 @@ export default function HeatmapStylesMenu() {
             />
 
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2em' }}>
-                <Button startIcon={<AutoAwesomeIcon />} variant="contained" color="primary">
+                <Button startIcon={<AutoAwesomeIcon />} variant="contained" color="primary" className = "heat-map-buttons">
                     Visualize
                 </Button>
             </div>

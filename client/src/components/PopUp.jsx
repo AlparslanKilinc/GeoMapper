@@ -12,10 +12,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import GeoMapperImage from "../assets/GeoMapperLogo.svg";
 
 
-export default function PopUp({ open, onClose, title}) {
+export default function PopUp({ open, onClose, title, className}) {
  return(
         <div id = "like-popup">
-            <Dialog open={open} onClose={onClose}>
+            <Dialog open={open} onClose={onClose} className={className}>
                 <IconButton onClick={onClose} sx = {{
                     ml:'350px',
                 }}>
@@ -29,7 +29,7 @@ export default function PopUp({ open, onClose, title}) {
                     <span style={{ fontSize: '18px' }}>GeoMapper</span>
                 </div>
                 <DialogTitle>{title}</DialogTitle>
-                <DialogContent>
+                <DialogContent >
                     <Button sx = {{
                         backgroundColor: 'var(--main-color)',
                             '&:hover': {backgroundColor: 'var(--dark-color)'},
