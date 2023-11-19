@@ -17,7 +17,7 @@ export const store = configureStore({
     map: mapReducer,
     exploreSearch: exploreSearchReducer,
     geojson: geojsonReducer,
-    mapDataEditor: mapDataEditorReducer,
+    mapDataEditor: mapDataEditorReducer
   },
-  devTools: false
+  devTools: true
 });

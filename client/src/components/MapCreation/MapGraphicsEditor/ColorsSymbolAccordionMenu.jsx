@@ -3,7 +3,7 @@ import { Autocomplete, Divider, Typography, TextField } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeColorByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
 import Box from '@mui/material/Box';
-import ColorRange from './ColorRange';
+import ColorSelector from './ColorSelector';
 
 export default function ColorsSymbolAccordionMenu() {
   const dispatch = useDispatch();
@@ -58,7 +58,7 @@ export default function ColorsSymbolAccordionMenu() {
       >
         <Typography variant="subtitle2">range</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-        <ColorRange
+        <ColorSelector
           lower="min"
           upper={100}
           disableUpper={false}
@@ -66,7 +66,7 @@ export default function ColorsSymbolAccordionMenu() {
           intialColor="#ADD8E6"
         />
 
-        <ColorRange
+        <ColorSelector
           lower={101}
           upper={200}
           disableUpper={false}
@@ -74,7 +74,7 @@ export default function ColorsSymbolAccordionMenu() {
           intialColor="#0000CD"
         />
 
-        <ColorRange
+        <ColorSelector
           lower={201}
           upper={'max'}
           disableUpper={true}

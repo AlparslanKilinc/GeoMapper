@@ -4,9 +4,11 @@ const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
   points: [],
   regions: [],
-  colorByProperty: 'team',
-  sizeByProperty: 'population',
-  propertyNames: ['population', 'team']
+  colorByProperty: 'TEAM',
+  sizeByProperty: '',
+  nameByProperty: 'NAME',
+  propertyNames: [],
+  selectedRegionIdx: -1
 };
 
 const mapGraphicsDataSlice = createSlice({
@@ -19,9 +21,32 @@ const mapGraphicsDataSlice = createSlice({
 
     changeColorByProperty: (state, action) => {
       state.colorByProperty = action.payload;
+    },
+    setChoroplethData: (state, action) => {
+      const { propertyNames, regions } = action.payload;
+      state.propertyNames = propertyNames;
+      state.regions = regions;
+    },
+    setNameByProperty: (state, action) => {
+      state.nameByProperty = action.payload;
+    },
+    setRegionProperty: (state, action) => {
+      const { propertyName, value } = action.payload;
+      const region = state.regions[state.selectedRegionIdx];
+      region[propertyName] = value;
+    },
+    setSelectedRegionIdx: (state, action) => {
+      state.selectedRegionIdx = action.payload;
     }
   }
 });
 
-export const { changeSizeByProperty, changeColorByProperty } = mapGraphicsDataSlice.actions;
+export const {
+  changeSizeByProperty,
+  changeColorByProperty,
+  setChoroplethData,
+  setNameByProperty,
+  setRegionProperty,
+  setSelectedRegionIdx
+} = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

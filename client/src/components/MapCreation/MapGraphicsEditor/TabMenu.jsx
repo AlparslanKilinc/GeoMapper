@@ -13,11 +13,7 @@ function CustomTabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -46,7 +42,7 @@ export default function TabMenu({ tabsConfig }) {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           TabIndicatorProps={{ style: { background: '#40E0D0' } }}
-          textColor="#40E0D0"
+          // textColor="#40E0D0"
           value={value}
           onChange={handleChange}
           centered
