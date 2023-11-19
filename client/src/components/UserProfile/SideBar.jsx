@@ -4,6 +4,10 @@ import Avatar from '@mui/material/Avatar';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser, getLoggedIn } from '../../redux-slices/authSlice';
 import { Link } from 'react-router-dom';
+import TextField from "@mui/material/TextField";
+import {TextareaAutosize} from "@mui/material";
+import Button from '@mui/material/Button';
+
 
 export default function Sidebar() {
   const dispatch = useDispatch();
@@ -80,32 +84,48 @@ export default function Sidebar() {
               </>
             ) : (
               <>
-                <input
-                  name="firstName"
-                  value={tempUserData.firstName}
-                  onChange={handleInputChange}
-                  placeholder="First Name"
+                <TextField
+                    name="firstName"
+                    value={tempUserData.firstName}
+                    onChange={handleInputChange}
+                    label="First Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                 />
-                <input
-                  name="lastName"
-                  value={tempUserData.lastName}
-                  onChange={handleInputChange}
-                  placeholder="Last Name"
+
+                <TextField
+                    name="lastName"
+                    value={tempUserData.lastName}
+                    onChange={handleInputChange}
+                    label="Last Name"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                 />
-                <input
-                  name="userName"
-                  value={tempUserData.userName}
-                  onChange={handleInputChange}
-                  placeholder="Username"
+
+                <TextField
+                    name="userName"
+                    value={tempUserData.userName}
+                    onChange={handleInputChange}
+                    label="Username"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                 />
-                <textarea
-                  name="bio"
-                  value={tempUserData.bio}
-                  onChange={handleInputChange}
-                  placeholder="Bio"
+
+                <TextField
+                    name="bio"
+                    value={tempUserData.bio}
+                    onChange={handleInputChange}
+                    label = "Bio"
+                    multiline
+                    placeholder="Bio"
+                    minRows={3}
+                    style={{ width: '100%', marginBottom: '16px', }}
                 />
-                <button onClick={handleSave}>Save</button>
-                <button onClick={handleCancel}>Cancel</button>
+                <Button variant = "contained" onClick={handleSave} style = {{ width: '100px'}}>Save</Button>
+                <Button variant = "outlined" onClick={handleCancel} style = {{ width: '100px'}}>Cancel</Button>
               </>
             )}
           </div>
