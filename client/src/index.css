@@ -210,3 +210,20 @@ input {
   color: white !important;
 }
 
+.dark-mode .map-view-content {
+  background-color:#333333 !important;
+  color:white;
+}
+.dark-mode .username{
+  color:white !important;
+}
+.dark-mode .comment-text{
+  color:white !important;
+}
+
+.dark-mode .map-description{
+  color:white !important;
+}
+
+
+

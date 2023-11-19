@@ -79,8 +79,8 @@ export default function MapView() {
         <div className = "mapview-container">
             <div className = "map-info">
                 <span><h1>World Population</h1></span>
-                <span><p>By John Doe     September 1, 2018</p></span>
-                <span><p>This is my description............</p></span>
+                <span ><p className = "map-description">By John Doe     September 1, 2018</p></span>
+                <span ><p className = "map-description">This is my description............</p></span>
             </div>
             <div className = "map-render">
                 <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png"/>
