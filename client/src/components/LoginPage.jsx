@@ -94,6 +94,7 @@ export default function LoginPage() {
             fullWidth
             error={!!formErrors.userName}
             helperText={formErrors.userName}
+            InputLabelProps={{ shrink: true }}  
           />
           <TextField
             name="password"
@@ -107,6 +108,7 @@ export default function LoginPage() {
             fullWidth
             error={!!formErrors.password}
             helperText={formErrors.password}
+            InputLabelProps={{ shrink: true }}  
           />
           <div style={{ minHeight: '12px', color: 'red', margin: '5px' }}>
             {errorMessage && <span>{errorMessage}</span>}
