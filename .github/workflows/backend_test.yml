@@ -23,6 +23,5 @@ jobs:
       - name: Run tests
         env:
           PORT: ${{ secrets.PORT }}
-          MONG_URI: ${{ secrets.MONG_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: cd server && npm test
