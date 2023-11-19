@@ -205,4 +205,8 @@ input {
   color:white  !important;
 }
 
+.dark-mode .landing-buttons{
+  background-color: #006666 !important;
+  color: white !important;
+}
 
