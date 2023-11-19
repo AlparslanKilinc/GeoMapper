@@ -24,29 +24,6 @@ export default function ColorsChoroAccordionMenu() {
   const handleColorByPropertyChange = (event, newValue) => {
     dispatch(changeColorByProperty(newValue));
   };
-  // lets extract unique values from the property associated with the colorByProperty
-  const extractUniqueColorValues = (regions, colorByProperty) => {
-    const uniqueValues = new Set();
-    regions.forEach((region) => {
-      uniqueValues.add(region[colorByProperty]);
-    });
-    return uniqueValues;
-  };
-  const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
-
-  const initColors = () => {
-    const uniqueValues = extractUniqueColorValues(regions, colorByProperty);
-    const c = Array.from(uniqueValues).map((name) => {
-      return { name, color: generateRandomColor() };
-    });
-
-    dispatch(setColors(c));
-    dispatch(setSelectedPropUniqueValues(Array.from(uniqueValues)));
-  };
-
-  useEffect(() => {
-    initColors();
-  }, []);
 
   return (
     <Box

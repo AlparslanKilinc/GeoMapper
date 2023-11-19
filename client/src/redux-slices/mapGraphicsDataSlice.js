@@ -31,12 +31,20 @@ const mapGraphicsDataSlice = createSlice({
       state.nameByProperty = action.payload;
     },
     setRegionProperty: (state, action) => {
-      const { propertyName, value } = action.payload;
-      const region = state.regions[state.selectedRegionIdx];
+      const { propertyName, value, id } = action.payload;
+      let idx = id || state.selectedRegionIdx;
+      const region = state.regions[idx];
       region[propertyName] = value;
     },
     setSelectedRegionIdx: (state, action) => {
       state.selectedRegionIdx = action.payload;
+    },
+    changeNameByProperty: (state, action) => {
+      state.nameByProperty = action.payload;
+    },
+    changeXByProperty: (state, action) => {
+      let { property, propertyBy } = action.payload;
+      state[property] = propertyBy;
     }
   }
 });
@@ -47,6 +55,8 @@ export const {
   setChoroplethData,
   setNameByProperty,
   setRegionProperty,
-  setSelectedRegionIdx
+  setSelectedRegionIdx,
+  changeNameByProperty,
+  changeXByProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

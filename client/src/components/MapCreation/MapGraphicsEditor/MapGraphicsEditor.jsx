@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -12,9 +12,13 @@ import MapTitleEditor from './MapTitleEditor';
 import UndoRedoButtonGroup from './UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
-import IconButton from '@mui/material/IconButton';
 import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice';
-import { setSelectedFeature } from '../../../redux-slices/mapStylesSlice';
+import {
+  setSelectedFeature,
+  setColors,
+  setSelectedPropUniqueValues
+} from '../../../redux-slices/mapStylesSlice';
+import { useEffect } from 'react';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -27,11 +31,36 @@ const dataEditingToolboxConfig = [
   { label: 'Tabular', content: 'Tabular' }
 ];
 
-export default function PermanentDrawerLeft() {
+export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const { colorByProperty, regions } = useSelector((state) => state.mapGraphics);
-  const { colors, selectedFeature } = useSelector((state) => state.mapStyles);
+  const { colors } = useSelector((state) => state.mapStyles);
+
+  //  lets extract unique values from the property associated with the colorByProperty
+  const extractUniqueColorValues = (regions, colorByProperty) => {
+    const uniqueValues = new Set();
+    regions.forEach((region) => {
+      uniqueValues.add(region[colorByProperty]);
+    });
+    return uniqueValues;
+  };
+  const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
+
+  const initColors = () => {
+    const uniqueValues = extractUniqueColorValues(regions, colorByProperty);
+    const c = Array.from(uniqueValues).map((name) => {
+      return { name, color: generateRandomColor() };
+    });
+
+    dispatch(setColors(c));
+    dispatch(setSelectedPropUniqueValues(Array.from(uniqueValues)));
+  };
+
+  useEffect(() => {
+    initColors();
+  }, []);
+
   const onEachFeature = (feature, layer) => {
     // check if map graphics type is choropleth
     if (mapGraphicsType === 'Choropleth Map') {

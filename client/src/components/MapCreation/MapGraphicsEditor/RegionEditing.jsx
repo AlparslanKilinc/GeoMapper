@@ -9,9 +9,8 @@ import { setSelectedPropUniqueValues } from '../../../redux-slices/mapStylesSlic
 export default function RegionEditing() {
   const dispatch = useDispatch();
 
-  const { propertyNames, selectedRegionIdx, regions, nameByProperty } = useSelector(
-    (state) => state.mapGraphics
-  );
+  const { propertyNames, selectedRegionIdx, regions, nameByProperty, colorByProperty } =
+    useSelector((state) => state.mapGraphics);
   const [prop, setProp] = React.useState(nameByProperty);
 
   const { selectedPropUniqueValues, selectedFeature, colors } = useSelector(
@@ -38,7 +37,6 @@ export default function RegionEditing() {
     dispatch(setRegionProperty({ propertyName: prop, value: value }));
     // find the color for the region by the colorByProperty inside colors array
     let color = colors.find((color) => color.name === value);
-    console.log(selectedFeature);
     selectedFeature.setStyle({ fillColor: color.color });
   };
 
@@ -50,7 +48,7 @@ export default function RegionEditing() {
     <TextField type={type} value={regionDetails[prop]} onChange={handlePropValueChange} fullWidth />
   );
 
-  if (type === 'text') {
+  if (prop === colorByProperty) {
     inputField = (
       <Autocomplete
         value={regionDetails[prop]}
