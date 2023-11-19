@@ -17,11 +17,14 @@
 .username{
     font-weight: bold;
     margin-right:10px;
+    color: black;
 }
 
 .reply{
     margin-top:5px;
     color: darkgrey;
 }
-
+.comment-text{
+    color: black;
+}
 

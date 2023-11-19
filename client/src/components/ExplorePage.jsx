@@ -103,7 +103,7 @@ export default function ExplorePage() {
               horizontal: 'left', // Adjust this to align with the left of the button
             }}
         >
-          <div style={{ padding: '10px' }}>
+          <div style={{ padding: '10px' }} >
             <Autocomplete
                 multiple
                 id="tags"

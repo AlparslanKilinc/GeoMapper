@@ -6,7 +6,7 @@ import BorderAccordionMenu from './BorderAccordionMenu';
 
 export default function StylesMenus() {
   return (
-    <div>
+    <div className = "style-menu">
       <ColorsAccordionMenu />
       <ShapeAccordionMenu />
       <BorderAccordionMenu />

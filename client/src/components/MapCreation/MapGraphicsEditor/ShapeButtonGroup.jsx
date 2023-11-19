@@ -21,7 +21,7 @@ function ShapeButtonGroup() {
   };
 
   return (
-    <ButtonGroup variant="contained">
+    <ButtonGroup variant="contained" >
       <IconButton
         onClick={() => handleClick('circle')}
         color={shape === 'circle' ? 'primary' : 'default'}

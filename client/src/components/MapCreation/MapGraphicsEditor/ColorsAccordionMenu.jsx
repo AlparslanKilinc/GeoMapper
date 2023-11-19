@@ -18,19 +18,19 @@ export default function ColorsAccordionMenu() {
 
   return (
     <Accordion>
-      <AccordionSummary
+      <AccordionSummary className = "styles-buttons"
         expandIcon={<ExpandMoreIcon />} // Black expand icon
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
         <Typography>
-          <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-            <PaletteOutlinedIcon sx={{ mr: 0.5 }} /> colors
+          <Box className = "dark-mode-labels" component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+            <PaletteOutlinedIcon sx={{ mr: 0.5 }}/> colors
           </Box>
         </Typography>
         {/* Emoji included */}
       </AccordionSummary>
-      <AccordionDetails>{accordionDetails}</AccordionDetails>
+      <AccordionDetails className = "color-symbol-accordian-menu">{accordionDetails}</AccordionDetails>
     </Accordion>
   );
 }

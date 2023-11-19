@@ -29,7 +29,7 @@ function MapBox(props) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
 
   return (
-    <Box
+    <Box className = "dark-mode-map"
       component="main"
       sx={{
         flexGrow: 1,
@@ -85,17 +85,17 @@ export default function PermanentDrawerLeft() {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
+    <Box className = "map-graphics-editor" sx={{ display: 'flex', height: '100%', width: '100%' }}>
       <CssBaseline />
 
-      <Drawer
+      <Drawer className = "left-drawer"
         sx={{
           width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            position: 'relative'
+            position: 'relative',
           },
           height: '100%'
         }}

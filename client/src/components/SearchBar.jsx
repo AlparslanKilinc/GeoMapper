@@ -10,9 +10,9 @@ export default function SearchBar(){
     return(
        <div className = "searchBar" >
            <form>
-               <TextField
+               <TextField sx = {{backgroundColor : 'white', borderRadius: '5px'}}
                    id="search-bar"
-                   className="text"
+                   className="search-bar"
                    onInput={(e) => {
                        setSearchQuery(e.target.value);
                    }}

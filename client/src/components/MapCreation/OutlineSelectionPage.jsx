@@ -32,7 +32,7 @@ export default function OutlineSelectionPage() {
   };
 
   return (
-    <div id="outline-page">
+    <div id="outline-page" className = "outline-selection-page">
       <div id="outline-page-left">
         <div className="header-primary">
           <h2>{mapGraphicsType}</h2>
@@ -42,9 +42,10 @@ export default function OutlineSelectionPage() {
         <h3 className="secondary-title">select map</h3>
 
         <LoadingButton
-          startIcon={<CloudUploadIcon />}
+          startIcon={<CloudUploadIcon className = "outline-loading-button"/>}
           variant="outlined"
           style={{ color: 'black', borderColor: 'black' }}
+          className = "outline-loading-button"
         >
           upload map
         </LoadingButton>
@@ -52,10 +53,11 @@ export default function OutlineSelectionPage() {
         <TextField
           variant="outlined"
           helperText="What type of map do you want to create?"
+          className = "outline-selection-texfield"
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start">
-                <PlaceIcon /> search for places
+              <InputAdornment position="start" className = "map-location-textfield"  >
+                <PlaceIcon/> search for places
               </InputAdornment>
             )
           }}

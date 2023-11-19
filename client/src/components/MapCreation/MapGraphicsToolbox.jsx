@@ -19,7 +19,7 @@ const MapGraphicsToolbox = () => {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-            height: '100%' // make Drawer height 100% of the container
+            height: '100%', // make Drawer height 100% of the container
           }
         }}
         variant="permanent"

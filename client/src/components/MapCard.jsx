@@ -90,21 +90,21 @@ export default function MapCard () {
                         alt="green iguana"
                     />
                     <CardContent>
-                        <Link href = "ExplorePage#" underline = "hover" sx = {{color: 'var(--dark-color)', fontSize:'10px'}}>
+                        <Link className = "map-card-user-link" href = "ExplorePage#" underline = "hover" sx = {{color: 'var(--dark-color)', fontSize:'10px'}}>
                             @john123
                         </Link>
-                        <Typography gutterBottom variant="h5">
+                        <Typography gutterBottom variant="h5" className = "dark-mode-labels">
                             Election Results
                         </Typography>
-                        <Typography variant = "h8" component = "div">
+                        <Typography variant = "h8" component = "div" className = "dark-mode-labels">
                             This is my description of the most recent election results
                         </Typography>
                     </CardContent>
                     <div className = "tags">
-                        <Chip label="Chorpleth" sx={{mb:1 ,ml: 1}} onClick={handleTagClick}/>
-                        <Chip label="United States" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
-                        <Chip label="Election"sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
-                        <Chip label="Map" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick}/>
+                        <Chip className = "tag" label="Chorpleth" sx={{mb:1 ,ml: 1}} onClick={handleTagClick}/>
+                        <Chip className = "tag"label="United States" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
+                        <Chip className = "tag" label="Election"sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
+                        <Chip className = "tag" label="Map" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick}/>
                     </div>
 
                 </CardActionArea>

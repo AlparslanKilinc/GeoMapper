@@ -51,3 +51,138 @@ input {
   font-family: 'Outfit', sans-serif;
 }
 
+.dark-mode{
+  background-color: #212121;
+  color: #ffffff;
+  --white: #212121;
+  --black: white;
+  --light-color: #006666;
+  --dark-color: #1db954;
+}
+.dark-mode .MuiCard-root {
+  background-color:#333333;
+
+}
+
+.dark-mode .landing-page{
+  background-color: #212121;
+}
+
+.dark-mode .map-card-user-link{
+  color: #40e0d0;
+}
+
+.dark-mode .template-selection {
+  background-color: #212121;
+}
+
+.dark-mode .intro{
+  border-style: none;
+}
+
+.dark-mode .outline-selection-page{
+  color:white;
+}
+
+.dark-mode .outline-loading-button {
+  color: white !important;
+  border-color: white !important;
+}
+
+.dark-mode .MuiInputBase-input {
+  color: white !important;
+}
+
+.dark-mode .outline-selection-texfield .map-location-textfield {
+  color: white !important;
+}
+
+.dark-mode .MuiLoadingButton-root {
+  color: white !important;
+}
+
+.dark-mode .MuiLoadingButton-root.MuiButton-outlined {
+  border-color: white !important; /* Border color for outlined style */
+}
+
+.dark-mode .MuiOutlinedInput-input {
+  color: white !important; /* Text color */
+}
+
+.dark-mode .MuiFormLabel-root {
+  color: white !important; /* Label color */
+}
+
+.dark-mode .MuiOutlinedInput-notchedOutline {
+  border-color: white !important; /* Border color */
+}
+
+.dark-mode .MuiFormHelperText-root {
+  color: white !important; /* Helper text color */
+}
+.dark-mode .data-editor-cols{
+  color:white !important;
+}
+.dark-mode .mapCreationWrapper{
+  background-color:  #212121;
+}
+
+.dark-mode .left-drawer .MuiDrawer-paper {
+  width: 240px; /* or use your desired width */
+  box-sizing: border-box;
+  position: relative;
+  background-color: #212121; /* Set the background color to black */
+  color: white; /* Set the text color to white */
+}
+
+.dark-mode.left-drawer .MuiDrawer-paper a {
+  color: white; /* Set the link color to white if applicable */
+}
+
+.dark-mode .map-graphics-editor {
+  background-color: #212121; /* Set the background color to black */
+}
+
+.dark-mode .styles-buttons{
+  background-color: #212121  !important;
+  color: white !important;
+}
+.dark-mode .style-menu{
+  border-style: solid;
+  border-color: white;
+}
+
+.dark-mode .MuiSvgIcon-root {
+  color: white !important;
+}
+
+.dark-mode .color-symbol-accordian-menu{
+  background-color: #212121  !important;
+}
+
+.dark-mode .dark-mode-labels {
+  color: white;
+}
+.dark-mode .dark-mode-map{
+  background-color: #212121  !important;
+}
+
+.dark-mode .dark-mode-divider{
+  background-color: white;
+}
+
+.dark-mode .search-bar{
+  background-color:  #212121 !important ;
+}
+.dark-mode .tag{
+  background-color:  #1a1a1a !important;
+  color: white !important;
+
+}
+
+.dark-mode .map-view-content{
+  filter:none
+}
+.dark-mode .map-render{
+  filter:none
+}

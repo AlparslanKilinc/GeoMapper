@@ -11,6 +11,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import Logo from './Logo.jsx';
 import UserIconMenu from './UserIconMenu';
 import Search from '../SearchBar';
+import ToggleDarkMode from "../ToggleDarkMode.jsx";
 
 const AuthButton = ({ loggedIn }) => {
   if (loggedIn) {
@@ -27,7 +28,7 @@ const AuthButton = ({ loggedIn }) => {
   );
 };
 
-export default function NavBar() {
+export default function NavBar({isDark, handleDarkModeClick}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const location = useLocation();
   const isExplorePage = location.pathname == '/explore';
@@ -38,6 +39,7 @@ export default function NavBar() {
         <Logo />
         <div className={'iconContainer'}>
           {isExplorePage && <Search/>}
+          <ToggleDarkMode isDark = {isDark} handleDarkModeClick={handleDarkModeClick} />
           <Link className="link" to={'/explore'}>
             <IconButton id = "exploreButton" color="inherit" aria-label="explore">
               <ExploreIcon />

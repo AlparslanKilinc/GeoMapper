@@ -10,7 +10,7 @@ export default function RegionEditing() {
     dispatch(changeColorByProperty(newValue));
   };
   return (
-    <Box
+    <Box className = "dark-mode-map"
       display="flex"
       flexDirection="column"
       alignItems="center"

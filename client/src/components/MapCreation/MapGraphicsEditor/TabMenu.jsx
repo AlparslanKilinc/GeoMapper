@@ -14,8 +14,8 @@ function CustomTabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+        <Box sx={{ p: 3 }} className = "dark-mode-map">
+          <Typography >{children}</Typography>
         </Box>
       )}
     </div>
@@ -48,9 +48,9 @@ export default function TabMenu({ tabsConfig, handleTabularOpen }) {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
+    <Box sx={{ width: '100%' ,height: '100%'}} className = "dark-mode-map">
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
+        <Tabs className = "dark-mode-labels"
           TabIndicatorProps={{ style: { background: '#40E0D0' } }}
           textColor="#40E0D0"
           value={value}
@@ -63,7 +63,7 @@ export default function TabMenu({ tabsConfig, handleTabularOpen }) {
         </Tabs>
       </Box>
       {tabsConfig.map((tab, index) => (
-        <CustomTabPanel value={value} index={index} key={index}>
+        <CustomTabPanel className = "dark-mode-labels" value={value} index={index} key={index} >
           {tab.content}
         </CustomTabPanel>
       ))}

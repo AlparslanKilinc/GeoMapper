@@ -37,14 +37,16 @@ const AnnotateContent = () => {
         justifyContent="center"
         fullWidth
       >
-        <Typography variant="subtitle2">description</Typography>
-        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-        <BaseTextareaAutosize
-          value={description}
-          onChange={handleChangeDescription}
-          minRows={6}
-          style={{ width: '200px !important', fontFamily: 'Outfit', fontSize: '15px' }}
-        />
+        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }}/>
+
+
+        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+          <Typography variant="subtitle2">description</Typography>
+          <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+          <TextField  multiline rows = {4} onChange={handleChangeDescription} value={description} type="text" fullWidth />
+        </Box>
+
+
       </Box>
     </Box>
   );

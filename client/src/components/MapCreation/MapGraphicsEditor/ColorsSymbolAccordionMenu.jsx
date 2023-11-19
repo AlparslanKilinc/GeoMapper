@@ -26,7 +26,7 @@ export default function ColorsSymbolAccordionMenu() {
         justifyContent="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="subtitle2">color by property</Typography>
+        <Typography variant="subtitle2" className = "dark-mode-labels">color by property</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
         <Autocomplete
           value={colorByProperty}
@@ -44,7 +44,7 @@ export default function ColorsSymbolAccordionMenu() {
         justifyContent="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="subtitle2">steps</Typography>
+        <Typography variant="subtitle2" className = "dark-mode-labels">steps</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
         <TextField type="number" defaultValue={3} fullWidth />
       </Box>
@@ -56,7 +56,7 @@ export default function ColorsSymbolAccordionMenu() {
         justifyContent="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="subtitle2">range</Typography>
+        <Typography variant="subtitle2"  className = "dark-mode-labels">range</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
         <ColorRange
           lower="min"

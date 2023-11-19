@@ -26,7 +26,7 @@ export default function BorderAccordionMenu() {
   };
   return (
     <Accordion>
-      <AccordionSummary
+      <AccordionSummary className = "styles-buttons"
         expandIcon={<ExpandMoreIcon />} // Black expand icon
         aria-controls="panel1a-content"
         id="panel1a-header"
@@ -38,7 +38,7 @@ export default function BorderAccordionMenu() {
         </Typography>
         {/* Emoji included */}
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails  className = "color-symbol-accordian-menu">
         <Box
           display="flex"
           flexDirection="column"
@@ -53,7 +53,7 @@ export default function BorderAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <Typography variant="subtitle2">border color</Typography>
+            <Typography variant="subtitle2"  className = "dark-mode-labels">border color</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
             <MuiColorInput format="hex" value={borderColor} onChange={handleBorderColorChange} />
           </Box>
@@ -65,7 +65,7 @@ export default function BorderAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <SubMenuTitle title="border width" />
+            <Typography variant="subtitle2"  className = "dark-mode-labels">border width</Typography>
             <Slider
               min={0}
               max={10}

@@ -13,7 +13,13 @@ import CopyRight from './CopyRight';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setMapGraphicsType } from '../redux-slices/mapMetadataSlice';
+import * as PropTypes from "prop-types";
 
+function Typeography(props) {
+  return null;
+}
+
+Typeography.propTypes = {children: PropTypes.node};
 export default function LandingPage() {
   const scrollContainer = useRef(null);
   const mapData = mapDataJson.mapData;
@@ -72,7 +78,7 @@ export default function LandingPage() {
         <img className="image" src={GeoMapperImage} alt="logo" />
       </div>
 
-      <Divider className="divider">Choose from diverse templates and start mapping!</Divider>
+      <Divider className = "divider"> Choose from diverse templates and start mapping!</Divider>
       <div className="maps-container">
         <Button onClick={() => scroll(-400)}>&lt;</Button>
         <div className="maps" ref={scrollContainer}>

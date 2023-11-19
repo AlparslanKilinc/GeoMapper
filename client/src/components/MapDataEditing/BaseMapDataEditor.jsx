@@ -46,7 +46,7 @@ const BaseMapDataEditor = (config) => {
     const handleDelete = () => { };
 
     const renderDefaultTableButtons = () => (
-      <div id="table-buttons">
+      <div id="table-buttons" className = "table-buttons">
         <LoadingButton
           variant="outlined"
           style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
@@ -77,7 +77,7 @@ const BaseMapDataEditor = (config) => {
           <TableHead>
             <TableRow>
               {columnNames.map((colName, index) => (
-                <TableCell key={index}>{colName}</TableCell>
+                <TableCell className = "data-editor-cols" key={index}>{colName}</TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -116,7 +116,7 @@ const BaseMapDataEditor = (config) => {
 
         <h3 className="secondary-title">add data</h3>
         <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-          <LoadingButton
+          <LoadingButton className = "loading-button"
             startIcon={<CloudUploadIcon />}
             variant="outlined"
             style={{ color: 'black', borderColor: 'black' }}
