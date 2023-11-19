@@ -11,7 +11,8 @@ const sendUserResponse = (res, user) => {
       email: user.email,
       userName: user.userName,
       bio: user.bio,
-      id: user._id
+      id: user._id,
+      profilePicPath: user.profilePicPath
     },
     loggedIn: true
   });
@@ -78,9 +79,7 @@ registerUser = async (req, res) => {
 
     if (existingUserByUserName) {
       console.log('An account with this User Name already exists');
-      return res
-        .status(400)
-        .json({ errorMessage: 'An account with this username already exists' });
+      return res.status(400).json({ errorMessage: 'An account with this username already exists' });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -97,39 +96,6 @@ registerUser = async (req, res) => {
     });
 
     return sendUserResponse(res, savedUser);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send();
-  }
-};
-
-const updateUser = async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    if (req.body.userName) {
-      const existingUserByUserName = await User.findOne({ userName: req.body.userName });
-      if (existingUserByUserName && String(existingUserByUserName._id) !== String(userId)) {
-        return res
-          .status(400)
-          .json({ errorMessage: 'An account with this User Name already exists' });
-      }
-    }
-
-    const updateFields = Object.keys(req.body).reduce((acc, key) => {
-      if (req.body[key] !== undefined && req.body[key] !== null) {
-        acc[key] = req.body[key];
-      }
-      return acc;
-    }, {});
-
-    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
-
-    if (!updatedUser) {
-      return res.status(404).json({ errorMessage: 'User not found' });
-    }
-
-    return sendUserResponse(res, updatedUser);
   } catch (err) {
     console.error(err);
     return res.status(500).send();
@@ -168,10 +134,64 @@ logoutUser = (req, res) => {
     .send();
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (req.body.userName) {
+      const existingUserByUserName = await User.findOne({ userName: req.body.userName });
+      if (existingUserByUserName && String(existingUserByUserName._id) !== String(userId)) {
+        return res
+          .status(400)
+          .json({ errorMessage: 'An account with this User Name already exists' });
+      }
+    }
+
+    const updateFields = Object.keys(req.body).reduce((acc, key) => {
+      if (req.body[key] !== undefined && req.body[key] !== null) {
+        acc[key] = req.body[key];
+      }
+      return acc;
+    }, {});
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+
+    return sendUserResponse(res, updatedUser);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send();
+  }
+};
+
+const updateUserProfilePic = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).send({ errorMessage: 'No file uploaded.' });
+    }
+
+    const filePath = file.path;
+
+    const updatedUser = await User.findByIdAndUpdate(userId, { profilePicPath: filePath });
+
+    return sendUserResponse(res, updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ errorMessage: 'Error uploading file' });
+  }
+};
+
 module.exports = {
   getLoggedIn,
   registerUser,
   loginUser,
   logoutUser,
-  updateUser
+  updateUser,
+  updateUserProfilePic
 };

@@ -60,6 +60,14 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+export const updateUserProfilePic = createAsyncThunk(
+  'auth/updateUserProfilePic',
+  async ({ formData, id }) => {
+    const response = await api.updateUserProfilePic(formData, id);
+    return response.data;
+  }
+);
+
 export const changePassword = createAsyncThunk(
   'auth/changePassword',
   async ({ newPassword, id }) => {
@@ -104,6 +112,11 @@ export const authSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.loggedIn = action.payload.loggedIn;
+        state.isLoading = false;
+      })
+      .addCase(updateUserProfilePic.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
         state.isLoading = false;

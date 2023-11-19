@@ -35,11 +35,19 @@ export const updateUser = (firstName, lastName, userName, bio, id) => {
     bio: bio
   });
 };
+export const updateUserProfilePic = (formData, id) => {
+  return api.post(`/updateUserProfilePic/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
 const apis = {
   getLoggedIn,
   registerUser,
   loginUser,
   logoutUser,
-  updateUser
+  updateUser,
+  updateUserProfilePic
 };
 export default apis;

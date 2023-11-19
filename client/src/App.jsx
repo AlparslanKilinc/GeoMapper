@@ -12,8 +12,12 @@ import ChangePassword from './components/ChangePassword';
 import ForgotPassword from './components/ForgotPassword';
 import RecoveryCode from './components/RecoveryCode';
 import SetNewPassword from './components/SetNewPassword';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getLoggedIn } from './redux-slices/authSlice';
 
 function App() {
+  const dispatch = useDispatch();
   const theme = createTheme({
     palette: {
       primary: {
@@ -74,6 +78,10 @@ function App() {
       // Add any other theme customizations here
     }
   });
+
+  useEffect(() => {
+    dispatch(getLoggedIn());
+  }, [dispatch]);
 
   return (
     <ThemeProvider theme={theme}>

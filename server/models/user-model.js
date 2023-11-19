@@ -13,7 +13,8 @@ const UserSchema = new Schema({
   draftedMaps: [{ type: ObjectId, ref: 'map' }],
   bookmarkedMaps: [{ type: ObjectId, ref: 'map' }],
   profileCreated: { type: Date, default: Date.now },
-  bio: { type: String, default: '' }
+  bio: { type: String, default: '' },
+  profilePicPath: { type: String, default: '' }
 });
 
 module.exports = mongoose.model('user', UserSchema);
