@@ -61,8 +61,13 @@ input {
 }
 .dark-mode .MuiCard-root {
   background-color:#333333;
-
 }
+
+.dark-mode .explore-title .sort-menu .MuiMenu-paper .newest {
+  background-color: black !important;
+  color: white !important;
+}
+
 
 .dark-mode .landing-page{
   background-color: #212121;
@@ -186,3 +191,14 @@ input {
 .dark-mode .map-render{
   filter:none
 }
+
+.dark-mode .explore-buttons{
+  background-color: #006666 !important;
+  color: white !important;
+}
+.dark-mode .explore-buttons{
+   background-color: #006666 !important;
+   color: white !important
+ }
+
+

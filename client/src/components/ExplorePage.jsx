@@ -50,6 +50,7 @@ export default function ExplorePage() {
           <div className = "filter"><Button
               variant = "contained"
               onClick={handleFilterMenuOpen}
+              className = "explore-buttons"
               sx = {{backgroundColor : 'var(--main-color)',
                 '&:hover': {backgroundColor: 'var(--dark-color)'}}}
           >Filter</Button>
@@ -57,6 +58,7 @@ export default function ExplorePage() {
           <div className = "sort">
             <Button
                 variant = "contained"
+                className = "explore-buttons"
                 onClick={handleSortMenuOpen}
                 sx = {{backgroundColor : 'var(--main-color)',
                   '&:hover': {backgroundColor: 'var(--dark-color)'
@@ -81,14 +83,22 @@ export default function ExplorePage() {
             <MapCard></MapCard>
           </div>
         </div>
-        <Menu anchorEl={anchorEl}
-              open={isSortOpen}
-              onClose={handleSortMenuClose}>
-          <MenuItem onClick={handleSortMenuClose}>Newest</MenuItem>
-          <MenuItem onClick={handleSortMenuClose}>Oldest</MenuItem>
-          <MenuItem onClick={handleSortMenuClose}>Most Likes</MenuItem>
-          <MenuItem onClick={handleSortMenuClose}>Least Likes</MenuItem>
-        </Menu>
+          <div className='sort-menu'>
+              <Menu anchorEl={anchorEl} open={isSortOpen} onClose={handleSortMenuClose}>
+                  <MenuItem className='newest'onClick={handleSortMenuClose}>
+                      Newest
+                  </MenuItem>
+                  <MenuItem className='oldest' onClick={handleSortMenuClose}>
+                      Oldest
+                  </MenuItem>
+                  <MenuItem className='most-likes' onClick={handleSortMenuClose}>
+                      Most Likes
+                  </MenuItem>
+                  <MenuItem className='least-likes' onClick={handleSortMenuClose}>
+                      Least Likes
+                  </MenuItem>
+              </Menu>
+          </div>
 
         <Popover
             open={isFilterOpen}
