@@ -18,7 +18,7 @@ export default function CopyRight() {
   };
 
   return (
-    <div style={footerStyle}>
+    <div style={footerStyle} className = "footer">
       <img src={GeoMapperImage} alt="GeoMapper Logo" width="40" height="40" style={imageStyle} />
       &copy; 2024 GeoMapper
     </div>
