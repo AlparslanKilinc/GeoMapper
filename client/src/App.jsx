@@ -12,12 +12,21 @@ import ChangePassword from './components/ChangePassword';
 import ForgotPassword from './components/ForgotPassword';
 import RecoveryCode from './components/RecoveryCode';
 import SetNewPassword from './components/SetNewPassword';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 function App() {
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState(() => {
+    const storedDarkMode = localStorage.getItem('darkMode');
+    return storedDarkMode ? JSON.parse(storedDarkMode) : false;
+  });
+
   const handleDarkModeClick = () => {
-    setIsDark(!isDark)
+    setIsDark((prevIsDark) => {
+      const newIsDark = !prevIsDark;
+      localStorage.setItem('darkMode', JSON.stringify(newIsDark));
+      return newIsDark;
+    });
+
   }
   const theme = createTheme({
     palette: {
@@ -79,7 +88,10 @@ function App() {
       // Add any other theme customizations here
     }
   });
-
+  useEffect(() => {
+    // Update the dark mode state in localStorage whenever it changes
+    localStorage.setItem('darkMode', JSON.stringify(isDark));
+  }, [isDark]);
 
 
   return (
