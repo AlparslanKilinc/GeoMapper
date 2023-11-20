@@ -15,5 +15,7 @@ describe('LoginPage', () => {
         cy.get('a[href="/register"]').click();
         cy.url().should('include', '/register');
     });
-});
+
+    //testinggggg
+})
 
