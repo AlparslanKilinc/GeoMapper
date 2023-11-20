@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 dotenv.config();
 const Port = process.env.PORT;
-
 const app = express();
 
 // Middleware
@@ -17,7 +16,6 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
-app.use('/uploads', express.static('uploads'));
 
 app.get('/health', (req, res) => {
   res.status(200).send('OK');

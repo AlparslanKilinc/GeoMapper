@@ -22,17 +22,12 @@ export default function Sidebar() {
     dispatch(getLoggedIn());
   }, [dispatch]);
 
-  const serverBaseUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://geomapper-ylm6.onrender.com/'
-      : 'http://localhost:5001/';
-
   const initialUserData = {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     userName: user?.userName || '',
     bio: user?.bio || '',
-    picPath: user?.profilePicPath ? `${serverBaseUrl}${user.profilePicPath}` : ''
+    picPath: user?.profilePicPath || ''
   };
 
   const [userData, setUserData] = useState(initialUserData);
@@ -40,7 +35,7 @@ export default function Sidebar() {
   useEffect(() => {
     setUserData({
       ...initialUserData,
-      picPath: user?.profilePicPath ? `${serverBaseUrl}${user.profilePicPath}` : ''
+      picPath: user?.profilePicPath || ''
     });
 
     if (errorMessage) {

@@ -21,11 +21,6 @@ export default function UserIconMenu() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const serverBaseUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://geomapper-ylm6.onrender.com/'
-      : 'http://localhost:5001/';
-
   const user = useSelector((state) => state.auth.user);
   useEffect(() => {
     dispatch(getLoggedIn());
@@ -35,7 +30,7 @@ export default function UserIconMenu() {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     userName: user?.userName || '',
-    profilePicPath: user?.profilePicPath ? `${serverBaseUrl}${user.profilePicPath}` : ''
+    profilePicPath: user?.profilePicPath || ''
   };
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
