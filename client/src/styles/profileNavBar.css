@@ -1,13 +1,15 @@
 .navbar {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
-  margin-top: 3rem;
+  margin-top: 1rem;
   flex: 0.5;
+  background-color: var(--white);
+  flex: 1;
 }
 .nav-list {
   display: flex;
   align-items: center;
+  margin-left: 2rem;
   gap: 1rem;
 }
 .nav-button {

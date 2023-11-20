@@ -6,12 +6,9 @@ import ProfileNavBar from './ProfileNavBar';
 
 export default function ProfilePage() {
   return (
-    <div className='profile-page'>
-      <div className="profile">
-        <Sidebar />
-        <ProfileNavBar/>
-      </div>
-      <CopyRight/>
+    <div className="profile-page">
+      <ProfileNavBar />
+      <CopyRight />
     </div>
   );
 }

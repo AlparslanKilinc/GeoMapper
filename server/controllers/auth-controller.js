@@ -1,8 +1,9 @@
 const auth = require('../auth');
 const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
-const generateFileHash = require('../fileHashing').generateFileHash;
-const fs = require('fs').promises;
+const { bucket } = require('../googleCloudStorage');
+const crypto = require('crypto');
+const fetch = require('node-fetch');
 
 const sendUserResponse = (res, user) => {
   return res.status(200).json({
@@ -160,25 +161,41 @@ const updateUserData = async (req, res) => {
 
     if (req.file) {
       const file = req.file;
-      const filePath = file.path;
-      const newFileHash = await generateFileHash(filePath);
-
+      const blob = bucket.file(file.originalname);
       const existingUser = await User.findById(userId);
-      if (existingUser && existingUser.profilePicPath) {
-        const existingFileHash = await generateFileHash(existingUser.profilePicPath);
+      let isDuplicate = false;
 
-        if (newFileHash === existingFileHash) {
-          await fs.unlink(filePath); // Deletes the new file if duplicate exists
-        } else {
-          try {
-            await fs.unlink(existingUser.profilePicPath); // Deletes old file if new profile picture is different
-          } catch (deleteError) {
-            console.error('Error deleting old profile picture:', deleteError);
-          }
-          updateFields.profilePicPath = filePath;
+      if (existingUser && existingUser.profilePicPath) {
+        isDuplicate = await isDuplicateImage(file, existingUser.profilePicPath);
+        if (isDuplicate) {
+          updateFields.profilePicPath = existingUser.profilePicPath;
         }
-      } else {
-        updateFields.profilePicPath = filePath;
+      }
+
+      if (!isDuplicate) {
+        // Upload the file to Google Cloud Storage
+        const blobStream = blob.createWriteStream({
+          resumable: false
+        });
+
+        blobStream.on('error', (err) => {
+          console.error('Error in blobStream:', err);
+          throw new Error('Error uploading file');
+        });
+
+        await new Promise((resolve, reject) => {
+          blobStream.on('finish', resolve);
+          blobStream.on('error', reject);
+          blobStream.end(file.buffer);
+        });
+
+        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        updateFields.profilePicPath = publicUrl;
+
+        // Delete old profile picture from GCS if it exists
+        if (existingUser && existingUser.profilePicPath) {
+          await deleteFileFromGCS(existingUser.profilePicPath);
+        }
       }
     }
 
@@ -193,6 +210,30 @@ const updateUserData = async (req, res) => {
     return res.status(500).send({ errorMessage: 'Error updating user data' });
   }
 };
+
+async function isDuplicateImage(newFile, existingFilePath) {
+  const newFileHash = await generateFileHash(newFile.buffer);
+  const existingFileHash = await generateFileHashFromURL(existingFilePath);
+  console.log(newFileHash === existingFileHash);
+  return newFileHash === existingFileHash;
+}
+
+async function generateFileHash(buffer) {
+  const hash = crypto.createHash('md5');
+  hash.update(buffer);
+  return hash.digest('hex');
+}
+
+async function generateFileHashFromURL(url) {
+  const response = await fetch(url);
+  const buffer = await response.buffer();
+  return generateFileHash(buffer);
+}
+
+async function deleteFileFromGCS(filePath) {
+  const fileName = filePath.split('/').pop();
+  await bucket.file(fileName).delete();
+}
 
 module.exports = {
   getLoggedIn,
