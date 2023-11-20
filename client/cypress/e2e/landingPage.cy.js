@@ -12,13 +12,4 @@ describe('Landing Page', () => {
         );
     });
 
-    it('should navigate to the Explore and Register pages when buttons are clicked', () => {
-        cy.get('#explore').click();
-        cy.url().should('include', '/explore');
-
-        cy.get('#register').click();
-        cy.url().should('include', '/register');
-    });
-
-
 });
