@@ -1,6 +1,8 @@
 const auth = require('../auth');
 const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
+const generateFileHash = require('../fileHashing').generateFileHash;
+const fs = require('fs').promises;
 
 const sendUserResponse = (res, user) => {
   return res.status(200).json({
@@ -11,7 +13,8 @@ const sendUserResponse = (res, user) => {
       email: user.email,
       userName: user.userName,
       bio: user.bio,
-      id: user._id
+      id: user._id,
+      profilePicPath: user.profilePicPath
     },
     loggedIn: true
   });
@@ -78,9 +81,7 @@ registerUser = async (req, res) => {
 
     if (existingUserByUserName) {
       console.log('An account with this User Name already exists');
-      return res
-        .status(400)
-        .json({ errorMessage: 'An account with this username already exists' });
+      return res.status(400).json({ errorMessage: 'An account with this username already exists' });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -97,39 +98,6 @@ registerUser = async (req, res) => {
     });
 
     return sendUserResponse(res, savedUser);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send();
-  }
-};
-
-const updateUser = async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    if (req.body.userName) {
-      const existingUserByUserName = await User.findOne({ userName: req.body.userName });
-      if (existingUserByUserName && String(existingUserByUserName._id) !== String(userId)) {
-        return res
-          .status(400)
-          .json({ errorMessage: 'An account with this User Name already exists' });
-      }
-    }
-
-    const updateFields = Object.keys(req.body).reduce((acc, key) => {
-      if (req.body[key] !== undefined && req.body[key] !== null) {
-        acc[key] = req.body[key];
-      }
-      return acc;
-    }, {});
-
-    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
-
-    if (!updatedUser) {
-      return res.status(404).json({ errorMessage: 'User not found' });
-    }
-
-    return sendUserResponse(res, updatedUser);
   } catch (err) {
     console.error(err);
     return res.status(500).send();
@@ -168,10 +136,68 @@ logoutUser = (req, res) => {
     .send();
 };
 
+const updateUserData = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const updateFields = {};
+
+    if (req.body) {
+      if (req.body.userName) {
+        const existingUserByUserName = await User.findOne({ userName: req.body.userName });
+        if (existingUserByUserName && String(existingUserByUserName._id) !== String(userId)) {
+          return res
+            .status(400)
+            .json({ errorMessage: 'An account with this User Name already exists' });
+        }
+      }
+
+      for (let key in req.body) {
+        if (req.body[key] !== undefined && req.body[key] !== null) {
+          updateFields[key] = req.body[key];
+        }
+      }
+    }
+
+    if (req.file) {
+      const file = req.file;
+      const filePath = file.path;
+      const newFileHash = await generateFileHash(filePath);
+
+      const existingUser = await User.findById(userId);
+      if (existingUser && existingUser.profilePicPath) {
+        const existingFileHash = await generateFileHash(existingUser.profilePicPath);
+
+        if (newFileHash === existingFileHash) {
+          await fs.unlink(filePath); // Deletes the new file if duplicate exists
+        } else {
+          try {
+            await fs.unlink(existingUser.profilePicPath); // Deletes old file if new profile picture is different
+          } catch (deleteError) {
+            console.error('Error deleting old profile picture:', deleteError);
+          }
+          updateFields.profilePicPath = filePath;
+        }
+      } else {
+        updateFields.profilePicPath = filePath;
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ errorMessage: 'User not found' });
+    }
+
+    return sendUserResponse(res, updatedUser);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ errorMessage: 'Error updating user data' });
+  }
+};
+
 module.exports = {
   getLoggedIn,
   registerUser,
   loginUser,
   logoutUser,
-  updateUser
+  updateUserData
 };
