@@ -1,6 +1,8 @@
 const auth = require('../auth');
 const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
+const generateFileHash = require('../fileHashing').generateFileHash;
+const fs = require('fs').promises;
 
 const sendUserResponse = (res, user) => {
   return res.status(200).json({
@@ -134,28 +136,53 @@ logoutUser = (req, res) => {
     .send();
 };
 
-const updateUser = async (req, res) => {
+const updateUserData = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.userId;
+    const updateFields = {};
 
-    if (req.body.userName) {
-      const existingUserByUserName = await User.findOne({ userName: req.body.userName });
-      if (existingUserByUserName && String(existingUserByUserName._id) !== String(userId)) {
-        return res
-          .status(400)
-          .json({ errorMessage: 'An account with this User Name already exists' });
+    if (req.body) {
+      if (req.body.userName) {
+        const existingUserByUserName = await User.findOne({ userName: req.body.userName });
+        if (existingUserByUserName && String(existingUserByUserName._id) !== String(userId)) {
+          return res
+            .status(400)
+            .json({ errorMessage: 'An account with this User Name already exists' });
+        }
+      }
+
+      for (let key in req.body) {
+        if (req.body[key] !== undefined && req.body[key] !== null) {
+          updateFields[key] = req.body[key];
+        }
       }
     }
 
-    const updateFields = Object.keys(req.body).reduce((acc, key) => {
-      if (req.body[key] !== undefined && req.body[key] !== null) {
-        acc[key] = req.body[key];
+    if (req.file) {
+      const file = req.file;
+      const filePath = file.path;
+      const newFileHash = await generateFileHash(filePath);
+
+      const existingUser = await User.findById(userId);
+      if (existingUser && existingUser.profilePicPath) {
+        const existingFileHash = await generateFileHash(existingUser.profilePicPath);
+
+        if (newFileHash === existingFileHash) {
+          await fs.unlink(filePath); // Deletes the new file if duplicate exists
+        } else {
+          try {
+            await fs.unlink(existingUser.profilePicPath); // Deletes old file if new profile picture is different
+          } catch (deleteError) {
+            console.error('Error deleting old profile picture:', deleteError);
+          }
+          updateFields.profilePicPath = filePath;
+        }
+      } else {
+        updateFields.profilePicPath = filePath;
       }
-      return acc;
-    }, {});
+    }
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
-
     if (!updatedUser) {
       return res.status(404).json({ errorMessage: 'User not found' });
     }
@@ -163,27 +190,7 @@ const updateUser = async (req, res) => {
     return sendUserResponse(res, updatedUser);
   } catch (err) {
     console.error(err);
-    return res.status(500).send();
-  }
-};
-
-const updateUserProfilePic = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const file = req.file;
-
-    if (!file) {
-      return res.status(400).send({ errorMessage: 'No file uploaded.' });
-    }
-
-    const filePath = file.path;
-
-    const updatedUser = await User.findByIdAndUpdate(userId, { profilePicPath: filePath });
-
-    return sendUserResponse(res, updatedUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ errorMessage: 'Error uploading file' });
+    return res.status(500).send({ errorMessage: 'Error updating user data' });
   }
 };
 
@@ -192,6 +199,5 @@ module.exports = {
   registerUser,
   loginUser,
   logoutUser,
-  updateUser,
-  updateUserProfilePic
+  updateUserData
 };

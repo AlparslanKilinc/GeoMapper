@@ -9,14 +9,18 @@ const baseURL =
 const api = axios.create({
   baseURL: baseURL
 });
+
 export const getLoggedIn = () => api.get(`/loggedIn/`);
+
 export const loginUser = (userName, password) => {
   return api.post(`/login/`, {
     userName: userName,
     password: password
   });
 };
+
 export const logoutUser = () => api.get(`/logout/`);
+
 export const registerUser = (userName, firstName, lastName, email, password, passwordVerify) => {
   return api.post(`/register/`, {
     userName: userName,
@@ -27,27 +31,20 @@ export const registerUser = (userName, firstName, lastName, email, password, pas
     passwordVerify: passwordVerify
   });
 };
-export const updateUser = (firstName, lastName, userName, bio, id) => {
-  return api.post(`/updateUser/${id}`, {
-    userName: userName,
-    firstName: firstName,
-    lastName: lastName,
-    bio: bio
-  });
-};
-export const updateUserProfilePic = (formData, id) => {
-  return api.post(`/updateUserProfilePic/${id}`, formData, {
+
+export const updateUserData = (formData) => {
+  return api.post(`/updateUserData/`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
   });
 };
+
 const apis = {
   getLoggedIn,
   registerUser,
   loginUser,
   logoutUser,
-  updateUser,
-  updateUserProfilePic
+  updateUserData
 };
 export default apis;

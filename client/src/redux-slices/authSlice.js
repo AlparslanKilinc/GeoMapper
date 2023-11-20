@@ -52,19 +52,15 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async () => {
   return response.data;
 });
 
-export const updateUser = createAsyncThunk(
-  'auth/updateUser',
-  async ({ firstName, lastName, userName, bio, id }) => {
-    const response = await api.updateUser(firstName, lastName, userName, bio, id);
-    return response.data;
-  }
-);
-
-export const updateUserProfilePic = createAsyncThunk(
-  'auth/updateUserProfilePic',
-  async ({ formData, id }) => {
-    const response = await api.updateUserProfilePic(formData, id);
-    return response.data;
+export const updateUserData = createAsyncThunk(
+  'auth/updateUserData',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.updateUserData(formData);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
   }
 );
 
@@ -111,15 +107,13 @@ export const authSlice = createSlice({
         state.user = null;
         state.isLoading = false;
       })
-      .addCase(updateUser.fulfilled, (state, action) => {
+      .addCase(updateUserData.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
         state.isLoading = false;
       })
-      .addCase(updateUserProfilePic.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.loggedIn = action.payload.loggedIn;
-        state.isLoading = false;
+      .addCase(updateUserData.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(loginUser.pending, (state, action) => {
         state.isLoading = true;
