@@ -8,22 +8,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
+      strategy:
+        # don't fail the entire matrix on failure
+        fail-fast: false
+        matrix:
+          # run copies of the current job in parallel
+          containers: [ 1, 2, 3, 4, 5 ]
     - name: Cache node modules
       uses: actions/cache@v3
       with:
         path: client/node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
-
+c
     - name: Install dependencies
       run: npm install
       working-directory: ./client
 
+
     - name: Run Cypress tests
       uses: cypress-io/github-action@v6
       with:
+        record: true
+        parallel: true
         start: npm run dev
         browser: chrome
         working-directory: ./client
