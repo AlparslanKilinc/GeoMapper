@@ -6,6 +6,8 @@ import PublishedMaps from './PublishedMaps';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import EditIcon from '@mui/icons-material/Edit';
 import MapIcon from '@mui/icons-material/Map';
+import { Divider } from '@mui/material';
+import Sidebar from './SideBar';
 
 const NavState = {
   DRAFTS: 'Drafts',
@@ -70,7 +72,11 @@ export default function ProfileNavBar() {
           Bookmarks
         </button>
       </li>
-      <div className="content">{Content}</div>
+      <Divider/>
+      <div className="profile">
+        <Sidebar />
+        <div className="content">{Content}</div>
+      </div>
     </div>
   );
 }

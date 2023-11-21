@@ -23,6 +23,7 @@ jobs:
       - name: Run tests
         env:
           PORT: ${{ secrets.PORT }}
-          MONG_URI: ${{ secrets.MONG_URI }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: cd server && npm test

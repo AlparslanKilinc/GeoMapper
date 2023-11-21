@@ -4,29 +4,43 @@ import api from '../auth-request-api/index';
 const initialState = {
   user: null,
   loggedIn: false,
-  message: '',
+  message: null,
   isLoading: false
 };
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async ({ userName, firstName, lastName, email, password, passwordVerify }) => {
-    const response = await api.registerUser(
-      userName,
-      firstName,
-      lastName,
-      email,
-      password,
-      passwordVerify
-    );
-    return response.data;
+  async (
+    { userName, firstName, lastName, email, password, passwordVerify },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.registerUser(
+        userName,
+        firstName,
+        lastName,
+        email,
+        password,
+        passwordVerify
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
   }
 );
 
-export const loginUser = createAsyncThunk('auth/loginUser', async ({ userName, password }) => {
-  const response = await api.loginUser(userName, password);
-  return response.data;
-});
+export const loginUser = createAsyncThunk(
+  'auth/loginUser',
+  async ({ userName, password }, { rejectWithValue }) => {
+    try {
+      const response = await api.loginUser(userName, password);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
 
 export const getLoggedIn = createAsyncThunk('auth/getLoggedIn', async () => {
   const response = await api.getLoggedIn();
@@ -38,11 +52,15 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async () => {
   return response.data;
 });
 
-export const updateUser = createAsyncThunk(
-  'auth/updateUser',
-  async ({ firstName, lastName, userName, bio, id }) => {
-    const response = await api.updateUser(firstName, lastName, userName, bio, id);
-    return response.data;
+export const updateUserData = createAsyncThunk(
+  'auth/updateUserData',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.updateUserData(formData);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
   }
 );
 
@@ -62,7 +80,11 @@ export const forgotPassword = createAsyncThunk('auth/forgotPassword', async ({ e
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    resetErrorMessage: (state) => {
+      state.message = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.fulfilled, (state, action) => {
@@ -85,10 +107,13 @@ export const authSlice = createSlice({
         state.user = null;
         state.isLoading = false;
       })
-      .addCase(updateUser.fulfilled, (state, action) => {
+      .addCase(updateUserData.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
         state.isLoading = false;
+      })
+      .addCase(updateUserData.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(loginUser.pending, (state, action) => {
         state.isLoading = true;
@@ -99,11 +124,12 @@ export const authSlice = createSlice({
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
-          state.message = action.payload ? action.payload.errorMessage : 'An error occurred';
+          state.message = action.payload?.errorMessage || 'An error occurred';
           state.isLoading = false;
         }
       );
   }
 });
 
+export const { resetErrorMessage } = authSlice.actions;
 export default authSlice.reducer;

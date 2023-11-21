@@ -3,8 +3,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 dotenv.config();
+require('./setupCloud');
 const Port = process.env.PORT;
-
 const app = express();
 
 // Middleware

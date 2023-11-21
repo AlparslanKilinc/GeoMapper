@@ -31,9 +31,15 @@ function a11yProps(index) {
   };
 }
 
-export default function TabMenu({ tabsConfig }) {
+export default function TabMenu({ tabsConfig, handleTabularOpen }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
+    // TODO: Use enum
+    if (tabsConfig[newValue].label === 'Tabular') {
+      handleTabularOpen(true);
+    } else {
+      handleTabularOpen(false);
+    }
     setValue(newValue);
   };
 

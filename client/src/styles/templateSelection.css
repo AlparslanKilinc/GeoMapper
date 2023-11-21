@@ -7,7 +7,7 @@
   max-width: 90vw;
 }
 
-.intro {
+.template-intro {
   display: flex;
   flex-direction: column;
 }

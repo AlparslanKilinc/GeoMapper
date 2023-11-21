@@ -7,6 +7,10 @@
   line-height: 0.3;
 }
 
+.link {
+  text-decoration: none;
+}
+
 .personal-info {
   display: flex;
   flex-direction: column;
@@ -25,5 +29,17 @@
   background-color: transparent;
   color: var(--main-color);
   border: 1.5px solid var(--main-color);
+  border-radius: 8px;
+}
+
+.editProfileButton:hover {
+  font-size: 16px;
+  font-family: 'Outfit', sans-serif;
+  width: 85%;
+  height: auto;
+  padding: 1rem;
+  background-color: transparent;
+  color: var(--dark-color);
+  border: 1.5px solid var(--dark-color);
   border-radius: 8px;
 }

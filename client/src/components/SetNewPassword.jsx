@@ -5,14 +5,11 @@ import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled } from '@mui/material/styles';
-import { useSelector } from 'react-redux';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import '../styles/loginPage.css';
 
-export default function ForgotPassword() {
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
+export default function SetNewPassword() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -24,21 +21,12 @@ export default function ForgotPassword() {
     }
   }));
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-  };
-
   const handleSubmit = (event) => {
-    event.preventDefault();
-    navigate('/RecoveryCode');
+    console.log('Submit New Password');
   };
 
   const goBack = () => {
-    if (loggedIn) {
-      navigate('/profile');
-    } else {
-      navigate('/login');
-    }
+    navigate('/RecoveryCode');
   };
 
   return (
@@ -62,20 +50,29 @@ export default function ForgotPassword() {
           <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
           <h1>Forgot Password</h1>
         </div>
-        <p>Input your email address and we'll dispatch a recovery code to you.</p>
+        <p>Enter your new password.</p>
         <Box component="form" noValidate onSubmit={handleSubmit}>
           <TextField
             size="small"
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-            autoComplete="email"
+            id="newPassword"
+            label="New Password"
+            name="New Password"
+            type="text"
+            autoComplete="New Password"
+          />
+          <TextField
+            size="small"
+            margin="normal"
+            required
+            fullWidth
+            id="confirmNewPassword"
+            label="Confirm New Password"
+            name="Confirm New Password"
+            type="text"
+            autoComplete="Confirm New Password"
           />
           <Button
             type="submit"
@@ -83,7 +80,7 @@ export default function ForgotPassword() {
             variant="contained"
             style={{ backgroundColor: '#40E0D0' }}
           >
-            Continue
+            Submit
           </Button>
         </Box>
       </Box>
