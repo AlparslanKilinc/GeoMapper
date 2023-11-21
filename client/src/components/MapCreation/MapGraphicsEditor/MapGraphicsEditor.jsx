@@ -1,89 +1,85 @@
-import * as React from 'react';
+import React from 'react';
 import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import GeoJsonMap from '../GeoJsonMap/';
 import TabMenu from './TabMenu';
-import StylesMenuSelector from './StylesMenuSelector';
+import StylesMenu from './StylesMenus';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
-import TabularSelector from './TabularSelector';
 import MapTitleEditor from './MapTitleEditor';
 import UndoRedoButtonGroup from './UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
+import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice';
+import {
+  setSelectedFeature,
+  setColors,
+  setSelectedPropUniqueValues
+} from '../../../redux-slices/mapStylesSlice';
+import { useEffect } from 'react';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
-  { label: 'Styles', content: <StylesMenuSelector /> },
+  { label: 'Styles', content: <StylesMenu /> },
   { label: 'Annotate', content: <AnnotateContent /> }
 ];
 
 const dataEditingToolboxConfig = [
   { label: 'Region', content: <RegionEditing /> },
-  { label: 'Tabular', content: <TabularSelector /> }
+  { label: 'Tabular', content: 'Tabular' }
 ];
 
-function MapBox(props) {
-  const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
+export default function MapGraphicsEditor() {
+  const dispatch = useDispatch();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const { colorByProperty, regions } = useSelector((state) => state.mapGraphics);
+  const { colors } = useSelector((state) => state.mapStyles);
 
-  return (
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        bgcolor: 'background.default',
-        p: 3,
-        display: 'flex',
-        flexDirection: 'row'
-      }}
-    >
-      <UndoRedoButtonGroup />
+  //  lets extract unique values from the property associated with the colorByProperty
+  const extractUniqueColorValues = (regions, colorByProperty) => {
+    const uniqueValues = new Set();
+    regions.forEach((region) => {
+      uniqueValues.add(region[colorByProperty]);
+    });
+    return uniqueValues;
+  };
+  const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
 
-      {isLoadingGeojson ? (
-        <CircularProgress />
-      ) : (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            width: '100%'
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <MapTitleEditor />
-            {/* make the buttons a square */}
+  const initColors = () => {
+    const uniqueValues = extractUniqueColorValues(regions, colorByProperty);
+    const c = Array.from(uniqueValues).map((name) => {
+      return { name, color: generateRandomColor() };
+    });
 
-            <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
-              <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
-                <SaveOutlinedIcon />
-              </Button>
-
-              <Button
-                variant="outlined"
-                aria-label="publish"
-                sx={{ height: '50px', width: '50px' }}
-              >
-                <PublishOutlinedIcon />
-              </Button>
-            </Box>
-          </Box>
-
-          {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={true} />}
-        </div>
-      )}
-    </Box>
-  );
-}
-
-export default function PermanentDrawerLeft() {
-  const [isTabularOpened, setIsTabularOpened] = React.useState(false);
-  const handleTabularOpen = (newState) => {
-    setIsTabularOpened(newState);
+    dispatch(setColors(c));
+    dispatch(setSelectedPropUniqueValues(Array.from(uniqueValues)));
   };
 
+  useEffect(() => {
+    initColors();
+  }, []);
+
+  const onEachFeature = (feature, layer) => {
+    // check if map graphics type is choropleth
+    if (mapGraphicsType === 'Choropleth Map') {
+      let regionData = regions[feature.properties.regionIdx];
+
+      // find the color for the region by the colorByProperty inside colors array
+      let color = colors.find((color) => color.name === regionData[colorByProperty]);
+      layer.setStyle({ fillColor: color.color });
+    }
+    const onClick = (e) => {
+      dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
+      dispatch(setSelectedFeature(e.target));
+      // change the color of the selected feature
+    };
+    layer.on({
+      click: onClick
+    });
+  };
+  const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
       <CssBaseline />
@@ -102,18 +98,68 @@ export default function PermanentDrawerLeft() {
         variant="permanent"
         anchor="left"
       >
-        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
+        <TabMenu tabsConfig={stylesToolboxConfig} />
       </Drawer>
+      <UndoRedoButtonGroup />
 
-      {!isTabularOpened && (<MapBox />)}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: 'background.default',
+          p: 3,
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
+        {isLoadingGeojson ? (
+          <CircularProgress />
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              width: '100%'
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <MapTitleEditor />
+              {/* make the buttons a square */}
+
+              <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
+                <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
+                  <SaveOutlinedIcon />
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  aria-label="publish"
+                  sx={{ height: '50px', width: '50px' }}
+                >
+                  <PublishOutlinedIcon />
+                </Button>
+              </Box>
+            </Box>
+
+            {geojson && (
+              <GeoJsonMap
+                geoJsonData={geojson.geoJSON}
+                styled={true}
+                onEachFeature={onEachFeature}
+                key={JSON.stringify(colors)}
+              />
+            )}
+          </div>
+        )}
+      </Box>
 
       <Drawer
         sx={{
-          // TODO: Fix the layout, now it's just using a hacky way
-          maxWidth: "80vw",
+          width: drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            maxWidth: "80vw",
+            width: drawerWidth,
             boxSizing: 'border-box',
             position: 'relative',
             // remove the top borders
@@ -124,7 +170,7 @@ export default function PermanentDrawerLeft() {
         variant="permanent"
         anchor="right"
       >
-        <TabMenu tabsConfig={dataEditingToolboxConfig} handleTabularOpen={handleTabularOpen} />
+        <TabMenu tabsConfig={dataEditingToolboxConfig} />
       </Drawer>
     </Box>
   );

@@ -30,13 +30,7 @@ const AnnotateContent = () => {
         <TextField onChange={handleChangeTitle} value={title} type="text" fullWidth />
       </Box>
 
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        fullWidth
-      >
+      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
         <Typography variant="subtitle2">description</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
         <BaseTextareaAutosize
