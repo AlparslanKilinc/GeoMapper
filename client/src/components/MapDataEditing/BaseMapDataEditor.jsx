@@ -24,7 +24,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import '../../styles/mapDataEditingPage.css';
 import { setRegionProperty } from '../../redux-slices/mapGraphicsDataSlice';
-import PropertySelector from '../MapCreation/propertySelector';
+import PropertySelector from '../MapCreation/PropertySelector';
 
 const BaseMapDataEditor = (config) => {
   return (props) => {
