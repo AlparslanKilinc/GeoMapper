@@ -1,5 +1,5 @@
 client/node_modules
 server/node_modules
 .env
-cloud-key.json
+google-cloud-key.json
 ```
