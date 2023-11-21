@@ -18,7 +18,6 @@ describe("RegisterPage", () => {
         });
         cy.visit('/login');
 
-        // Fill in the login form
         cy.get('#userName').type(testUsername);
         cy.get('#password').type(testPassword);
         cy.get('[type="submit"]').click();
