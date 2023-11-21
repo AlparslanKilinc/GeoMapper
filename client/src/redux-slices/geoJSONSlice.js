@@ -29,28 +29,6 @@ export const fetchGeojson = createAsyncThunk(
   }
 );
 
-export const createGeojson = createAsyncThunk(
-    'geojson/createGeojson',
-    async ({ geojsonData, ownerId, isPrivate, name }, { rejectWithValue }) => {
-      try {
-        const config = {
-          params: {
-            ownerId: ownerId,
-            isPrivate: isPrivate,
-            name: name
-          },
-          headers: {
-            'Content-Type': 'application/octet-stream'
-          },
-          responseType: 'arraybuffer'
-        };
-        const response = await apis.createGeojson(geojsonData, config);
-        return response.data;
-      } catch (error) {
-        return rejectWithValue({ message: 'Error creating GeoJSON' });
-      }
-    }
-);
 
 
 const geoJsonSlice = createSlice({
@@ -84,13 +62,6 @@ const geoJsonSlice = createSlice({
       .addCase(fetchGeojsonById.rejected, (state) => {
         state.isLoadingGeojson = false;
       })
-      .addCase(createGeojson.rejected, (state) => {
-      state.isLoadingGeojson = false;
-    })
-  .addCase(createGeojson.fulfilled, (state, action) => {
-      state.isLoadingGeojson = false;
-    });
-
   }
 });
 
