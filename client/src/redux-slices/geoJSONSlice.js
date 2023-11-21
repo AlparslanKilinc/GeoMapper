@@ -61,7 +61,7 @@ const geoJsonSlice = createSlice({
       })
       .addCase(fetchGeojsonById.rejected, (state) => {
         state.isLoadingGeojson = false;
-      })
+      });
   }
 });
 
