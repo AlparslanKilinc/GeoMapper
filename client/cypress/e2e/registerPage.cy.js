@@ -2,10 +2,10 @@ describe("RegisterPage", () => {
     const testUsername = 'testuser';
     const testPassword = 'testpassword';
     it('should log in with the registered account', () => {
-        // Register the test account if not already registered
+
         cy.request({
             method: 'POST',
-            url: 'auth/registerUser', // Replace with the actual registration API endpoint
+            url: 'auth/registerUser',
             body: {
                 username: testUsername,
                 firstName: 'Tina',
