@@ -29,8 +29,6 @@ export const fetchGeojson = createAsyncThunk(
   }
 );
 
-
-
 const geoJsonSlice = createSlice({
   name: 'geojson',
   initialState: {
