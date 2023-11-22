@@ -25,6 +25,36 @@ export default function ColorsChoroAccordionMenu() {
     dispatch(changeColorByProperty(newValue));
   };
 
+  let colorSelectors = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%' }}
+    >
+      <Typography variant="subtitle2">select color</Typography>
+      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+
+      {colors.map(({ name, color }, index) => {
+        return (
+          <ColorSelector
+            title={name}
+            intialColor={color}
+            disableLower
+            disableUpper
+            handleColorChangeCustom={handleColorChangeText(name)}
+            key={index + 'colorSelector'}
+          />
+        );
+      })}
+    </Box>
+  );
+
+  // if the colorByProperty is continous, then we need to show the color range
+  if (!isNaN(regions[0][colorByProperty]))
+    colorSelectors = <Typography>Range color selector under construction</Typography>;
+
   return (
     <Box
       display="flex"
@@ -51,29 +81,7 @@ export default function ColorsChoroAccordionMenu() {
         />
       </Box>
 
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ width: '100%' }}
-      >
-        <Typography variant="subtitle2">select color</Typography>
-        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-
-        {colors.map(({ name, color }, index) => {
-          return (
-            <ColorSelector
-              title={name}
-              intialColor={color}
-              disableLower
-              disableUpper
-              handleColorChangeCustom={handleColorChangeText(name)}
-              key={index + 'colorSelector'}
-            />
-          );
-        })}
-      </Box>
+      {colorSelectors}
     </Box>
   );
 }

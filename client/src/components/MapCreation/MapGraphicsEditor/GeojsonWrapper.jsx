@@ -13,7 +13,7 @@ export default function GeojsonWrapper({ styles, isStyled }) {
   const { geoJSON } = useSelector((state) => state.geojson.geojson);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const { colorByProperty, regions, nameByProperty } = useSelector((state) => state.mapGraphics);
-  const { colors } = useSelector((state) => state.mapStyles);
+  const { colors, continousColorScale } = useSelector((state) => state.mapStyles);
 
   const map = useMap();
   const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
@@ -21,7 +21,6 @@ export default function GeojsonWrapper({ styles, isStyled }) {
   let onEachFeature = (feature, layer) => {};
 
   if (isStyled) {
-    console.log('rerendering geojsonwrapper');
     onEachFeature = (feature, layer) => {
       // check if map graphics type is choropleth
 
@@ -30,9 +29,16 @@ export default function GeojsonWrapper({ styles, isStyled }) {
         let regionData = regions[feature.properties.regionIdx];
         name = regionData[nameByProperty];
         // find the color for the region by the colorByProperty inside colors array
+
+        // check type of colorByProperty
         let color = generateRandomColor();
-        let colorObj = colors.find((color) => color.name === regionData[colorByProperty]);
-        if (colorObj) color = colorObj.color;
+        let colorPropVal = regionData[colorByProperty];
+        if (!isNaN(colorPropVal)) {
+          color = continousColorScale[feature.properties.regionIdx];
+        } else {
+          let colorObj = colors.find((color) => color.name === regionData[colorByProperty]);
+          if (colorObj) color = colorObj.color;
+        }
         layer.setStyle({ fillColor: color });
       }
       const onClick = (e) => {

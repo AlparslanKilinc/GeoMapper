@@ -30,7 +30,8 @@ export default function RegionEditing() {
     }
   }
   const handlePropValueChange = (event) => {
-    dispatch(setRegionProperty({ propertyName: prop, value: event.target.value }));
+    // convert event.target.value to
+    dispatch(setRegionProperty({ propertyName: prop, value: Number(event.target.value) }));
   };
 
   const handlePropValueChangeText = (event, value) => {
@@ -48,7 +49,7 @@ export default function RegionEditing() {
     <TextField type={type} value={regionDetails[prop]} onChange={handlePropValueChange} fullWidth />
   );
 
-  if (prop === colorByProperty) {
+  if (prop === colorByProperty && isNaN(regionDetails[prop])) {
     inputField = (
       <Autocomplete
         value={regionDetails[prop]}

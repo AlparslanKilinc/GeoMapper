@@ -13,13 +13,13 @@ import MapTitleEditor from './MapTitleEditor';
 import UndoRedoButtonGroup from './UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
-import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice';
 import {
-  setSelectedFeature,
   setColors,
-  setSelectedPropUniqueValues
+  setSelectedPropUniqueValues,
+  setContinousColorScale
 } from '../../../redux-slices/mapStylesSlice';
 import { useEffect } from 'react';
+import * as d3 from 'd3';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -62,13 +62,26 @@ export default function MapGraphicsEditor() {
     dispatch(setSelectedPropUniqueValues(Array.from(uniqueValues)));
   };
 
-  const initColorsNumerical = () => {};
+  const initColorsNumerical = () => {
+    const data = regions.map((region) => region[colorByProperty]);
+    const minData = d3.min(data);
+    const maxData = d3.max(data);
+
+    // Create a continuous color scale
+    const colorScale = d3.scaleLinear().domain([minData, maxData]).range(['lightblue', 'darkblue']); // You can choose any two colors
+
+    // Normalize and map data to color
+    const c = data.map((d) => colorScale(d));
+    console.log(c);
+    dispatch(setContinousColorScale(c));
+  };
 
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
     if (mapGraphicsType === 'Choropleth Map') {
       const isNumeric = !isNaN(regions[0][colorByProperty]);
+      console.log('isNumeric', isNumeric);
       if (isNumeric) initColorsNumerical();
       else initColorsCategorical();
     }
@@ -76,7 +89,7 @@ export default function MapGraphicsEditor() {
 
   useEffect(() => {
     initColors();
-  }, []);
+  }, [colorByProperty, regions]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
