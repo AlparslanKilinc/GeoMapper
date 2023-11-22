@@ -62,7 +62,7 @@ const BaseMapDataEditor = (config) => {
       dispatch(checkMatch());
     };
 
-    const handleDelete = () => {};
+    const handleDelete = () => { };
 
     const renderDefaultTableButtons = () => (
       <div id="table-buttons">
@@ -139,7 +139,7 @@ const BaseMapDataEditor = (config) => {
 
     let propertySelectors = properties.map((selectorConfig) => {
       return (
-        <PropertySelector propertyName={selectorConfig.propertyName} value={selectorConfig.value} />
+        <PropertySelector key={selectorConfig.propertyName} propertyName={selectorConfig.propertyName} value={selectorConfig.value} />
       );
     });
 
@@ -149,48 +149,52 @@ const BaseMapDataEditor = (config) => {
       </Box>
     );
 
+    const renderLeftPanel = () => (
+      <div id="data-editing-page-left">
+        <div className="header-primary">
+          <h2>{config.mapGraphicsType}</h2>
+          <Divider style={{ width: '50%' }} />
+        </div>
+
+        <h3 className="secondary-title">add data</h3>
+        <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
+          <LoadingButton
+            startIcon={<CloudUploadIcon />}
+            variant="outlined"
+            style={{ color: 'black', borderColor: 'black' }}
+          >
+            upload map
+          </LoadingButton>
+
+          <LoadingButton
+            startIcon={<AutoFixHighIcon />}
+            variant="outlined"
+            style={{ color: 'black', borderColor: 'black' }}
+          >
+            random data
+          </LoadingButton>
+        </div>
+
+        <TextField
+          variant="outlined"
+          label="Search for places"
+          sx={{
+            width: '80%'
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            )
+          }}
+        />
+      </div>
+    );
+
     return (
       <div id="data-editing-page">
-        <div id="data-editing-page-left">
-          <div className="header-primary">
-            <h2>{config.mapGraphicsType}</h2>
-            <Divider style={{ width: '50%' }} />
-          </div>
-
-          <h3 className="secondary-title">add data</h3>
-          <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
-            <LoadingButton
-              startIcon={<CloudUploadIcon />}
-              variant="outlined"
-              style={{ color: 'black', borderColor: 'black' }}
-            >
-              upload map
-            </LoadingButton>
-
-            <LoadingButton
-              startIcon={<AutoFixHighIcon />}
-              variant="outlined"
-              style={{ color: 'black', borderColor: 'black' }}
-            >
-              random data
-            </LoadingButton>
-          </div>
-
-          <TextField
-            variant="outlined"
-            label="Search for places"
-            sx={{
-              width: '80%'
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              )
-            }}
-          />
-        </div>
+        {!props.isTabularTab && renderLeftPanel()}
         <div id="data-editing-page-mid">{renderTable()}</div>
         <div id="data-editing-page-right">
           <div className="header-primary">

@@ -37,7 +37,7 @@ export default function TabMenu({ tabsConfig, handleTabularOpen }) {
     // TODO: Use enum
     if (tabsConfig[newValue].label === 'Tabular') {
       handleTabularOpen(true);
-    } else {
+    } else if (tabsConfig[newValue].label === 'Region') {
       handleTabularOpen(false);
     }
     setValue(newValue);

@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import GeoJsonMap from '../GeoJsonMap/';
 import TabMenu from './TabMenu';
+import TabularSelector from './TabularSelector';
 import StylesMenu from './StylesMenus';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
@@ -28,12 +29,13 @@ const stylesToolboxConfig = [
 
 const dataEditingToolboxConfig = [
   { label: 'Region', content: <RegionEditing /> },
-  { label: 'Tabular', content: 'Tabular' }
+  { label: 'Tabular', content: <TabularSelector /> }
 ];
 
 export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const [isTabularOpened, setIsTabularOpened] = React.useState(false);
   const { colorByProperty, regions } = useSelector((state) => state.mapGraphics);
   const { colors } = useSelector((state) => state.mapStyles);
 
@@ -61,6 +63,10 @@ export default function MapGraphicsEditor() {
     initColors();
   }, []);
 
+  const handleTabularOpen = (newState) => {
+    setIsTabularOpened(newState);
+  };
+
   const onEachFeature = (feature, layer) => {
     // check if map graphics type is choropleth
     if (mapGraphicsType === 'Choropleth Map') {
@@ -79,7 +85,65 @@ export default function MapGraphicsEditor() {
       click: onClick
     });
   };
-  const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
+
+  function MapBox() {
+    const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
+    return (<Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        bgcolor: 'background.default',
+        pr: 4,
+        display: 'flex',
+        flexDirection: 'row'
+      }}
+    >
+      <UndoRedoButtonGroup />
+
+      {isLoadingGeojson ? (
+        <CircularProgress />
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            width: '100%'
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <MapTitleEditor />
+            {/* make the buttons a square */}
+
+            <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
+              <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
+                <SaveOutlinedIcon />
+              </Button>
+
+              <Button
+                variant="outlined"
+                aria-label="publish"
+                sx={{ height: '50px', width: '50px' }}
+              >
+                <PublishOutlinedIcon />
+              </Button>
+            </Box>
+          </Box>
+
+          {geojson && (
+            <GeoJsonMap
+              geoJsonData={geojson.geoJSON}
+              styled={true}
+              onEachFeature={onEachFeature}
+              key={JSON.stringify(colors)}
+            />
+          )}
+        </div>
+      )}
+    </Box>);
+
+  }
+
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
       <CssBaseline />
@@ -98,68 +162,20 @@ export default function MapGraphicsEditor() {
         variant="permanent"
         anchor="left"
       >
-        <TabMenu tabsConfig={stylesToolboxConfig} />
+        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
-      <UndoRedoButtonGroup />
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: 'background.default',
-          p: 3,
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
-        {isLoadingGeojson ? (
-          <CircularProgress />
-        ) : (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              width: '100%'
-            }}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <MapTitleEditor />
-              {/* make the buttons a square */}
-
-              <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
-                <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
-                  <SaveOutlinedIcon />
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  aria-label="publish"
-                  sx={{ height: '50px', width: '50px' }}
-                >
-                  <PublishOutlinedIcon />
-                </Button>
-              </Box>
-            </Box>
-
-            {geojson && (
-              <GeoJsonMap
-                geoJsonData={geojson.geoJSON}
-                styled={true}
-                onEachFeature={onEachFeature}
-                key={JSON.stringify(colors)}
-              />
-            )}
-          </div>
-        )}
-      </Box>
+      {!isTabularOpened && (<MapBox />)}
 
       <Drawer
         sx={{
-          width: drawerWidth,
+          // TODO: Trying to find a better solution to the tabular width issue
+          width: isTabularOpened ? null : drawerWidth,
+          maxWidth: "80vw",
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: isTabularOpened ? null : drawerWidth,
+            maxWidth: "80vw",
             boxSizing: 'border-box',
             position: 'relative',
             // remove the top borders
@@ -170,7 +186,7 @@ export default function MapGraphicsEditor() {
         variant="permanent"
         anchor="right"
       >
-        <TabMenu tabsConfig={dataEditingToolboxConfig} />
+        <TabMenu tabsConfig={dataEditingToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
     </Box>
   );
