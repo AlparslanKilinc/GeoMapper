@@ -56,7 +56,18 @@ const geoJsonSlice = createSlice({
     isLoadingItems: true,
     isLoadingGeojson: false
   },
-  reducers: {},
+  reducers: {
+    setUploadedGeoJSON: (state, action) => {
+      state.geojson = { geoJSON: action.payload };
+      state.isLoadingGeojson = false;
+    },
+    startLoadingGeojson: (state) => {
+      state.isLoadingGeojson = true;
+    },
+    stopLoadingGeojson: (state) => {
+      state.isLoadingGeojson = false;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchGeojson.pending, (state) => {
@@ -82,4 +93,5 @@ const geoJsonSlice = createSlice({
   }
 });
 
+export const { setUploadedGeoJSON,startLoadingGeojson, stopLoadingGeojson } = geoJsonSlice.actions;
 export default geoJsonSlice.reducer;
