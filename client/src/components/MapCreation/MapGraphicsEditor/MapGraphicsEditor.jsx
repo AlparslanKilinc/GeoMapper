@@ -36,7 +36,7 @@ export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
-  const { colorByProperty, regions } = useSelector((state) => state.mapGraphics);
+  const { colorByProperty, regions, nameByProperty } = useSelector((state) => state.mapGraphics);
   const { colors } = useSelector((state) => state.mapStyles);
 
   //  lets extract unique values from the property associated with the colorByProperty
@@ -49,14 +49,29 @@ export default function MapGraphicsEditor() {
   };
   const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
 
-  const initColors = () => {
+  const initColorsCategorical = () => {
     const uniqueValues = extractUniqueColorValues(regions, colorByProperty);
     const c = Array.from(uniqueValues).map((name) => {
-      return { name, color: generateRandomColor() };
+      let color = generateRandomColor();
+      let colorObj = colors.find((color) => color.name === name);
+      if (colorObj) color = colorObj.color;
+      return { name, color: color };
     });
 
     dispatch(setColors(c));
     dispatch(setSelectedPropUniqueValues(Array.from(uniqueValues)));
+  };
+
+  const initColorsNumerical = () => {};
+
+  const initColors = () => {
+    //check if the property associated with the colorByProperty is numeric or not
+
+    if (mapGraphicsType === 'Choropleth Map') {
+      const isNumeric = !isNaN(regions[0][colorByProperty]);
+      if (isNumeric) initColorsNumerical();
+      else initColorsCategorical();
+    }
   };
 
   useEffect(() => {
@@ -67,81 +82,56 @@ export default function MapGraphicsEditor() {
     setIsTabularOpened(newState);
   };
 
-  const onEachFeature = (feature, layer) => {
-    // check if map graphics type is choropleth
-    if (mapGraphicsType === 'Choropleth Map') {
-      let regionData = regions[feature.properties.regionIdx];
-
-      // find the color for the region by the colorByProperty inside colors array
-      let color = colors.find((color) => color.name === regionData[colorByProperty]);
-      layer.setStyle({ fillColor: color.color });
-    }
-    const onClick = (e) => {
-      dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
-      dispatch(setSelectedFeature(e.target));
-      // change the color of the selected feature
-    };
-    layer.on({
-      click: onClick
-    });
-  };
-
   function MapBox() {
     const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
-    return (<Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        bgcolor: 'background.default',
-        pr: 4,
-        display: 'flex',
-        flexDirection: 'row'
-      }}
-    >
-      <UndoRedoButtonGroup />
+    return (
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: 'background.default',
+          pr: 4,
+          display: 'flex',
+          flexDirection: 'row'
+        }}
+      >
+        <UndoRedoButtonGroup />
 
-      {isLoadingGeojson ? (
-        <CircularProgress />
-      ) : (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            width: '100%'
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <MapTitleEditor />
-            {/* make the buttons a square */}
+        {isLoadingGeojson ? (
+          <CircularProgress />
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              width: '100%'
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <MapTitleEditor />
+              {/* make the buttons a square */}
 
-            <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
-              <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
-                <SaveOutlinedIcon />
-              </Button>
+              <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
+                <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
+                  <SaveOutlinedIcon />
+                </Button>
 
-              <Button
-                variant="outlined"
-                aria-label="publish"
-                sx={{ height: '50px', width: '50px' }}
-              >
-                <PublishOutlinedIcon />
-              </Button>
+                <Button
+                  variant="outlined"
+                  aria-label="publish"
+                  sx={{ height: '50px', width: '50px' }}
+                >
+                  <PublishOutlinedIcon />
+                </Button>
+              </Box>
             </Box>
-          </Box>
 
-          {geojson && (
-            <GeoJsonMap
-              geoJsonData={geojson.geoJSON}
-              styled={true}
-              onEachFeature={onEachFeature}
-              key={JSON.stringify(colors)}
-            />
-          )}
-        </div>
-      )}
-    </Box>);
-
+            {geojson && <GeoJsonMap styled={true} key={JSON.stringify(colors)} />}
+          </div>
+        )}
+      </Box>
+    );
   }
 
   return (
@@ -165,17 +155,17 @@ export default function MapGraphicsEditor() {
         <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
 
-      {!isTabularOpened && (<MapBox />)}
+      {!isTabularOpened && <MapBox />}
 
       <Drawer
         sx={{
           // TODO: Trying to find a better solution to the tabular width issue
           width: isTabularOpened ? null : drawerWidth,
-          maxWidth: "80vw",
+          maxWidth: '80vw',
           flexShrink: 0,
           '& .MuiDrawer-paper': {
             width: isTabularOpened ? null : drawerWidth,
-            maxWidth: "80vw",
+            maxWidth: '80vw',
             boxSizing: 'border-box',
             position: 'relative',
             // remove the top borders

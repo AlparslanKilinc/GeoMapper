@@ -54,7 +54,11 @@ const ColorSelector = ({
   let colorBy = colorByRange;
 
   if (title) {
-    colorBy = <Typography variant="subtitle2">{title}</Typography>;
+    colorBy = (
+      <Typography sx={{ minWidth: '5ch' }} variant="subtitle2">
+        {title}
+      </Typography>
+    );
   }
 
   return (
@@ -63,7 +67,6 @@ const ColorSelector = ({
       flexDirection="row"
       alignItems="center"
       justifyContent="center"
-      format="hex"
       sx={{ gap: 2 }}
     >
       <MuiColorInput
