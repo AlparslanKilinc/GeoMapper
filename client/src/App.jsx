@@ -13,6 +13,7 @@ import ForgotPassword from './components/ForgotPassword';
 import RecoveryCode from './components/RecoveryCode';
 import SetNewPassword from './components/SetNewPassword';
 import React, {useEffect, useState} from "react";
+import CssBaseline from '@mui/material/CssBaseline';
 
 function App() {
   const [isDark, setIsDark] = useState(() => {
@@ -21,21 +22,27 @@ function App() {
   });
 
   const handleDarkModeClick = () => {
-    setIsDark((prevIsDark) => {
+       setIsDark((prevIsDark) => {
       const newIsDark = !prevIsDark;
       localStorage.setItem('darkMode', JSON.stringify(newIsDark));
       return newIsDark;
     });
 
   }
+
   const theme = createTheme({
     palette: {
       primary: {
-        main: '#40E0D0' // Your desired primary color
-        // You can also specify light, dark, and contrastText if needed
+        main: '#40E0D0'
       }
     },
     typography: {
+      allVariants: {
+        color: 'black'
+      },
+      button: {
+        textTransform: 'none'
+      },
       fontFamily: [
         'Outfit', // The name of your font family
         'Arial', // Fallback font
@@ -43,61 +50,162 @@ function App() {
       ].join(',')
     },
     components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "white",
+            color: "#40e0d0",
+          }
+        }
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'white'
+          }
+        }
+      },
+
       MuiButton: {
         styleOverrides: {
           root: {
-            // Name of the rule
-            textTransform: 'none' // Change text transform
-          },
-          indicator: {
-            color: 'green' // Your desired color
+            backgroundColor: ' #40e0d0',
+            '&:hover': {
+              backgroundColor: ' #006666',
+            },
           }
-        }
+        },
       },
+        MuiLoadingButton: {
+          styleOverrides: {
+            root: {
+              backgroundColor: ' #40e0d0',
+              '&:hover': {
+                backgroundColor: ' #006666',
+              },
+            }
+        },
+        MuiSelect: {
+          styleOverrides: {
+            root: {
+              border: '1px solid #212121',
+            }
+          }
 
-      MuiAccordion: {
-        styleOverrides: {
-          root: {
-            backgroundColor: 'white', // White background for the accordion
-            boxShadow: 'none', // Removes box shadow
-            '&:before': {
-              display: 'none' // Removes the pseudo-element that can also add a shadow
-            },
-            '&.MuiPaper-elevation0': {
-              boxShadow: 'none' // Ensures no shadow when the elevation is set to 0
-            }
-          }
-        }
-      },
-      // Style overrides for AccordionSummary
-      MuiAccordionSummary: {
-        styleOverrides: {
-          root: {
-            backgroundColor: 'white', // White background for the accordion summary
-            color: 'black', // Black text color
-            '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-              transform: 'rotate(180deg)', // Ensures the icon rotates when expanded
-              color: '#40E0D0'
-            },
-            '& .MuiAccordionSummary-expandIconWrapper': {
-              color: 'black' // Black color for the expand icon
-            }
-          }
-        }
+        },
+
+
       }
-      // Add any other theme customizations here
     }
   });
+
+
+
+
+  const darkTheme = createTheme({
+    palette: {
+      background: {
+        default: "#212121"
+      },
+    },
+    typography: {
+      allVariants: {
+        color: 'white'
+      },
+      button: {
+        textTransform: 'none'
+      },
+      fontFamily: [
+        'Outfit', // The name of your font family
+        'Arial', // Fallback font
+        'sans-serif' // Generic font family
+      ].join(','),
+    },
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "#212121",
+            color: "006666",
+          }
+        }
+
+      },
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            color: 'white',
+          }
+        }
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#006666',
+            '&:hover': {
+              backgroundColor: 'black',
+            },
+          }
+        }
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#333333',
+            color: 'white'
+          }
+        }
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#1a1a1a',
+            color: 'white'
+          }
+        }
+      },
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            color: 'var(--main-color)'
+          }
+        }
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#333333',
+          }
+        }
+      },
+      MuiNavigationButton: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#006666',
+          }
+        }
+      },
+      MuiSelect: {
+        styleOverrides: {
+          root: {
+            border: '1px solid white',
+          }
+        }
+      },
+    }
+
+
+
+  });
+
   useEffect(() => {
-    // Update the dark mode state in localStorage whenever it changes
     localStorage.setItem('darkMode', JSON.stringify(isDark));
   }, [isDark]);
 
-
   return (
-    <ThemeProvider theme = {theme}>
+    <ThemeProvider theme = {isDark ? darkTheme : theme}>
       <Router>
-        <div id="root" className={isDark ? 'dark-mode' : 'light-mode'}>
+        <CssBaseline />
         <NavBar  isDark={isDark} handleDarkModeClick = {handleDarkModeClick}/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -112,7 +220,6 @@ function App() {
           <Route path="/recoveryCode" element={<RecoveryCode />} />
           <Route path="/setNewPassword" element={<SetNewPassword />} />
         </Routes>
-        </div>
       </Router>
     </ThemeProvider>
   );

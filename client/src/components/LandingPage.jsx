@@ -64,12 +64,12 @@ export default function LandingPage() {
           </p>
           <div className="button-group">
             <Link className="link" to={'/explore'}>
-              <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="explore" className = "landing-buttons">
+              <Button  variant="contained" id="explore" className = "landing-buttons">
                 Explore
               </Button>
             </Link>
             <Link className="link" to={'/register'}>
-              <Button style={{ backgroundColor: '#40E0D0' }} className = "landing-buttons" variant="contained" id="register">
+              <Button  className = "landing-buttons" variant="contained" id="register">
                 Register
               </Button>
             </Link>
@@ -91,7 +91,6 @@ export default function LandingPage() {
                 <p>{map.description}</p>
                 <Button
                   onClick={() => handleCreateClick(map.title)}
-                  style={{ backgroundColor: '#40E0D0' }}
                   variant="contained"
                   id="register"
                   className = "landing-buttons"

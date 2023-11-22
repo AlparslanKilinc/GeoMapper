@@ -48,21 +48,19 @@ const BaseMapDataEditor = (config) => {
     const renderDefaultTableButtons = () => (
       <div id="table-buttons" className = "table-buttons">
         <LoadingButton
-          variant="outlined"
-          style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
+          variant="variant"
           onClick={handleAddColumn}
         >
           Add Column
         </LoadingButton>
         <LoadingButton
-          variant="outlined"
-          style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
+          variant="variant"
           onClick={handleAddRow}
         >
           Add Row
         </LoadingButton>
         <LoadingButton
-          variant="outlined"
+          variant="contained"
           style={{ color: 'red', borderColor: 'red' }}
           onClick={handleDelete}
         >
@@ -118,16 +116,14 @@ const BaseMapDataEditor = (config) => {
         <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
           <LoadingButton className = "loading-button"
             startIcon={<CloudUploadIcon />}
-            variant="outlined"
-            style={{ color: 'black', borderColor: 'black' }}
+            variant="contained"
           >
             upload map
           </LoadingButton>
 
           <LoadingButton
             startIcon={<AutoFixHighIcon />}
-            variant="outlined"
-            style={{ color: 'black', borderColor: 'black' }}
+            variant="contained"
           >
             random data
           </LoadingButton>
@@ -206,8 +202,7 @@ const BaseMapDataEditor = (config) => {
             </Typography>
           </Box>
           <LoadingButton
-            variant="outlined"
-            style={{ color: 'black', borderColor: 'black' }}
+            variant="contained"
             onClick={handleCheck}
           >
             check

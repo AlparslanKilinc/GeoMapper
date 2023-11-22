@@ -16,15 +16,6 @@ export default function MapCreationWrapper() {
   const location = useLocation();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
-  const NavigationButton = styled(Button)(({ theme }) => ({
-    borderColor: '#40e0d0',
-    color: '#40e0d0',
-    '&:hover': {
-      borderColor: '#40e0d0',
-      backgroundColor: 'transparent'
-    }
-  }));
-
   useEffect(() => {
     if (location.state && location.state.stage) {
       setCurrentStage(location.state.stage);
@@ -49,23 +40,23 @@ export default function MapCreationWrapper() {
   return (
     <div className="mapCreationWrapper">
       <div className="wrapper-button-group">
-        <NavigationButton
-          variant="outlined"
+        <Button
+          variant="contained"
           startIcon={<ArrowBackIcon />}
           onClick={goBack}
           disabled={currentStage === 0}
         >
           Back
-        </NavigationButton>
+        </Button>
 
-        <NavigationButton
-          variant="outlined"
+        <Button
+          variant="contained"
           endIcon={<ArrowForwardIcon />}
           onClick={goForward}
           disabled={!mapGraphicsType || currentStage === stages.length - 1}
         >
           Next
-        </NavigationButton>
+        </Button>
       </div>
       {stages[currentStage]}
     </div>

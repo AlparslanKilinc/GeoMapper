@@ -10,7 +10,7 @@ export default function SearchBar(){
     return(
        <div className = "searchBar" >
            <form>
-               <TextField sx = {{backgroundColor : 'white', borderRadius: '5px'}}
+               <TextField sx = {{borderRadius: '5px'}}
                    id="search-bar"
                    className="search-bar"
                    onInput={(e) => {

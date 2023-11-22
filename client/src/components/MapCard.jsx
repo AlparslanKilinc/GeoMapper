@@ -90,7 +90,7 @@ export default function MapCard () {
                         alt="green iguana"
                     />
                     <CardContent>
-                        <Link className = "map-card-user-link" href = "ExplorePage#" underline = "hover" sx = {{color: 'var(--dark-color)', fontSize:'10px'}}>
+                        <Link className = "map-card-user-link" href = "ExplorePage#" underline = "hover" sx = {{ fontSize:'10px'}}>
                             @john123
                         </Link>
                         <Typography gutterBottom variant="h5" className = "dark-mode-labels">

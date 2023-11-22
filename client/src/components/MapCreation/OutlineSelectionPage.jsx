@@ -52,8 +52,8 @@ export default function OutlineSelectionPage() {
 
         <TextField
           variant="outlined"
-          helperText="What type of map do you want to create?"
           className = "outline-selection-texfield"
+          style = {{marginRight: '10px'}}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start" className = "map-location-textfield"  >
@@ -61,7 +61,9 @@ export default function OutlineSelectionPage() {
               </InputAdornment>
             )
           }}
-        />
+
+            />
+          <Typography style = {{fontSize: '12px', marginTop: '-20px'}}>What type of map do you want to create?</Typography>
 
         {isLoadingItems ? (
           <Typography>Loading...</Typography>

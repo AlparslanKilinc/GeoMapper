@@ -29,7 +29,7 @@ function MapBox(props) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
 
   return (
-    <Box className = "dark-mode-map"
+    <Box
       component="main"
       sx={{
         flexGrow: 1,

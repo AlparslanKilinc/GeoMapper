@@ -1,7 +1,5 @@
 .navigationBar {
   display: flex;
-  background-color: var(--white);
-  color: var(--main-color);
   justify-content: space-between;
   gap: 1rem;
 }

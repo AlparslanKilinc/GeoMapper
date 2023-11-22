@@ -1,4 +1,3 @@
-
 import React, {useState} from 'react';
 import '../styles/explorePage.css'
 import MapCard from './MapCard'
@@ -10,6 +9,9 @@ import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
 import Popover from '@mui/material/Popover';
 import CopyRight from './CopyRight';
+import mapMetadataSlice from '../redux-slices/mapMetadataSlice';
+import Typography from "@mui/material/Typography";
+import MenuList from '@mui/material/MenuList';
 
 
 
@@ -45,24 +47,20 @@ export default function ExplorePage() {
   }
   return (
       <div className = "explore-page">
-        <div className = "explore-title"><h1>Explore</h1></div>
+        <Typography className = "explore-title" sx = {{fontSize: '30px'}}>Explore</Typography>
         <div className = "filter-sort-buttons">
           <div className = "filter"><Button
               variant = "contained"
               onClick={handleFilterMenuOpen}
               className = "explore-buttons"
-              sx = {{backgroundColor : 'var(--main-color)',
-                '&:hover': {backgroundColor: 'var(--dark-color)'}}}
           >Filter</Button>
           </div>
           <div className = "sort">
             <Button
                 variant = "contained"
                 className = "explore-buttons"
-                onClick={handleSortMenuOpen}
-                sx = {{backgroundColor : 'var(--main-color)',
-                  '&:hover': {backgroundColor: 'var(--dark-color)'
-                  }}}>Sort
+                onClick={handleSortMenuOpen}>
+                Sort
             </Button>
           </div>
         </div>
@@ -86,6 +84,7 @@ export default function ExplorePage() {
         </div>
           <div className='sort-menu'>
               <Menu anchorEl={anchorEl} open={isSortOpen} onClose={handleSortMenuClose}>
+                  <MenuList>
                   <MenuItem className='newest'onClick={handleSortMenuClose}>
                       Newest
                   </MenuItem>
@@ -98,6 +97,7 @@ export default function ExplorePage() {
                   <MenuItem className='least-likes' onClick={handleSortMenuClose}>
                       Least Likes
                   </MenuItem>
+                </MenuList>
               </Menu>
           </div>
 

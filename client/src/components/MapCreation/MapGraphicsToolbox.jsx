@@ -39,7 +39,7 @@ const MapGraphicsToolbox = () => {
         </Tabs>
       </Drawer>
 
-      <Box sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
+      <Box sx={{ flexGrow: 1, p: 3 }}>
         {selectedTab === 0 && (
           // Content for Annotate tools
           <Typography variant="h6" gutterBottom>
