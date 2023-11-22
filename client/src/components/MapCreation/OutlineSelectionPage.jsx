@@ -1,22 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import '../../styles/outlineSelectionPage.css';
 import { useSelector } from 'react-redux';
 import { List, ListItemButton, ListItemText, Divider, TextField } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
-import '../../styles/outlineSelectionPage.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import GeoJsonMap from './GeoJsonMap';
 import { useDispatch } from 'react-redux';
 import { fetchGeojson, fetchGeojsonById } from '../../redux-slices/geoJSONSlice';
 import InputAdornment from '@mui/material/InputAdornment';
 import PlaceIcon from '@mui/icons-material/Place';
+import OutlineFileUploader from './OutlineFileUploader';
 
 export default function OutlineSelectionPage() {
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-
   const dispatch = useDispatch();
+
   const { items, geojson, isLoadingItems, isLoadingGeojson } = useSelector(
     (state) => state.geojson
   );
@@ -28,7 +26,6 @@ export default function OutlineSelectionPage() {
   // Handler for clicking an item
   const handleItemClick = (item) => {
     dispatch(fetchGeojsonById(item._id));
-    // Perform actions when an item is clicked
   };
 
   return (
@@ -40,15 +37,7 @@ export default function OutlineSelectionPage() {
         </div>
 
         <h3 className="secondary-title">select map</h3>
-
-        <LoadingButton
-          startIcon={<CloudUploadIcon />}
-          variant="outlined"
-          style={{ color: 'black', borderColor: 'black' }}
-        >
-          upload map
-        </LoadingButton>
-
+        <OutlineFileUploader />
         <TextField
           variant="outlined"
           helperText="What type of map do you want to create?"
@@ -62,7 +51,9 @@ export default function OutlineSelectionPage() {
         />
 
         {isLoadingItems ? (
-          <Typography>Loading...</Typography>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <CircularProgress />
+          </div>
         ) : (
           <List sx={{ width: '100%' }}>
             {items.map((item, index) => (
