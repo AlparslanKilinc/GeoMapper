@@ -72,7 +72,6 @@ export default function MapGraphicsEditor() {
 
     // Normalize and map data to color
     const c = data.map((d) => colorScale(d));
-    console.log(c);
     dispatch(setContinousColorScale(c));
   };
 

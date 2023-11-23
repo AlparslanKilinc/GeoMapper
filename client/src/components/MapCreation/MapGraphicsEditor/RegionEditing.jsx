@@ -2,10 +2,10 @@ import React from 'react';
 import { Box, Typography, Divider, TextField, Autocomplete } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  changeColorByProperty,
-  setRegionProperty
+  setRegionProperty,
+  setSelectedRegionIdx
 } from '../../../redux-slices/mapGraphicsDataSlice';
-import { setSelectedPropUniqueValues } from '../../../redux-slices/mapStylesSlice';
+
 export default function RegionEditing() {
   const dispatch = useDispatch();
 
@@ -13,9 +13,18 @@ export default function RegionEditing() {
     useSelector((state) => state.mapGraphics);
   const [prop, setProp] = React.useState(nameByProperty);
 
-  const { selectedPropUniqueValues, selectedFeature, colors } = useSelector(
-    (state) => state.mapStyles
-  );
+  const { selectedPropUniqueValues } = useSelector((state) => state.mapStyles);
+
+  const extractRegionNames = () => {
+    let names = [];
+    regions.forEach((region, index) => {
+      names.push({ label: region[nameByProperty], id: index });
+    });
+
+    return names;
+  };
+
+  const regionNames = extractRegionNames();
 
   let regionDetails = {};
   let name = 'New York';
@@ -39,6 +48,10 @@ export default function RegionEditing() {
     // find the color for the region by the colorByProperty inside colors array
     // let color = colors.find((color) => color.name === value);
     // selectedFeature.setStyle({ fillColor: color.color });
+  };
+
+  const handleOptionSelect = (event, newValue) => {
+    dispatch(setSelectedRegionIdx(newValue.id));
   };
 
   const handleColorByPropertyChange = (event, newValue) => {
@@ -109,7 +122,14 @@ export default function RegionEditing() {
       justifyContent="center"
       sx={{ gap: 2 }}
     >
-      <TextField variant="outlined" placeholder="Search..." sx={{ width: '100%' }} />
+      <Autocomplete
+        sx={{ width: '100%' }}
+        options={regionNames}
+        onChange={handleOptionSelect}
+        renderInput={(params) => (
+          <TextField label="Search..." variant="outlined" {...params} fullWidth />
+        )}
+      />
       {isRegionSelected ? (
         regionPropertyEditor
       ) : (
