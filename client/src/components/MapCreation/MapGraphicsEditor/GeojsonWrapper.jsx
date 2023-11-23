@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
@@ -9,15 +9,22 @@ import '../../../styles/map-label.css';
 
 export default function GeojsonWrapper({ styles, isStyled }) {
   const dispatch = useDispatch();
+  const map = useMap();
+  const geojsonLayer = useRef();
   const { geoJSON } = useSelector((state) => state.geojson.geojson);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const { colorByProperty, regions, nameByProperty } = useSelector((state) => state.mapGraphics);
   const { colors, continousColorScale } = useSelector((state) => state.mapStyles);
 
-  const map = useMap();
   const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
 
   let onEachFeature = (feature, layer) => {};
+
+  useEffect(() => {
+    if (geojsonLayer) {
+      map.fitBounds(geojsonLayer.current.getBounds());
+    }
+  }, [geoJSON]);
 
   if (isStyled) {
     onEachFeature = (feature, layer) => {
@@ -74,7 +81,9 @@ export default function GeojsonWrapper({ styles, isStyled }) {
 
   return (
     <div styles={{ width: '100%', height: '100%' }}>
-      {geoJSON && <GeoJSON data={geoJSON} style={styles} onEachFeature={onEachFeature} />}
+      {geoJSON && (
+        <GeoJSON data={geoJSON} style={styles} onEachFeature={onEachFeature} ref={geojsonLayer} />
+      )}
     </div>
   );
 }
