@@ -39,9 +39,6 @@ const mapStylesDataSlice = createSlice({
     setSelectedPropUniqueValues: (state, action) => {
       state.selectedPropUniqueValues = action.payload;
     },
-    setSelectedFeature: (state, action) => {
-      state.selectedFeature = action.payload;
-    },
     setContinousColorScale: (state, action) => {
       state.continousColorScale = action.payload;
     }
@@ -55,7 +52,6 @@ export const {
   setColors,
   changeColorByName,
   setSelectedPropUniqueValues,
-  setSelectedFeature,
   setContinousColorScale
 } = mapStylesDataSlice.actions;
 

@@ -4,7 +4,6 @@ import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
 import { useMap } from 'react-leaflet';
 import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice';
-import { setSelectedFeature } from '../../../redux-slices/mapStylesSlice';
 import { useDispatch } from 'react-redux';
 import '../../../styles/map-label.css';
 
@@ -43,8 +42,6 @@ export default function GeojsonWrapper({ styles, isStyled }) {
       }
       const onClick = (e) => {
         dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
-        dispatch(setSelectedFeature(e.target));
-        // change the color of the selected feature
       };
 
       let labels = true;

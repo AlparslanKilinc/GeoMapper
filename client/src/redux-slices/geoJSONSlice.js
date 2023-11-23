@@ -9,19 +9,6 @@ const getRandomNbaPlayer = () => {
   return teams[parseInt(Math.random() * teams.length)];
 };
 
-// const processGeojson = (geojson) => {
-//   // remove all properties from features
-//   let regions = [];
-//   geojson.features.forEach((feature, index) => {
-//     //from feature.properties only take the first 5 properties
-
-//     regions.push({ ...feature.properties, TEAM: getRandomNbaPlayer() });
-//     feature.properties = { regionIdx: index };
-//   });
-//   let propertyNames = Object.keys(regions[0]);
-//   return { regions, propertyNames };
-// };
-
 const processGeojson = (geojson) => {
   let regions = [];
   geojson.features.forEach((feature, index) => {

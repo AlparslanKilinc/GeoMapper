@@ -37,8 +37,8 @@ export default function RegionEditing() {
   const handlePropValueChangeText = (event, value) => {
     dispatch(setRegionProperty({ propertyName: prop, value: value }));
     // find the color for the region by the colorByProperty inside colors array
-    let color = colors.find((color) => color.name === value);
-    selectedFeature.setStyle({ fillColor: color.color });
+    // let color = colors.find((color) => color.name === value);
+    // selectedFeature.setStyle({ fillColor: color.color });
   };
 
   const handleColorByPropertyChange = (event, newValue) => {
