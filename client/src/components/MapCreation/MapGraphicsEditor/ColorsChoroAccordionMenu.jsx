@@ -1,19 +1,16 @@
-import React, { useEffect } from 'react';
-import { Autocomplete, Divider, Typography, TextField } from '@mui/material';
+import React from 'react';
+import { Autocomplete, Divider, Typography, TextField, Slider } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeColorByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
-import {
-  setColors,
-  changeColorByName,
-  setSelectedPropUniqueValues
-} from '../../../redux-slices/mapStylesSlice';
+import { changeColorByName, setOpacity } from '../../../redux-slices/mapStylesSlice';
 import Box from '@mui/material/Box';
 import ColorSelector from './ColorSelector';
+import SubMenuTitle from './SubMenuTitle';
 
 export default function ColorsChoroAccordionMenu() {
   const dispatch = useDispatch();
   const { propertyNames, colorByProperty, regions } = useSelector((state) => state.mapGraphics);
-  const { colors } = useSelector((state) => state.mapStyles);
+  const { colors, opacity } = useSelector((state) => state.mapStyles);
 
   const handleColorChangeText = (name) => {
     return (color) => {
@@ -23,6 +20,10 @@ export default function ColorsChoroAccordionMenu() {
 
   const handleColorByPropertyChange = (event, newValue) => {
     dispatch(changeColorByProperty(newValue));
+  };
+
+  const handleChangeOpacity = (event, newValue) => {
+    dispatch(setOpacity(newValue));
   };
 
   let colorSelectors = (
@@ -82,6 +83,17 @@ export default function ColorsChoroAccordionMenu() {
       </Box>
 
       {colorSelectors}
+
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ width: '100%' }}
+      >
+        <SubMenuTitle title="opacity" />
+        <Slider min={0} max={1} step={0.01} value={opacity} onChange={handleChangeOpacity} />
+      </Box>
     </Box>
   );
 }

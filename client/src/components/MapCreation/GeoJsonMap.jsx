@@ -9,10 +9,10 @@ const GeoJsonMap = ({ styled }) => {
   const styles = { color: 'black', weight: 1 };
 
   if (styled) {
-    const { borderColor, borderWidth } = useSelector((state) => state.mapStyles);
+    const { borderColor, borderWidth, opacity } = useSelector((state) => state.mapStyles);
     styles.color = borderColor;
     styles.weight = borderWidth;
-    styles.fillOpacity = 1;
+    styles.fillOpacity = opacity;
   }
 
   return (

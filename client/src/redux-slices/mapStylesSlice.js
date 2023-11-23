@@ -10,7 +10,8 @@ const initialState = {
   borderWidth: 1, // Width of borders of map elements
   selectedPropUniqueValues: [], // Unique values for the selected property,
   selectedFeature: null,
-  continousColorScale: []
+  continousColorScale: [],
+  opacity: 1
 };
 
 const mapStylesDataSlice = createSlice({
@@ -41,6 +42,9 @@ const mapStylesDataSlice = createSlice({
     },
     setContinousColorScale: (state, action) => {
       state.continousColorScale = action.payload;
+    },
+    setOpacity: (state, action) => {
+      state.opacity = action.payload;
     }
   }
 });
@@ -52,7 +56,8 @@ export const {
   setColors,
   changeColorByName,
   setSelectedPropUniqueValues,
-  setContinousColorScale
+  setContinousColorScale,
+  setOpacity
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;
