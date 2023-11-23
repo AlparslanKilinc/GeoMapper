@@ -49,7 +49,10 @@ const createGeojson = async (req, res) => {
 const searchGeojson = async (req, res) => {
   try {
     const { query } = req.params;
-    const searchResults = await Geo.find({ name: { $regex: query, $options: 'i' } });
+    const searchResults = await Geo.find(
+      { name: { $regex: query, $options: 'i' } },
+      '_id name'
+    ).sort('name');
     res.json(searchResults);
   } catch (error) {
     res.status(500).send({ message: 'Error performing search', error: error.message });

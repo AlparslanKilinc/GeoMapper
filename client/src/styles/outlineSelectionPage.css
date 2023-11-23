@@ -8,6 +8,11 @@
   padding: 0;
 }
 
+#outline-page-left .MuiList-root {
+  max-height: 400px; /* Adjust this value as needed */
+  overflow-y: auto;
+}
+
 /* let the outline-page-right have the remaining space */
 #outline-page-right {
   flex: 1;

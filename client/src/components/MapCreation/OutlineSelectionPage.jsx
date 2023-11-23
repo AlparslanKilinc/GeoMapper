@@ -20,7 +20,10 @@ export default function OutlineSelectionPage() {
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchInput(query);
-    if (query.length >= 1) {
+
+    if (query.length === 0) {
+      dispatch(fetchGeojson());
+    } else {
       dispatch(searchGeojson(query));
     }
   };
