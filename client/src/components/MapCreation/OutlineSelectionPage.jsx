@@ -1,29 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/outlineSelectionPage.css';
-import { useSelector } from 'react-redux';
-import { List, ListItemButton, ListItemText, Divider, TextField } from '@mui/material';
-import { useEffect } from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
-import GeoJsonMap from './GeoJsonMap';
-import { useDispatch } from 'react-redux';
-import { fetchGeojson, fetchGeojsonById } from '../../redux-slices/geoJSONSlice';
-import InputAdornment from '@mui/material/InputAdornment';
+import { useSelector, useDispatch } from 'react-redux';
+import { List, ListItemButton, ListItemText, Divider, TextField, CircularProgress, InputAdornment } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
+import GeoJsonMap from './GeoJsonMap';
 import OutlineFileUploader from './OutlineFileUploader';
+import { fetchGeojson, fetchGeojsonById, searchGeojson } from '../../redux-slices/geoJSONSlice';
 
 export default function OutlineSelectionPage() {
-  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const dispatch = useDispatch();
-
-  const { items, geojson, isLoadingItems, isLoadingGeojson } = useSelector(
-    (state) => state.geojson
-  );
+  const [searchInput, setSearchInput] = useState('');
+  const { items, geojson, isLoadingItems, isLoadingGeojson } = useSelector((state) => state.geojson);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   useEffect(() => {
     dispatch(fetchGeojson());
-  }, []);
+  }, [dispatch]);
 
-  // Handler for clicking an item
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchInput(query);
+    if (query.length >= 1) {
+      dispatch(searchGeojson(query));
+    }
+  };
+
   const handleItemClick = (item) => {
     dispatch(fetchGeojsonById(item._id));
   };
@@ -36,17 +37,19 @@ export default function OutlineSelectionPage() {
           <Divider style={{ width: '50%' }} />
         </div>
 
-        <h3 className="secondary-title">select map</h3>
+        <h3 className="secondary-title">Select Map</h3>
         <OutlineFileUploader />
         <TextField
           variant="outlined"
+          value={searchInput}
+          onChange={handleSearchChange}
           helperText="What type of map do you want to create?"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <PlaceIcon /> search for places
+                <PlaceIcon />
               </InputAdornment>
-            )
+            ),
           }}
         />
 
@@ -68,7 +71,6 @@ export default function OutlineSelectionPage() {
         )}
       </div>
       <div id="outline-page-right">
-        {/* <h2>Map Preview</h2> */}
         {isLoadingGeojson ? (
           <CircularProgress />
         ) : (
