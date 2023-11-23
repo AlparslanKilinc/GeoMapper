@@ -9,14 +9,32 @@ const getRandomNbaPlayer = () => {
   return teams[parseInt(Math.random() * teams.length)];
 };
 
+// const processGeojson = (geojson) => {
+//   // remove all properties from features
+//   let regions = [];
+//   geojson.features.forEach((feature, index) => {
+//     //from feature.properties only take the first 5 properties
+
+//     regions.push({ ...feature.properties, TEAM: getRandomNbaPlayer() });
+//     feature.properties = { regionIdx: index };
+//   });
+//   let propertyNames = Object.keys(regions[0]);
+//   return { regions, propertyNames };
+// };
+
 const processGeojson = (geojson) => {
-  // remove all properties from features
   let regions = [];
   geojson.features.forEach((feature, index) => {
-    regions.push({ ...feature.properties, TEAM: getRandomNbaPlayer() });
+    // Extract only the first 5 properties
+    let firstFiveProperties = Object.fromEntries(Object.entries(feature.properties).slice(0, 5));
+
+    regions.push({ ...firstFiveProperties, TEAM: getRandomNbaPlayer() });
     feature.properties = { regionIdx: index };
   });
-  let propertyNames = Object.keys(regions[0]);
+
+  // Assuming that all features have the same properties,
+  // this will get the property names from the first region
+  let propertyNames = regions.length > 0 ? Object.keys(regions[0]) : [];
   return { regions, propertyNames };
 };
 
