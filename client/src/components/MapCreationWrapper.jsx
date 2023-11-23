@@ -9,12 +9,15 @@ import TempleSelection from './MapCreation/TemplateSelection';
 import MapDataEditorSelector from './MapDataEditing/MapDataEditorSelector';
 import OutlineSelectionPage from './MapCreation/OutlineSelectionPage';
 import MapGraphicsEditing from './MapCreation/MapGraphicsEditing';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearGeojson } from '../redux-slices/geoJSONSlice';
 
 export default function MapCreationWrapper() {
+  const dispatch = useDispatch();
   const [currentStage, setCurrentStage] = useState(0);
   const location = useLocation();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const mapOutline = useSelector((state) => state.geojson.geojson);
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -25,6 +28,11 @@ export default function MapCreationWrapper() {
     }
   }));
 
+  const isNextButtonDisabled = () => {
+    if (currentStage === 1 && !mapOutline) return true;
+    return !mapGraphicsType;
+  };
+
   useEffect(() => {
     if (location.state && location.state.stage) {
       setCurrentStage(location.state.stage);
@@ -32,6 +40,9 @@ export default function MapCreationWrapper() {
   }, [location]);
 
   const goBack = () => {
+    if (currentStage === 1) {
+      dispatch(clearGeojson());
+    }
     setCurrentStage(currentStage - 1);
   };
 
@@ -49,23 +60,22 @@ export default function MapCreationWrapper() {
   return (
     <div className="mapCreationWrapper">
       <div className="wrapper-button-group">
-        <NavigationButton
-          variant="outlined"
-          startIcon={<ArrowBackIcon />}
-          onClick={goBack}
-          disabled={currentStage === 0}
-        >
-          Back
-        </NavigationButton>
+        {currentStage !== 0 && (
+          <NavigationButton variant="outlined" startIcon={<ArrowBackIcon />} onClick={goBack}>
+            Back
+          </NavigationButton>
+        )}
 
-        <NavigationButton
-          variant="outlined"
-          endIcon={<ArrowForwardIcon />}
-          onClick={goForward}
-          disabled={!mapGraphicsType || currentStage === stages.length - 1}
-        >
-          Next
-        </NavigationButton>
+        {currentStage < stages.length - 1 && currentStage !== 0 && (
+          <NavigationButton
+            variant="outlined"
+            endIcon={<ArrowForwardIcon />}
+            onClick={goForward}
+            disabled={isNextButtonDisabled()}
+          >
+            Next
+          </NavigationButton>
+        )}
       </div>
       {stages[currentStage]}
     </div>

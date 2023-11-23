@@ -9,6 +9,7 @@ const rawBodyParser = express.raw({
 });
 router.get('/', GeojsonController.getGeojsonIdNamePairs);
 router.get('/:id', GeojsonController.getGeojsonById);
+router.get('/search/:query', GeojsonController.searchGeojson);
 
 // Use the rawBodyParser middleware only for the POST route
 router.post('/', rawBodyParser, GeojsonController.createGeojson);
