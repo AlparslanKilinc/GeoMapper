@@ -15,7 +15,7 @@ const processGeojson = (geojson) => {
     // Extract only the first 5 properties
     let firstFiveProperties = Object.fromEntries(Object.entries(feature.properties).slice(0, 5));
 
-    regions.push({ ...firstFiveProperties, TEAM: getRandomNbaPlayer() });
+    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer() });
     feature.properties = { regionIdx: index };
   });
 

@@ -4,7 +4,7 @@ const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
   points: [],
   regions: [],
-  colorByProperty: 'TEAM',
+  colorByProperty: 'GOAT',
   sizeByProperty: '',
   nameByProperty: 'NAME',
   propertyNames: [],
