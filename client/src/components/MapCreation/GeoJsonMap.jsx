@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapContainer } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+// import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
 import GeojsonWrapper from './MapGraphicsEditor/GeojsonWrapper';
 
@@ -16,7 +16,7 @@ const GeoJsonMap = ({ styled }) => {
   }
 
   return (
-    <MapContainer center={position} zoom={4} style={{ flexGrow: 1 }}>
+    <MapContainer center={position} zoom={4} style={{ flexGrow: 1, backgroundColor: 'white' }}>
       <GeojsonWrapper styles={styles} isStyled={styled} />
     </MapContainer>
   );
