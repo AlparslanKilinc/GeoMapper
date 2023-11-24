@@ -6,7 +6,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../styles/mapCreationWrapper.css';
 import { styled } from '@mui/material/styles';
 import TempleSelection from './MapCreation/TemplateSelection';
-import MapDataEditorSelector from './MapDataEditing/MapDataEditorSelector';
+import MapDataEditor from './MapDataEditing/MapDataEditor';
 import OutlineSelectionPage from './MapCreation/OutlineSelectionPage';
 import MapGraphicsEditing from './MapCreation/MapGraphicsEditing';
 import { useSelector } from 'react-redux';
@@ -42,7 +42,7 @@ export default function MapCreationWrapper() {
   const stages = [
     <TempleSelection onSelectionComplete={goForward} />,
     <OutlineSelectionPage />,
-    <MapDataEditorSelector />,
+    <MapDataEditor />,
     <MapGraphicsEditing />
   ];
 

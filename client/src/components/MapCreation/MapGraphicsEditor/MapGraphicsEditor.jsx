@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import GeoJsonMap from '../GeoJsonMap/';
 import TabMenu from './TabMenu';
-import TabularSelector from './TabularSelector';
+import DataEditorTable from '../../MapDataEditing/DataEditorTable';
 import StylesMenu from './StylesMenus';
 import AnnotateContent from './AnnotateContent';
 import RegionEditing from './RegionEditing';
@@ -29,7 +29,7 @@ const stylesToolboxConfig = [
 
 const dataEditingToolboxConfig = [
   { label: 'Region', content: <RegionEditing /> },
-  { label: 'Tabular', content: <TabularSelector /> }
+  { label: 'Tabular', content: <DataEditorTable /> }
 ];
 
 export default function MapGraphicsEditor() {
