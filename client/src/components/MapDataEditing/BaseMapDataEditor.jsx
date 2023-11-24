@@ -48,13 +48,13 @@ const BaseMapDataEditor = (config) => {
     const renderDefaultTableButtons = () => (
       <div id="table-buttons" className = "table-buttons">
         <LoadingButton
-          variant="variant"
+          variant="contained"
           onClick={handleAddColumn}
         >
           Add Column
         </LoadingButton>
         <LoadingButton
-          variant="variant"
+          variant="contained"
           onClick={handleAddRow}
         >
           Add Row
@@ -75,7 +75,7 @@ const BaseMapDataEditor = (config) => {
           <TableHead>
             <TableRow>
               {columnNames.map((colName, index) => (
-                <TableCell className = "data-editor-cols" key={index}>{colName}</TableCell>
+                <TableCell className = "data-editor-cols" key={index} >{colName}</TableCell>
               ))}
             </TableRow>
           </TableHead>

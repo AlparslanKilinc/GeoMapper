@@ -5,7 +5,7 @@ import { changeColorByProperty } from '../../../redux-slices/mapGraphicsDataSlic
 import Box from '@mui/material/Box';
 import ColorRange from './ColorRange';
 
-export default function ColorsSymbolAccordionMenu() {
+export default function ColorsSymbolAccordionMenu({theme}) {
   const dispatch = useDispatch();
   const { propertyNames, colorByProperty } = useSelector((state) => state.mapGraphics);
   const handleColorByPropertyChange = (event, newValue) => {
@@ -26,17 +26,25 @@ export default function ColorsSymbolAccordionMenu() {
         justifyContent="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="subtitle2" className = "dark-mode-labels">color by property</Typography>
+        <Typography variant="subtitle2" >color by property</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
         <Autocomplete
           value={colorByProperty}
           onChange={handleColorByPropertyChange}
           options={propertyNames}
           fullWidth
-          renderInput={(params) => <TextField {...params} fullWidth />}
+          renderOption={(props, option) => (
+              <li {...props} style={{ color: 'black' }}>
+                {option}
+              </li>
+          )}
+          renderInput={(params) => <TextField  {...params} fullWidth  sx={{
+            '& .MuiOutlinedInput-root': {
+              color: theme.typography.allVariants.color
+            },
+          }}/>}
         />
       </Box>
-
       <Box
         display="flex"
         flexDirection="column"
@@ -44,9 +52,13 @@ export default function ColorsSymbolAccordionMenu() {
         justifyContent="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="subtitle2" className = "dark-mode-labels">steps</Typography>
+        <Typography variant="subtitle2" >steps</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-        <TextField type="number" defaultValue={3} fullWidth />
+        <TextField type="number" defaultValue={3} fullWidth  sx={{
+          '& .MuiOutlinedInput-root': {
+            color: theme.typography.allVariants.color
+          },
+        }}/>
       </Box>
 
       <Box
@@ -56,7 +68,7 @@ export default function ColorsSymbolAccordionMenu() {
         justifyContent="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="subtitle2"  className = "dark-mode-labels">range</Typography>
+        <Typography variant="subtitle2"  >range</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
         <ColorRange
           lower="min"
@@ -64,6 +76,7 @@ export default function ColorsSymbolAccordionMenu() {
           disableUpper={false}
           disableLower={true}
           intialColor="#ADD8E6"
+          theme={theme}
         />
 
         <ColorRange
@@ -72,6 +85,7 @@ export default function ColorsSymbolAccordionMenu() {
           disableUpper={false}
           disableLower={false}
           intialColor="#0000CD"
+          theme={theme}
         />
 
         <ColorRange
@@ -80,6 +94,7 @@ export default function ColorsSymbolAccordionMenu() {
           disableUpper={true}
           disableLower={false}
           intialColor="#00008B"
+          theme={theme}
         />
       </Box>
     </Box>

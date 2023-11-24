@@ -2,7 +2,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import { MuiColorInput } from 'mui-color-input';
 
-const ColorRange = ({ lower, upper, disableUpper, disableLower, intialColor }) => {
+const ColorRange = ({ lower, upper, disableUpper, disableLower, intialColor, theme }) => {
   const [color, setColor] = React.useState(intialColor);
 
   const handleChange = (color) => {
@@ -20,11 +20,11 @@ const ColorRange = ({ lower, upper, disableUpper, disableLower, intialColor }) =
       <MuiColorInput
         value={color}
         onChange={handleChange}
-        inputProps={{ style: { width: '0', border: 'none' } }}
+        inputProps={{ style: { width: '0', borderColor: 'none' } }}
         sx={{
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
-              borderColor: 'white' // Change border color
+              borderColor: 'transparent' // Change border color
             },
             '&:hover fieldset': {
               borderColor: 'white' // Change border color on hover
@@ -43,7 +43,10 @@ const ColorRange = ({ lower, upper, disableUpper, disableLower, intialColor }) =
           width: '30px', // Set the width
           height: '30px', // Set the height to make it square
           padding: '2', // Remove padding to keep it small
-          borderRadius: '0' // Make edges sharp/square
+          borderRadius: '0', // Make edges sharp/square
+            color: theme.typography.allVariants.color,
+            backgroundColor: disableLower ? 'initial' : theme.palette.background.default,
+
         }}
       />
       -
@@ -55,7 +58,9 @@ const ColorRange = ({ lower, upper, disableUpper, disableLower, intialColor }) =
           width: '30px', // Set the width
           height: '30px', // Set the height to make it square
           padding: '2', // Remove padding to keep it small
-          borderRadius: '0' // Make edges sharp/square
+          borderRadius: '0', // Make edges sharp/square
+            color: theme.typography.allVariants.color,
+            backgroundColor: disableLower ? 'initial' : theme.palette.background.default,
         }}
       />
     </Box>

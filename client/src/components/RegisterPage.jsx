@@ -12,8 +12,9 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { registerUser } from '../redux-slices/authSlice';
 import Box from '@mui/material/Box';
+import CopyRight from "./CopyRight.jsx";
 
-export default function RegisterPage() {
+export default function RegisterPage({theme}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isLoading = useSelector((state) => state.auth.isLoading);
   const dispatch = useDispatch();
@@ -41,7 +42,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+      <div>
+    <Container component="main" maxWidth="xs" style = {{height: '100vh'}}>
       <CssBaseline />
       <Box
         sx={{
@@ -144,5 +146,7 @@ export default function RegisterPage() {
         </Link>
       </Box>
     </Container>
+  <CopyRight theme = {theme}/>
+  </div>
   );
 }

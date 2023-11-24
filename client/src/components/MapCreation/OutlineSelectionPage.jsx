@@ -12,8 +12,9 @@ import { useDispatch } from 'react-redux';
 import { fetchGeojson, fetchGeojsonById } from '../../redux-slices/geoJSONSlice';
 import InputAdornment from '@mui/material/InputAdornment';
 import PlaceIcon from '@mui/icons-material/Place';
+import CopyRight from "../CopyRight.jsx";
 
-export default function OutlineSelectionPage() {
+export default function OutlineSelectionPage({theme}) {
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   const dispatch = useDispatch();
@@ -36,15 +37,15 @@ export default function OutlineSelectionPage() {
       <div id="outline-page-left">
         <div className="header-primary">
           <h2>{mapGraphicsType}</h2>
-          <Divider style={{ width: '50%' }} />
+          <Divider style={{ width: '50%' }}  />
         </div>
 
         <h3 className="secondary-title">select map</h3>
 
         <LoadingButton
           startIcon={<CloudUploadIcon className = "outline-loading-button"/>}
-          variant="outlined"
-          style={{ color: 'black', borderColor: 'black' }}
+          variant="contained"
+          style={{ color: theme.typography.allVariants.color  }}
           className = "outline-loading-button"
         >
           upload map
@@ -55,9 +56,14 @@ export default function OutlineSelectionPage() {
           className = "outline-selection-texfield"
           style = {{marginRight: '10px'}}
           InputProps={{
+              style: {
+                  color: theme.typography.allVariants.color
+              },
             startAdornment: (
-              <InputAdornment position="start" className = "map-location-textfield"  >
-                <PlaceIcon/> search for places
+              <InputAdornment position="start" className = "map-location-textfield" sx = {{
+                  color: theme.typography.allVariants.color
+              }}  >
+                <PlaceIcon /> search for places
               </InputAdornment>
             )
           }}

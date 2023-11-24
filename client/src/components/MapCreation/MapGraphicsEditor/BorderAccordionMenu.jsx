@@ -13,7 +13,7 @@ import { changeBorderColor, changeBorderWidth } from '../../../redux-slices/mapS
 import SubMenuTitle from './SubMenuTitle';
 import { Slider } from '@mui/material';
 
-export default function BorderAccordionMenu() {
+export default function BorderAccordionMenu({theme}) {
   const dispatch = useDispatch();
   const { borderColor, borderWidth } = useSelector((state) => state.mapStyles);
 
@@ -25,7 +25,7 @@ export default function BorderAccordionMenu() {
     dispatch(changeBorderWidth(newValue));
   };
   return (
-    <Accordion>
+    <Accordion sx = {{bgcolor:theme.palette.background.secondaryDefault}}>
       <AccordionSummary className = "styles-buttons"
         expandIcon={<ExpandMoreIcon />} // Black expand icon
         aria-controls="panel1a-content"
@@ -53,9 +53,17 @@ export default function BorderAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <Typography variant="subtitle2"  className = "dark-mode-labels">border color</Typography>
+            <Typography variant="subtitle2"  >border color</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <MuiColorInput format="hex" value={borderColor} onChange={handleBorderColorChange} />
+            <MuiColorInput
+                format="hex" value={borderColor}
+                onChange={handleBorderColorChange}
+                InputProps = {{
+                  style: {
+                    color: theme.typography.allVariants.color,
+                  },
+                }}
+            />
           </Box>
 
           <Box
@@ -65,7 +73,7 @@ export default function BorderAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <Typography variant="subtitle2"  className = "dark-mode-labels">border width</Typography>
+            <Typography variant="subtitle2" >border width</Typography>
             <Slider
               min={0}
               max={10}

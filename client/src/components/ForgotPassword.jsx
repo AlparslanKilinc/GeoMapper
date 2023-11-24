@@ -8,8 +8,9 @@ import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import '../styles/loginPage.css';
+import CopyRight from "./CopyRight.jsx";
 
-export default function ForgotPassword() {
+export default function ForgotPassword({theme}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -53,9 +54,10 @@ export default function ForgotPassword() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'top',
           padding: '1rem',
-          gap: '0.5rem'
+          gap: '0.5rem',
+            height: '100vh',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -87,6 +89,7 @@ export default function ForgotPassword() {
           </Button>
         </Box>
       </Box>
+      <CopyRight theme = {theme}/>
     </div>
   );
 }

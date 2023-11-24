@@ -11,6 +11,9 @@ const dotdensitymapConfig = {
     ],
 };
 
-const DotdensitymapDataEditor = BaseMapDataEditor(dotdensitymapConfig);
+const DotdensitymapDataEditor  = ({theme}) => {
+   return <BaseMapDataEditor config = {dotdensitymapConfig} theme={theme}/>
+}
+
 
 export default DotdensitymapDataEditor;

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeMapTitle } from '../../../redux-slices/mapMetadataSlice';
 
-const MapTitleEditor = () => {
+const MapTitleEditor = ({theme}) => {
   const dispatch = useDispatch();
   const { title } = useSelector((state) => state.mapMetadata);
   const handleTitleChange = (event) => {
@@ -24,9 +24,10 @@ const MapTitleEditor = () => {
               borderColor: 'transparent' // Hide border by default
             },
             '&:hover fieldset': {
-              borderColor: 'grey' // Show border on hover
-            }
-          }
+              borderColor: '#40e0d0' // Show border on hover
+            },
+            color: theme.typography.allVariants.color
+          },
         }}
       />
     </Box>

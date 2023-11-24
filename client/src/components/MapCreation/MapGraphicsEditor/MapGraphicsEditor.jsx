@@ -16,7 +16,7 @@ import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
-  { label: 'Styles', content: <StylesMenuSelector /> },
+  { label: 'Styles', content: <StylesMenuSelector/> },
   { label: 'Annotate', content: <AnnotateContent /> }
 ];
 
@@ -25,10 +25,11 @@ const dataEditingToolboxConfig = [
   { label: 'Tabular', content: <TabularSelector /> }
 ];
 
-function MapBox(props) {
+function MapBox({ theme }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
 
-  return (
+
+    return (
     <Box
       component="main"
       sx={{
@@ -39,7 +40,7 @@ function MapBox(props) {
         flexDirection: 'row'
       }}
     >
-      <UndoRedoButtonGroup />
+      <UndoRedoButtonGroup theme = {theme} />
 
       {isLoadingGeojson ? (
         <CircularProgress />
@@ -49,16 +50,16 @@ function MapBox(props) {
             display: 'flex',
             flexDirection: 'column',
             height: '100%',
-            width: '100%'
+            width: '100%',
           }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <MapTitleEditor />
+            <MapTitleEditor theme = {theme}/>
             {/* make the buttons a square */}
 
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
               <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
-                <SaveOutlinedIcon />
+                <SaveOutlinedIcon sx={{ color: theme.palette.iconColor }}/>
               </Button>
 
               <Button
@@ -66,7 +67,7 @@ function MapBox(props) {
                 aria-label="publish"
                 sx={{ height: '50px', width: '50px' }}
               >
-                <PublishOutlinedIcon />
+                <PublishOutlinedIcon sx={{ color: theme.palette.iconColor }}/>
               </Button>
             </Box>
           </Box>
@@ -78,7 +79,8 @@ function MapBox(props) {
   );
 }
 
-export default function PermanentDrawerLeft() {
+export default function PermanentDrawerLeft({theme}) {
+    console.log(theme)
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
@@ -86,7 +88,6 @@ export default function PermanentDrawerLeft() {
 
   return (
     <Box className = "map-graphics-editor" sx={{ display: 'flex', height: '100%', width: '100%' }}>
-      <CssBaseline />
 
       <Drawer className = "left-drawer"
         sx={{
@@ -96,16 +97,18 @@ export default function PermanentDrawerLeft() {
             width: drawerWidth,
             boxSizing: 'border-box',
             position: 'relative',
+              bgcolor: theme.palette.background.default,
+
           },
           height: '100%'
         }}
         variant="permanent"
         anchor="left"
       >
-        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
+        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} theme = {theme}/>
       </Drawer>
 
-      {!isTabularOpened && (<MapBox />)}
+      {!isTabularOpened && (<MapBox theme={theme} />)}
 
       <Drawer
         sx={{
@@ -117,14 +120,15 @@ export default function PermanentDrawerLeft() {
             boxSizing: 'border-box',
             position: 'relative',
             // remove the top borders
-            borderTop: 'none'
+            borderTop: 'none',
+              bgcolor: theme.palette.background.default,
           },
           height: '100%'
         }}
         variant="permanent"
         anchor="right"
       >
-        <TabMenu tabsConfig={dataEditingToolboxConfig} handleTabularOpen={handleTabularOpen} />
+        <TabMenu  tabsConfig={dataEditingToolboxConfig}  handleTabularOpen={handleTabularOpen} theme={theme}/>
       </Drawer>
     </Box>
   );

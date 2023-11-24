@@ -8,6 +8,7 @@ import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import '../styles/loginPage.css';
+import CopyRight from "./CopyRight.jsx";
 
 export default function RecoveryCode() {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export default function RecoveryCode() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '100vw', width: '98%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '100vw', width: '98%', height: '100vh' }}>
       <div style={{ alignSelf: 'flex-start', width: '100%', paddingTop: '1rem' }}>
         <NavigationButton variant="outlined" startIcon={<ArrowBackIcon />} onClick={goBack}>
           Back
@@ -44,12 +45,13 @@ export default function RecoveryCode() {
       </div>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem',
-          gap: '0.5rem'
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'top',
+            padding: '1rem',
+            gap: '0.5rem',
+            height: '100vh',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -81,6 +83,7 @@ export default function RecoveryCode() {
           </Button>
         </Box>
       </Box>
+        <CopyRight/>
     </div>
   );
 }

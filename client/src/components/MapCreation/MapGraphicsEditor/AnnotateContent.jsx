@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeMapDescription, changeMapTitle } from '../../../redux-slices/mapMetadataSlice';
 
-const AnnotateContent = () => {
+const AnnotateContent = ({theme}) => {
   const { description, title } = useSelector((state) => state.mapMetadata);
   const dispatch = useDispatch();
 
@@ -24,10 +24,15 @@ const AnnotateContent = () => {
       justifyContent="center"
       sx={{ gap: 2 }}
     >
-      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+      <Box  display="flex" flexDirection="column" alignItems="center" justifyContent="center">
         <Typography variant="subtitle2">title</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-        <TextField onChange={handleChangeTitle} value={title} type="text" fullWidth />
+        <TextField onChange={handleChangeTitle} value={title} type="text" fullWidth
+                   InputProps={{
+                     style: {
+                       color: theme.typography.allVariants.color
+                     },
+                   }}/>
       </Box>
 
       <Box
@@ -43,7 +48,11 @@ const AnnotateContent = () => {
         <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
           <Typography variant="subtitle2">description</Typography>
           <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-          <TextField  multiline rows = {4} onChange={handleChangeDescription} value={description} type="text" fullWidth />
+          <TextField  multiline rows = {4} onChange={handleChangeDescription} value={description} type="text" fullWidth
+                      InputProps={{
+                        style: {
+                          color: theme.typography.allVariants.color
+                        }}}/>
         </Box>
 
 

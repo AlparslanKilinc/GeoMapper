@@ -31,10 +31,12 @@ function App() {
   }
 
   const theme = createTheme({
+    themeName: 'light',
     palette: {
       primary: {
         main: '#40E0D0'
-      }
+      },
+      iconColor: 'black',
     },
     typography: {
       allVariants: {
@@ -53,7 +55,7 @@ function App() {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: "white",
+            backgroundColor: "#fff",
             color: "#40e0d0",
           }
         }
@@ -61,7 +63,7 @@ function App() {
       MuiTextField: {
         styleOverrides: {
           root: {
-            backgroundColor: 'white'
+            backgroundColor: '#fff'
           }
         }
       },
@@ -70,8 +72,10 @@ function App() {
         styleOverrides: {
           root: {
             backgroundColor: ' #40e0d0',
+            color: 'black',
             '&:hover': {
               backgroundColor: ' #006666',
+              color: 'black',
             },
           }
         },
@@ -93,6 +97,14 @@ function App() {
           }
 
         },
+          MuiDrawer: {
+            styleOverrides: {
+              root: {
+                backgroundColor: '#fff',
+              }
+            }
+          },
+
 
 
       }
@@ -100,17 +112,26 @@ function App() {
   });
 
 
-
-
   const darkTheme = createTheme({
+    themeName: 'dark', // Add a custom property to identify the theme
     palette: {
       background: {
-        default: "#212121"
+        default: "#212121",
+        secondaryDefault: "#333333",
       },
+      iconColor: '#fff',
+      drawer: {
+        background: '#212121', // specify your desired background color
+      },
+      primary: {
+        main: '#40E0D0'
+      },
+      divider: '#fff'
     },
     typography: {
       allVariants: {
-        color: 'white'
+        color: '#fff',
+        secondaryColor: '#40E0D0'
       },
       button: {
         textTransform: 'none'
@@ -126,7 +147,7 @@ function App() {
         styleOverrides: {
           root: {
             backgroundColor: "#212121",
-            color: "006666",
+            color: "#006666",
           }
         }
 
@@ -134,7 +155,7 @@ function App() {
       MuiTypography: {
         styleOverrides: {
           root: {
-            color: 'white',
+            color: '#fff',
           }
         }
       },
@@ -142,6 +163,7 @@ function App() {
         styleOverrides: {
           root: {
             backgroundColor: '#006666',
+            color: '#fff',
             '&:hover': {
               backgroundColor: 'black',
             },
@@ -152,7 +174,7 @@ function App() {
         styleOverrides: {
           root: {
             backgroundColor: '#333333',
-            color: 'white'
+            color: '#fff'
           }
         }
       },
@@ -160,7 +182,7 @@ function App() {
         styleOverrides: {
           root: {
             backgroundColor: '#1a1a1a',
-            color: 'white'
+            color: '#fff'
           }
         }
       },
@@ -175,7 +197,10 @@ function App() {
         styleOverrides: {
           root: {
             backgroundColor: '#333333',
-          }
+            '& .MuiInputBase-input': {
+              color: '#fff',
+            },
+          },
         }
       },
       MuiNavigationButton: {
@@ -185,16 +210,51 @@ function App() {
           }
         }
       },
-      MuiSelect: {
+      MuiTabs: {
         styleOverrides: {
           root: {
-            border: '1px solid white',
+            backgroundColor: '#212121',
           }
         }
       },
-    }
+      MuiDrawer: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#212121',
+          }
+        }
+      },
+      MuiBPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#212121',
+          }
+        }
+      },
+      MuiSelect: {
+        styleOverrides: {
+          root: {
+            border: '1px solid #fff',
+          }
+        }
+      },
+      MuiAccordian: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#212121',
+          }
+        }
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#333333',
+          }
+        }
+      },
 
 
+    },
 
   });
 
@@ -208,20 +268,21 @@ function App() {
         <CssBaseline />
         <NavBar  isDark={isDark} handleDarkModeClick = {handleDarkModeClick}/>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/explore" element={<ExplorePage />} />
-          <Route path="/mapCreation" element={<MapCreationWrapper />} />
-          <Route path="/mapView" element={<MapView />} />
-          <Route path="/changePassword" element={<ChangePassword />} />
-          <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/recoveryCode" element={<RecoveryCode />} />
-          <Route path="/setNewPassword" element={<SetNewPassword />} />
+          <Route path="/" element={<LandingPage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/register" element={<RegisterPage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/login" element={<LoginPage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/profile" element={<ProfilePage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/explore" element={<ExplorePage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/mapCreation" element={<MapCreationWrapper theme={isDark ? darkTheme : theme} />} />
+          <Route path="/mapView" element={<MapView theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/changePassword" element={<ChangePassword theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/forgotPassword" element={<ForgotPassword theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/recoveryCode" element={<RecoveryCode  theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/setNewPassword" element={<SetNewPassword theme={isDark ? darkTheme : theme}/>} />
         </Routes>
       </Router>
     </ThemeProvider>
+
   );
 }
 

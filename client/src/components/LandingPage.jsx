@@ -20,7 +20,7 @@ function Typeography(props) {
 }
 
 Typeography.propTypes = {children: PropTypes.node};
-export default function LandingPage() {
+export default function LandingPage({theme}) {
   const scrollContainer = useRef(null);
   const mapData = mapDataJson.mapData;
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ export default function LandingPage() {
         </div>
         <Button onClick={() => scroll(400)}>&gt;</Button>
       </div>
-      <CopyRight />
+      <CopyRight theme = {theme}/>
     </div>
   );
 }

@@ -8,14 +8,14 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
 import Popover from '@mui/material/Popover';
-import CopyRight from './CopyRight';
-import mapMetadataSlice from '../redux-slices/mapMetadataSlice';
 import Typography from "@mui/material/Typography";
 import MenuList from '@mui/material/MenuList';
+import CopyRight from "./CopyRight.jsx";
 
 
 
-export default function ExplorePage() {
+export default function ExplorePage({theme}) {
+    console.log(theme.themeName)
   const [anchorEl, setAnchorEl] = useState(null);
   const [filterAnchor, setFilterAnchor] = useState(null)
   const isSortOpen = Boolean(anchorEl);
@@ -66,19 +66,19 @@ export default function ExplorePage() {
         </div>
         <div className = "map-card-container">
           <div className = "MapCard">
-            <MapCard></MapCard>
+            <MapCard theme = {theme}></MapCard>
           </div>
           <div className = "MapCard">
-            <MapCard></MapCard>
+            <MapCard theme = {theme}></MapCard>
           </div>
           <div className = "MapCard">
-            <MapCard></MapCard>
+            <MapCard theme = {theme}></MapCard>
           </div>
             <div className = "MapCard">
-                <MapCard></MapCard>
+                <MapCard theme = {theme}></MapCard>
             </div>
             <div className = "MapCard">
-                <MapCard></MapCard>
+                <MapCard theme = {theme}></MapCard>
             </div>
 
         </div>
@@ -146,7 +146,7 @@ export default function ExplorePage() {
             </div>
           </div>
         </Popover>
-          <CopyRight className/>
+          <CopyRight theme = {theme}/>
       </div>
   );
 }

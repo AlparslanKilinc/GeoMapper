@@ -7,24 +7,25 @@ import Box from '@mui/material/Box';
 import ColorsSymbolAccordionMenu from './ColorsSymbolAccordionMenu';
 import ColorsDotDensityAccordionMenu from './ColorsDotDensityAccordionMenu';
 import { useSelector } from 'react-redux';
+import {ThemeProvider} from "@mui/material/styles";
 
-export default function ColorsAccordionMenu() {
+export default function ColorsAccordionMenu({theme}) {
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
-  let accordionDetails = <ColorsSymbolAccordionMenu />;
+  let accordionDetails = <ColorsSymbolAccordionMenu theme = {theme}/>;
 
   if (mapGraphicsType === 'Dot Density Map') {
-    accordionDetails = <ColorsDotDensityAccordionMenu />;
+    accordionDetails = <ColorsDotDensityAccordionMenu theme = {theme} />;
   }
 
   return (
-    <Accordion>
+    <Accordion sx = {{bgcolor:theme.palette.background.secondaryDefault}}>
       <AccordionSummary className = "styles-buttons"
         expandIcon={<ExpandMoreIcon />} // Black expand icon
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
         <Typography>
-          <Box className = "dark-mode-labels" component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box  component="span" sx={{ display: 'flex', alignItems: 'center' }}>
             <PaletteOutlinedIcon sx={{ mr: 0.5 }}/> colors
           </Box>
         </Typography>

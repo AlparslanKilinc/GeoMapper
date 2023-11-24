@@ -1,15 +1,7 @@
-.map-render{
-    height:500px;
-    width: 1100px;
-    border-radius: 10px;
-    margin-top:80px;
-    display:flex;
-    filter: drop-shadow(-1px 6px 8px #d1d1d1);
-}
+
 .map-info{
     margin-bottom:-75px;
     font-family: 'Outfit', sans-serif;
-
 }
 
 .map-info h1{
@@ -24,24 +16,12 @@
     color: dimgrey;
 }
 
-.map-render img{
-    height: 500px;
-    width: 800px;
-    border-radius: 10px;
-    object-fit: cover;
- }
 .map-view-content{
     width:100%;
     background-color: white;
-    filter: drop-shadow(0px -5px 1px #d1d1d1);
     border-radius:7px;
 }
 
-.comment{
-    display:flex;
-    height:440px;
-    overflow-y: scroll;
-}
 
 .login-link{
     color: var(--main-color);
@@ -63,7 +43,4 @@
 .actions{
     display:flex;
     padding:15px;
-}
-.export, .bookmarks, .share{
-    padding-left:10px;
 }

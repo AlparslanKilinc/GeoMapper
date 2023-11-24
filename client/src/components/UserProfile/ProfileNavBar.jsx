@@ -13,27 +13,27 @@ const NavState = {
   PUBLISHED_MAPS: 'PublishedMaps'
 };
 
-export default function ProfileNavBar() {
+export default function ProfileNavBar({theme}) {
   const [Select, setSelect] = useState(NavState.DRAFTS);
-  const [Content, setContent] = useState(<Drafts />);
+  const [Content, setContent] = useState(<Drafts theme = {theme}/>);
 
   let handleButton = (input) => {
     switch (input) {
       case NavState.BOOKMARKS:
         setSelect(NavState.BOOKMARKS);
-        setContent(<Bookmarks />);
+        setContent(<Bookmarks theme = {theme} />);
         break;
       case NavState.DRAFTS:
         setSelect(NavState.DRAFTS);
-        setContent(<Drafts />);
+        setContent(<Drafts theme = {theme} />);
         break;
       case NavState.PUBLISHED_MAPS:
         setSelect(NavState.PUBLISHED_MAPS);
-        setContent(<PublishedMaps />);
+        setContent(<PublishedMaps  theme = {theme} />);
         break;
       default:
         setSelect(NavState.DRAFTS);
-        setContent(<Drafts />);
+        setContent(<Drafts  theme = {theme} />);
         break;
     }
   };
@@ -44,7 +44,7 @@ export default function ProfileNavBar() {
         <button
           onClick={() => handleButton(NavState.DRAFTS)}
           className="nav-button"
-          style={{ borderBottom: Select === NavState.DRAFTS ? '3px solid #40e0d0' : 'none' }}
+          style={{ color:theme.typography.allVariants.color,  borderBottom: Select === NavState.DRAFTS ? '3px solid #40e0d0' : 'none' }}
         >
           <EditIcon />
           Drafts
@@ -54,7 +54,7 @@ export default function ProfileNavBar() {
           onClick={() => handleButton(NavState.PUBLISHED_MAPS)}
           className="nav-button"
           style={{
-            borderBottom: Select === NavState.PUBLISHED_MAPS ? '3px solid #40e0d0' : 'none'
+            color:theme.typography.allVariants.color, borderBottom: Select === NavState.PUBLISHED_MAPS ? '3px solid #40e0d0' : 'none'
           }}
         >
           <MapIcon />
@@ -64,7 +64,7 @@ export default function ProfileNavBar() {
         <button
           onClick={() => handleButton(NavState.BOOKMARKS)}
           className="nav-button"
-          style={{ borderBottom: Select === NavState.BOOKMARKS ? '3px solid #40e0d0' : 'none' }}
+          style={{ color:theme.typography.allVariants.color , borderBottom: Select === NavState.BOOKMARKS ? '3px solid #40e0d0' : 'none' }}
         >
           <BookmarkBorderIcon />
           Bookmarks

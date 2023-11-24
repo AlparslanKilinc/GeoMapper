@@ -7,11 +7,12 @@ import choroplethMap from '../../assets/choropleth_map.png';
 import dotDensityMap from '../../assets/dot_density_map.png';
 import { Divider, Button } from '@mui/material';
 import mapDataJson from '../../mapData.json';
-import CopyRight from '.././CopyRight';
 import { useDispatch } from 'react-redux';
 import { setMapGraphicsType } from '../../redux-slices/mapMetadataSlice';
+import CopyRight from "../CopyRight.jsx";
 
-export default function TemplateSelection({ onSelectionComplete }) {
+
+export default function TemplateSelection({ onSelectionComplete}) {
   const dispatch = useDispatch();
   const mapData = mapDataJson.mapData;
 
@@ -66,7 +67,6 @@ export default function TemplateSelection({ onSelectionComplete }) {
           ))}
         </div>
       </div>
-      <CopyRight />
     </div>
   );
 }

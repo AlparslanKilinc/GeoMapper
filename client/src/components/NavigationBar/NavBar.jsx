@@ -32,11 +32,10 @@ export default function NavBar({isDark, handleDarkModeClick}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const location = useLocation();
   const isExplorePage = location.pathname == '/explore';
-  console.log(isExplorePage);
   return (
     <AppBar position="static">
       <Toolbar className={'navigationBar'}>
-        <Logo />
+        <Logo isDark = {isDark}/>
         <div className={'iconContainer'}>
           {isExplorePage && <Search/>}
           <ToggleDarkMode isDark = {isDark} handleDarkModeClick={handleDarkModeClick} />

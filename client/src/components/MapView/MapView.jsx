@@ -14,7 +14,9 @@ import IconButton from '@mui/material/IconButton';
 import PopUp from '../PopUp';
 import SharePopUp from '../SharePopUp'
 import ForkForm from '../ForkForm'
-export default function MapView() {
+import Box from "@mui/material/Box";
+import CopyRight from "../CopyRight.jsx";
+export default function MapView({theme}) {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
@@ -82,61 +84,69 @@ export default function MapView() {
                 <span ><p className = "map-description">By John Doe     September 1, 2018</p></span>
                 <span ><p className = "map-description">This is my description............</p></span>
             </div>
-            <div className = "map-render">
-                <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png"/>
-                <div className="map-view-content">
-                  <div className = "comment">
-                      <div className = "comment-section">
-                          <Comment/>
-                      </div>
-                  </div>
-                    <Divider/>
-                    <div className = "post-comment">
-                        {loggedIn ? (
-                            <div className= "comment-form">
-                                <Paper
-                                    component="form"
-                                    sx={{ p: '12px 4px', display: 'flex', alignItems: 'center', width: 350}}>
-                                    <InputBase
-                                        sx={{ ml: 1, flex: 1 }}
-                                        placeholder="Post a comment"
-                                        inputProps={{ 'aria-label': 'Post a comment' }}
-                                    />
-                                    <Button variant="contained"
-                                            sx = {{backgroundColor: "var(--main-color)",
+            <Box sx={{
+                height: '500px',
+                width: '1100px',
+                borderRadius: '10px',
+                marginTop: '80px',
+                display: 'flex',
+                flexDirection: 'row',
+                backgroundColor: 'black'
+
+            }}>
+                    <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png" style={{ maxWidth: '70%' }}/>
+                    <Paper sx = {{ width: '30%'}}>
+                        <div className = "comment" style = {{height: '90%'}} >
+                                <Comment/>
+                        </div>
+                        <Divider/>
+                        <div className = "post-comment"  style = {{ height: '10%'}}>
+                            {loggedIn ? (
+                                <div className= "comment-form">
+                                    <Paper
+                                        component="form"
+                                        sx={{ p: '12px 4px', display: 'flex', alignItems: 'center', width: 350}}>
+                                        <InputBase
+                                            sx={{ ml: 1, flex: 1 }}
+                                            placeholder="Post a comment"
+                                            inputProps={{ 'aria-label': 'Post a comment' }}
+                                        />
+                                        <Button variant="contained"
+                                                sx = {{backgroundColor: "var(--main-color)",
                                                     '&:hover': 'var(--dark-color)'}}
-                                    >Post</Button>
-                                </Paper>
-                            </div>
-                        ) : (
-                            <p>
-                                <a className="login-link" href="/login">
-                                    Login
-                                </a>{" "}
-                                to comment
-                            </p>)}
-                    </div>
-                </div>
-            </div>
-            <div className = "actions">
+                                        >Post</Button>
+                                    </Paper>
+                                </div>
+                            ) : (
+                                <p>
+                                    <a className="login-link" href="/login">
+                                        Login
+                                    </a>{" "}
+                                    to comment
+                                </p>)}
+                        </div>
+                    </Paper>
+                    <Divider/>
+            </Box>
+            <div className = "actions"  style={{ display: 'flex', gap: '8px' }}>
                 <IconButton>
-                    <ThumbUpOffAltIcon className = "like"onClick = {handleLike}/>
+                    <ThumbUpOffAltIcon  sx = {{color: theme.palette.iconColor}} className = "like"onClick = {handleLike}/>
                  </IconButton>
                  <IconButton>
-                    <ShareIcon className = "export" onClick = {handleFork}/>
+                    <ShareIcon  sx = {{color: theme.palette.iconColor}} className = "export" onClick = {handleFork}/>
                 </IconButton>
 
                 <IconButton>
-                    <IosShareIcon className = "share" onClick = {handleShare}/>
+                    <IosShareIcon   sx = {{color: theme.palette.iconColor}} className = "share" onClick = {handleShare}/>
                 </IconButton>
                  <IconButton>
-                     <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
+                     <BookmarkBorderIcon  sx = {{color: theme.palette.iconColor}} className = "bookmarks" onClick = {handleBookmark}/>
                  </IconButton>
-
-        </div>
+             </div>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
             {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}
             {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
+            <CopyRight theme = {theme}/>
         </div>
 );
 }

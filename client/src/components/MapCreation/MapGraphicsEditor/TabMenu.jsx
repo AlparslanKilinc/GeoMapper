@@ -14,7 +14,7 @@ function CustomTabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }} className = "dark-mode-map">
+        <Box sx={{ p: 3 }}>
           <Typography >{children}</Typography>
         </Box>
       )}
@@ -35,7 +35,7 @@ function a11yProps(index) {
   };
 }
 
-export default function TabMenu({ tabsConfig, handleTabularOpen }) {
+export default function TabMenu({ tabsConfig, handleTabularOpen,theme }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     // TODO: Use enum
@@ -48,9 +48,9 @@ export default function TabMenu({ tabsConfig, handleTabularOpen }) {
   };
 
   return (
-    <Box sx={{ width: '100%' ,height: '100%'}} className = "dark-mode-map">
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
-        <Tabs className = "dark-mode-labels"
+    <Box sx={{ width: '100%' ,height: '100%', bgcolor: theme.palette.background.default}}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider'}} >
+        <Tabs
           TabIndicatorProps={{ style: { background: '#40E0D0' } }}
           textColor="#40E0D0"
           value={value}
@@ -63,8 +63,8 @@ export default function TabMenu({ tabsConfig, handleTabularOpen }) {
         </Tabs>
       </Box>
       {tabsConfig.map((tab, index) => (
-        <CustomTabPanel className = "dark-mode-labels" value={value} index={index} key={index} >
-          {tab.content}
+        <CustomTabPanel  value={value} index={index} key={index} >
+          {React.cloneElement(tab.content, { theme })}
         </CustomTabPanel>
       ))}
     </Box>

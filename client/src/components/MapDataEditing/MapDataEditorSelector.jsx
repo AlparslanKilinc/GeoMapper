@@ -7,18 +7,17 @@ import SpikemapDataEditor from './SpikemapDataEditor';
 
 const MapDataEditorSelector = () => {
     const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-
     switch (mapGraphicsType) {
         case "Symbol Map":
-            return <SymbolmapDataEditor />;
+            return <SymbolmapDataEditor/>;
         case "Choropleth Map":
             return <ChoroplethmapDataEditor />;
         case "Heat Map":
-            return <HeatmapDataEditor />;
+            return <HeatmapDataEditor/>;
         case "Dot Density Map":
-            return <DotdensitymapDataEditor />;
+            return <DotdensitymapDataEditor/>;
         case "Spike Map":
-            return <SpikemapDataEditor />;
+            return <SpikemapDataEditor/>;
         default:
             return null; // or some default component or behavior
     }

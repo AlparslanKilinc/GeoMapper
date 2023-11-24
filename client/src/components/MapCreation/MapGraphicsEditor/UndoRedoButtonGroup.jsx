@@ -6,7 +6,7 @@ import RedoIcon from '@mui/icons-material/Redo';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Box from '@mui/material/Box';
 
-function UndoRedoButtonGroup() {
+function UndoRedoButtonGroup({theme}) {
   // Add your button handlers here
   const handleUndo = () => {
     /* Undo logic */
@@ -26,13 +26,13 @@ function UndoRedoButtonGroup() {
         variant="contained"
       >
         <Button onClick={handleUndo} className = "undo-redo-buttons">
-          <UndoIcon />
+          <UndoIcon sx={{ color: theme.palette.iconColor }}/>
         </Button>
         <Button onClick={handleRedo} className = "undo-redo-buttons">
-          <RedoIcon />
+          <RedoIcon sx={{ color: theme.palette.iconColor }}/>
         </Button>
         <Button onClick={handleExport} className = "undo-redo-buttons">
-          <SaveAltIcon />
+          <SaveAltIcon sx={{ color: theme.palette.iconColor }}/>
         </Button>
       </ButtonGroup>
     </Box>

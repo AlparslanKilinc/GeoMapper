@@ -18,7 +18,7 @@ import SharePopUp from './SharePopUp'
 import ForkForm from './ForkForm'
 
 
-export default function MapCard () {
+export default function MapCard ({theme}) {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
@@ -93,10 +93,10 @@ export default function MapCard () {
                         <Link className = "map-card-user-link" href = "ExplorePage#" underline = "hover" sx = {{ fontSize:'10px'}}>
                             @john123
                         </Link>
-                        <Typography gutterBottom variant="h5" className = "dark-mode-labels">
+                        <Typography gutterBottom variant="h5">
                             Election Results
                         </Typography>
-                        <Typography variant = "h8" component = "div" className = "dark-mode-labels">
+                        <Typography variant = "h8" component = "div">
                             This is my description of the most recent election results
                         </Typography>
                     </CardContent>
@@ -110,16 +110,16 @@ export default function MapCard () {
                 </CardActionArea>
                 <CardActions>
                     <IconButton >
-                        <ThumbUpOffAltIcon  onClick = {handleLike}/>
+                        <ThumbUpOffAltIcon  sx = {{color: theme.palette.iconColor}} onClick = {handleLike}/>
                     </IconButton>
                     <IconButton>
-                        <ShareIcon  onClick = {handleFork}/>
+                        <ShareIcon   sx = {{color: theme.palette.iconColor}} onClick = {handleFork}/>
                     </IconButton>
                     <IconButton>
-                        <IosShareIcon onClick = {handleShare}/>
+                        <IosShareIcon  sx = {{color: theme.palette.iconColor}} onClick = {handleShare}/>
                     </IconButton>
                     <IconButton>
-                        <BookmarkBorderIcon  onClick = {handleBookmark}/>
+                        <BookmarkBorderIcon  sx = {{color: theme.palette.iconColor}}  onClick = {handleBookmark}/>
                     </IconButton>
                 </CardActions>
             </Card>

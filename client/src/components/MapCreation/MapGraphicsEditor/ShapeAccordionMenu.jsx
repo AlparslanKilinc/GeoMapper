@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { changeSizeByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
 import Slider from '@mui/material/Slider';
 
-export default function ShapeAccordionMenu() {
+export default function ShapeAccordionMenu({theme}) {
   const dispatch = useDispatch();
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const { propertyNames, sizeByProperty } = useSelector((state) => state.mapGraphics);
@@ -23,7 +23,7 @@ export default function ShapeAccordionMenu() {
     dispatch(changeSizeByProperty(newValue));
   };
   return (
-    <Accordion>
+      <Accordion sx = {{bgcolor:theme.palette.background.secondaryDefault}}>
       <AccordionSummary className = "styles-buttons"
         expandIcon={<ExpandMoreIcon />} // Black expand icon
         aria-controls="panel1a-content"
@@ -45,9 +45,9 @@ export default function ShapeAccordionMenu() {
           sx={{ gap: 2 }}
         >
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <Typography variant="subtitle2" className = "dark-mode-labels">select shape</Typography>
+            <Typography variant="subtitle2">select shape</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <ShapeButtonGroup />
+            <ShapeButtonGroup theme = {theme}/>
           </Box>
 
           <Box
@@ -57,15 +57,23 @@ export default function ShapeAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%', display: mapGraphicsType === 'Dot Density Map' ? 'none' : 'flex' }}
           >
-            <Typography variant="subtitle2" className = "dark-mode-labels">size by property</Typography>
+            <Typography variant="subtitle2">size by property</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
             <Autocomplete
-              value={sizeByProperty}
-              onChange={handleSizeByPropertyChange}
-              options={propertyNames}
-              fullWidth
-              renderInput={(params) => <TextField {...params} fullWidth />}
+                value={sizeByProperty}
+                onChange={handleSizeByPropertyChange}
+                options={propertyNames}
+                fullWidth
+                renderOption={(props, option) => (
+                    <li {...props} style={{ color: 'black' }}>
+                      {option}
+                    </li>
+                )}
+                renderInput={(params) => (
+                    <TextField {...params} fullWidth/>
+                )}
             />
+
           </Box>
 
           <Box
@@ -75,7 +83,7 @@ export default function ShapeAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <Typography variant="subtitle2" className = "dark-mode-labels">fixed size</Typography>
+            <Typography variant="subtitle2">fixed size</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
             <Slider />
           </Box>
