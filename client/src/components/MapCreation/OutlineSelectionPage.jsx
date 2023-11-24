@@ -6,8 +6,9 @@ import PlaceIcon from '@mui/icons-material/Place';
 import GeoJsonMap from './GeoJsonMap';
 import OutlineFileUploader from './OutlineFileUploader';
 import { fetchGeojson, fetchGeojsonById, searchGeojson } from '../../redux-slices/geoJSONSlice';
+import Typography from "@mui/material/Typography";
 
-export default function OutlineSelectionPage() {
+export default function OutlineSelectionPage({theme}) {
   const dispatch = useDispatch();
   const [searchInput, setSearchInput] = useState('');
   const { items, geojson, isLoadingItems, isLoadingGeojson } = useSelector((state) => state.geojson);
@@ -41,20 +42,23 @@ export default function OutlineSelectionPage() {
         </div>
 
         <h3 className="secondary-title">Select Map</h3>
-        <OutlineFileUploader />
+        <OutlineFileUploader theme = {theme}/>
         <TextField
           variant="outlined"
           value={searchInput}
           onChange={handleSearchChange}
-          helperText="What type of map do you want to create?"
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start">
-                <PlaceIcon />
-              </InputAdornment>
+                <InputAdornment position="start" className = "map-location-textfield" sx = {{
+                  color: theme.typography.allVariants.color
+                }}  >
+                  <PlaceIcon /> search for places
+                </InputAdornment>
             ),
           }}
         />
+        <Typography style = {{fontSize: '12px', marginTop: '-20px'}}>What type of map do you want to create?</Typography>
+
 
         {isLoadingItems ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

@@ -14,7 +14,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import CopyRight from './CopyRight';
 import Box from '@mui/material/Box';
 
-export default function LoginPage() {
+export default function LoginPage({theme}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isLoading = useSelector((state) => state.auth.isLoading);
   const errorMessage = useSelector((state) => state.auth.message);
@@ -143,7 +143,7 @@ export default function LoginPage() {
           </Link>
         </div>
       </Box>
-      <CopyRight />
+      <CopyRight theme = {theme}/>
     </div>
   );
 }

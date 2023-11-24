@@ -24,7 +24,7 @@ import { useEffect } from 'react';
 const drawerWidth = 240;
 const stylesToolboxConfig = [
   { label: 'Styles', content: <StylesMenu /> },
-  { label: 'Annotate', content: <AnnotateContent /> }
+  { label: 'Annotate', content: <AnnotateContent/> }
 ];
 
 const dataEditingToolboxConfig = [
@@ -162,7 +162,7 @@ export default function MapGraphicsEditor() {
         variant="permanent"
         anchor="left"
       >
-        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
+        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen}/>
       </Drawer>
 
       {!isTabularOpened && (<MapBox />)}

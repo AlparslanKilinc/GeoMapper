@@ -18,7 +18,7 @@ import SharePopUp from './SharePopUp'
 import ForkForm from './ForkForm'
 
 
-export default function MapCard () {
+export default function MapCard ({theme}) {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
@@ -90,7 +90,7 @@ export default function MapCard () {
                         alt="green iguana"
                     />
                     <CardContent>
-                        <Link href = "ExplorePage#" underline = "hover" sx = {{color: 'var(--dark-color)', fontSize:'10px'}}>
+                        <Link className = "map-card-user-link" href = "ExplorePage#" underline = "hover" sx = {{ fontSize:'10px'}}>
                             @john123
                         </Link>
                         <Typography gutterBottom variant="h5">
@@ -101,29 +101,29 @@ export default function MapCard () {
                         </Typography>
                     </CardContent>
                     <div className = "tags">
-                        <Chip label="Chorpleth" sx={{mb:1 ,ml: 1}} onClick={handleTagClick}/>
-                        <Chip label="United States" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
-                        <Chip label="Election"sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
-                        <Chip label="Map" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick}/>
+                        <Chip className = "tag" label="Chorpleth" sx={{mb:1 ,ml: 1}} onClick={handleTagClick}/>
+                        <Chip className = "tag"label="United States" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
+                        <Chip className = "tag" label="Election"sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
+                        <Chip className = "tag" label="Map" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick}/>
                     </div>
 
                 </CardActionArea>
                 <CardActions>
-                    <IconButton>
-                        <ThumbUpOffAltIcon className = "like" onClick = {handleLike}/>
+                    <IconButton >
+                        <ThumbUpOffAltIcon  sx = {{color: theme.palette.iconColor}} onClick = {handleLike}/>
                     </IconButton>
                     <IconButton>
-                        <ShareIcon className = "export"  onClick = {handleFork}/>
+                        <ShareIcon   sx = {{color: theme.palette.iconColor}} onClick = {handleFork}/>
                     </IconButton>
                     <IconButton>
-                        <IosShareIcon className = "share" onClick = {handleShare}/>
+                        <IosShareIcon  sx = {{color: theme.palette.iconColor}} onClick = {handleShare}/>
                     </IconButton>
                     <IconButton>
-                        <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
+                        <BookmarkBorderIcon  sx = {{color: theme.palette.iconColor}}  onClick = {handleBookmark}/>
                     </IconButton>
                 </CardActions>
             </Card>
-            {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
+            {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle} className="custom-popup"/>}
             {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}
             {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
 

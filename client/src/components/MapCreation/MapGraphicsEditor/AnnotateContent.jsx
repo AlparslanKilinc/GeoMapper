@@ -37,7 +37,10 @@ const AnnotateContent = () => {
           value={description}
           onChange={handleChangeDescription}
           minRows={6}
-          style={{ width: '200px !important', fontFamily: 'Outfit', fontSize: '15px' }}
+          style={{ width: '200px !important', fontFamily: 'Outfit', fontSize: '15px'
+
+
+        }}
         />
       </Box>
     </Box>

@@ -1,12 +1,13 @@
-.explorePage{
+.explore-page {
   display: flex;
   flex-direction: column;
-  height: 100%; /* 100% of the viewport height */
-  width: 100%; /* 100% of the viewport width */
+  min-width: 95vw;
   justify-content: center;
-  overflow: scroll;
+  padding: 10px; /* Add padding for spacing */
 }
-
+* {
+  box-sizing: border-box;
+}
 
 .explore-title{
   align-self:center;
@@ -14,21 +15,22 @@
 
 .filter-sort-buttons{
   display:flex;
-  margin-left:100px;
+  margin-left:40px;
   width: 12%;
   gap:10px;
 }
 
 .map-card-container{
-  display:flex;
-  margin-top:10px;
-  padding-bottom: 20px;
-  padding-left:100px;
-  justify-content: flex-start;
+  display: flex;
   flex-wrap: wrap;
-  gap: 30px 30px;
-  width:100%;
-  overflow: scroll;
+  gap: 30px;
+  padding: 20px;
+  justify-content: flex-start;
+  overflow-y: auto;
+  max-width: 100%;
+  margin-left: 20px;
+  margin-top:10px;
+  margin-bottom: 10px;
 }
 .MuiAutocomplete-root .MuiAutocomplete-popupIndicator {
   display: none;

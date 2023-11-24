@@ -15,7 +15,7 @@ const NavState = {
   PUBLISHED_MAPS: 'PublishedMaps'
 };
 
-export default function ProfileNavBar() {
+export default function ProfileNavBar({theme}) {
   const [Select, setSelect] = useState(NavState.DRAFTS);
   const [Content, setContent] = useState(<Drafts />);
 
@@ -23,19 +23,19 @@ export default function ProfileNavBar() {
     switch (input) {
       case NavState.BOOKMARKS:
         setSelect(NavState.BOOKMARKS);
-        setContent(<Bookmarks />);
+        setContent(<Bookmarks theme = {theme}/>);
         break;
       case NavState.DRAFTS:
         setSelect(NavState.DRAFTS);
-        setContent(<Drafts />);
+        setContent(<Drafts  theme = {theme}/>);
         break;
       case NavState.PUBLISHED_MAPS:
         setSelect(NavState.PUBLISHED_MAPS);
-        setContent(<PublishedMaps />);
+        setContent(<PublishedMaps theme = {theme}/>);
         break;
       default:
         setSelect(NavState.DRAFTS);
-        setContent(<Drafts />);
+        setContent(<Drafts theme = {theme}/>);
         break;
     }
   };

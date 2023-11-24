@@ -12,20 +12,40 @@ import ChangePassword from './components/ChangePassword';
 import ForgotPassword from './components/ForgotPassword';
 import RecoveryCode from './components/RecoveryCode';
 import SetNewPassword from './components/SetNewPassword';
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import { getLoggedIn } from './redux-slices/authSlice';
+import CssBaseline from "@mui/material/CssBaseline";
 
 function App() {
   const dispatch = useDispatch();
+  const [isDark, setIsDark] = useState(() => {
+    const storedDarkMode = localStorage.getItem('darkMode');
+    return storedDarkMode ? JSON.parse(storedDarkMode) : false;
+  });
+  const handleDarkModeClick = () => {
+    setIsDark((prevIsDark) => {
+      const newIsDark = !prevIsDark;
+      localStorage.setItem('darkMode', JSON.stringify(newIsDark));
+      return newIsDark;
+    });
+
+  }
   const theme = createTheme({
+    themeName: 'light',
     palette: {
       primary: {
-        main: '#40E0D0' // Your desired primary color
-        // You can also specify light, dark, and contrastText if needed
-      }
+        main: '#40E0D0'
+      },
+      iconColor: 'black',
     },
     typography: {
+      allVariants: {
+        color: 'black'
+      },
+      button: {
+        textTransform: 'none'
+      },
       fontFamily: [
         'Outfit', // The name of your font family
         'Arial', // Fallback font
@@ -33,72 +53,244 @@ function App() {
       ].join(',')
     },
     components: {
-      MuiButton: {
+      MuiAppBar: {
         styleOverrides: {
           root: {
-            // Name of the rule
-            textTransform: 'none' // Change text transform
-          },
-          indicator: {
-            color: 'green' // Your desired color
+            backgroundColor: "#fff",
+            color: "#40e0d0",
+          }
+        }
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#fff'
           }
         }
       },
 
-      MuiAccordion: {
+      MuiButton: {
         styleOverrides: {
           root: {
-            backgroundColor: 'white', // White background for the accordion
-            boxShadow: 'none', // Removes box shadow
-            '&:before': {
-              display: 'none' // Removes the pseudo-element that can also add a shadow
+            backgroundColor: ' #40e0d0',
+            color: 'black',
+            '&:hover': {
+              backgroundColor: ' #006666',
+              color: 'black',
             },
-            '&.MuiPaper-elevation0': {
-              boxShadow: 'none' // Ensures no shadow when the elevation is set to 0
+          }
+        },
+      },
+      MuiLoadingButton: {
+        styleOverrides: {
+          root: {
+            backgroundColor: ' #40e0d0',
+            '&:hover': {
+              backgroundColor: ' #006666',
+            },
+          }
+        },
+        MuiSelect: {
+          styleOverrides: {
+            root: {
+              border: '1px solid #212121',
             }
+          }
+
+        },
+        MuiDrawer: {
+          styleOverrides: {
+            root: {
+              backgroundColor: '#fff',
+            }
+          }
+        },
+
+
+
+      }
+    }
+  });
+
+
+  const darkTheme = createTheme({
+    themeName: 'dark', // Add a custom property to identify the theme
+    palette: {
+      background: {
+        default: "#212121",
+        secondaryDefault: "#333333",
+      },
+      iconColor: '#fff',
+      drawer: {
+        background: '#212121', // specify your desired background color
+      },
+      primary: {
+        main: '#40E0D0'
+      },
+      divider: '#fff'
+    },
+    typography: {
+      allVariants: {
+        color: '#fff',
+        secondaryColor: '#40E0D0'
+      },
+      button: {
+        textTransform: 'none'
+      },
+      fontFamily: [
+        'Outfit', // The name of your font family
+        'Arial', // Fallback font
+        'sans-serif' // Generic font family
+      ].join(','),
+    },
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "#212121",
+            color: "#006666",
+          }
+        }
+
+      },
+      MuiToolbar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "#212121",
+            color: "#006666",
           }
         }
       },
-      // Style overrides for AccordionSummary
-      MuiAccordionSummary: {
+      MuiTypography: {
         styleOverrides: {
           root: {
-            backgroundColor: 'white', // White background for the accordion summary
-            color: 'black', // Black text color
-            '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-              transform: 'rotate(180deg)', // Ensures the icon rotates when expanded
-              color: '#40E0D0'
-            },
-            '& .MuiAccordionSummary-expandIconWrapper': {
-              color: 'black' // Black color for the expand icon
-            }
+            color: '#fff',
           }
         }
-      }
-      // Add any other theme customizations here
-    }
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#006666',
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: 'black',
+            },
+          }
+        }
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#333333',
+            color: '#fff'
+          }
+        }
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#1a1a1a',
+            color: '#fff'
+          }
+        }
+      },
+      MuiLink: {
+        styleOverrides: {
+          root: {
+            color: 'var(--main-color)'
+          }
+        }
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#333333',
+            '& .MuiInputBase-input': {
+              color: '#fff',
+            },
+          },
+        }
+      },
+      MuiNavigationButton: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#006666',
+          }
+        }
+      },
+      MuiTabs: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#212121',
+          }
+        }
+      },
+      MuiDrawer: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#212121',
+          }
+        }
+      },
+      MuiBPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#212121',
+          }
+        }
+      },
+      MuiSelect: {
+        styleOverrides: {
+          root: {
+            border: '1px solid #fff',
+          }
+        }
+      },
+      MuiAccordian: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#212121',
+          }
+        }
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#333333',
+          }
+        }
+      },
+
+
+    },
+
   });
+
+
 
   useEffect(() => {
     dispatch(getLoggedIn());
   }, [dispatch]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider  theme = {isDark ? darkTheme : theme}>
       <Router>
-        <NavBar />
+        <CssBaseline />
+        <NavBar  isDark={isDark} handleDarkModeClick = {handleDarkModeClick}/>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/explore" element={<ExplorePage />} />
-          <Route path="/mapCreation" element={<MapCreationWrapper />} />
-          <Route path="/mapView" element={<MapView />} />
-          <Route path="/changePassword" element={<ChangePassword />} />
-          <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/recoveryCode" element={<RecoveryCode />} />
-          <Route path="/setNewPassword" element={<SetNewPassword />} />
+          <Route path="/" element={<LandingPage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/register" element={<RegisterPage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/login" element={<LoginPage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/profile" element={<ProfilePage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/explore" element={<ExplorePage theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/mapCreation" element={<MapCreationWrapper theme={isDark ? darkTheme : theme} />} />
+          <Route path="/mapView" element={<MapView theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/changePassword" element={<ChangePassword theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/forgotPassword" element={<ForgotPassword theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/recoveryCode" element={<RecoveryCode  theme={isDark ? darkTheme : theme}/>} />
+          <Route path="/setNewPassword" element={<SetNewPassword theme={isDark ? darkTheme : theme}/>} />
+
         </Routes>
       </Router>
     </ThemeProvider>

@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import '../styles/loginPage.css';
 
-export default function RecoveryCode() {
+export default function RecoveryCode({theme}) {
   const navigate = useNavigate();
   const [recoveryCode, setRecoveryCode] = useState('');
 

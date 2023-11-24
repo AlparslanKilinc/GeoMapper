@@ -73,7 +73,7 @@ const ColorSelector = ({
         sx={{
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
-              borderColor: 'white' // Change border color
+              borderColor: 'transparent' // Change border color
             },
             '&:hover fieldset': {
               borderColor: 'white' // Change border color on hover

@@ -4,11 +4,11 @@ import CopyRight from '../CopyRight';
 import '../../styles/profilePage.css';
 import ProfileNavBar from './ProfileNavBar';
 
-export default function ProfilePage() {
+export default function ProfilePage({theme}) {
   return (
     <div className="profile-page">
-      <ProfileNavBar />
-      <CopyRight />
+      <ProfileNavBar theme = {theme} />
+      <CopyRight theme = {theme} />
     </div>
   );
 }

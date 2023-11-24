@@ -8,7 +8,7 @@ import { styled } from '@mui/material/styles';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import '../styles/loginPage.css';
 
-export default function SetNewPassword() {
+export default function SetNewPassword({theme}) {
   const navigate = useNavigate();
 
   const NavigationButton = styled(Button)(({ theme }) => ({

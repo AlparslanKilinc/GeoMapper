@@ -1,15 +1,11 @@
-.map-render{
-    height:500px;
-    width: 1100px;
-    border-radius: 10px;
-    margin-top:80px;
-    display:flex;
-    filter: drop-shadow(-1px 6px 12px #d1d1d1);
-}
+
 .map-info{
     margin-bottom:-75px;
+    margin-left: 200px;
     font-family: 'Outfit', sans-serif;
-
+}
+.map-comments-and-display{
+    margin-left: 200px;
 }
 
 .map-info h1{
@@ -24,24 +20,12 @@
     color: dimgrey;
 }
 
-.map-render img{
-    height: 500px;
-    width: 800px;
-    border-radius: 10px;
-    object-fit: cover;
- }
 .map-view-content{
     width:100%;
     background-color: white;
-    filter: drop-shadow(0px -4px 12px #d1d1d1);
-    border-radius:7px
+    border-radius:7px;
 }
 
-.comment{
-    display:flex;
-    height:440px;
-    overflow-y: scroll;
-}
 
 .login-link{
     color: var(--main-color);
@@ -61,9 +45,7 @@
 }
 
 .actions{
+    margin-left: 200px;
     display:flex;
     padding:15px;
-}
-.export, .bookmarks, .share{
-    padding-left:10px;
 }

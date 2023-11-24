@@ -12,7 +12,7 @@ import CopyRight from './CopyRight';
 
 import Box from '@mui/material/Box';
 
-export default function ChangePasswordPage() {
+export default function ChangePasswordPage({theme}) {
   const isLoading = useSelector((state) => state.auth.isLoading);
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
@@ -128,7 +128,7 @@ export default function ChangePasswordPage() {
           </Button>
         </Link>
       </Box>
-      <CopyRight />
+      <CopyRight theme = {theme} />
     </div>
   );
 }

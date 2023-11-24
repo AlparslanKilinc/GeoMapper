@@ -24,7 +24,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
-const OutlineFileUploader = () => {
+const OutlineFileUploader = ({theme}) => {
   const dispatch = useDispatch();
   const [warning, setWarning] = useState(null);
   const [error, setError] = useState(null);
@@ -134,8 +134,8 @@ const OutlineFileUploader = () => {
       <Button
         startIcon={<CloudUploadIcon />}
         component="label"
-        variant="outlined"
-        style={{ color: 'black', borderColor: 'black' }}
+        variant="contained"
+        style={{ color: theme.typography.allVariants.color}}
       >
         Upload a map
         <VisuallyHiddenInput

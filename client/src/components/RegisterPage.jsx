@@ -14,7 +14,7 @@ import { registerUser, resetErrorMessage } from '../redux-slices/authSlice';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
 import Box from '@mui/material/Box';
 
-export default function RegisterPage() {
+export default function RegisterPage({theme}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isLoading = useSelector((state) => state.auth.isLoading);
   const errorMessage = useSelector((state) => state.auth.message);

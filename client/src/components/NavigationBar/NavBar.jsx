@@ -11,6 +11,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import Logo from './Logo.jsx';
 import UserIconMenu from './UserIconMenu';
 import Search from '../SearchBar';
+import ToggleDarkMode from "../ToggleDarkMode.jsx";
 
 const AuthButton = ({ loggedIn }) => {
   if (loggedIn) {
@@ -18,38 +19,39 @@ const AuthButton = ({ loggedIn }) => {
   }
 
   return (
-    <Link className="link" to={'/login'}>
-      <IconButton color="inherit" aria-label="login">
-        <LoginIcon />
-        <span style={{ fontSize: '18px' }}>Login</span>
-      </IconButton>
-    </Link>
+      <Link className="link" to={'/login'}>
+        <IconButton color="inherit" aria-label="login">
+          <LoginIcon />
+          <span style={{ fontSize: '18px' }}>Login</span>
+        </IconButton>
+      </Link>
   );
 };
 
-export default function NavBar() {
+export default function NavBar({isDark, handleDarkModeClick}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const location = useLocation();
   const isExplorePage = location.pathname == '/explore';
   return (
-    <AppBar position="static">
-      <Toolbar className={'navigationBar'}>
-        <Logo />
-        <div className={'iconContainer'}>
-          {isExplorePage && <Search/>}
-          <Link className="link" to={'/explore'}>
-            <IconButton id = "exploreButton" color="inherit" aria-label="explore">
-              <ExploreIcon />
-            </IconButton>
-          </Link>
-          <Link className="link" to={'/mapCreation'}>
-            <IconButton id = 'mapCreation' color="inherit" aria-label="add">
-              <AddIcon />
-            </IconButton>
-          </Link>
-          <AuthButton id = "loginButton" loggedIn={loggedIn} />
-        </div>
-      </Toolbar>
-    </AppBar>
+      <AppBar position="static">
+        <Toolbar className={'navigationBar'}>
+          <Logo isDark = {isDark}/>
+          <div className={'iconContainer'}>
+            {isExplorePage && <Search/>}
+            <ToggleDarkMode isDark = {isDark} handleDarkModeClick={handleDarkModeClick} />
+            <Link className="link" to={'/explore'}>
+              <IconButton id = "exploreButton" color="inherit" aria-label="explore">
+                <ExploreIcon />
+              </IconButton>
+            </Link>
+            <Link className="link" to={'/mapCreation'}>
+              <IconButton id = 'mapCreation' color="inherit" aria-label="add">
+                <AddIcon />
+              </IconButton>
+            </Link>
+            <AuthButton id = "loginButton" loggedIn={loggedIn} />
+          </div>
+        </Toolbar>
+      </AppBar>
   );
 }

@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setMapGraphicsType } from '../redux-slices/mapMetadataSlice';
 
-export default function LandingPage() {
+export default function LandingPage({theme}) {
   const scrollContainer = useRef(null);
   const mapData = mapDataJson.mapData;
   const navigate = useNavigate();
@@ -85,7 +85,6 @@ export default function LandingPage() {
                 <p>{map.description}</p>
                 <Button
                   onClick={() => handleCreateClick(map.title)}
-                  style={{ backgroundColor: '#40E0D0' }}
                   variant="contained"
                   id="register"
                 >
@@ -97,8 +96,7 @@ export default function LandingPage() {
         </div>
         <Button onClick={() => scroll(400)}>&gt;</Button>
       </div>
-
-      <CopyRight />
+      <CopyRight theme = {theme}/>
     </div>
   );
 }

@@ -14,7 +14,9 @@ import IconButton from '@mui/material/IconButton';
 import PopUp from '../PopUp';
 import SharePopUp from '../SharePopUp'
 import ForkForm from '../ForkForm'
-export default function MapView() {
+import Box from "@mui/material/Box";
+import CopyRight from "../CopyRight.jsx";
+export default function MapView({theme}) {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
@@ -79,32 +81,39 @@ export default function MapView() {
         <div className = "mapview-container">
             <div className = "map-info">
                 <span><h1>World Population</h1></span>
-                <span><p>By John Doe     September 1, 2018</p></span>
-                <span><p>This is my description............</p></span>
+                <span ><p className = "map-description">By John Doe     September 1, 2018</p></span>
+                <span ><p className = "map-description">This is my description............</p></span>
             </div>
-            <div className = "map-render">
-                <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png"/>
-                <div className="map-view-content">
-                  <div className = "comment">
-                      <div className = "comment-section">
-                          <Comment/>
-                      </div>
-                  </div>
+            <Box sx={{
+                height: '500px',
+                width: '1100px',
+                borderRadius: '10px',
+                marginTop: '80px',
+                display: 'flex',
+                flexDirection: 'row',
+                backgroundColor: 'black'
+
+            }} className = 'map-comments-and-display'>
+                <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png" style={{ maxWidth: '70%' }}/>
+                <Paper sx = {{ width: '30%'}}>
+                    <div className = "comment" style = {{height: '90%'}} >
+                        <Comment/>
+                    </div>
                     <Divider/>
-                    <div className = "post-comment">
+                    <div className = "post-comment"  style = {{ height: '10%'}}>
                         {loggedIn ? (
                             <div className= "comment-form">
                                 <Paper
                                     component="form"
-                                    sx={{ p: '12px 4px', display: 'flex', alignItems: 'center', width: 350}}>
+                                    sx={{ display: 'flex', alignItems: 'center', width: 330}}>
                                     <InputBase
-                                        sx={{ ml: 1, flex: 1 }}
+                                        sx={{ ml: 1, flex: 1, color: theme.typography.allVariants.color }}
                                         placeholder="Post a comment"
-                                        inputProps={{ 'aria-label': 'Post a comment' }}
+                                        inputProps={{ 'aria-label': 'Post a comment'}}
                                     />
                                     <Button variant="contained"
                                             sx = {{backgroundColor: "var(--main-color)",
-                                                    '&:hover': 'var(--dark-color)'}}
+                                                '&:hover': 'var(--dark-color)', mr: '5px'}}
                                     >Post</Button>
                                 </Paper>
                             </div>
@@ -116,27 +125,28 @@ export default function MapView() {
                                 to comment
                             </p>)}
                     </div>
-                </div>
+                </Paper>
+                <Divider/>
+            </Box>
+            <div className = "actions"  style={{ display: 'flex', gap: '8px' }}>
+                <IconButton>
+                    <ThumbUpOffAltIcon  sx = {{color: theme.palette.iconColor}} className = "like"onClick = {handleLike}/>
+                </IconButton>
+                <IconButton>
+                    <ShareIcon  sx = {{color: theme.palette.iconColor}} className = "export" onClick = {handleFork}/>
+                </IconButton>
+
+                <IconButton>
+                    <IosShareIcon   sx = {{color: theme.palette.iconColor}} className = "share" onClick = {handleShare}/>
+                </IconButton>
+                <IconButton>
+                    <BookmarkBorderIcon  sx = {{color: theme.palette.iconColor}} className = "bookmarks" onClick = {handleBookmark}/>
+                </IconButton>
             </div>
-            <div className = "actions">
-                <IconButton>
-                    <ThumbUpOffAltIcon className = "like"onClick = {handleLike}/>
-                 </IconButton>
-                 <IconButton>
-                    <ShareIcon className = "export" onClick = {handleFork}/>
-                </IconButton>
-
-                <IconButton>
-                    <IosShareIcon className = "share" onClick = {handleShare}/>
-                </IconButton>
-                 <IconButton>
-                     <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
-                 </IconButton>
-
-        </div>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
             {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}
             {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
+            <CopyRight theme = {theme}/>
         </div>
-);
+    );
 }

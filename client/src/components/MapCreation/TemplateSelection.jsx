@@ -68,7 +68,6 @@ export default function TemplateSelection({ onSelectionComplete }) {
           ))}
         </div>
       </div>
-      <CopyRight />
     </div>
   );
 }

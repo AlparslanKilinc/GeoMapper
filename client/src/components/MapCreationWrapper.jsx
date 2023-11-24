@@ -12,7 +12,7 @@ import MapGraphicsEditing from './MapCreation/MapGraphicsEditing';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearGeojson } from '../redux-slices/geoJSONSlice';
 
-export default function MapCreationWrapper() {
+export default function MapCreationWrapper({theme}) {
   const dispatch = useDispatch();
   const [currentStage, setCurrentStage] = useState(0);
   const location = useLocation();
@@ -52,26 +52,29 @@ export default function MapCreationWrapper() {
 
   const stages = [
     <TempleSelection onSelectionComplete={goForward} />,
-    <OutlineSelectionPage />,
+    <OutlineSelectionPage theme = {theme} />,
     <MapDataEditorSelector />,
-    <MapGraphicsEditing />
+    <MapGraphicsEditing/>
   ];
 
   return (
     <div className="mapCreationWrapper">
       <div className="wrapper-button-group">
         {currentStage !== 0 && (
-          <NavigationButton variant="outlined" startIcon={<ArrowBackIcon />} onClick={goBack}>
+          <NavigationButton
+              sx = {{color: theme.typography.allVariants.color}}
+              variant="contained" startIcon={<ArrowBackIcon />} onClick={goBack}>
             Back
           </NavigationButton>
         )}
 
         {currentStage < stages.length - 1 && currentStage !== 0 && (
           <NavigationButton
-            variant="outlined"
+            variant="contained"
             endIcon={<ArrowForwardIcon />}
             onClick={goForward}
             disabled={isNextButtonDisabled()}
+            sx = {{color: theme.typography.allVariants.color}}
           >
             Next
           </NavigationButton>
