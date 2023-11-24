@@ -1,9 +1,9 @@
 .comment-container img {
-    min-width:36px;
-    min-height: 36px;
+    min-width:40px;
+    min-height: 40px;
     max-width:36px;
     max-height: 36px;
-    border-radius: 50%;
+    border-radius: 60%;
     margin-right:10px;
     margin-left:10px;
     padding-top:5px;

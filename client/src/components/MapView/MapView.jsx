@@ -93,7 +93,7 @@ export default function MapView({theme}) {
                 flexDirection: 'row',
                 backgroundColor: 'black'
 
-            }}>
+            }} className = 'map-comments-and-display'>
                     <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png" style={{ maxWidth: '70%' }}/>
                     <Paper sx = {{ width: '30%'}}>
                         <div className = "comment" style = {{height: '90%'}} >
@@ -105,15 +105,15 @@ export default function MapView({theme}) {
                                 <div className= "comment-form">
                                     <Paper
                                         component="form"
-                                        sx={{ p: '12px 4px', display: 'flex', alignItems: 'center', width: 350}}>
+                                        sx={{ display: 'flex', alignItems: 'center', width: 330}}>
                                         <InputBase
-                                            sx={{ ml: 1, flex: 1 }}
+                                            sx={{ ml: 1, flex: 1, color: theme.typography.allVariants.color }}
                                             placeholder="Post a comment"
-                                            inputProps={{ 'aria-label': 'Post a comment' }}
+                                            inputProps={{ 'aria-label': 'Post a comment'}}
                                         />
                                         <Button variant="contained"
                                                 sx = {{backgroundColor: "var(--main-color)",
-                                                    '&:hover': 'var(--dark-color)'}}
+                                                    '&:hover': 'var(--dark-color)', mr: '5px'}}
                                         >Post</Button>
                                     </Paper>
                                 </div>

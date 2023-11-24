@@ -12,7 +12,7 @@ export default function Logo({isDark}) {
       <Link className="link" to={loggedIn ? '/profile' : '/'}>
         <img src={isDark ? DarkModeLogo : GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
       </Link>
-      <span style={{ fontSize: '18px' }}>GeoMapper</span>
+      <span style={{ fontSize: '18px', color: isDark ? '#40E0D0' : '#006666'}}>GeoMapper</span>
     </div>
   );
 }

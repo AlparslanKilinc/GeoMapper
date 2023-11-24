@@ -1,7 +1,11 @@
 
 .map-info{
     margin-bottom:-75px;
+    margin-left: 200px;
     font-family: 'Outfit', sans-serif;
+}
+.map-comments-and-display{
+    margin-left: 200px;
 }
 
 .map-info h1{
@@ -41,6 +45,7 @@
 }
 
 .actions{
+    margin-left: 200px;
     display:flex;
     padding:15px;
 }
