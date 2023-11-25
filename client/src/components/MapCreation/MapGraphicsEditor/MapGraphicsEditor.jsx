@@ -19,6 +19,7 @@ import {
   setColors,
   setSelectedPropUniqueValues
 } from '../../../redux-slices/mapStylesSlice';
+import  Legend  from '../Legend.jsx'
 import { useEffect } from 'react';
 
 const drawerWidth = 240;
@@ -54,9 +55,9 @@ export default function MapGraphicsEditor() {
     const c = Array.from(uniqueValues).map((name) => {
       return { name, color: generateRandomColor() };
     });
-
     dispatch(setColors(c));
     dispatch(setSelectedPropUniqueValues(Array.from(uniqueValues)));
+    console.log(colors)
   };
 
   useEffect(() => {
@@ -113,8 +114,8 @@ export default function MapGraphicsEditor() {
         >
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
+              <Legend properties = {colors} mapType = {mapGraphicsType}/>
             {/* make the buttons a square */}
-
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
               <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
                 <SaveOutlinedIcon />
