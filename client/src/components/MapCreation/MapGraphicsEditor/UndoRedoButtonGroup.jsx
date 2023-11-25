@@ -19,7 +19,7 @@ function UndoRedoButtonGroup() {
       position: 'absolute',
       top: '55%',
       transform: 'translateY(-50%)',
-      zIndex: 1,
+      zIndex: 1000,
     }}>
       <ButtonGroup
         orientation="vertical"
