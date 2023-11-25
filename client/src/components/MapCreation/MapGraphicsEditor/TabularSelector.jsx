@@ -10,15 +10,15 @@ const TabularSelector = () => {
 
     switch (mapGraphicsType) {
         case "Symbol Map":
-            return <SymbolmapDataEditor isTabularTab={true} />;
+            return <SymbolmapDataEditor isTabularTab={true}/>;
         case "Choropleth Map":
-            return <ChoroplethmapDataEditor isTabularTab={true} />;
+            return <ChoroplethmapDataEditor isTabularTab={true}/>;
         case "Heat Map":
-            return <HeatmapDataEditor isTabularTab={true} />;
+            return <HeatmapDataEditor isTabularTab={true}/>;
         case "Dot Density Map":
-            return <DotdensitymapDataEditor isTabularTab={true} />;
+            return <DotdensitymapDataEditor isTabularTab={true}/>;
         case "Spike Map":
-            return <SpikemapDataEditor isTabularTab={true} />;
+            return <SpikemapDataEditor isTabularTab={true}/>;
         default:
             return null;
     }

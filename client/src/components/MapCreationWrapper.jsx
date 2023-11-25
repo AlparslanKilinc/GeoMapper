@@ -20,10 +20,7 @@ export default function MapCreationWrapper({theme}) {
   const mapOutline = useSelector((state) => state.geojson.geojson);
 
   const NavigationButton = styled(Button)(({ theme }) => ({
-    borderColor: '#40e0d0',
-    color: '#40e0d0',
     '&:hover': {
-      borderColor: '#40e0d0',
       backgroundColor: 'transparent'
     }
   }));
@@ -54,7 +51,7 @@ export default function MapCreationWrapper({theme}) {
     <TempleSelection onSelectionComplete={goForward} />,
     <OutlineSelectionPage theme = {theme} />,
     <MapDataEditorSelector />,
-    <MapGraphicsEditing/>
+    <MapGraphicsEditing theme = {theme}/>
   ];
 
   return (
@@ -62,7 +59,6 @@ export default function MapCreationWrapper({theme}) {
       <div className="wrapper-button-group">
         {currentStage !== 0 && (
           <NavigationButton
-              sx = {{color: theme.typography.allVariants.color}}
               variant="contained" startIcon={<ArrowBackIcon />} onClick={goBack}>
             Back
           </NavigationButton>
@@ -74,7 +70,6 @@ export default function MapCreationWrapper({theme}) {
             endIcon={<ArrowForwardIcon />}
             onClick={goForward}
             disabled={isNextButtonDisabled()}
-            sx = {{color: theme.typography.allVariants.color}}
           >
             Next
           </NavigationButton>

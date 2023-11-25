@@ -15,9 +15,11 @@ const NavState = {
   PUBLISHED_MAPS: 'PublishedMaps'
 };
 
+
 export default function ProfileNavBar({theme}) {
+  console.log(theme)
   const [Select, setSelect] = useState(NavState.DRAFTS);
-  const [Content, setContent] = useState(<Drafts />);
+  const [Content, setContent] = useState(<Drafts theme = {theme}/>);
 
   let handleButton = (input) => {
     switch (input) {
@@ -41,14 +43,15 @@ export default function ProfileNavBar({theme}) {
   };
 
   return (
-    <div className="navbar">
+    <div className="navbar"  style={{ backgroundColor: theme.palette.background.default }} >
       <li className="nav-list">
         <button
           onClick={() => handleButton(NavState.DRAFTS)}
           className="nav-button"
-          style={{ borderBottom: Select === NavState.DRAFTS ? '3px solid #40e0d0' : 'none' }}
+          style={{ borderBottom: Select === NavState.DRAFTS ? '3px solid #40e0d0' : 'none',
+          color: theme.typography.allVariants.color}}
         >
-          <EditIcon />
+          <EditIcon sx = {{color: theme.palette.iconColor}}/>
           Drafts
         </button>
 
@@ -56,25 +59,27 @@ export default function ProfileNavBar({theme}) {
           onClick={() => handleButton(NavState.PUBLISHED_MAPS)}
           className="nav-button"
           style={{
-            borderBottom: Select === NavState.PUBLISHED_MAPS ? '3px solid #40e0d0' : 'none'
+            borderBottom: Select === NavState.PUBLISHED_MAPS ? '3px solid #40e0d0' : 'none',
+            color: theme.typography.allVariants.color
           }}
         >
-          <MapIcon />
+          <MapIcon sx = {{color: theme.palette.iconColor}}/>
           Published Maps
         </button>
 
         <button
           onClick={() => handleButton(NavState.BOOKMARKS)}
           className="nav-button"
-          style={{ borderBottom: Select === NavState.BOOKMARKS ? '3px solid #40e0d0' : 'none' }}
+          style={{ borderBottom: Select === NavState.BOOKMARKS ? '3px solid #40e0d0' : 'none',
+            color: theme.typography.allVariants.color}}
         >
-          <BookmarkBorderIcon />
+          <BookmarkBorderIcon sx = {{color: theme.palette.iconColor}}/>
           Bookmarks
         </button>
       </li>
       <Divider/>
-      <div className="profile">
-        <Sidebar />
+      <div className="profile" style={{ backgroundColor: theme.palette.background.default }}>
+        <Sidebar theme = {theme}/>
         <div className="content">{Content}</div>
       </div>
     </div>

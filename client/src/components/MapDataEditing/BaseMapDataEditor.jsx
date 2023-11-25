@@ -28,6 +28,8 @@ import PropertySelector from '../MapCreation/PropertySelector';
 
 const BaseMapDataEditor = (config) => {
   return (props) => {
+    const {theme} = props;
+    console.log(theme)
     const dispatch = useDispatch();
     const data = useSelector((state) => state.mapDataEditor.data);
     const isMatchSuccessful = useSelector((state) => state.mapDataEditor.isMatchSuccessful);

@@ -32,7 +32,7 @@ const dataEditingToolboxConfig = [
   { label: 'Tabular', content: <TabularSelector /> }
 ];
 
-export default function MapGraphicsEditor() {
+export default function MapGraphicsEditor({theme}) {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
@@ -86,7 +86,7 @@ export default function MapGraphicsEditor() {
     });
   };
 
-  function MapBox() {
+  function MapBox({theme}) {
     const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
     return (<Box
       component="main"
@@ -162,7 +162,7 @@ export default function MapGraphicsEditor() {
         variant="permanent"
         anchor="left"
       >
-        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen}/>
+        <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} theme = {theme}/>
       </Drawer>
 
       {!isTabularOpened && (<MapBox />)}
@@ -186,7 +186,7 @@ export default function MapGraphicsEditor() {
         variant="permanent"
         anchor="right"
       >
-        <TabMenu tabsConfig={dataEditingToolboxConfig} handleTabularOpen={handleTabularOpen} />
+        <TabMenu tabsConfig={dataEditingToolboxConfig} handleTabularOpen={handleTabularOpen} theme = {theme} />
       </Drawer>
     </Box>
   );

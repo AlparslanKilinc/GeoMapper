@@ -57,7 +57,6 @@ export default function TemplateSelection({ onSelectionComplete }) {
                   onClick={() => {
                     handleSelection(map.title);
                   }}
-                  style={{ backgroundColor: '#40E0D0' }}
                   variant="contained"
                   id="register"
                 >

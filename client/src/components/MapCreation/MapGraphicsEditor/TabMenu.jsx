@@ -31,7 +31,7 @@ function a11yProps(index) {
   };
 }
 
-export default function TabMenu({ tabsConfig, handleTabularOpen }) {
+export default function TabMenu({ tabsConfig, handleTabularOpen, theme }) {
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     // TODO: Use enum
@@ -45,10 +45,10 @@ export default function TabMenu({ tabsConfig, handleTabularOpen }) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
         <Tabs
           TabIndicatorProps={{ style: { background: '#40E0D0' } }}
-          // textColor="#40E0D0"
+          textColor = 'theme.typography.allVariants.color'
           value={value}
           onChange={handleChange}
           centered

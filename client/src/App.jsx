@@ -34,6 +34,10 @@ function App() {
   const theme = createTheme({
     themeName: 'light',
     palette: {
+        background: {
+          default: "#FFF",
+          secondaryDefault: "#FFF",
+        },
       primary: {
         main: '#40E0D0'
       },

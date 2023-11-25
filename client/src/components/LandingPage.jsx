@@ -58,12 +58,12 @@ export default function LandingPage({theme}) {
           </p>
           <div className="button-group">
             <Link className="link" to={'/explore'}>
-              <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="explore">
+              <Button  variant="contained" id="explore">
                 Explore
               </Button>
             </Link>
             <Link className="link" to={'/register'}>
-              <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+              <Button variant="contained" id="register">
                 Register
               </Button>
             </Link>

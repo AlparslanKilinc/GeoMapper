@@ -6,9 +6,8 @@ import ProfileNavBar from './ProfileNavBar';
 
 export default function ProfilePage({theme}) {
   return (
-    <div className="profile-page">
+    <div className="profile-page" >
       <ProfileNavBar theme = {theme} />
-      <CopyRight theme = {theme} />
     </div>
   );
 }
