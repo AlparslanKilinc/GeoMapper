@@ -27,7 +27,15 @@ const AnnotateContent = () => {
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
         <Typography variant="subtitle2">title</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-        <TextField onChange={handleChangeTitle} value={title} type="text" fullWidth />
+        <TextField
+          onChange={handleChangeTitle}
+          value={title}
+          type="text" fullWidth
+          sx={{
+            '& input': {
+              padding: '0.5em 0.5em'
+            },
+          }} />
       </Box>
 
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
