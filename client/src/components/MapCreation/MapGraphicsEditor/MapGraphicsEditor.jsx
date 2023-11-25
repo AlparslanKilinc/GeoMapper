@@ -13,6 +13,7 @@ import MapTitleEditor from './MapTitleEditor';
 import UndoRedoButtonGroup from './UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice';
 import {
   setSelectedFeature,
@@ -115,7 +116,10 @@ export default function MapGraphicsEditor() {
             {/* make the buttons a square */}
 
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
-              <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
+              <Button
+                variant="outlined"
+                aria-label="save"
+                sx={{ height: '50px', width: '50px' }}>
                 <SaveOutlinedIcon />
               </Button>
 
@@ -125,6 +129,14 @@ export default function MapGraphicsEditor() {
                 sx={{ height: '50px', width: '50px' }}
               >
                 <PublishOutlinedIcon />
+              </Button>
+
+              <Button
+                variant="outlined"
+                aria-label="publish"
+                sx={{ height: '50px', width: '50px' }}
+              >
+                <SaveAltIcon />
               </Button>
             </Box>
           </Box>

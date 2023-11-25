@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Box from '@mui/material/Box';
 
 function UndoRedoButtonGroup() {
@@ -13,9 +12,6 @@ function UndoRedoButtonGroup() {
   };
   const handleRedo = () => {
     /* Redo logic */
-  };
-  const handleExport = () => {
-    /* Export logic */
   };
 
   const padding = 2 * 8;
@@ -32,15 +28,30 @@ function UndoRedoButtonGroup() {
         orientation="vertical"
         aria-label="vertical contained button group"
         variant="contained"
+        sx={{
+          backgroundColor: 'transparent',
+          boxShadow: 'none',
+          '& .MuiButton-root': {
+            borderColor: 'transparent',
+            '&:not(:last-of-type)': {
+              borderBottom: 'none',
+            },
+          },
+        }}
       >
-        <Button onClick={handleUndo}>
+        <Button onClick={handleUndo} sx={{
+          borderTopRightRadius: '50%',
+          width: '3em',
+          height: '3em'
+        }}>
           <UndoIcon />
         </Button>
-        <Button onClick={handleRedo}>
+        <Button onClick={handleRedo} sx={{
+          borderBottomRightRadius: '50%',
+          width: '3em',
+          height: '3em'
+        }}>
           <RedoIcon />
-        </Button>
-        <Button onClick={handleExport}>
-          <SaveAltIcon />
         </Button>
       </ButtonGroup>
     </Box>
