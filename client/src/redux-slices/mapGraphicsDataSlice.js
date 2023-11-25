@@ -18,6 +18,20 @@ const mapGraphicsDataSlice = createSlice({
   name: 'mapGraphics',
   initialState,
   reducers: {
+    addProperty: (state, action) => {
+      const newProperty = action.payload;
+      state.propertyNames.push(newProperty);
+      state.regions.forEach((region) => {
+        region[newProperty] = '';
+      });
+    },
+    deleteProperty: (state, action) => {
+      const propertyToDelete = action.payload;
+      state.propertyNames = state.propertyNames.filter((p) => p !== propertyToDelete);
+      state.regions.forEach((region) => {
+        delete region[propertyToDelete];
+      });
+    },
     changeNameByProperty: (state, action) => {
       state.nameByProperty = action.payload;
     },
@@ -58,6 +72,8 @@ const mapGraphicsDataSlice = createSlice({
 });
 
 export const {
+  addProperty,
+  deleteProperty,
   changeNameByProperty,
   changeValueByProperty,
   changeLatByProperty,
