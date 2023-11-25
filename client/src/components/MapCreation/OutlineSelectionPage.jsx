@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
 import '../../styles/outlineSelectionPage.css';
 import CircularProgress from '@mui/material/CircularProgress';
-import GeoJsonMap from './GeoJsonMap';
+import GeoJsonMap from './Map/GeoJsonMap';
 import { useDispatch } from 'react-redux';
 import { fetchGeojson, fetchGeojsonById } from '../../redux-slices/geoJSONSlice';
 import InputAdornment from '@mui/material/InputAdornment';
