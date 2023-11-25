@@ -14,13 +14,10 @@ function UndoRedoButtonGroup() {
     /* Redo logic */
   };
 
-  const padding = 2 * 8;
-
   return (
     <Box sx={{
       position: 'absolute',
       top: '55%',
-      left: padding,
       transform: 'translateY(-50%)',
       zIndex: 1,
     }}>

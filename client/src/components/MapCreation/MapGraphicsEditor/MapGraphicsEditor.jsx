@@ -114,7 +114,6 @@ export default function MapGraphicsEditor() {
       sx={{
         flexGrow: 1,
         bgcolor: 'background.default',
-        p: 2,
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
@@ -134,7 +133,7 @@ export default function MapGraphicsEditor() {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
 
-            <Box display="flex" gap={1} sx={{ marginLeft: 'auto' }}>
+            <Box display="flex" gap={1} sx={{ marginLeft: 'auto', pr: 2 }}>
               <Button
                 variant="outlined"
                 aria-label="save"

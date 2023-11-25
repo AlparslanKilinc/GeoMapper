@@ -12,7 +12,7 @@ const MapTitleEditor = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" p={2}>
+    <Box display="flex" justifyContent="center" alignItems="center" p={1}>
       <TextField
         value={title}
         onChange={handleTitleChange}
@@ -25,7 +25,12 @@ const MapTitleEditor = () => {
             },
             '&:hover fieldset': {
               borderColor: 'grey' // Show border on hover
-            }
+            },
+            '& input': {
+              fontSize: '1.25rem',
+              fontWeight: 'bold',
+              padding: '0.7em 0.4em'
+            },
           }
         }}
       />
