@@ -18,8 +18,16 @@ function UndoRedoButtonGroup() {
     /* Export logic */
   };
 
+  const padding = 2 * 8;
+
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box sx={{
+      position: 'absolute',
+      top: '55%',
+      left: padding,
+      transform: 'translateY(-50%)',
+      zIndex: 1,
+    }}>
       <ButtonGroup
         orientation="vertical"
         aria-label="vertical contained button group"

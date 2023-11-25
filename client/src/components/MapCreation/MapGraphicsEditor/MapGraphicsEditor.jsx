@@ -93,13 +93,12 @@ export default function MapGraphicsEditor() {
       sx={{
         flexGrow: 1,
         bgcolor: 'background.default',
-        pr: 4,
+        p: 2,
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'column',
+        position: 'relative',
       }}
     >
-      <UndoRedoButtonGroup />
-
       {isLoadingGeojson ? (
         <CircularProgress />
       ) : (
@@ -131,17 +130,19 @@ export default function MapGraphicsEditor() {
           </Box>
 
           {geojson && (
-            <GeoJsonMap
-              geoJsonData={geojson.geoJSON}
-              styled={true}
-              onEachFeature={onEachFeature}
-              key={JSON.stringify(colors)}
-            />
+            <>
+              <UndoRedoButtonGroup />
+              <GeoJsonMap
+                geoJsonData={geojson.geoJSON}
+                styled={true}
+                onEachFeature={onEachFeature}
+                key={JSON.stringify(colors)}
+              />
+            </>
           )}
         </div>
       )}
     </Box>);
-
   }
 
   return (
