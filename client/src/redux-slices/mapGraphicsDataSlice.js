@@ -12,8 +12,10 @@ const initialState = {
   LonByProperty: 'Lon',
   colorByProperty: 'Color',
   sizeByProperty: 'Size',
+  labelByProperty: '',
+  isLabelVisible: false,
   propertyNames: [],
-  selectedRegionIdx: 0,
+  selectedRegionIdx: -1,
   columnValidationErrors: {}
 };
 
@@ -120,6 +122,12 @@ const mapGraphicsDataSlice = createSlice({
     },
     setSelectedRegionIdx: (state, action) => {
       state.selectedRegionIdx = action.payload;
+    },
+    toggleLabelVisibility: (state, action) => {
+      state.isLabelVisible = !state.isLabelVisible;
+    },
+    setLabelByProperty: (state, action) => {
+      state.labelByProperty = action.payload;
     }
   }
 });
@@ -140,6 +148,8 @@ export const {
   setColumnType,
   addColumn,
   removeColumn,
-  validateColumnData
+  validateColumnData,
+  toggleLabelVisibility,
+  setLabelByProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

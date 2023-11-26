@@ -2,6 +2,7 @@ import React from 'react';
 import ColorsAccordionMenu from './ColorsAccordion/ColorsAccordionMenu';
 import ShapeAccordionMenu from './Shapes/ShapeAccordionMenu';
 import BorderAccordionMenu from './BorderAccordionMenu';
+import LabelsAccordionMenu from './LabelsAccordionMenu';
 import { useSelector } from 'react-redux';
 
 export default function StylesMenus() {
@@ -13,6 +14,7 @@ export default function StylesMenus() {
 
       {mapGraphicsType === SYMBOL_MAP && <ShapeAccordionMenu />}
       <BorderAccordionMenu />
+      <LabelsAccordionMenu />
     </div>
   );
 }

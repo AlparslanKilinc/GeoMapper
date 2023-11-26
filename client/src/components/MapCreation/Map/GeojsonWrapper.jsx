@@ -16,6 +16,8 @@ export default function GeojsonWrapper({ isStyled }) {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
+  const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
+  const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
   const { colors, continousColorScale, borderColor, borderWidth, opacity } = useSelector(
     (state) => state.mapStyles
   );
@@ -41,14 +43,15 @@ export default function GeojsonWrapper({ isStyled }) {
   if (isStyled) {
     onEachFeature = (feature, layer) => {
       // check if map graphics type is choropleth
+      let regionData = regions[feature.properties.regionIdx];
 
       let name = '';
+      let labelText = regionData[labelByProperty];
       if (mapGraphicsType === 'Choropleth Map') {
         const onClick = (e) => {
           dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
         };
 
-        let regionData = regions[feature.properties.regionIdx];
         name = regionData[nameByProperty];
         // find the color for the region by the colorByProperty inside colors array
 
@@ -79,12 +82,11 @@ export default function GeojsonWrapper({ isStyled }) {
         });
       }
 
-      let labels = false;
-      if (labels && name) {
+      if (isLabelVisible && labelText) {
         const label = L.marker(layer.getBounds().getCenter(), {
           icon: L.divIcon({
             className: 'map-label',
-            html: name,
+            html: labelText,
             iconSize: [100, 40]
           })
         });
