@@ -39,7 +39,8 @@ export default function MapGraphicsEditor() {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const colors = useSelector((state) => state.mapStyles.colors);
-
+  const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
+  const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
   //  lets extract unique values from the property associated with the colorByProperty
   const extractUniqueColorValues = (regions, colorByProperty) => {
     const uniqueValues = new Set();
