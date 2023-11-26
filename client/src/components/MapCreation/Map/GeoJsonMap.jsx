@@ -5,9 +5,6 @@ import GeojsonWrapper from './GeojsonWrapper';
 const GeoJsonMap = ({ styled }) => {
   const position = [37.8, -96.9]; // Approximate geographic center of the contiguous US
 
-  useEffect(() => {
-    console.log('GeoJsonMap rendered');
-  }, []);
   return (
     <MapContainer center={position} zoom={4} style={{ flexGrow: 1, backgroundColor: 'white' }}>
       <GeojsonWrapper isStyled={styled} />

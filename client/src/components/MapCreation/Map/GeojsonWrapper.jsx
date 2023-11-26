@@ -20,10 +20,6 @@ export default function GeojsonWrapper({ isStyled }) {
     (state) => state.mapStyles
   );
 
-  useEffect(() => {
-    console.log('GeojsonWrapper rendered');
-  }, []);
-
   const styles = { color: 'black', weight: 1 };
 
   if (isStyled) {
@@ -48,6 +44,10 @@ export default function GeojsonWrapper({ isStyled }) {
 
       let name = '';
       if (mapGraphicsType === 'Choropleth Map') {
+        const onClick = (e) => {
+          dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
+        };
+
         let regionData = regions[feature.properties.regionIdx];
         name = regionData[nameByProperty];
         // find the color for the region by the colorByProperty inside colors array
@@ -62,10 +62,22 @@ export default function GeojsonWrapper({ isStyled }) {
           if (colorObj) color = colorObj.color;
         }
         layer.setStyle({ fillColor: color });
+
+        const hoverStyle = {
+          fillOpacity: 0.7
+        };
+
+        layer.on({
+          click: onClick,
+          mouseover: (e) => {
+            layer.setStyle(hoverStyle);
+          },
+          mouseout: (e) => {
+            layer.setStyle();
+            layer.setStyle({ fillColor: color, fillOpacity: opacity, weight: borderWidth });
+          }
+        });
       }
-      const onClick = (e) => {
-        dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
-      };
 
       let labels = false;
       if (labels && name) {
@@ -88,10 +100,6 @@ export default function GeojsonWrapper({ isStyled }) {
         // add this label to the map
         label.addTo(map);
       }
-
-      layer.on({
-        click: onClick
-      });
     };
   }
 
