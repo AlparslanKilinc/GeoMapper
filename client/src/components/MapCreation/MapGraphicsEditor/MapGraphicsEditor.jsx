@@ -115,7 +115,7 @@ export default function MapGraphicsEditor() {
         >
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
-              <Legend properties = {colors} mapType = {mapGraphicsType}/>
+              {/*<Legend properties = {colors} mapType = {mapGraphicsType}/>*/}
               {/* make the buttons a square */}
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
               <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
