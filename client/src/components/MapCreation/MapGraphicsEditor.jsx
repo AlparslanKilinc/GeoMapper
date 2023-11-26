@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import domtoimage from 'dom-to-image';
 import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -39,6 +40,7 @@ export default function MapGraphicsEditor() {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const colors = useSelector((state) => state.mapStyles.colors);
+  const { title } = useSelector((state) => state.mapMetadata);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
   //  lets extract unique values from the property associated with the colorByProperty
@@ -95,6 +97,51 @@ export default function MapGraphicsEditor() {
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
   };
+
+  function handleExport() {
+    const mapElement = document.getElementById("mapContainer");
+    const elementsToExclude = document.querySelectorAll('.exclude-from-capture');
+
+    const hideElementsForCapture = () => {
+      elementsToExclude.forEach(el => {
+        el.style.display = 'none';
+      });
+    };
+
+    const showElementsAfterCapture = () => {
+      elementsToExclude.forEach(el => {
+        el.style.display = '';
+      });
+    };
+
+    if (mapElement) {
+      hideElementsForCapture();
+      setTimeout(() => {
+        const scale = 4;
+        domtoimage.toPng(mapElement, {
+          height: mapElement.offsetHeight * scale,
+          width: mapElement.offsetWidth * scale,
+          style: {
+            transform: 'scale(' + scale + ')',
+            transformOrigin: 'top left',
+            width: mapElement.offsetWidth + 'px',
+            height: mapElement.offsetHeight + 'px'
+          }
+        })
+          .then((dataUrl) => {
+            showElementsAfterCapture();
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = title + '.png';
+            link.click();
+          })
+          .catch((error) => {
+            showElementsAfterCapture();
+            console.error('Error exporting map: ', error);
+          });
+      }, 500);
+    }
+  }
 
   function MapBox() {
     const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
@@ -160,6 +207,7 @@ export default function MapGraphicsEditor() {
                 <Button
                   variant="outlined"
                   aria-label="publish"
+                  onClick={handleExport}
                   sx={buttonStyle}>
                   <SaveAltIcon />
                 </Button>
@@ -169,7 +217,9 @@ export default function MapGraphicsEditor() {
             {geojson && (
               <>
                 <UndoRedoButtonGroup />
-                <GeoJsonMap styled={true} />
+                <div id="mapContainer" style={{ height: '100%', width: '100%', display: 'flex' }}>
+                  <GeoJsonMap styled={true} />
+                </div>
               </>
             )}
           </div>
