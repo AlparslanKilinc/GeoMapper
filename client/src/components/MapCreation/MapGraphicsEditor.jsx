@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import domtoimage from 'dom-to-image';
 import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -12,6 +11,7 @@ import AnnotateContent from './MapGraphicsEditor/AnnotateMenu/AnnotateContent';
 import RegionEditing from './MapGraphicsEditor/GraphicsTools/RegionEditing';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
+import ExportDialog from './MapGraphicsEditor/ExportDialog';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -37,10 +37,10 @@ export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const colors = useSelector((state) => state.mapStyles.colors);
-  const { title } = useSelector((state) => state.mapMetadata);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
   //  lets extract unique values from the property associated with the colorByProperty
@@ -98,51 +98,15 @@ export default function MapGraphicsEditor() {
     setIsTabularOpened(newState);
   };
 
-  function handleExport() {
-    const mapElement = document.getElementById("mapContainer");
-    const elementsToExclude = document.querySelectorAll('.exclude-from-capture');
+  const handleOpenExportDialog = () => {
+    setExportDialogOpen(true);
+  };
 
-    const hideElementsForCapture = () => {
-      elementsToExclude.forEach(el => {
-        el.style.display = 'none';
-      });
-    };
+  const handleCloseExportDialog = () => {
+    setExportDialogOpen(false);
+  };
 
-    const showElementsAfterCapture = () => {
-      elementsToExclude.forEach(el => {
-        el.style.display = '';
-      });
-    };
-
-    if (mapElement) {
-      hideElementsForCapture();
-      setTimeout(() => {
-        const scale = 4;
-        domtoimage.toPng(mapElement, {
-          height: mapElement.offsetHeight * scale,
-          width: mapElement.offsetWidth * scale,
-          style: {
-            transform: 'scale(' + scale + ')',
-            transformOrigin: 'top left',
-            width: mapElement.offsetWidth + 'px',
-            height: mapElement.offsetHeight + 'px'
-          }
-        })
-          .then((dataUrl) => {
-            showElementsAfterCapture();
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = title + '.png';
-            link.click();
-          })
-          .catch((error) => {
-            showElementsAfterCapture();
-            console.error('Error exporting map: ', error);
-          });
-      }, 500);
-    }
-  }
-
+  // TODO: Move the MapBox out as a separate component, now the switch of the dialog will trigger the re-rendering of the MapBox.
   function MapBox() {
     const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
     const buttonStyle = {
@@ -207,7 +171,7 @@ export default function MapGraphicsEditor() {
                 <Button
                   variant="outlined"
                   aria-label="publish"
-                  onClick={handleExport}
+                  onClick={handleOpenExportDialog}
                   sx={buttonStyle}>
                   <SaveAltIcon />
                 </Button>
@@ -250,6 +214,10 @@ export default function MapGraphicsEditor() {
       </Drawer>
 
       {!isTabularOpened && <MapBox />}
+      <ExportDialog
+        open={exportDialogOpen}
+        onClose={handleCloseExportDialog}
+      />
 
       <Drawer
         sx={{
