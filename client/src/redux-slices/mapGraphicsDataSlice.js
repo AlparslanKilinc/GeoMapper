@@ -116,7 +116,8 @@ const mapGraphicsDataSlice = createSlice({
     },
     setRegionProperty: (state, action) => {
       const { propertyName, value, id } = action.payload;
-      let idx = id || state.selectedRegionIdx;
+      let idx = state.selectedRegionIdx;
+      if( id !== undefined) idx = id;
       const region = state.regions[idx];
       region[propertyName] = value;
     },
