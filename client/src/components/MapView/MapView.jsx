@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../styles/mapView.css'
 import Comment from './Comment'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
@@ -14,12 +14,26 @@ import IconButton from '@mui/material/IconButton';
 import PopUp from '../PopUp';
 import SharePopUp from '../SharePopUp'
 import ForkForm from '../ForkForm'
+import {styled} from "@mui/material/styles";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack.js";
+import {useNavigate} from "react-router-dom";
+
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
+    const navigate = useNavigate()
+
+    const NavigationButton = styled(Button)(({ theme }) => ({
+        borderColor: '#40e0d0',
+        color: '#40e0d0',
+        '&:hover': {
+            borderColor: '#40e0d0',
+            backgroundColor: 'transparent'
+        }
+    }));
     const openPopup = () => {
         setPopupOpen(true);
     };
@@ -75,8 +89,15 @@ export default function MapView() {
         }
     }
 
+    const goBack = () => {
+        navigate('/explore')
+    };
+
     return (
         <div className = "mapview-container">
+                <NavigationButton sx = {{ml: '-120px', mt: '10px'}}variant="outlined" startIcon={<ArrowBackIcon />} onClick={goBack}>
+                    Back
+                </NavigationButton>
             <div className = "map-info">
                 <span><h1>World Population</h1></span>
                 <span><p>By John Doe     September 1, 2018</p></span>
