@@ -5,32 +5,46 @@ import { LoadingButton } from '@mui/lab';
 import { Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Menu, MenuItem } from '@mui/material';
+import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { setRegionProperty,addProperty,deleteProperty } from '../../../redux-slices/mapGraphicsDataSlice';
+import {
+  setRegionProperty,
+  addProperty,
+  deleteProperty,
+  setColumnType,
+  addColumn,
+  removeColumn,
+  validateColumnData
+} from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
   const dispatch = useDispatch();
   const {
+    addedColumns,
     regions,
     points,
-    valueByProperty,
+    columnTypes,
     colorByProperty,
     nameByProperty,
     LatByProperty,
-    LonByProperty
+    LonByProperty,
+    columnValidationErrors
   } = useSelector((state) => state.mapGraphics);
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState('');
-  const [addedColumns, setAddedColumns] = useState([]);
   const [displayedProperties, setDisplayedProperties] = useState([]);
+  const [cellErrors, setCellErrors] = useState({});
+  const [columnErrors, setColumnErrors] = useState({});
+  // This is the data to be displayed in the table
   let data = mapGraphicsType === 'Choropleth Map' ? regions : points;
 
+  // This is the Displayed Columns To avoid showing the geojson properties
   useEffect(() => {
     let initialProperties =
       mapGraphicsType === 'Choropleth Map'
         ? [nameByProperty, colorByProperty]
-        : [nameByProperty, colorByProperty, LatByProperty, LonByProperty];
+        : [nameByProperty, LatByProperty, LonByProperty];
 
     setDisplayedProperties([...new Set([...initialProperties, ...addedColumns])]);
   }, [
@@ -39,37 +53,51 @@ export default function DataEditorTable() {
     nameByProperty,
     colorByProperty,
     LatByProperty,
-    LonByProperty
+    LonByProperty,
+    columnTypes
   ]);
-
-  const handleClick = (event, columnName) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedColumn(columnName);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const isDeletable = (columnName) => {
-    return ![nameByProperty, colorByProperty, LatByProperty, LonByProperty].includes(columnName);
-  };
+  // This is the Column errors to be displayed in the table
+  useEffect(() => {
+    setColumnErrors(columnValidationErrors);
+  }, [columnValidationErrors]);
 
   const handleAddColumn = () => {
     const newColumnName = prompt('Enter new column name:');
     if (newColumnName && !addedColumns.includes(newColumnName)) {
-      setAddedColumns([...addedColumns, newColumnName]);
+      dispatch(addColumn(newColumnName));
       dispatch(addProperty(newColumnName));
     }
   };
 
-  const handleDeleteColumn = (columnNameToDelete) => {
+  const handleRemoveColumn = (columnNameToDelete) => {
     if (window.confirm(`Are you sure you want to delete the "${columnNameToDelete}" column?`)) {
-      console.log('delete column');
       dispatch(deleteProperty(columnNameToDelete));
-      setAddedColumns(addedColumns.filter((column) => column !== columnNameToDelete));
+      dispatch(removeColumn(columnNameToDelete));
       handleClose();
     }
+  };
+
+  const handleColumnTypeChange = (newType) => {
+    dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
+    dispatch(validateColumnData({ columnName: selectedColumn }));
+    handleClose();
+  };
+
+  const handleCellChange = (rowIndex, columnName, value) => {
+    const columnType = columnTypes[columnName];
+    let newErrors = { ...cellErrors };
+    const isEmpty = value === undefined || value.trim() === '';
+
+    if (columnType === 'number') {
+      const isNumber = isEmpty || (!isNaN(Number(value)) && isFinite(value));
+      newErrors[`${rowIndex}-${columnName}`] = !isNumber;
+    } else if (columnType === 'text') {
+      newErrors[`${rowIndex}-${columnName}`] = !isEmpty && value.trim() === '';
+    }
+
+    setCellErrors(newErrors);
+    dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
+    dispatch(validateColumnData({ columnName }));
   };
 
   const handleDeleteRow = () => {
@@ -80,8 +108,35 @@ export default function DataEditorTable() {
     // To Do
   };
 
-  const handleCellChange = (rowIndex, columnName, value) => {
-    dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
+  // Helper Functions
+  // This is to check if the column is deletable or not
+  const isDeletable = (columnName) => {
+    return ![nameByProperty, colorByProperty, LatByProperty, LonByProperty].includes(columnName);
+  };
+
+  // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
+  const getColumnLabel = (columnName) => {
+    if (columnName === nameByProperty) {
+      return 'Name';
+    } else if (columnName === colorByProperty) {
+      return 'Color';
+    } else if (columnName === LatByProperty) {
+      return 'Latitude';
+    } else if (columnName === LonByProperty) {
+      return 'Longitude';
+    } else {
+      return columnName;
+    }
+  };
+
+  // Menu Functions
+  const handleClick = (event, columnName) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedColumn(columnName);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   const TableButtons = () => (
@@ -103,14 +158,19 @@ export default function DataEditorTable() {
           <TableHead>
             <TableRow>
               {displayedProperties.map((colName, index) => (
-                <TableCell key={index}>
-                  {colName}
-                  {isDeletable(colName) && (
+                <TableCell sx={{ verticalAlign: 'bottom' }} key={index}>
+                  {isDeletable(colName) ? (
+                    ''
+                  ) : (
+                    <div className="table-label">{getColumnLabel(colName)}</div>
+                  )}
+                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    {colName}
                     <MoreVertIcon
                       onClick={(e) => handleClick(e, colName)}
-                      style={{ cursor: 'pointer', marginLeft: '10px' }}
+                      style={{ cursor: 'pointer', margin: '0', padding: '0' }}
                     />
-                  )}
+                  </div>
                 </TableCell>
               ))}
             </TableRow>
@@ -124,6 +184,14 @@ export default function DataEditorTable() {
                     <TextField
                       value={row[colName] || ''}
                       onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
+                      error={!!cellErrors[`${rowIndex}-${colName}`]}
+                      helperText={
+                        cellErrors[`${rowIndex}-${colName}`]
+                          ? columnTypes[colName] === 'number'
+                            ? 'Number Required'
+                            : 'Text  Required'
+                          : ''
+                      }
                       sx={{
                         '& input': {
                           padding: '0.3em 0.5em'
@@ -142,6 +210,17 @@ export default function DataEditorTable() {
                 )}
               </TableRow>
             ))}
+            <TableRow>
+              {displayedProperties.map((colName, index) => (
+                <TableCell key={index}>
+                  {columnErrors[colName] ? (
+                    <span style={{ color: 'red' }}>{columnErrors[colName]}</span>
+                  ) : (
+                    <span style={{ color: 'green' }}>✓</span>
+                  )}
+                </TableCell>
+              ))}
+            </TableRow>
           </TableBody>
         </Table>
         <Menu
@@ -151,7 +230,20 @@ export default function DataEditorTable() {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem onClick={() => handleDeleteColumn(selectedColumn)}>Delete Column</MenuItem>
+          <MenuItem>
+            <FormControl component="fieldset">
+              <RadioGroup
+                value={columnTypes[selectedColumn] || 'text'}
+                onChange={(e) => handleColumnTypeChange(e.target.value)}
+              >
+                <FormControlLabel value="text" control={<Radio />} label="Text" />
+                <FormControlLabel value="number" control={<Radio />} label="Number" />
+              </RadioGroup>
+            </FormControl>
+          </MenuItem>
+          {isDeletable(selectedColumn) && (
+            <MenuItem onClick={() => handleRemoveColumn(selectedColumn)}>Delete Column</MenuItem>
+          )}
         </Menu>
         <TableButtons />
       </div>

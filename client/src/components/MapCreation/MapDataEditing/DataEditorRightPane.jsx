@@ -47,7 +47,8 @@ export default function DataEditorRightPane() {
       <Box sx={{ display: 'flex', alignItems: 'center', padding: '0.5em', fontSize: '0.8em' }}>
         <ReportProblemIcon color="action" />
         <Typography variant="body2" className="normalText">
-          You can set number, date, and text columns using the menu in the column header.
+          You can set number and text columns using the menu in the column header. A red cell
+          indicates missing data or a problem that needs to be fixed.
         </Typography>
       </Box>
       <LoadingButton
