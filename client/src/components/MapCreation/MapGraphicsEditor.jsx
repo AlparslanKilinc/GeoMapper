@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -18,7 +18,6 @@ import {
   setSelectedPropUniqueValues,
   setContinousColorScale
 } from '../../redux-slices/mapStylesSlice';
-import { useEffect } from 'react';
 import * as d3 from 'd3';
 
 const drawerWidth = 240;
@@ -36,8 +35,9 @@ export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
-  const { colorByProperty, regions, nameByProperty } = useSelector((state) => state.mapGraphics);
-  const { colors } = useSelector((state) => state.mapStyles);
+  const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
+  const regions = useSelector((state) => state.mapGraphics.regions);
+  const colors = useSelector((state) => state.mapStyles.colors);
 
   //  lets extract unique values from the property associated with the colorByProperty
   const extractUniqueColorValues = (regions, colorByProperty) => {
@@ -139,7 +139,7 @@ export default function MapGraphicsEditor() {
               </Box>
             </Box>
 
-            {geojson && <GeoJsonMap styled={true} key={JSON.stringify(colors)} />}
+            {geojson && <GeoJsonMap styled={true} />}
           </div>
         )}
       </Box>

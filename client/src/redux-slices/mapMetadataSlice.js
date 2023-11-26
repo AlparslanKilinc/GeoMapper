@@ -11,7 +11,7 @@ const mapMetadataInitialState = {
   forkedFrom: { isForked: false, originalMapId: null },
   tags: [],
   comments: [],
-  mapGraphicsType: 'Symbol Map',
+  mapGraphicsType: 'Choropleth Map',
   publishDate: null,
   title: 'Goat Debate'
 };

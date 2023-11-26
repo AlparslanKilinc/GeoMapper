@@ -7,14 +7,30 @@ import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice
 import { useDispatch } from 'react-redux';
 import '../../../styles/map-label.css';
 
-export default function GeojsonWrapper({ styles, isStyled }) {
+export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
   const map = useMap();
   const geojsonLayer = useRef();
   const { geoJSON } = useSelector((state) => state.geojson.geojson);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-  const { colorByProperty, regions, nameByProperty } = useSelector((state) => state.mapGraphics);
-  const { colors, continousColorScale } = useSelector((state) => state.mapStyles);
+  const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
+  const regions = useSelector((state) => state.mapGraphics.regions);
+  const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
+  const { colors, continousColorScale, borderColor, borderWidth, opacity } = useSelector(
+    (state) => state.mapStyles
+  );
+
+  useEffect(() => {
+    console.log('GeojsonWrapper rendered');
+  }, []);
+
+  const styles = { color: 'black', weight: 1 };
+
+  if (isStyled) {
+    styles.color = borderColor;
+    styles.weight = borderWidth;
+    styles.fillOpacity = opacity;
+  }
 
   const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
 
@@ -24,7 +40,7 @@ export default function GeojsonWrapper({ styles, isStyled }) {
     if (geojsonLayer) {
       map.fitBounds(geojsonLayer.current.getBounds());
     }
-  }, [geoJSON]);
+  }, []);
 
   if (isStyled) {
     onEachFeature = (feature, layer) => {
@@ -51,7 +67,7 @@ export default function GeojsonWrapper({ styles, isStyled }) {
         dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
       };
 
-      let labels = true;
+      let labels = false;
       if (labels && name) {
         const label = L.marker(layer.getBounds().getCenter(), {
           icon: L.divIcon({

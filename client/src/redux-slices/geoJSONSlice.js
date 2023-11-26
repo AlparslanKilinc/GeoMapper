@@ -11,6 +11,7 @@ const getRandomNbaPlayer = () => {
 
 const processGeojson = (geojson) => {
   let regions = [];
+
   geojson.features.forEach((feature, index) => {
     // Extract only the first 5 properties
     let firstFiveProperties = Object.fromEntries(Object.entries(feature.properties).slice(0, 5));

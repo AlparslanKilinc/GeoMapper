@@ -3,7 +3,7 @@ import Pbf from 'pbf';
 import geobuf from 'geobuf';
 // import the geojson file Africa.json with assertion
 
-import africa from './africa.json' assert { type: 'json' };
+import world_map from './world_map.json' assert { type: 'json' };
 
 const postGejson = async (geojson_raw, name) => {
   // Compress the geojson
@@ -26,5 +26,5 @@ const fetchGeojsonById = async (id) => {
   console.log(geojson_raw);
 };
 
-// postGejson(africa, 'Africa');
-fetchGeojsonById('655e938c2fef3f8b5a56f8a1');
+postGejson(world_map, 'World Map');
+// fetchGeojsonById('655e938c2fef3f8b5a56f8a1');
