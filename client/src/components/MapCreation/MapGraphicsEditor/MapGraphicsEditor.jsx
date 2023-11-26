@@ -21,6 +21,7 @@ import {
 } from '../../../redux-slices/mapStylesSlice';
 import  Legend  from '../Legend.jsx'
 import { useEffect } from 'react';
+import CircularProgress from "@mui/material/CircularProgress";
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -115,7 +116,7 @@ export default function MapGraphicsEditor() {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
               <Legend properties = {colors} mapType = {mapGraphicsType}/>
-            {/* make the buttons a square */}
+              {/* make the buttons a square */}
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto' }}>
               <Button variant="outlined" aria-label="save" sx={{ height: '50px', width: '50px' }}>
                 <SaveOutlinedIcon />
@@ -130,7 +131,6 @@ export default function MapGraphicsEditor() {
               </Button>
             </Box>
           </Box>
-
           {geojson && (
             <GeoJsonMap
               geoJsonData={geojson.geoJSON}
