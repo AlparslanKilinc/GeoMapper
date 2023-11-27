@@ -12,9 +12,13 @@ function CustomTabPanel(props) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
+      // TODO: Trying to find a better solution to the overflow issue.
+      style={{
+        maxHeight: '400px'
+      }}
     >
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
+    </div >
   );
 }
 

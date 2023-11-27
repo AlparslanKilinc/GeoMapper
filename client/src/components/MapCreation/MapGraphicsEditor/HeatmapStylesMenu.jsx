@@ -10,7 +10,7 @@ import {
     Box,
     TextField
 } from '@mui/material';
-import HeatmapColorRange from './HeatmapColorRange';
+import HeatmapColorRange from './StylesMenu/ColorsAccordion/HeatmapColorRange';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 export default function HeatmapStylesMenu() {
