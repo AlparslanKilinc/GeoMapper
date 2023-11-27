@@ -47,6 +47,20 @@
   flex-direction: column;
 }
 
+
+.table-label {
+  border: 1px solid transparent;
+  color: var(--white);
+  background-color: var(--dark-color);
+  width: fit-content;
+  border-radius: 5px;
+  text-align: center;
+  padding: 0.5em;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 1rem;
+}
+
 h2 {
   margin-bottom: 0.5em;
 }

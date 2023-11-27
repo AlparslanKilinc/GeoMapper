@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/outlineSelectionPage.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { List, ListItemButton, ListItemText, Divider, TextField, CircularProgress, InputAdornment } from '@mui/material';
+import {
+  List,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  TextField,
+  CircularProgress,
+  InputAdornment
+} from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
-import GeoJsonMap from './GeoJsonMap';
+import GeoJsonMap from './Map/GeoJsonMap';
 import OutlineFileUploader from './OutlineFileUploader';
 import { fetchGeojson, fetchGeojsonById, searchGeojson } from '../../redux-slices/geoJSONSlice';
 
 export default function OutlineSelectionPage() {
   const dispatch = useDispatch();
   const [searchInput, setSearchInput] = useState('');
-  const { items, geojson, isLoadingItems, isLoadingGeojson } = useSelector((state) => state.geojson);
+  const { items, isLoadingItems, isLoadingGeojson } = useSelector((state) => state.geojson);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   useEffect(() => {
@@ -52,7 +60,7 @@ export default function OutlineSelectionPage() {
               <InputAdornment position="start">
                 <PlaceIcon />
               </InputAdornment>
-            ),
+            )
           }}
         />
 
@@ -78,7 +86,7 @@ export default function OutlineSelectionPage() {
           <CircularProgress />
         ) : (
           <div style={{ height: '100%', width: '100%', display: 'flex' }}>
-            {geojson && <GeoJsonMap geoJsonData={geojson.geoJSON} styled={false} />}
+            <GeoJsonMap styled={false} />
           </div>
         )}
       </div>

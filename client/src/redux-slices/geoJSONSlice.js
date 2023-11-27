@@ -9,15 +9,33 @@ const getRandomNbaPlayer = () => {
   return teams[parseInt(Math.random() * teams.length)];
 };
 
+const getType = (value) => {
+  if (typeof value === 'number') {
+    return 'number';
+  } else if (typeof value === 'string') {
+    return 'text';
+  }
+};
+
 const processGeojson = (geojson) => {
-  // remove all properties from features
   let regions = [];
+  let columnTypes = {};
+
   geojson.features.forEach((feature, index) => {
-    regions.push({ ...feature.properties, TEAM: getRandomNbaPlayer() });
+    // Extract only the first 5 properties
+    let firstFiveProperties = Object.fromEntries(Object.entries(feature.properties).slice(0, 5));
+    for (const [key, value] of Object.entries(firstFiveProperties)) {
+      columnTypes[key] = getType(value);
+    }
+    columnTypes['GOAT'] = 'text';
+    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer() });
     feature.properties = { regionIdx: index };
   });
-  let propertyNames = Object.keys(regions[0]);
-  return { regions, propertyNames };
+
+  // Assuming that all features have the same properties,
+  // this will get the property names from the first region
+  let propertyNames = regions.length > 0 ? Object.keys(regions[0]) : [];
+  return { regions, propertyNames, columnTypes };
 };
 
 export const fetchGeojsonById = createAsyncThunk(
@@ -26,8 +44,8 @@ export const fetchGeojsonById = createAsyncThunk(
     try {
       const response = await apis.getGeojsonById(id);
       const geojson = geobuf.decode(new Pbf(response.data));
-      const { regions, propertyNames } = processGeojson(geojson);
-      thunkApi.dispatch(setChoroplethData({ regions, propertyNames }));
+      const { regions, propertyNames, columnTypes } = processGeojson(geojson);
+      thunkApi.dispatch(setChoroplethData({ regions, propertyNames, columnTypes }));
       return { geoJSON: geojson };
     } catch (error) {
       console.log(error);
@@ -64,7 +82,7 @@ const geoJsonSlice = createSlice({
   name: 'geojson',
   initialState: {
     items: [],
-    geojson: null,
+    geojson: {},
     isLoadingItems: true,
     isLoadingGeojson: false
   },
@@ -80,7 +98,7 @@ const geoJsonSlice = createSlice({
       state.isLoadingGeojson = false;
     },
     clearGeojson: (state) => {
-      state.geojson = null;
+      state.geojson = {};
     }
   },
   extraReducers: (builder) => {
@@ -118,5 +136,6 @@ const geoJsonSlice = createSlice({
   }
 });
 
-export const { setUploadedGeoJSON, startLoadingGeojson, stopLoadingGeojson, clearGeojson } = geoJsonSlice.actions;
+export const { setUploadedGeoJSON, startLoadingGeojson, stopLoadingGeojson, clearGeojson } =
+  geoJsonSlice.actions;
 export default geoJsonSlice.reducer;

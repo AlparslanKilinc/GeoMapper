@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import StylesMenu from './StylesMenus';
+import StylesMenu from './StylesMenu/StylesMenus';
 import HeatmapStylesMenu from './HeatmapStylesMenu';
 
 const StylesMenuSelector = () => {

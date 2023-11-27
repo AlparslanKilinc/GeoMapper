@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import LoginIcon from '@mui/icons-material/Login';
 import Logo from './Logo.jsx';
 import UserIconMenu from './UserIconMenu';
-import Search from '../SearchBar';
+import Search from '../Explore/SearchBar.jsx';
 
 const AuthButton = ({ loggedIn }) => {
   if (loggedIn) {

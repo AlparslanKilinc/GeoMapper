@@ -11,9 +11,10 @@ import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import PopUp from '../PopUp';
-import SharePopUp from '../SharePopUp'
-import ForkForm from '../ForkForm'
+import PopUp from '../Explore/PopUp';
+import SharePopUp from '../Explore/SharePopUp'
+import ForkForm from '../Explore/ForkForm'
+
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
