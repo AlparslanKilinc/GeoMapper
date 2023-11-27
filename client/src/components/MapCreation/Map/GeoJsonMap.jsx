@@ -7,11 +7,13 @@ const GeoJsonMap = ({ styled }) => {
   const { mapBackgroundColor, isTilelayerVisible } = useSelector((state) => state.mapStyles);
 
   return (
-    <MapContainer style={{ flexGrow: 1, backgroundColor: mapBackgroundColor }}>
-      {isTilelayerVisible && <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />}
+    <MapContainer style={{ flexGrow: 1, backgroundColor: styled ? mapBackgroundColor : 'white' }}>
+      {isTilelayerVisible && (
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
+      )}
       <GeojsonWrapper isStyled={styled} />
     </MapContainer>
   );

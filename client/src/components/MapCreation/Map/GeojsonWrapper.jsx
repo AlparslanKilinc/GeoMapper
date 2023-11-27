@@ -11,7 +11,7 @@ export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
   const map = useMap();
   const geojsonLayer = useRef();
-  const { geoJSON } = useSelector((state) => state.geojson.geojson);
+  const geoJSON = useSelector((state) => state.geojson.geojson.geoJSON);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
@@ -32,10 +32,10 @@ export default function GeojsonWrapper({ isStyled }) {
 
   const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
 
-  let onEachFeature = (feature, layer) => { };
+  let onEachFeature = (feature, layer) => {};
 
   useEffect(() => {
-    if (geojsonLayer) {
+    if (geojsonLayer && geojsonLayer.current) {
       map.fitBounds(geojsonLayer.current.getBounds());
     }
   }, []);

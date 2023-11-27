@@ -10,7 +10,7 @@ import MapDataEditor from './MapDataEditing/MapDataEditor';
 import OutlineSelectionPage from './OutlineSelectionPage';
 import MapGraphicsEditor from './MapGraphicsEditor';
 import { useSelector, useDispatch } from 'react-redux';
-import { clearGeojson } from '../redux-slices/geoJSONSlice';
+import { clearGeojson } from '../../redux-slices/geoJSONSlice';
 
 export default function MapCreationWrapper() {
   const dispatch = useDispatch();

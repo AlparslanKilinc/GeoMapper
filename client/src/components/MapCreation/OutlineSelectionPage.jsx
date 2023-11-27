@@ -11,7 +11,7 @@ import {
   InputAdornment
 } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
-import GeoJsonMap from './GeoJsonMap';
+import GeoJsonMap from './Map/GeoJsonMap';
 import OutlineFileUploader from './OutlineFileUploader';
 import { fetchGeojson, fetchGeojsonById, searchGeojson } from '../../redux-slices/geoJSONSlice';
 

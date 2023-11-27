@@ -82,7 +82,7 @@ const geoJsonSlice = createSlice({
   name: 'geojson',
   initialState: {
     items: [],
-    geojson: null,
+    geojson: {},
     isLoadingItems: true,
     isLoadingGeojson: false
   },
@@ -136,5 +136,6 @@ const geoJsonSlice = createSlice({
   }
 });
 
-export const { setUploadedGeoJSON, startLoadingGeojson, stopLoadingGeojson, clearGeojson } = geoJsonSlice.actions;
+export const { setUploadedGeoJSON, startLoadingGeojson, stopLoadingGeojson, clearGeojson } =
+  geoJsonSlice.actions;
 export default geoJsonSlice.reducer;
