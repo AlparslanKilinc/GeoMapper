@@ -46,4 +46,17 @@ const createGeojson = async (req, res) => {
   }
 };
 
-module.exports = { getGeojsonById, getGeojsonIdNamePairs, createGeojson };
+const searchGeojson = async (req, res) => {
+  try {
+    const { query } = req.params;
+    const searchResults = await Geo.find(
+      { name: { $regex: query, $options: 'i' } },
+      '_id name'
+    ).sort('name');
+    res.json(searchResults);
+  } catch (error) {
+    res.status(500).send({ message: 'Error performing search', error: error.message });
+  }
+};
+
+module.exports = { getGeojsonById, getGeojsonIdNamePairs, createGeojson, searchGeojson };
