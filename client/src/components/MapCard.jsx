@@ -101,10 +101,10 @@ export default function MapCard () {
                         </Typography>
                     </CardContent>
                     <div className = "tags">
-                        <Chip label="Chorpleth" sx={{mb:1 ,ml: 1}} onClick={handleTagClick}/>
-                        <Chip label="United States" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
-                        <Chip label="Election"sx={{mb:1  ,ml: 1}}  onClick={handleTagClick} />
-                        <Chip label="Map" sx={{mb:1  ,ml: 1}}  onClick={handleTagClick}/>
+                        <Chip label="Chorpleth" sx={{mb:1 ,ml: 1}} />
+                        <Chip label="United States" sx={{mb:1  ,ml: 1}}   />
+                        <Chip label="Election"sx={{mb:1  ,ml: 1}}  />
+                        <Chip label="Map" sx={{mb:1  ,ml: 1}} />
                     </div>
 
                 </CardActionArea>
