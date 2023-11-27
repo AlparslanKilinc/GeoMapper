@@ -98,7 +98,7 @@ const geoJsonSlice = createSlice({
       state.isLoadingGeojson = false;
     },
     clearGeojson: (state) => {
-      state.geojson = null;
+      state.geojson = {};
     }
   },
   extraReducers: (builder) => {

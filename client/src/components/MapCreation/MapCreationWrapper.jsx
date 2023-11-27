@@ -17,7 +17,7 @@ export default function MapCreationWrapper() {
   const [currentStage, setCurrentStage] = useState(0);
   const location = useLocation();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-  const mapOutline = useSelector((state) => state.geojson.geojson);
+  const mapOutline = useSelector((state) => state.geojson.geojson.geoJSON);
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
