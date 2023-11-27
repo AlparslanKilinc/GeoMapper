@@ -35,6 +35,8 @@ const initialState = {
   height: 0, // Height for 3D elements
   borderColor: 'black', // black hex code
   borderWidth: 1, // Width of borders of map elements
+  mapBackgroundColor: 'white',
+  isTilelayerVisible: false,
   selectedPropUniqueValues: [], // Unique values for the selected property,
   selectedFeature: null,
   continousColorScale: [],
@@ -53,6 +55,12 @@ const mapStylesDataSlice = createSlice({
     },
     changeBorderWidth: (state, action) => {
       state.borderWidth = action.payload;
+    },
+    changeBackgroundColor: (state, action) => {
+      state.mapBackgroundColor = action.payload;
+    },
+    toggleTilelayerVisibility: (state, action) => {
+      state.isTilelayerVisible = !state.isTilelayerVisible;
     },
     setColors: (state, action) => {
       state.colors = action.payload;
@@ -83,6 +91,8 @@ export const {
   changeSelectedShape,
   changeBorderColor,
   changeBorderWidth,
+  changeBackgroundColor,
+  toggleTilelayerVisibility,
   setColors,
   setColorPaletteIdx,
   changeColorByName,
