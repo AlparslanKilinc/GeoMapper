@@ -1,4 +1,4 @@
-.comment-container img {
+.img {
     min-width:36px;
     min-height: 36px;
     max-width:36px;
@@ -6,12 +6,16 @@
     border-radius: 50%;
     margin-right:10px;
     margin-left:10px;
-    padding-top:5px;
 }
+.comment-item {
+    margin-bottom: 10px; /* Adjust the margin as needed */
+}
+
 
 .comment-container{
     display:flex;
     margin-bottom: 20px;
+    flex-direction: column;
 }
 
 .username{
@@ -23,5 +27,11 @@
     margin-top:5px;
     color: darkgrey;
 }
+.comment-item {
+    display: flex; /* Ensure that .comment-item is a flex container */
+    align-items: center; /* Align items vertically */
+    margin-bottom: 10px; /* Adjust the margin as needed */
+}
+
 
 
