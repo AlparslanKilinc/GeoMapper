@@ -8,9 +8,9 @@ import LegendAccordionMenu from "./LegendAccordionMenu.jsx";
 export default function StylesMenus() {
   return (
     <div>
-      <ColorsAccordionMenu />
-      <ShapeAccordionMenu />
-      <BorderAccordionMenu />
+      <ColorsAccordionMenu/>
+      <ShapeAccordionMenu/>
+      <BorderAccordionMenu/>
         <LegendAccordionMenu/>
     </div>
   );
