@@ -16,6 +16,8 @@ import ForkForm from '../ForkForm'
 import {Typography} from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import BookmarkIcon from "@mui/icons-material/Bookmark.js";
+
 
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
@@ -24,6 +26,7 @@ export default function MapView() {
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
     const [liked, setLiked] = useState(false);
+    const [bookmarked, setBookmarked] = useState(false);
     let likes = 1000
     const openPopup = () => {
         setPopupOpen(true);
@@ -84,6 +87,12 @@ export default function MapView() {
             openPopup();
             return;
         }
+        if (!bookmarked){
+            setBookmarked(true);
+        }
+        else{
+            setBookmarked(false);
+        }
     }
 
     return (
@@ -131,21 +140,26 @@ export default function MapView() {
             </div>
             <Typography variant = 'subtitle1' sx = {{mt: '20px', ml: '25px'}}>{likes} likes</Typography>
             <div className = "actions">
-                <IconButton onClick = {handleLike}>
+                <IconButton >
                     {liked ? (
-                        <FavoriteIcon className="like" style={{ color: 'red' }} />
+                        <FavoriteIcon onClick = {handleLike} className="like" style={{ color: 'red' }} />
                     ) : (
-                        <FavoriteBorderIcon className="like" />
+                        <FavoriteBorderIcon onClick = {handleLike} className="like" />
                     )}
                  </IconButton>
-                 <IconButton>
-                    <ShareIcon className = "export" onClick = {handleFork}/>
+                 <IconButton >
+                    <ShareIcon onClick = {handleFork} className = "export" />
                 </IconButton>
-                <IconButton>
-                    <IosShareIcon className = "share" onClick = {handleShare}/>
-                </IconButton>
-                 <IconButton>
-                     <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
+                <IconButton >
+                    <IosShareIcon onClick = {handleShare} className = "share" />
+                </IconButton >
+                 <IconButton >
+                     {bookmarked ? (
+                         <BookmarkIcon onClick={handleBookmark} className = "bookmarks" style = {{color: '#40e0d0'}}/>
+                     ): (
+                         <BookmarkBorderIcon  onClick={handleBookmark} className = "bookmarks"/>
+
+                     )}
                  </IconButton>
         </div>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}

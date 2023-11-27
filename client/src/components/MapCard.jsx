@@ -17,6 +17,7 @@ import SharePopUp from './SharePopUp'
 import ForkForm from './ForkForm'
 import FavoriteIcon from "@mui/icons-material/Favorite.js";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder.js";
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 
 export default function MapCard () {
@@ -26,6 +27,7 @@ export default function MapCard () {
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
     const [liked, setLiked] = useState(false);
+    const [bookmarked, setBookmarked] = useState(false);
     const openPopup = () => {
         setPopupOpen(true);
     };
@@ -68,7 +70,6 @@ export default function MapCard () {
         return;
     }
     const handleFork = () =>{
-        console.log(loggedIn)
         if(!loggedIn){
             setPopUpTitle("To fork a map, please create an account");
             openPopup();
@@ -84,6 +85,13 @@ export default function MapCard () {
             openPopup();
             return;
         }
+        if (!bookmarked){
+            setBookmarked(true);
+        }
+        else{
+            setBookmarked(false);
+        }
+
     }
 
     return(
@@ -116,22 +124,35 @@ export default function MapCard () {
 
                 </CardActionArea>
                 <CardActions>
-                        <IconButton onClick = {handleLike}>
+                    <IconButton >
                             {liked ? (
-                                <FavoriteIcon className="like" style={{ color: 'red' }} />
+                                <FavoriteIcon onClick = {handleLike} className="like" style={{ color: 'red' }} />
                             ) : (
-                                <FavoriteBorderIcon className="like" />
+                                <FavoriteBorderIcon onClick = {handleLike} className="like" />
                             )}
                     </IconButton>
+
                     <IconButton>
-                        <ShareIcon className = "export"  onClick = {handleFork}/>
+                        <ShareIcon className = "export" onClick = {handleFork}/>
                     </IconButton>
-                    <IconButton>
+
+                    <IconButton >
                         <IosShareIcon className = "share" onClick = {handleShare}/>
                     </IconButton>
-                    <IconButton>
-                        <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
-                    </IconButton>
+
+                <IconButton >
+                    {bookmarked ? (
+                        <BookmarkIcon onClick = {handleBookmark} className = "bookmarks" style = {{color: '#40e0d0'}}/>
+                    ): (
+                        <BookmarkBorderIcon onClick = {handleBookmark} className = "bookmarks"/>
+
+                    )}
+                </IconButton>
+
+
+
+
+
                 </CardActions>
             </Card>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
