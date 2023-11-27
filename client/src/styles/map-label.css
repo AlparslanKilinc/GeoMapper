@@ -1,4 +1,10 @@
 .map-label {
   font-family: Outfit;
   font-size: 10px;
+  text-align: center;
+  line-height: 40px;
+  width: 100px;
+  margin-left: -50px;
+  margin-top: -20px;
+  pointer-events: none;
 }
