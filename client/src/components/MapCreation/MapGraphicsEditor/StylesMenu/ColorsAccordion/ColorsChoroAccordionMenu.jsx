@@ -5,6 +5,7 @@ import { changeColorByProperty } from '../../../../../redux-slices/mapGraphicsDa
 import { changeColorByName, setOpacity } from '../../../../../redux-slices/mapStylesSlice';
 import Box from '@mui/material/Box';
 import ColorSelector from './ColorSelector';
+import ColorPalette from './ColorPalette';
 import SubMenuTitle from '../../SubMenuTitle';
 
 export default function ColorsChoroAccordionMenu() {
@@ -26,35 +27,38 @@ export default function ColorsChoroAccordionMenu() {
     dispatch(setOpacity(newValue));
   };
 
-  let colorSelectors = (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      sx={{ width: '100%' }}
-    >
-      <Typography variant="subtitle2">select color</Typography>
-      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-
-      {colors.map(({ name, color }, index) => {
-        return (
-          <ColorSelector
-            title={name}
-            intialColor={color}
-            disableLower
-            disableUpper
-            handleColorChangeCustom={handleColorChangeText(name)}
-            key={index + 'colorSelector'}
-          />
-        );
-      })}
-    </Box>
-  );
+  let colorSelectors;
 
   // if the colorByProperty is continous, then we need to show the color range
-  if (!isNaN(regions[0][colorByProperty]))
-    colorSelectors = <Typography>Range color selector under construction</Typography>;
+  if (!isNaN(regions[0][colorByProperty])) {
+    colorSelectors = <ColorPalette />;
+  } else {
+    colorSelectors = (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ width: '100%' }}
+      >
+        <Typography variant="subtitle2">select color</Typography>
+        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+
+        {colors.map(({ name, color }, index) => {
+          return (
+            <ColorSelector
+              title={name}
+              intialColor={color}
+              disableLower
+              disableUpper
+              handleColorChangeCustom={handleColorChangeText(name)}
+              key={index + 'colorSelector'}
+            />
+          );
+        })}
+      </Box>
+    );
+  }
 
   return (
     <Box

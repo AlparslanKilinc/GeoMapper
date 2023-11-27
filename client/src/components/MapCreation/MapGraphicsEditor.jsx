@@ -40,7 +40,7 @@ export default function MapGraphicsEditor() {
   const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
-  const colors = useSelector((state) => state.mapStyles.colors);
+  const { colors, colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
   //  lets extract unique values from the property associated with the colorByProperty
@@ -72,7 +72,7 @@ export default function MapGraphicsEditor() {
     const maxData = d3.max(data);
 
     // Create a continuous color scale
-    const colorScale = d3.scaleLinear().domain([minData, maxData]).range(['lightblue', 'darkblue']); // You can choose any two colors
+    const colorScale = d3.scaleLinear().domain([minData, maxData]).range(colorPalette[colorPaletteIdx]); // You can choose any two colors
 
     // Normalize and map data to color
     const c = data.map((d) => colorScale(d));

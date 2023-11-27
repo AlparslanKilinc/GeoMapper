@@ -1,8 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const hexColorPalette = {
+  lightRed: '#ff6666',
+  darkRed: '#8b0000',
+  lightGreen: '#90ee90',
+  darkGreen: '#006400',
+  lightBlue: '#add8e6',
+  darkBlue: '#00008b',
+  lightYellow: '#ffffe0',
+  darkYellow: '#ffd700',
+  lightOrange: '#ffd580',
+  darkOrange: '#ff8c00',
+  lightPurple: '#e6e6fa',
+  darkPurple: '#800080',
+  lightPink: '#ffb6c1',
+  darkPink: '#ff1493',
+};
+
 const initialState = {
   mapId: null, // Reference to the main Map
   colors: [], // Colors configurations for the symbols
+  colorPalette: [
+    [hexColorPalette.lightBlue, hexColorPalette.darkBlue],
+    [hexColorPalette.lightGreen, hexColorPalette.darkGreen],
+    [hexColorPalette.lightPurple, hexColorPalette.darkPurple],
+    [hexColorPalette.lightPink, hexColorPalette.darkPink],
+    [hexColorPalette.lightRed, hexColorPalette.darkRed],
+    [hexColorPalette.lightYellow, hexColorPalette.darkYellow],
+    [hexColorPalette.lightOrange, hexColorPalette.darkOrange],
+  ],
+  colorPaletteIdx: 0,
   shape: 'circle', // Shape type for the map symbols
   size: 0, // Size of the map symbols
   height: 0, // Height for 3D elements
@@ -30,6 +57,9 @@ const mapStylesDataSlice = createSlice({
     setColors: (state, action) => {
       state.colors = action.payload;
     },
+    setColorPaletteIdx: (state, action) => {
+      state.colorPaletteIdx = action.payload;
+    },
     changeColorByName: (state, action) => {
       const { name, color } = action.payload;
       const colorCopy = [...state.colors];
@@ -54,6 +84,7 @@ export const {
   changeBorderColor,
   changeBorderWidth,
   setColors,
+  setColorPaletteIdx,
   changeColorByName,
   setSelectedPropUniqueValues,
   setContinousColorScale,
