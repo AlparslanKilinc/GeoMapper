@@ -12,6 +12,7 @@ import RegionEditing from './MapGraphicsEditor/GraphicsTools/RegionEditing';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import ExportDialog from './MapGraphicsEditor/ExportDialog';
+import Legend from './Legend'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -153,7 +154,8 @@ export default function MapGraphicsEditor() {
           >
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <MapTitleEditor />
-              <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
+                <Legend properties = {colors} mapType = {mapGraphicsType}/>
+                <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
                 <Button
                   variant="outlined"
                   aria-label="save"
@@ -212,7 +214,6 @@ export default function MapGraphicsEditor() {
       >
         <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
-
       {!isTabularOpened && <MapBox />}
       <ExportDialog
         open={exportDialogOpen}
