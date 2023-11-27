@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import '../styles/landingPage.css';
 import GeoMapperImage from '../assets/GeoMapperLogo.svg';
-import heatMap from '../assets/heat_map.jpeg';
+import heatMap from '../assets/heat_map.png';
 import spikeMap from '../assets/spike_map.png';
 import symbolMap from '../assets/symbol_map.png';
 import choroplethMap from '../assets/choropleth_map.png';
