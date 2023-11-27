@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     mapId: null,
-    orientation: 'vertical',
+    orientation: 'verticle',
     bgColor:'#ffffff',
     fontColor: 'black',
 };
