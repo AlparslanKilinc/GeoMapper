@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import '../../styles/mapView.css'
 import Comment from './Comment'
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ShareIcon from '@mui/icons-material/Share';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -14,12 +13,18 @@ import IconButton from '@mui/material/IconButton';
 import PopUp from '../PopUp';
 import SharePopUp from '../SharePopUp'
 import ForkForm from '../ForkForm'
+import {Typography} from "@mui/material";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
+    const [liked, setLiked] = useState(false);
+    let likes = 1000
     const openPopup = () => {
         setPopupOpen(true);
     };
@@ -45,11 +50,17 @@ export default function MapView() {
     }
 
     const handleLike = () =>{
-        console.log("map was liked")
+        likes = likes + 1
         if(!loggedIn){
             setPopUpTitle("To like a map, please create an account");
             openPopup();
             return;
+        }
+        if (!liked){
+            setLiked(true)
+        }
+        else{
+            setLiked(false)
         }
     }
     const handleShare = () =>{
@@ -118,21 +129,24 @@ export default function MapView() {
                     </div>
                 </div>
             </div>
+            <Typography variant = 'subtitle1' sx = {{mt: '20px', ml: '25px'}}>{likes} likes</Typography>
             <div className = "actions">
-                <IconButton>
-                    <ThumbUpOffAltIcon className = "like"onClick = {handleLike}/>
+                <IconButton onClick = {handleLike}>
+                    {liked ? (
+                        <FavoriteIcon className="like" style={{ color: 'red' }} />
+                    ) : (
+                        <FavoriteBorderIcon className="like" />
+                    )}
                  </IconButton>
                  <IconButton>
                     <ShareIcon className = "export" onClick = {handleFork}/>
                 </IconButton>
-
                 <IconButton>
                     <IosShareIcon className = "share" onClick = {handleShare}/>
                 </IconButton>
                  <IconButton>
                      <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
                  </IconButton>
-
         </div>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
             {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}

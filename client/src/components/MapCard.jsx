@@ -6,7 +6,6 @@ import Typography from '@mui/material/Typography';
 import {CardActionArea, CardActions } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ShareIcon from '@mui/icons-material/Share';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -16,6 +15,8 @@ import {useSelector} from "react-redux";
 import PopUp from './PopUp.jsx';
 import SharePopUp from './SharePopUp'
 import ForkForm from './ForkForm'
+import FavoriteIcon from "@mui/icons-material/Favorite.js";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder.js";
 
 
 export default function MapCard () {
@@ -24,6 +25,7 @@ export default function MapCard () {
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
+    const [liked, setLiked] = useState(false);
     const openPopup = () => {
         setPopupOpen(true);
     };
@@ -49,11 +51,16 @@ export default function MapCard () {
     }
 
     const handleLike = () =>{
-        console.log("map was liked")
         if(!loggedIn){
             setPopUpTitle("To like a map, please create an account");
             openPopup();
             return;
+        }
+        if (!liked){
+            setLiked(true)
+        }
+        else{
+            setLiked(false)
         }
     }
     const handleShare = () =>{
@@ -109,8 +116,12 @@ export default function MapCard () {
 
                 </CardActionArea>
                 <CardActions>
-                    <IconButton>
-                        <ThumbUpOffAltIcon className = "like" onClick = {handleLike}/>
+                        <IconButton onClick = {handleLike}>
+                            {liked ? (
+                                <FavoriteIcon className="like" style={{ color: 'red' }} />
+                            ) : (
+                                <FavoriteBorderIcon className="like" />
+                            )}
                     </IconButton>
                     <IconButton>
                         <ShareIcon className = "export"  onClick = {handleFork}/>
