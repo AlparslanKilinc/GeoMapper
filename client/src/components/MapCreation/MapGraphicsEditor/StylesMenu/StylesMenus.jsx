@@ -5,7 +5,6 @@ import BorderAccordionMenu from './BorderAccordionMenu';
 import MapStyleAccordionMenu from './MapStyleAccordionMenu';
 import LabelsAccordionMenu from './LabelsAccordionMenu';
 import { useSelector } from 'react-redux';
-import { Divider } from '@mui/material';
 
 export default function StylesMenus() {
   const SYMBOL_MAP = 'Symbol Map';
@@ -13,25 +12,16 @@ export default function StylesMenus() {
 
   const dividerStyle = {
     borderColor: 'black',
-    borderBottomWidth: '1.2px',
+    borderBottomWidth: '1.2px'
   };
 
   return (
     <div>
       <ColorsAccordionMenu />
-      <Divider sx={dividerStyle} />
-      {mapGraphicsType === SYMBOL_MAP && (
-        <>
-          <ShapeAccordionMenu />
-          <Divider sx={dividerStyle} />
-        </>
-      )}
+      {mapGraphicsType === SYMBOL_MAP && <ShapeAccordionMenu />}
       <BorderAccordionMenu />
-      <Divider sx={dividerStyle} />
       <LabelsAccordionMenu />
-      <Divider sx={dividerStyle} />
       <MapStyleAccordionMenu />
-      <Divider sx={dividerStyle} />
     </div>
   );
 }
