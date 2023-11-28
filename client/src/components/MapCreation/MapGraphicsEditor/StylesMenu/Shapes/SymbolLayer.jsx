@@ -35,14 +35,11 @@ const SymbolLayer = () => {
     const minValue = min,
       maxValue = max;
     const size = minSize + ((value - minValue) / (maxValue - minValue)) * (maxSize - minSize);
-    return [size, size];
+    return size;
   }
 
   const markers = Object.values(points).map((point) => {
-    const iconSize = calculateMarkerSize(point[sizeByProperty]) || [
-      fixedSymbolSize,
-      fixedSymbolSize
-    ];
+    const iconSize = calculateMarkerSize(point[sizeByProperty]) || fixedSymbolSize;
     const opacity = point[opacityByProperty] || fixedOpacity;
     // Assuming you have a way to determine the color, add that logic here
     let color = fixedColor; // Replace 'someColorLogic' with actual logic to determine color
