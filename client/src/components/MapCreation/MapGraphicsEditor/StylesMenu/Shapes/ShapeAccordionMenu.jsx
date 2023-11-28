@@ -13,15 +13,37 @@ import { Divider } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeSizeByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import Slider from '@mui/material/Slider';
+import { setFixedSymbolSize } from '../../../../../redux-slices/mapGraphicsDataSlice';
 
 export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
-  const { propertyNames, sizeByProperty } = useSelector((state) => state.mapGraphics);
+  const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
+  const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
 
   const handleSizeByPropertyChange = (event, newValue) => {
     dispatch(changeSizeByProperty(newValue));
   };
+
+  const handleSymbolSizeChange = (event, newValue) => {
+    dispatch(setFixedSymbolSize(event.target.value));
+  };
+
+  const fixedSymbolSizeSlider = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%' }}
+    >
+      <Typography variant="subtitle2">fixed size</Typography>
+      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+      <Slider value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
+    </Box>
+  );
+
   return (
     <Accordion>
       <AccordionSummary
@@ -68,17 +90,7 @@ export default function ShapeAccordionMenu() {
             />
           </Box>
 
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ width: '100%' }}
-          >
-            <Typography variant="subtitle2">fixed size</Typography>
-            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <Slider />
-          </Box>
+          {!sizeByProperty && fixedSymbolSizeSlider}
         </Box>
       </AccordionDetails>
     </Accordion>

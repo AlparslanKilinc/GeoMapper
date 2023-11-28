@@ -43,6 +43,9 @@ export default function MapGraphicsEditor() {
   const { colors, colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
+  const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
+  const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
+
   //  lets extract unique values from the property associated with the colorByProperty
   const extractUniqueColorValues = (regions, colorByProperty) => {
     const uniqueValues = new Set();
@@ -72,7 +75,10 @@ export default function MapGraphicsEditor() {
     const maxData = d3.max(data);
 
     // Create a continuous color scale
-    const colorScale = d3.scaleLinear().domain([minData, maxData]).range(colorPalette[colorPaletteIdx]); // You can choose any two colors
+    const colorScale = d3
+      .scaleLinear()
+      .domain([minData, maxData])
+      .range(colorPalette[colorPaletteIdx]); // You can choose any two colors
 
     // Normalize and map data to color
     const c = data.map((d) => colorScale(d));
@@ -117,15 +123,17 @@ export default function MapGraphicsEditor() {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundImage: 'linear-gradient(135deg, rgba(224, 234, 252, 0.3) 25%, transparent 25%, transparent 50%, rgba(224, 234, 252, 0.3) 50%, rgba(224, 234, 252, 0.3) 75%, transparent 75%, transparent 100%)',
+      backgroundImage:
+        'linear-gradient(135deg, rgba(224, 234, 252, 0.3) 25%, transparent 25%, transparent 50%, rgba(224, 234, 252, 0.3) 50%, rgba(224, 234, 252, 0.3) 75%, transparent 75%, transparent 100%)',
       backgroundSize: '14px 14px',
       border: 'none',
       boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.1)',
       '&:hover': {
-        backgroundImage: 'linear-gradient(135deg, rgba(207, 222, 243, 0.3) 25%, transparent 25%, transparent 50%, rgba(207, 222, 243, 0.3) 50%, rgba(207, 222, 243, 0.3) 75%, transparent 75%, transparent 100%)',
+        backgroundImage:
+          'linear-gradient(135deg, rgba(207, 222, 243, 0.3) 25%, transparent 25%, transparent 50%, rgba(207, 222, 243, 0.3) 50%, rgba(207, 222, 243, 0.3) 75%, transparent 75%, transparent 100%)',
         backgroundSize: '14px 14px',
         border: 'none',
-        boxShadow: '1px 1px 6px rgba(0, 0, 0, 0.2)',
+        boxShadow: '1px 1px 6px rgba(0, 0, 0, 0.2)'
       }
     };
 
@@ -137,7 +145,7 @@ export default function MapGraphicsEditor() {
           bgcolor: 'background.default',
           display: 'flex',
           flexDirection: 'column',
-          position: 'relative',
+          position: 'relative'
         }}
       >
         {isLoadingGeojson ? (
@@ -154,17 +162,11 @@ export default function MapGraphicsEditor() {
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <MapTitleEditor />
               <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-                <Button
-                  variant="outlined"
-                  aria-label="save"
-                  sx={buttonStyle}>
+                <Button variant="outlined" aria-label="save" sx={buttonStyle}>
                   <SaveOutlinedIcon />
                 </Button>
 
-                <Button
-                  variant="outlined"
-                  aria-label="publish"
-                  sx={buttonStyle}>
+                <Button variant="outlined" aria-label="publish" sx={buttonStyle}>
                   <PublishOutlinedIcon />
                 </Button>
 
@@ -172,7 +174,8 @@ export default function MapGraphicsEditor() {
                   variant="outlined"
                   aria-label="publish"
                   onClick={handleOpenExportDialog}
-                  sx={buttonStyle}>
+                  sx={buttonStyle}
+                >
                   <SaveAltIcon />
                 </Button>
               </Box>
@@ -214,10 +217,7 @@ export default function MapGraphicsEditor() {
       </Drawer>
 
       {!isTabularOpened && <MapBox />}
-      <ExportDialog
-        open={exportDialogOpen}
-        onClose={handleCloseExportDialog}
-      />
+      <ExportDialog open={exportDialogOpen} onClose={handleCloseExportDialog} />
 
       <Drawer
         sx={{

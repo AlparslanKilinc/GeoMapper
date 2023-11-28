@@ -11,7 +11,11 @@ const initialState = {
   LatByProperty: 'Lat',
   LonByProperty: 'Lon',
   colorByProperty: 'Color',
-  sizeByProperty: 'Size',
+  sizeByProperty: 'size',
+  fixedSymbolSize: 10,
+  fixedOpacity: 0.5,
+  opacityByProperty: '',
+  fixedColor: '#800080',
   labelByProperty: '',
   isLabelVisible: false,
   propertyNames: [],
@@ -117,7 +121,7 @@ const mapGraphicsDataSlice = createSlice({
     setRegionProperty: (state, action) => {
       const { propertyName, value, id } = action.payload;
       let idx = state.selectedRegionIdx;
-      if( id !== undefined) idx = id;
+      if (id !== undefined) idx = id;
       const region = state.regions[idx];
       region[propertyName] = value;
     },
@@ -129,6 +133,9 @@ const mapGraphicsDataSlice = createSlice({
     },
     setLabelByProperty: (state, action) => {
       state.labelByProperty = action.payload;
+    },
+    setFixedSymbolSize: (state, action) => {
+      state.fixedSymbolSize = action.payload;
     }
   }
 });
@@ -151,6 +158,7 @@ export const {
   removeColumn,
   validateColumnData,
   toggleLabelVisibility,
-  setLabelByProperty
+  setLabelByProperty,
+  setFixedSymbolSize
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

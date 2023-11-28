@@ -8,17 +8,13 @@ import { useSelector } from 'react-redux';
 
 export default function StylesMenus() {
   const SYMBOL_MAP = 'Symbol Map';
-  const { mapGraphicsType } = useSelector((state) => state.mapMetadata.mapGraphicsType);
-
-  const dividerStyle = {
-    borderColor: 'black',
-    borderBottomWidth: '1.2px'
-  };
+  const CHORO_MAP = 'Choropleth Map';
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   return (
     <div>
       <ColorsAccordionMenu />
-      {mapGraphicsType === SYMBOL_MAP && <ShapeAccordionMenu />}
+      {mapGraphicsType !== CHORO_MAP && <ShapeAccordionMenu />}
       <BorderAccordionMenu />
       <LabelsAccordionMenu />
       <MapStyleAccordionMenu />
