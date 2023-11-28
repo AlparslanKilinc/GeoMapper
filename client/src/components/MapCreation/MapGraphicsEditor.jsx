@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -38,12 +38,15 @@ export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
-  const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const { colors, colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
+  const exportDialogRef = useRef();
+  const openExportDialog = () => {
+    exportDialogRef.current.handleOpenExportDialog();
+  };
   //  lets extract unique values from the property associated with the colorByProperty
   const extractUniqueColorValues = (regions, colorByProperty) => {
     const uniqueValues = new Set();
@@ -97,14 +100,6 @@ export default function MapGraphicsEditor() {
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
-  };
-
-  const handleOpenExportDialog = () => {
-    setExportDialogOpen(true);
-  };
-
-  const handleCloseExportDialog = () => {
-    setExportDialogOpen(false);
   };
 
   // TODO: Move the MapBox out as a separate component, now the switch of the dialog will trigger the re-rendering of the MapBox.
@@ -172,7 +167,7 @@ export default function MapGraphicsEditor() {
                 <Button
                   variant="outlined"
                   aria-label="publish"
-                  onClick={handleOpenExportDialog}
+                  onClick={openExportDialog}
                   sx={buttonStyle}>
                   <SaveAltIcon />
                 </Button>
@@ -215,10 +210,7 @@ export default function MapGraphicsEditor() {
         <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
       {!isTabularOpened && <MapBox />}
-      <ExportDialog
-        open={exportDialogOpen}
-        onClose={handleCloseExportDialog}
-      />
+      <ExportDialog ref={exportDialogRef} />
 
       <Drawer
         sx={{
