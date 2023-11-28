@@ -14,7 +14,7 @@ const hexColorPalette = {
   lightPurple: '#e6e6fa',
   darkPurple: '#800080',
   lightPink: '#ffb6c1',
-  darkPink: '#ff1493',
+  darkPink: '#ff1493'
 };
 
 const initialState = {
@@ -27,7 +27,7 @@ const initialState = {
     [hexColorPalette.lightPink, hexColorPalette.darkPink],
     [hexColorPalette.lightRed, hexColorPalette.darkRed],
     [hexColorPalette.lightYellow, hexColorPalette.darkYellow],
-    [hexColorPalette.lightOrange, hexColorPalette.darkOrange],
+    [hexColorPalette.lightOrange, hexColorPalette.darkOrange]
   ],
   colorPaletteIdx: 0,
   shape: 'circle', // Shape type for the map symbols
