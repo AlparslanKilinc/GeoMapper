@@ -7,6 +7,10 @@ import { useSelector } from "react-redux";
 import * as d3 from 'd3';
 
 export default function Legend({ properties, mapType }) {
+    if (mapType != "Choropleth Map") {
+        return;
+    }
+
     const legendRef = useRef(null);
     const { regions, colorByProperty } = useSelector((state) => state.mapGraphics);
     const { colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
