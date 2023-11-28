@@ -31,7 +31,9 @@ const initialState = {
   isLabelVisible: false,
   propertyNames: [],
   selectedRegionIdx: -1,
-  columnValidationErrors: {}
+  columnValidationErrors: {},
+  validationMessage:
+    '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.'
 };
 
 function isValidValueForType(value, type) {
@@ -49,6 +51,36 @@ function isValidValueForType(value, type) {
   }
   return false;
 }
+
+const performValidation = (state) => {
+  let isColumnInvalid = false;
+  let message = '✓ No errors found.';
+
+  Object.keys(state.columnTypes).forEach((columnName) => {
+    const columnType = state.columnTypes[columnName];
+
+    state.regions.forEach((region) => {
+      const value = region[columnName];
+      if (!isValidValueForType(value, columnType)) {
+        isColumnInvalid = true;
+        message = 'X Looks like there are some errors in your dataset.';
+      }
+    });
+  });
+
+  if (!isColumnInvalid) {
+    for (let region of state.regions) {
+      if (!region[state.nameByProperty] || !region[state.colorByProperty]) {
+        message =
+          '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.';
+        break;
+      }
+    }
+  }
+
+  state.validationMessage = message;
+  return isColumnInvalid;
+};
 
 const mapGraphicsDataSlice = createSlice({
   name: 'mapGraphics',
@@ -85,17 +117,9 @@ const mapGraphicsDataSlice = createSlice({
     },
     validateColumnData: (state, action) => {
       const columnName = action.payload.columnName;
-      const columnType = state.columnTypes[columnName];
-      let isColumnInvalid = false;
+      const isInvalid = performValidation(state);
 
-      state.regions.forEach((region) => {
-        const value = region[columnName];
-        if (!isValidValueForType(value, columnType)) {
-          isColumnInvalid = true;
-        }
-      });
-
-      if (isColumnInvalid) {
+      if (isInvalid) {
         state.columnValidationErrors[columnName] = 'Invalid Data Type';
       } else {
         delete state.columnValidationErrors[columnName];
@@ -122,6 +146,7 @@ const mapGraphicsDataSlice = createSlice({
     changeXByProperty: (state, action) => {
       let { property, propertyBy } = action.payload;
       state[property] = propertyBy;
+      performValidation(state);
     },
     setChoroplethData: (state, action) => {
       const { propertyNames, regions, columnTypes } = action.payload;
