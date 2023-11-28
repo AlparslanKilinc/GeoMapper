@@ -1,45 +1,45 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-    mapId: null,
-    comments: [
-        {
-            id: 1,
-            author: 'User1',
-            text: 'This is the first comment.',
-            date_posted: new Date().toDateString(),
-            profilePic: ''
-        },
-        {
-            id: 2,
-            author: 'User2',
-            text: 'Another comment here.',
-            date_posted: new Date().toDateString(),
-            profilePic: ''
-        },
-    ],
+// Map Metadata Slice
+const commentsInitialState = {
+    comments: []
 };
 
-const commentsSlice = createSlice({
-    name: 'comments',
-    initialState,
+const commentsDataSlice = createSlice({
+    name: "commentsData",
+    initialState: commentsInitialState,
     reducers: {
         addComment: (state, action) => {
-            const newComment = {
-                id: state.comments.length + 1, // You may want to use a more sophisticated method to generate unique IDs
-                ...action.payload,
-                date_posted: new Date().toDateString(),
-            };
-            return {
-                ...state,
-                comments: [...state.comments, newComment],
-            };
+                const newComment = {
+                    author: action.payload.author,
+                    datePosted: new Date(),
+                    text: action.payload.text,
+                    replies: [],
+                    is_reply:false
+                };
+                state.comments.push(newComment);
         },
-    },
+        replyToComment: (state, action) => {
+           const {parentId, replyText, author} = action.payload;
+           const commentToReply = state.comments.find(comment => comment.id === parentId);
+            if (commentToReply) {
+                const newReply = {
+                    id: Date.now(), // You might want to use a more robust ID generation method
+                    author: author,
+                    datePosted: new Date(),
+                    text: replyText,
+                    is_reply: true,
+                };
+
+                commentToReply.replies.push(newReply);
+            }
+
+        },
+        removeComment: (state, action) => {
+            const commentIdToRemove = action.payload;
+            state.comments = state.comments.filter(comment => comment.id !== commentIdToRemove);
+        },
+    }
 });
-
-export const {
-    addComment
-} = commentsSlice.actions;
-
-export default commentsSlice.reducer;
+export const { addComment, replyToComment, removeComment } = commentsDataSlice.actions;
+export default commentsDataSlice.reducer;

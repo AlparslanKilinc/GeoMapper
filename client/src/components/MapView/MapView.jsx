@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import '../../styles/mapView.css'
 import Comment from './Comment'
 import ShareIcon from '@mui/icons-material/Share';
@@ -12,42 +12,21 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import PopUp from '../Explore/PopUp';
 import SharePopUp from '../Explore/SharePopUp'
-import ForkForm from '../Explore/ForkForm';
-import {styled} from "@mui/material/styles";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack.js";
-import {useNavigate} from "react-router-dom";
-import  {addComment} from "../../redux-slices/commentsSlice.js";
-import TextField from "@mui/material/TextField";
+import ForkForm from '../Explore/ForkForm'
 import {Typography} from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import BookmarkIcon from "@mui/icons-material/Bookmark.js";
 
-
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
-    const dispatch = useDispatch()
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
-
-    const navigate = useNavigate()
-    const [commentText, setCommentText] = useState("");
-    const user = useSelector((state) => state.auth.user);
-
-    const NavigationButton = styled(Button)(({ theme }) => ({
-        borderColor: '#40e0d0',
-        color: '#40e0d0',
-        '&:hover': {
-            borderColor: '#40e0d0',
-            backgroundColor: 'transparent'
-        }
-    }));
     const [liked, setLiked] = useState(false);
     const [bookmarked, setBookmarked] = useState(false);
     let likes = 1000
-
     const openPopup = () => {
         setPopupOpen(true);
     };
@@ -115,22 +94,8 @@ export default function MapView() {
         }
     }
 
-    const goBack = () => {
-        navigate('/explore')
-    };
-
-    const handleNewComment = () => {
-        const author = user.userName
-        dispatch(addComment({ author: author, text: commentText, profilePic: user.profilePicPath }));
-        setCommentText("")
-
-    }
-
     return (
         <div className = "mapview-container">
-                <NavigationButton sx = {{ml: '-120px', mt: '10px'}}variant="outlined" startIcon={<ArrowBackIcon />} onClick={goBack}>
-                    Back
-                </NavigationButton>
             <div className = "map-info">
                 <span><h1>World Population</h1></span>
                 <span><p>By John Doe     September 1, 2018</p></span>
@@ -150,18 +115,15 @@ export default function MapView() {
                             <div className= "comment-form">
                                 <Paper
                                     component="form"
-                                    sx={{ p: '15px 4px', display: 'flex', alignItems: 'center', width: 320}}>
+                                    sx={{ p: '12px 4px', display: 'flex', alignItems: 'center', width: 350}}>
                                     <InputBase
-                                        sx={{ ml: 1, flex: 1}}
-                                        placeholder='Post a comment'
-                                        id = "comment"
-                                        value = {commentText ? commentText : ""}
-                                        onChange={(e) => setCommentText(e.target.value)}
+                                        sx={{ ml: 1, flex: 1 }}
+                                        placeholder="Post a comment"
+                                        inputProps={{ 'aria-label': 'Post a comment' }}
                                     />
                                     <Button variant="contained"
                                             sx = {{backgroundColor: "var(--main-color)",
                                                     '&:hover': 'var(--dark-color)'}}
-                                            onClick = {handleNewComment}
                                     >Post</Button>
                                 </Paper>
                             </div>
@@ -183,8 +145,8 @@ export default function MapView() {
                     ) : (
                         <FavoriteBorderIcon onClick = {handleLike} className="like" />
                     )}
-                </IconButton>
-                <IconButton >
+                 </IconButton>
+                 <IconButton >
                     <ShareIcon onClick = {handleFork} className = "export" />
                 </IconButton>
                 <IconButton >
@@ -194,7 +156,9 @@ export default function MapView() {
                      {bookmarked ? (
                          <BookmarkIcon onClick={handleBookmark} className = "bookmarks" style = {{color: '#40e0d0'}}/>
                      ): (
-                         <BookmarkBorderIcon  onClick={handleBookmark} className = "bookmarks"/>)}
+                         <BookmarkBorderIcon  onClick={handleBookmark} className = "bookmarks"/>
+
+                     )}
                  </IconButton>
         </div>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
