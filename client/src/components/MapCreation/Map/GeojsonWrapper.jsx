@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
@@ -28,6 +28,8 @@ export default function GeojsonWrapper({ isStyled }) {
   const borderColor = useSelector((state) => state.mapStyles.borderColor);
   const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
   const opacity = useSelector((state) => state.mapStyles.opacity);
+
+  const [labels, setLabels] = useState(new Map());
 
   const uniqueKey = [
     JSON.stringify(geoJSON),
@@ -135,6 +137,7 @@ export default function GeojsonWrapper({ isStyled }) {
     });
 
     label.addTo(map);
+    setLabels((prev) => new Map(prev).set(layer, label));
   };
 
   useEffect(() => {
@@ -142,6 +145,16 @@ export default function GeojsonWrapper({ isStyled }) {
       map.fitBounds(geojsonLayer.current.getBounds());
     }
   }, [geoJSON]);
+
+  useEffect(() => {
+    if (!isLabelVisible) {
+      labels.forEach((label, layer) => {
+        map.removeLayer(label);
+        labels.delete(layer);
+      });
+      setLabels(new Map());
+    }
+  }, [isLabelVisible]);
 
   return (
     <div style={{ width: '100%', height: '100%' }}>

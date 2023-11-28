@@ -39,7 +39,6 @@ export default function MapBox({ handleOpenExportDialog }) {
       component="main"
       sx={{
         flexGrow: 1,
-        bgcolor: 'background.default',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative'
