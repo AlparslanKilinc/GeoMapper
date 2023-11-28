@@ -2,21 +2,39 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
-  points: Array(10).fill({}),
+  points: {
+    '36.7783#-119.4179': { lat: 36.7783, lon: -119.4179, size: 21, color: 'Jordan', opacity: 0.1 },
+    '31.9686#-99.9018': { lat: 31.9686, lon: -99.9018, size: 20, color: 'Kobe', opacity: 0.2 },
+    '27.9944#-81.7603': { lat: 27.9944, lon: -81.7603, size: 15, color: 'LeBron', opacity: 0.6 },
+    '40.7128#-74.006': { lat: 40.7128, lon: -74.006, size: 30, color: 'Kobe', opacity: 0.5 },
+    '40.6331#-89.3985': { lat: 40.6331, lon: -89.3985, size: 19, color: 'Kobe', opacity: 0.6 },
+    '41.2033#-77.1945': { lat: 41.2033, lon: -77.1945, size: 47, color: 'Kobe', opacity: 0.3 },
+    '40.4173#-82.9071': { lat: 40.4173, lon: -82.9071, size: 50, color: 'LeBron', opacity: 0.9 },
+    '32.1656#-82.9001': { lat: 32.1656, lon: -82.9001, size: 26, color: 'Kobe', opacity: 0.1 },
+    '35.7596#-79.0193': { lat: 35.7596, lon: -79.0193, size: 25, color: 'Jordan', opacity: 0.1 },
+    '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4 }
+  },
   regions: [],
   columnTypes: {},
   addedColumns: [],
   nameByProperty: 'Name',
   valueByProperty: 'Value',
-  LatByProperty: 'Lat',
-  LonByProperty: 'Lon',
-  colorByProperty: 'Color',
-  sizeByProperty: 'Size',
+  LatByProperty: 'lat',
+  LonByProperty: 'lon',
+  colorByProperty: 'color',
+  sizeByProperty: 'size',
+  fixedSymbolSize: 10,
+  fixedOpacity: 0.5,
+  opacityByProperty: '',
+  fixedColor: '#800080',
   labelByProperty: '',
   isLabelVisible: false,
   propertyNames: [],
   selectedRegionIdx: -1,
-  columnValidationErrors: {}
+  columnValidationErrors: {},
+  randomColumnCounter: 0,
+  validationMessage:
+    '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.'
 };
 
 function isValidValueForType(value, type) {
@@ -35,10 +53,41 @@ function isValidValueForType(value, type) {
   return false;
 }
 
+const performValidation = (state) => {
+  let isColumnInvalid = false;
+  let message = '✓ No errors found.';
+
+  Object.keys(state.columnTypes).forEach((columnName) => {
+    const columnType = state.columnTypes[columnName];
+
+    state.regions.forEach((region) => {
+      const value = region[columnName];
+      if (!isValidValueForType(value, columnType)) {
+        isColumnInvalid = true;
+        message = 'X Looks like there are some errors in your dataset.';
+      }
+    });
+  });
+
+  if (!isColumnInvalid) {
+    for (let region of state.regions) {
+      if (!region[state.nameByProperty] || !region[state.colorByProperty]) {
+        message =
+          '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.';
+        break;
+      }
+    }
+  }
+
+  state.validationMessage = message;
+  return isColumnInvalid;
+};
+
 const mapGraphicsDataSlice = createSlice({
   name: 'mapGraphics',
   initialState,
   reducers: {
+    resetMapGraphicsData: () => initialState,
     addProperty: (state, action) => {
       const newProperty = action.payload;
       state.propertyNames.push(newProperty);
@@ -70,17 +119,9 @@ const mapGraphicsDataSlice = createSlice({
     },
     validateColumnData: (state, action) => {
       const columnName = action.payload.columnName;
-      const columnType = state.columnTypes[columnName];
-      let isColumnInvalid = false;
+      const isInvalid = performValidation(state);
 
-      state.regions.forEach((region) => {
-        const value = region[columnName];
-        if (!isValidValueForType(value, columnType)) {
-          isColumnInvalid = true;
-        }
-      });
-
-      if (isColumnInvalid) {
+      if (isInvalid) {
         state.columnValidationErrors[columnName] = 'Invalid Data Type';
       } else {
         delete state.columnValidationErrors[columnName];
@@ -107,6 +148,7 @@ const mapGraphicsDataSlice = createSlice({
     changeXByProperty: (state, action) => {
       let { property, propertyBy } = action.payload;
       state[property] = propertyBy;
+      performValidation(state);
     },
     setChoroplethData: (state, action) => {
       const { propertyNames, regions, columnTypes } = action.payload;
@@ -117,9 +159,21 @@ const mapGraphicsDataSlice = createSlice({
     setRegionProperty: (state, action) => {
       const { propertyName, value, id } = action.payload;
       let idx = state.selectedRegionIdx;
-      if( id !== undefined) idx = id;
+      if (id !== undefined) idx = id;
       const region = state.regions[idx];
       region[propertyName] = value;
+    },
+    generateRandomColumn: (state) => {
+      state.randomColumnCounter += 1;
+      const randomColumnName = `RandomData_${state.randomColumnCounter}`;
+      state.addedColumns.push(randomColumnName);
+      state.propertyNames.push(randomColumnName);
+      state.columnTypes[randomColumnName] = 'number';
+
+      const entities = state.regions;
+      Object.values(entities).forEach((entity) => {
+        entity[randomColumnName] = Math.floor(Math.random() * 100);
+      });
     },
     setSelectedRegionIdx: (state, action) => {
       state.selectedRegionIdx = action.payload;
@@ -129,6 +183,15 @@ const mapGraphicsDataSlice = createSlice({
     },
     setLabelByProperty: (state, action) => {
       state.labelByProperty = action.payload;
+    },
+    setFixedSymbolSize: (state, action) => {
+      state.fixedSymbolSize = action.payload;
+    },
+    setFixedOpacity: (state, action) => {
+      state.fixedOpacity = action.payload;
+    },
+    setPropertyNames: (state, action) => {
+      state.propertyNames = action.payload;
     }
   }
 });
@@ -151,6 +214,11 @@ export const {
   removeColumn,
   validateColumnData,
   toggleLabelVisibility,
-  setLabelByProperty
+  setLabelByProperty,
+  setFixedSymbolSize,
+  setFixedOpacity,
+  setPropertyNames,
+  generateRandomColumn,
+  resetMapGraphicsData
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

@@ -12,7 +12,7 @@ import RegionEditing from './MapGraphicsEditor/GraphicsTools/RegionEditing';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import ExportDialog from './MapGraphicsEditor/ExportDialog';
-import Legend from './Legend'
+import Legend from './Legend';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -22,6 +22,8 @@ import {
   setContinousColorScale
 } from '../../redux-slices/mapStylesSlice';
 import * as d3 from 'd3';
+import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
+import MapBox from './MapBox';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -40,25 +42,36 @@ export default function MapGraphicsEditor() {
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
-  const { colors, colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
+  const points = useSelector((state) => state.mapGraphics.points);
+  const colors = useSelector((state) => state.mapStyles.colors);
+  const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
+  const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
+
+  let propList = regions;
+
+  if (mapGraphicsType === 'Symbol Map') {
+    propList = Object.values(points);
+  }
+
   const exportDialogRef = useRef();
   const openExportDialog = () => {
     exportDialogRef.current.handleOpenExportDialog();
   };
+
   //  lets extract unique values from the property associated with the colorByProperty
-  const extractUniqueColorValues = (regions, colorByProperty) => {
+  const extractUniqueColorValues = (propListObj, colorByProperty) => {
     const uniqueValues = new Set();
-    regions.forEach((region) => {
-      uniqueValues.add(region[colorByProperty]);
+    propListObj.forEach((propObj) => {
+      uniqueValues.add(propObj[colorByProperty]);
     });
     return uniqueValues;
   };
   const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
 
   const initColorsCategorical = () => {
-    const uniqueValues = extractUniqueColorValues(regions, colorByProperty);
+    const uniqueValues = extractUniqueColorValues(propList, colorByProperty);
     const c = Array.from(uniqueValues).map((name) => {
       let color = generateRandomColor();
       let colorObj = colors.find((color) => color.name === name);
@@ -71,12 +84,15 @@ export default function MapGraphicsEditor() {
   };
 
   const initColorsNumerical = () => {
-    const data = regions.map((region) => region[colorByProperty]);
+    const data = propList.map((propObj) => propObj[colorByProperty]);
     const minData = d3.min(data);
     const maxData = d3.max(data);
 
     // Create a continuous color scale
-    const colorScale = d3.scaleLinear().domain([minData, maxData]).range(colorPalette[colorPaletteIdx]); // You can choose any two colors
+    const colorScale = d3
+      .scaleLinear()
+      .domain([minData, maxData])
+      .range(colorPalette[colorPaletteIdx]); // You can choose any two colors
 
     // Normalize and map data to color
     const c = data.map((d) => colorScale(d));
@@ -86,109 +102,29 @@ export default function MapGraphicsEditor() {
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
-    if (mapGraphicsType === 'Choropleth Map') {
-      const isNumeric = !isNaN(regions[0][colorByProperty]);
+    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
+      const isNumeric = !isNaN(propList[0][colorByProperty]);
       console.log('isNumeric', isNumeric);
       if (isNumeric) initColorsNumerical();
       else initColorsCategorical();
     }
   };
 
+  const initPropertyNames = () => {
+    const propertyNames = Object.keys(propList[0]);
+    dispatch(setPropertyNames(propertyNames));
+  };
+
   useEffect(() => {
     initColors();
-  }, [colorByProperty, regions]);
+    initPropertyNames();
+  }, [colorByProperty]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
   };
 
   // TODO: Move the MapBox out as a separate component, now the switch of the dialog will trigger the re-rendering of the MapBox.
-  function MapBox() {
-    const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
-    const buttonStyle = {
-      minWidth: 0,
-      padding: 0,
-      height: '3.5em',
-      width: '3.5em',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundImage: 'linear-gradient(135deg, rgba(224, 234, 252, 0.3) 25%, transparent 25%, transparent 50%, rgba(224, 234, 252, 0.3) 50%, rgba(224, 234, 252, 0.3) 75%, transparent 75%, transparent 100%)',
-      backgroundSize: '14px 14px',
-      border: 'none',
-      boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.1)',
-      '&:hover': {
-        backgroundImage: 'linear-gradient(135deg, rgba(207, 222, 243, 0.3) 25%, transparent 25%, transparent 50%, rgba(207, 222, 243, 0.3) 50%, rgba(207, 222, 243, 0.3) 75%, transparent 75%, transparent 100%)',
-        backgroundSize: '14px 14px',
-        border: 'none',
-        boxShadow: '1px 1px 6px rgba(0, 0, 0, 0.2)',
-      }
-    };
-
-    return (
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: 'background.default',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-        }}
-      >
-        {isLoadingGeojson ? (
-          <CircularProgress />
-        ) : (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              width: '100%'
-            }}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <MapTitleEditor />
-                <Legend properties = {colors} mapType = {mapGraphicsType}/>
-                <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-                <Button
-                  variant="outlined"
-                  aria-label="save"
-                  sx={buttonStyle}>
-                  <SaveOutlinedIcon />
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  aria-label="publish"
-                  sx={buttonStyle}>
-                  <PublishOutlinedIcon />
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  aria-label="publish"
-                  onClick={openExportDialog}
-                  sx={buttonStyle}>
-                  <SaveAltIcon />
-                </Button>
-              </Box>
-            </Box>
-
-            {geojson && (
-              <>
-                <UndoRedoButtonGroup />
-                <div id="mapContainer" style={{ position: 'relative', height: '100%', width: '100%', display: 'flex' }}>
-                  <Legend properties={colors} mapType={mapGraphicsType} />
-                  <GeoJsonMap styled={true} />
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </Box>
-    );
-  }
 
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
@@ -210,7 +146,8 @@ export default function MapGraphicsEditor() {
       >
         <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
-      {!isTabularOpened && <MapBox />}
+
+      {!isTabularOpened && <MapBox openExportDialog={openExportDialog} />}
       <ExportDialog ref={exportDialogRef} />
 
       <Drawer
