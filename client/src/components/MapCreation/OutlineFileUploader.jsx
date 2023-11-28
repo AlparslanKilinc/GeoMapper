@@ -133,6 +133,7 @@ const OutlineFileUploader = () => {
     <div>
       <Button
         startIcon={<CloudUploadIcon />}
+        className ="upload-file-button"
         component="label"
         variant="outlined"
         style={{ color: 'black', borderColor: 'black' }}
@@ -141,6 +142,7 @@ const OutlineFileUploader = () => {
         <VisuallyHiddenInput
           type="file"
           multiple
+          className = "file-input"
           onChange={handleFileChange}
           accept=".json, .geojson, .kml, .zip"
         />
