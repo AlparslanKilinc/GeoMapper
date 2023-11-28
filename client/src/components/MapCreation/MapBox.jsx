@@ -8,9 +8,12 @@ import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import Legend from './Legend';
 
-export default function MapBox({ handleOpenExportDialog }) {
+export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
+  const colors = useSelector((state) => state.mapStyles.colors);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   const buttonStyle = {
     minWidth: 0,
@@ -69,7 +72,7 @@ export default function MapBox({ handleOpenExportDialog }) {
               <Button
                 variant="outlined"
                 aria-label="publish"
-                onClick={handleOpenExportDialog}
+                onClick={openExportDialog}
                 sx={buttonStyle}
               >
                 <SaveAltIcon />
@@ -82,6 +85,7 @@ export default function MapBox({ handleOpenExportDialog }) {
               <UndoRedoButtonGroup />
               <div id="mapContainer" style={{ height: '100%', width: '100%', display: 'flex' }}>
                 <GeoJsonMap styled={true} />
+                <Legend properties={colors} mapType={mapGraphicsType} />
               </div>
             </>
           )}

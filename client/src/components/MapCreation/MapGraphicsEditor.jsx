@@ -12,7 +12,7 @@ import RegionEditing from './MapGraphicsEditor/GraphicsTools/RegionEditing';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import ExportDialog from './MapGraphicsEditor/ExportDialog';
-import Legend from './Legend'
+import Legend from './Legend';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -126,8 +126,6 @@ export default function MapGraphicsEditor() {
 
   // TODO: Move the MapBox out as a separate component, now the switch of the dialog will trigger the re-rendering of the MapBox.
 
-
-  
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
       <CssBaseline />
@@ -149,10 +147,8 @@ export default function MapGraphicsEditor() {
         <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
 
-
-      {!isTabularOpened && <MapBox handleOpenExportDialog={handleOpenExportDialog} />}
+      {!isTabularOpened && <MapBox openExportDialog={openExportDialog} />}
       <ExportDialog ref={exportDialogRef} />
-
 
       <Drawer
         sx={{
