@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import '../../../styles/map-label.css';
 // import leaflet css
 import 'leaflet/dist/leaflet.css';
+import { color } from 'd3';
 
 export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
@@ -22,9 +23,26 @@ export default function GeojsonWrapper({ isStyled }) {
   const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
-  const { colors, continousColorScale, borderColor, borderWidth, opacity } = useSelector(
-    (state) => state.mapStyles
-  );
+  const colors = useSelector((state) => state.mapStyles.colors);
+  const continousColorScale = useSelector((state) => state.mapStyles.continousColorScale);
+  const borderColor = useSelector((state) => state.mapStyles.borderColor);
+  const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
+  const opacity = useSelector((state) => state.mapStyles.opacity);
+
+  const uniqueKey = [
+    JSON.stringify(geoJSON),
+    mapGraphicsType,
+    JSON.stringify(regions),
+    colorByProperty,
+    nameByProperty,
+    labelByProperty,
+    isLabelVisible,
+    JSON.stringify(colors),
+    JSON.stringify(continousColorScale),
+    borderColor,
+    borderWidth,
+    opacity
+  ].join('|');
 
   // Default Styles
   const defaultStyles = {
@@ -133,6 +151,7 @@ export default function GeojsonWrapper({ isStyled }) {
           style={defaultStyles}
           onEachFeature={onEachFeature}
           ref={geojsonLayer}
+          key={uniqueKey}
         />
       )}
     </div>

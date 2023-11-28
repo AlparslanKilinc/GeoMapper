@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import GeojsonWrapper from './GeojsonWrapper';
 import SymbolLayer from '../MapGraphicsEditor/StylesMenu/Shapes/SymbolLayer';
 
 const GeoJsonMap = ({ styled }) => {
-  const { mapBackgroundColor, isTilelayerVisible } = useSelector((state) => state.mapStyles);
+  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
+  const isTilelayerVisible = useSelector((state) => state.mapStyles.isTilelayerVisible);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
 

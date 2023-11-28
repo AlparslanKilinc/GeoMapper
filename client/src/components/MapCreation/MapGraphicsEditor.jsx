@@ -22,6 +22,7 @@ import {
 } from '../../redux-slices/mapStylesSlice';
 import * as d3 from 'd3';
 import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
+import MapBox from './MapBox';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -42,7 +43,9 @@ export default function MapGraphicsEditor() {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const points = useSelector((state) => state.mapGraphics.points);
-  const { colors, colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
+  const colors = useSelector((state) => state.mapStyles.colors);
+  const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
+  const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
   // const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
@@ -113,7 +116,7 @@ export default function MapGraphicsEditor() {
   useEffect(() => {
     initColors();
     initPropertyNames();
-  }, [colorByProperty, points, regions]);
+  }, [colorByProperty]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
@@ -128,87 +131,6 @@ export default function MapGraphicsEditor() {
   };
 
   // TODO: Move the MapBox out as a separate component, now the switch of the dialog will trigger the re-rendering of the MapBox.
-  function MapBox() {
-    const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
-    const buttonStyle = {
-      minWidth: 0,
-      padding: 0,
-      height: '3.5em',
-      width: '3.5em',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundImage:
-        'linear-gradient(135deg, rgba(224, 234, 252, 0.3) 25%, transparent 25%, transparent 50%, rgba(224, 234, 252, 0.3) 50%, rgba(224, 234, 252, 0.3) 75%, transparent 75%, transparent 100%)',
-      backgroundSize: '14px 14px',
-      border: 'none',
-      boxShadow: '1px 1px 4px rgba(0, 0, 0, 0.1)',
-      '&:hover': {
-        backgroundImage:
-          'linear-gradient(135deg, rgba(207, 222, 243, 0.3) 25%, transparent 25%, transparent 50%, rgba(207, 222, 243, 0.3) 50%, rgba(207, 222, 243, 0.3) 75%, transparent 75%, transparent 100%)',
-        backgroundSize: '14px 14px',
-        border: 'none',
-        boxShadow: '1px 1px 6px rgba(0, 0, 0, 0.2)'
-      }
-    };
-
-    return (
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: 'background.default',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative'
-        }}
-      >
-        {isLoadingGeojson ? (
-          <CircularProgress />
-        ) : (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              width: '100%'
-            }}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <MapTitleEditor />
-              <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-                <Button variant="outlined" aria-label="save" sx={buttonStyle}>
-                  <SaveOutlinedIcon />
-                </Button>
-
-                <Button variant="outlined" aria-label="publish" sx={buttonStyle}>
-                  <PublishOutlinedIcon />
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  aria-label="publish"
-                  onClick={handleOpenExportDialog}
-                  sx={buttonStyle}
-                >
-                  <SaveAltIcon />
-                </Button>
-              </Box>
-            </Box>
-
-            {geojson && (
-              <>
-                <UndoRedoButtonGroup />
-                <div id="mapContainer" style={{ height: '100%', width: '100%', display: 'flex' }}>
-                  <GeoJsonMap styled={true} />
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </Box>
-    );
-  }
 
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
@@ -231,7 +153,7 @@ export default function MapGraphicsEditor() {
         <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
 
-      {!isTabularOpened && <MapBox />}
+      {!isTabularOpened && <MapBox handleOpenExportDialog={handleOpenExportDialog} />}
       <ExportDialog open={exportDialogOpen} onClose={handleCloseExportDialog} />
 
       <Drawer
