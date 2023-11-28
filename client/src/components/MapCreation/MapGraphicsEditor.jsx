@@ -154,8 +154,7 @@ export default function MapGraphicsEditor() {
           >
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <MapTitleEditor />
-                <Legend properties = {colors} mapType = {mapGraphicsType}/>
-                <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
+              <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
                 <Button
                   variant="outlined"
                   aria-label="save"
@@ -184,6 +183,7 @@ export default function MapGraphicsEditor() {
               <>
                 <UndoRedoButtonGroup />
                 <div id="mapContainer" style={{ height: '100%', width: '100%', display: 'flex' }}>
+                  <Legend properties={colors} mapType={mapGraphicsType} />
                   <GeoJsonMap styled={true} />
                 </div>
               </>

@@ -40,7 +40,12 @@ export default function Legend({ properties, mapType }) {
     const style = orientation === 'horizontal' ? horizontalStyle : verticalStyle;
 
     return (
-        <Paper elevation={3} style={paperStyle}>
+        <Paper elevation={3} style={paperStyle} sx={{
+            position: 'absolute',
+            top: '55%',
+            transform: 'translateY(-50%)',
+            zIndex: 999,
+        }}>
             {properties.map((props, index) => (
                 <div key={index} style={style}>
                     <Box sx={{ bgcolor: props.color, height: '20px', width: '20px', marginRight: orientation === 'horizontal' ? '8px' : '5px' }} />
