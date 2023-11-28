@@ -158,7 +158,7 @@ export default function DataEditorTable() {
           <TableHead>
             <TableRow>
               {displayedProperties.map((colName, index) => (
-                <TableCell sx={{ verticalAlign: 'bottom' }} key={index}>
+                <TableCell sx={{ width: '150px', verticalAlign: 'bottom' }} key={index}>
                   {isDeletable(colName) ? (
                     ''
                   ) : (
