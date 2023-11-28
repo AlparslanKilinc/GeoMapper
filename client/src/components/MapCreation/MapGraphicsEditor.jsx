@@ -149,7 +149,8 @@ export default function MapGraphicsEditor() {
           >
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <MapTitleEditor />
-              <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
+                <Legend properties = {colors} mapType = {mapGraphicsType}/>
+                <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
                 <Button
                   variant="outlined"
                   aria-label="save"
