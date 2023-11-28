@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import '../../styles/mapView.css'
 import Comment from './Comment'
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ShareIcon from '@mui/icons-material/Share';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -13,10 +14,6 @@ import IconButton from '@mui/material/IconButton';
 import PopUp from '../Explore/PopUp';
 import SharePopUp from '../Explore/SharePopUp'
 import ForkForm from '../Explore/ForkForm'
-import {Typography} from "@mui/material";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import BookmarkIcon from "@mui/icons-material/Bookmark.js";
 
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
@@ -24,9 +21,6 @@ export default function MapView() {
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
-    const [liked, setLiked] = useState(false);
-    const [bookmarked, setBookmarked] = useState(false);
-    let likes = 1000
     const openPopup = () => {
         setPopupOpen(true);
     };
@@ -52,17 +46,11 @@ export default function MapView() {
     }
 
     const handleLike = () =>{
-        likes = likes + 1
+        console.log("map was liked")
         if(!loggedIn){
             setPopUpTitle("To like a map, please create an account");
             openPopup();
             return;
-        }
-        if (!liked){
-            setLiked(true)
-        }
-        else{
-            setLiked(false)
         }
     }
     const handleShare = () =>{
@@ -85,12 +73,6 @@ export default function MapView() {
             setPopUpTitle("To bookmark, please create an account");
             openPopup();
             return;
-        }
-        if (!bookmarked){
-            setBookmarked(true);
-        }
-        else{
-            setBookmarked(false);
         }
     }
 
@@ -137,29 +119,21 @@ export default function MapView() {
                     </div>
                 </div>
             </div>
-            <Typography variant = 'subtitle1' sx = {{mt: '20px', ml: '25px'}}>{likes} likes</Typography>
             <div className = "actions">
-                <IconButton >
-                    {liked ? (
-                        <FavoriteIcon onClick = {handleLike} className="like" style={{ color: 'red' }} />
-                    ) : (
-                        <FavoriteBorderIcon onClick = {handleLike} className="like" />
-                    )}
+                <IconButton>
+                    <ThumbUpOffAltIcon className = "like"onClick = {handleLike}/>
                  </IconButton>
-                 <IconButton >
-                    <ShareIcon onClick = {handleFork} className = "export" />
+                 <IconButton>
+                    <ShareIcon className = "export" onClick = {handleFork}/>
                 </IconButton>
-                <IconButton >
-                    <IosShareIcon onClick = {handleShare} className = "share" />
-                </IconButton >
-                 <IconButton >
-                     {bookmarked ? (
-                         <BookmarkIcon onClick={handleBookmark} className = "bookmarks" style = {{color: '#40e0d0'}}/>
-                     ): (
-                         <BookmarkBorderIcon  onClick={handleBookmark} className = "bookmarks"/>
 
-                     )}
+                <IconButton>
+                    <IosShareIcon className = "share" onClick = {handleShare}/>
+                </IconButton>
+                 <IconButton>
+                     <BookmarkBorderIcon className = "bookmarks" onClick = {handleBookmark}/>
                  </IconButton>
+
         </div>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
             {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}
