@@ -175,44 +175,51 @@ export default function DataEditorTable() {
               ))}
             </TableRow>
           </TableHead>
-
-          <TableBody>
-            {data.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
-                {displayedProperties.map((colName, colIndex) => (
-                  <TableCell key={colIndex}>
-                    <TextField
-                      value={row[colName] || ''}
-                      onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
-                      error={!!cellErrors[`${rowIndex}-${colName}`]}
-                      helperText={
-                        cellErrors[`${rowIndex}-${colName}`]
-                          ? columnTypes[colName] === 'number'
-                            ? 'Number Required'
-                            : 'Text  Required'
-                          : ''
-                      }
-                      sx={{
-                        '& input': {
-                          padding: '0.3em 0.5em'
+        </Table>
+        <div id="table-body-container" style={{ overflowY: 'auto' }}>
+          <Table size="small">
+            <TableBody>
+              {data.map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {displayedProperties.map((colName, colIndex) => (
+                    <TableCell key={colIndex}>
+                      <TextField
+                        value={row[colName] || ''}
+                        onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
+                        error={!!cellErrors[`${rowIndex}-${colName}`]}
+                        helperText={
+                          cellErrors[`${rowIndex}-${colName}`]
+                            ? columnTypes[colName] === 'number'
+                              ? 'Number Required'
+                              : 'Text  Required'
+                            : ''
                         }
-                      }}
-                    />
-                  </TableCell>
-                ))}
-                {mapGraphicsType !== 'Choropleth Map' && (
-                  <TableCell>
-                    <DeleteIcon
-                      onClick={() => handleDeleteRow(rowIndex)}
-                      sx={{ marginTop: '10px', cursor: 'pointer' }}
-                    />
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
+                        sx={{
+                          '& input': {
+                            padding: '0.3em 0.5em'
+                          }
+                        }}
+                      />
+                    </TableCell>
+                  ))}
+                  {mapGraphicsType !== 'Choropleth Map' && (
+                    <TableCell>
+                      <DeleteIcon
+                        onClick={() => handleDeleteRow(rowIndex)}
+                        sx={{ marginTop: '10px', cursor: 'pointer' }}
+                      />
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <div id="table-footer">
+          <Table size="small">
             <TableRow>
               {displayedProperties.map((colName, index) => (
-                <TableCell key={index}>
+                <TableCell sx={{ width: '150px', verticalAlign: 'bottom' }} key={index}>
                   {columnErrors[colName] ? (
                     <span style={{ color: 'red' }}>{columnErrors[colName]}</span>
                   ) : (
@@ -221,32 +228,32 @@ export default function DataEditorTable() {
                 </TableCell>
               ))}
             </TableRow>
-          </TableBody>
-        </Table>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem>
-            <FormControl component="fieldset">
-              <RadioGroup
-                value={columnTypes[selectedColumn] || 'text'}
-                onChange={(e) => handleColumnTypeChange(e.target.value)}
-              >
-                <FormControlLabel value="text" control={<Radio />} label="Text" />
-                <FormControlLabel value="number" control={<Radio />} label="Number" />
-              </RadioGroup>
-            </FormControl>
-          </MenuItem>
-          {isDeletable(selectedColumn) && (
-            <MenuItem onClick={() => handleRemoveColumn(selectedColumn)}>Delete Column</MenuItem>
-          )}
-        </Menu>
-        <TableButtons />
+          </Table>
+          <TableButtons />
+        </div>
       </div>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem>
+          <FormControl component="fieldset">
+            <RadioGroup
+              value={columnTypes[selectedColumn] || 'text'}
+              onChange={(e) => handleColumnTypeChange(e.target.value)}
+            >
+              <FormControlLabel value="text" control={<Radio />} label="Text" />
+              <FormControlLabel value="number" control={<Radio />} label="Number" />
+            </RadioGroup>
+          </FormControl>
+        </MenuItem>
+        {isDeletable(selectedColumn) && (
+          <MenuItem onClick={() => handleRemoveColumn(selectedColumn)}>Delete Column</MenuItem>
+        )}
+      </Menu>
     </div>
   );
 }
