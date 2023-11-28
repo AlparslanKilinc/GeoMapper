@@ -177,7 +177,7 @@ export default function MapGraphicsEditor() {
             {geojson && (
               <>
                 <UndoRedoButtonGroup />
-                <div id="mapContainer" style={{ height: '100%', width: '100%', display: 'flex' }}>
+                <div id="mapContainer" style={{ position: 'relative', height: '100%', width: '100%', display: 'flex' }}>
                   <Legend properties={colors} mapType={mapGraphicsType} />
                   <GeoJsonMap styled={true} />
                 </div>

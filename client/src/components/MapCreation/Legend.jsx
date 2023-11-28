@@ -35,15 +35,15 @@ export default function Legend({ properties, mapType }) {
     };
 
     return (
-        <Draggable nodeRef={legendRef}>
+        <Draggable nodeRef={legendRef} bounds="parent">
             <Paper
                 ref={legendRef}
                 elevation={3}
                 style={paperStyle}
                 sx={{
                     position: 'absolute',
-                    // top: '55%',
-                    // transform: 'translateY(-50%)',
+                    top: '70%',
+                    left: '85%',
                     zIndex: 999,
                     cursor: 'move'
                 }}>
