@@ -1,9 +1,21 @@
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import domtoimage from 'dom-to-image';
 import { Button, Dialog, DialogActions, DialogTitle } from '@mui/material';
 import { useSelector } from 'react-redux';
 
-export default function ExportDialog({ open, onClose }) {
+const ExportDialog = forwardRef((props, ref) => {
   const { title } = useSelector((state) => state.mapMetadata);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    handleOpenExportDialog: () => {
+      setExportDialogOpen(true);
+    }
+  }));
+
+  const handleCloseExportDialog = () => {
+    setExportDialogOpen(false);
+  };
 
   function handleExportChoice(exportType) {
     const mapElement = document.getElementById("mapContainer");
@@ -46,11 +58,11 @@ export default function ExportDialog({ open, onClose }) {
             link.href = dataUrl;
             link.download = title + fileExtension;
             link.click();
-            onClose();
+            handleCloseExportDialog();
           })
           .catch((error) => {
             showElementsAfterCapture();
-            onClose();
+            handleCloseExportDialog();
             console.error('Error exporting map: ', error);
           });
       }, 100);
@@ -58,7 +70,7 @@ export default function ExportDialog({ open, onClose }) {
   }
 
   return (
-    <Dialog open={open} onClose={onClose} aria-labelledby="export-dialog-title">
+    <Dialog open={exportDialogOpen} onClose={handleCloseExportDialog} aria-labelledby="export-dialog-title">
       <DialogTitle id="export-dialog-title">Please Select Export Format</DialogTitle>
       <DialogActions>
         <Button onClick={() => handleExportChoice('png')} color="primary">PNG</Button>
@@ -66,4 +78,6 @@ export default function ExportDialog({ open, onClose }) {
       </DialogActions>
     </Dialog>
   );
-}
+});
+
+export default ExportDialog;

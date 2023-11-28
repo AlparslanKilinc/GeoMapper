@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Drawer, Button } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -12,6 +12,7 @@ import RegionEditing from './MapGraphicsEditor/GraphicsTools/RegionEditing';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import ExportDialog from './MapGraphicsEditor/ExportDialog';
+import Legend from './Legend'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -39,7 +40,6 @@ export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [isTabularOpened, setIsTabularOpened] = React.useState(false);
-  const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const points = useSelector((state) => state.mapGraphics.points);
@@ -48,15 +48,17 @@ export default function MapGraphicsEditor() {
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
-  // const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
-  // const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
-  // const fixedColor = useSelector((state) => state.mapGraphics.fixedColor);
 
   let propList = regions;
 
   if (mapGraphicsType === 'Symbol Map') {
     propList = Object.values(points);
   }
+
+  const exportDialogRef = useRef();
+  const openExportDialog = () => {
+    exportDialogRef.current.handleOpenExportDialog();
+  };
 
   //  lets extract unique values from the property associated with the colorByProperty
   const extractUniqueColorValues = (propListObj, colorByProperty) => {
@@ -122,16 +124,10 @@ export default function MapGraphicsEditor() {
     setIsTabularOpened(newState);
   };
 
-  const handleOpenExportDialog = () => {
-    setExportDialogOpen(true);
-  };
-
-  const handleCloseExportDialog = () => {
-    setExportDialogOpen(false);
-  };
-
   // TODO: Move the MapBox out as a separate component, now the switch of the dialog will trigger the re-rendering of the MapBox.
 
+
+  
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>
       <CssBaseline />
@@ -153,8 +149,10 @@ export default function MapGraphicsEditor() {
         <TabMenu tabsConfig={stylesToolboxConfig} handleTabularOpen={handleTabularOpen} />
       </Drawer>
 
+
       {!isTabularOpened && <MapBox handleOpenExportDialog={handleOpenExportDialog} />}
-      <ExportDialog open={exportDialogOpen} onClose={handleCloseExportDialog} />
+      <ExportDialog ref={exportDialogRef} />
+
 
       <Drawer
         sx={{
