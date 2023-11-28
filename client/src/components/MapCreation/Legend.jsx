@@ -4,12 +4,15 @@ import Draggable from 'react-draggable';
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useSelector } from "react-redux";
+import * as d3 from 'd3';
 
 export default function Legend({ properties, mapType }) {
     const legendRef = useRef(null);
-    const { orientation } = useSelector((state) => state.legend);
-    const { bgColor } = useSelector((state) => state.legend);
-    const { fontColor } = useSelector((state) => state.legend);
+    const { regions, colorByProperty } = useSelector((state) => state.mapGraphics);
+    const { colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
+    const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
+
+    const isNumeric = !isNaN(regions[0][colorByProperty]);
 
     const horizontalPaper = {
         display: 'flex',
@@ -34,16 +37,16 @@ export default function Legend({ properties, mapType }) {
         marginBottom: orientation === 'vertical' ? '10px' : '0',
     };
 
-    return (
-        <Draggable nodeRef={legendRef} bounds="parent">
+    function textualLegend() {
+        return (
             <Paper
                 ref={legendRef}
                 elevation={3}
                 style={paperStyle}
                 sx={{
                     position: 'absolute',
-                    top: '70%',
-                    left: '85%',
+                    top: (orientation === 'horizontal') ? '85%' : '70%',
+                    left: (orientation === 'horizontal') ? '65%' : '85%',
                     zIndex: 999,
                     cursor: 'move'
                 }}>
@@ -56,6 +59,73 @@ export default function Legend({ properties, mapType }) {
                     </div>
                 ))}
             </Paper>
+        );
+    }
+
+    function numericalLegend() {
+        // TODO: Bug: I changed the max value in the data editor, but no change in the ui.
+        // We have to transfer text to num when enter data to table.
+        const minVal = d3.min(regions, (d) => d[colorByProperty]);
+        const maxVal = d3.max(regions, (d) => d[colorByProperty]);
+        const palette = colorPalette[colorPaletteIdx];
+
+        return (
+            <Paper
+                ref={legendRef}
+                elevation={3}
+                style={paperStyle}
+                sx={{
+                    position: 'absolute',
+                    top: (orientation === 'horizontal') ? '85%' : '60%',
+                    left: (orientation === 'horizontal') ? '75%' : '90%',
+                    zIndex: 999,
+                    cursor: 'move'
+                }}>
+                <Box
+                    sx={{
+                        width: orientation === 'horizontal' ? '10em' : '1em',
+                        height: orientation === 'horizontal' ? '1em' : '10em',
+                        position: 'relative',
+                        backgroundImage: orientation === 'horizontal'
+                            ? `linear-gradient(to right, ${palette.join(', ')})`
+                            : `linear-gradient(to bottom, ${palette.join(', ')})`
+                    }}
+                >
+                    <Typography style={{
+                        position: 'absolute',
+                        top: orientation === 'horizontal' ? '100%' : '0',
+                        left: orientation === 'horizontal' ? '0' : '100%',
+                        transform: orientation === 'horizontal'
+                            ? 'translateY(0)'
+                            : 'translateX(50%)',
+                        whiteSpace: 'nowrap',
+                        fontSize: '0.75em'
+                    }}>
+                        {minVal}
+                    </Typography>
+                    <Typography style={{
+                        position: 'absolute',
+                        top: orientation === 'horizontal' ? '100%' : 'initial',
+                        bottom: orientation === 'horizontal' ? 'initial' : '0',
+                        left: orientation === 'horizontal' ? 'initial' : '100%',
+                        right: orientation === 'horizontal' ? '0' : 'initial',
+                        transform: orientation === 'horizontal'
+                            ? 'translateY(0)'
+                            : 'translateX(50%)',
+                        whiteSpace: 'nowrap',
+                        fontSize: '0.75em'
+                    }}>
+                        {maxVal}
+                    </Typography>
+                </Box>
+
+            </Paper>
+        );
+    }
+
+    return (
+        <Draggable nodeRef={legendRef} bounds="parent">
+            {isNumeric ? numericalLegend() : textualLegend()}
         </Draggable>
     );
 }

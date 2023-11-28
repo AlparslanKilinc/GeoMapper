@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore.js";
 import Box from "@mui/material/Box";
 import LegendToggleIcon from '@mui/icons-material/LegendToggle';
@@ -9,14 +9,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Divider from "@mui/material/Divider";
-import {useDispatch, useSelector} from "react-redux";
-import {changeOrientation, changeBackgroundColor, changeFontColor} from "../../../../redux-slices/legendSlice.js";
-import {useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { changeOrientation, changeBackgroundColor, changeFontColor } from "../../../../redux-slices/legendSlice.js";
+import { useEffect } from "react";
 import { MuiColorInput } from 'mui-color-input';
 
-
-
-export default function LegendAccordionMenu () {
+export default function LegendAccordionMenu() {
     const [value, setValue] = React.useState('vertical');
     const [color, setColor] = React.useState('#ffffff')
     const [fontColor, setFontColor] = React.useState('black')
@@ -34,14 +32,14 @@ export default function LegendAccordionMenu () {
     };
 
     const handleBackgroundColorChange = (color) => {
-       setColor(color)
+        setColor(color)
     }
 
     const handleFontColorChange = (fontColor) => {
         setFontColor(fontColor)
     }
 
-    return(
+    return (
         <Accordion>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />} // Black expand icon
@@ -55,10 +53,10 @@ export default function LegendAccordionMenu () {
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <Typography variant="subtitle2" sx= {{ml: '45px'}}>orientation</Typography>
-                <Divider style={{ margin: '10px 0', width: '100%', height: 1 }}/>
+                <Typography variant="subtitle2" sx={{ ml: '45px' }}>orientation</Typography>
+                <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
                 <FormControl>
-                    <FormLabel id = "legend-orientation"/>
+                    <FormLabel id="legend-orientation" />
                     <RadioGroup
                         aria-labelledby="legend-orientation-radio-buttons"
                         name="controlled-radio-buttons-group"
@@ -68,11 +66,11 @@ export default function LegendAccordionMenu () {
                         <FormControlLabel value="horizontal" control={<Radio />} label="horizontal" />
                     </RadioGroup>
                 </FormControl>
-                <Typography variant="subtitle2" sx= {{ml: '20px', mt: '20px'}}>background color</Typography>
-                <Divider style={{ margin: '10px 0', width: '100%', height: 1 }}/>
+                <Typography variant="subtitle2" sx={{ ml: '20px', mt: '20px' }}>background color</Typography>
+                <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
                 <MuiColorInput format="hex" value={color} onChange={handleBackgroundColorChange} />
-                <Typography variant="subtitle2" sx= {{ml: '40px',  mt: '20px'}}>font color</Typography>
-                <Divider style={{ margin: '10px 0', width: '100%', height: 1 }}/>
+                <Typography variant="subtitle2" sx={{ ml: '40px', mt: '20px' }}>font color</Typography>
+                <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
                 <MuiColorInput format="hex" value={fontColor} onChange={handleFontColorChange} />
 
             </AccordionDetails>
