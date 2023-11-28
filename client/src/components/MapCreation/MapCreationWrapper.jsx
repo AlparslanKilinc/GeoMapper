@@ -11,6 +11,7 @@ import OutlineSelectionPage from './OutlineSelectionPage';
 import MapGraphicsEditor from './MapGraphicsEditor';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearGeojson } from '../../redux-slices/geoJSONSlice';
+import { resetMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice';
 
 export default function MapCreationWrapper() {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function MapCreationWrapper() {
   const location = useLocation();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const mapOutline = useSelector((state) => state.geojson.geojson.geoJSON);
-  const {validationMessage}  = useSelector((state) => state.mapGraphics);
+  const { validationMessage } = useSelector((state) => state.mapGraphics);
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -30,8 +31,11 @@ export default function MapCreationWrapper() {
   }));
 
   const isNextButtonDisabled = () => {
-    if (currentStage === 1 && !mapOutline || 
-      currentStage === 2 && !validationMessage.startsWith('✓')) return true;
+    if (
+      (currentStage === 1 && !mapOutline) ||
+      (currentStage === 2 && !validationMessage.startsWith('✓'))
+    )
+      return true;
     return !mapGraphicsType;
   };
 
@@ -43,6 +47,9 @@ export default function MapCreationWrapper() {
 
   const goBack = () => {
     if (currentStage === 1) {
+      dispatch(clearGeojson());
+    } else if (currentStage === 2) {
+      dispatch(resetMapGraphicsData());
       dispatch(clearGeojson());
     }
     setCurrentStage(currentStage - 1);

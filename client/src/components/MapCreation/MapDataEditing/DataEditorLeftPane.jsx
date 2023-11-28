@@ -6,9 +6,16 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SearchIcon from '@mui/icons-material/Search';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { Divider, TextField, InputAdornment, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { generateRandomColumn } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorLeftPane() {
+  const dispatch = useDispatch();
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
+
+  const handleRandomData = () => {
+    dispatch(generateRandomColumn());
+  };
 
   return (
     <div id="data-editing-page-left">
@@ -31,13 +38,18 @@ export default function DataEditorLeftPane() {
           startIcon={<AutoFixHighIcon />}
           variant="outlined"
           style={{ color: 'black', borderColor: 'black' }}
+          onClick={handleRandomData}
         >
           random data
         </LoadingButton>
       </div>
       {mapGraphicsType !== 'Choropleth Map' && (
-        <div style={{display: 'flex', flexDirection: 'column', gap:'1rem', alignItems: 'center'}}>
-          <Typography sx={{padding:'1rem', width:'350px'}}>You can start adding symbols to your map by searching for a place</Typography>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}
+        >
+          <Typography sx={{ padding: '1rem', width: '350px' }}>
+            You can start adding symbols to your map by searching for a place
+          </Typography>
           <TextField
             variant="outlined"
             label="Search for places"

@@ -32,6 +32,7 @@ const initialState = {
   propertyNames: [],
   selectedRegionIdx: -1,
   columnValidationErrors: {},
+  randomColumnCounter: 0,
   validationMessage:
     '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.'
 };
@@ -86,6 +87,7 @@ const mapGraphicsDataSlice = createSlice({
   name: 'mapGraphics',
   initialState,
   reducers: {
+    resetMapGraphicsData: () => initialState,
     addProperty: (state, action) => {
       const newProperty = action.payload;
       state.propertyNames.push(newProperty);
@@ -161,6 +163,18 @@ const mapGraphicsDataSlice = createSlice({
       const region = state.regions[idx];
       region[propertyName] = value;
     },
+    generateRandomColumn: (state) => {
+      state.randomColumnCounter += 1;
+      const randomColumnName = `RandomData_${state.randomColumnCounter}`;
+      state.addedColumns.push(randomColumnName);
+      state.propertyNames.push(randomColumnName);
+      state.columnTypes[randomColumnName] = 'number';
+
+      const entities = state.regions;
+      Object.values(entities).forEach((entity) => {
+        entity[randomColumnName] = Math.floor(Math.random() * 100);
+      });
+    },
     setSelectedRegionIdx: (state, action) => {
       state.selectedRegionIdx = action.payload;
     },
@@ -203,6 +217,8 @@ export const {
   setLabelByProperty,
   setFixedSymbolSize,
   setFixedOpacity,
-  setPropertyNames
+  setPropertyNames,
+  generateRandomColumn,
+  resetMapGraphicsData
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
