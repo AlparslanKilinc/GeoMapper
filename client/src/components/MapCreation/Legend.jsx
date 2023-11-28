@@ -88,7 +88,9 @@ export default function Legend({ properties, mapType }) {
                         position: 'relative',
                         backgroundImage: orientation === 'horizontal'
                             ? `linear-gradient(to right, ${palette.join(', ')})`
-                            : `linear-gradient(to bottom, ${palette.join(', ')})`
+                            : `linear-gradient(to bottom, ${palette.join(', ')})`,
+                        marginRight: orientation === 'horizontal' ? 'initial' : '0.4em',
+                        marginLeft: orientation === 'horizontal' ? 'initial' : '0.4em',
                     }}
                 >
                     <Typography style={{
