@@ -28,6 +28,7 @@ export default function GeojsonWrapper({ isStyled }) {
   const borderColor = useSelector((state) => state.mapStyles.borderColor);
   const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
   const opacity = useSelector((state) => state.mapStyles.opacity);
+  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
 
   const [labels, setLabels] = useState(new Map());
 
@@ -43,7 +44,8 @@ export default function GeojsonWrapper({ isStyled }) {
     JSON.stringify(continousColorScale),
     borderColor,
     borderWidth,
-    opacity
+    opacity,
+    mapBackgroundColor
   ].join('|');
 
   // Default Styles

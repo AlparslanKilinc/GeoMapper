@@ -31,12 +31,10 @@ export default function MapCreationWrapper() {
   }));
 
   const isNextButtonDisabled = () => {
-    if (
+    return (
       (currentStage === 1 && !mapOutline) ||
-      (currentStage === 2 && !validationMessage.startsWith('✓'))
-    )
-      return true;
-    return !mapGraphicsType;
+      (currentStage === 2 && !validationMessage.startsWith('✓') && mapGraphicsType !== 'Symbol Map')
+    );
   };
 
   useEffect(() => {
