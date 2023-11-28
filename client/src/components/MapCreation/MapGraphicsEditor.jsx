@@ -21,6 +21,7 @@ import {
   setContinousColorScale
 } from '../../redux-slices/mapStylesSlice';
 import * as d3 from 'd3';
+import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
 
 const drawerWidth = 240;
 const stylesToolboxConfig = [
@@ -40,24 +41,32 @@ export default function MapGraphicsEditor() {
   const [exportDialogOpen, setExportDialogOpen] = React.useState(false);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
+  const points = useSelector((state) => state.mapGraphics.points);
   const { colors, colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
-  const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
-  const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
+  // const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
+  // const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
+  // const fixedColor = useSelector((state) => state.mapGraphics.fixedColor);
+
+  let propList = regions;
+
+  if (mapGraphicsType === 'Symbol Map') {
+    propList = Object.values(points);
+  }
 
   //  lets extract unique values from the property associated with the colorByProperty
-  const extractUniqueColorValues = (regions, colorByProperty) => {
+  const extractUniqueColorValues = (propListObj, colorByProperty) => {
     const uniqueValues = new Set();
-    regions.forEach((region) => {
-      uniqueValues.add(region[colorByProperty]);
+    propListObj.forEach((propObj) => {
+      uniqueValues.add(propObj[colorByProperty]);
     });
     return uniqueValues;
   };
   const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
 
   const initColorsCategorical = () => {
-    const uniqueValues = extractUniqueColorValues(regions, colorByProperty);
+    const uniqueValues = extractUniqueColorValues(propList, colorByProperty);
     const c = Array.from(uniqueValues).map((name) => {
       let color = generateRandomColor();
       let colorObj = colors.find((color) => color.name === name);
@@ -70,7 +79,7 @@ export default function MapGraphicsEditor() {
   };
 
   const initColorsNumerical = () => {
-    const data = regions.map((region) => region[colorByProperty]);
+    const data = propList.map((propObj) => propObj[colorByProperty]);
     const minData = d3.min(data);
     const maxData = d3.max(data);
 
@@ -88,17 +97,23 @@ export default function MapGraphicsEditor() {
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
-    if (mapGraphicsType === 'Choropleth Map') {
-      const isNumeric = !isNaN(regions[0][colorByProperty]);
+    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
+      const isNumeric = !isNaN(propList[0][colorByProperty]);
       console.log('isNumeric', isNumeric);
       if (isNumeric) initColorsNumerical();
       else initColorsCategorical();
     }
   };
 
+  const initPropertyNames = () => {
+    const propertyNames = Object.keys(propList[0]);
+    dispatch(setPropertyNames(propertyNames));
+  };
+
   useEffect(() => {
     initColors();
-  }, [colorByProperty, regions]);
+    initPropertyNames();
+  }, [colorByProperty, points, regions]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);

@@ -37,7 +37,7 @@ export default function DataEditorTable() {
   const [cellErrors, setCellErrors] = useState({});
   const [columnErrors, setColumnErrors] = useState({});
   // This is the data to be displayed in the table
-  let data = mapGraphicsType === 'Choropleth Map' ? regions : points;
+  let data = mapGraphicsType === 'Choropleth Map' ? regions : Object.values(points);
 
   // This is the Displayed Columns To avoid showing the geojson properties
   useEffect(() => {

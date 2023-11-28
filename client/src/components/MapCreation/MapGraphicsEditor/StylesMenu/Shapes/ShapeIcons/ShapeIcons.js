@@ -1,34 +1,34 @@
 import L from 'leaflet';
 
-export const createCircleIcon = (size) => {
+export const createCircleIcon = (size, color, opacity) => {
   return L.divIcon({
     className: 'circle-icon',
-    iconSize: size, // size of the icon
-    html: '<div class="circle"></div>'
+    iconSize: size,
+    html: `<div class="circle" style="background-color: ${color}; opacity: ${opacity};"></div>`
   });
 };
 
-export const createTriangleIcon = (size) => {
+export const createTriangleIcon = (size, color, opacity) => {
   return L.divIcon({
     className: 'custom-icon triangle',
     iconSize: size,
-    html: '<div class="shape"></div>'
+    html: `<div class="shape" style="border-bottom-color: ${color}; opacity: ${opacity};"></div>`
   });
 };
 
-export const createDiamondIcon = (size) => {
+export const createDiamondIcon = (size, color, opacity) => {
   return L.divIcon({
     className: 'custom-icon diamond',
     iconSize: size,
-    html: '<div class="shape"></div>'
+    html: `<div class="shape" style="background-color: ${color}; opacity: ${opacity};"></div>`
   });
 };
 
-export const createSquareIcon = (size) => {
+export const createSquareIcon = (size, color, opacity) => {
   return L.divIcon({
     className: 'custom-icon square',
     iconSize: size,
-    html: '<div class="shape"></div>'
+    html: `<div class="shape" style="background-color: ${color}; opacity: ${opacity};"></div>`
   });
 };
 

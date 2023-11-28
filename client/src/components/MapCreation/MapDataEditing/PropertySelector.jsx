@@ -4,7 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { changeXByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function PropertySelector({ value, propertyName }) {
-  const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  let propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+
   const dispatch = useDispatch();
   const onChange = (event, newValue) => {
     const payload = {

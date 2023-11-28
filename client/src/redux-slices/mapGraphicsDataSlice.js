@@ -2,15 +2,26 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
-  points: Array(10).fill({}),
+  points: {
+    '36.7783#-119.4179': { lat: 36.7783, lon: -119.4179, size: 21, color: 'Jordan', opacity: 0.1 },
+    '31.9686#-99.9018': { lat: 31.9686, lon: -99.9018, size: 20, color: 'Kobe', opacity: 0.2 },
+    '27.9944#-81.7603': { lat: 27.9944, lon: -81.7603, size: 15, color: 'LeBron', opacity: 0.6 },
+    '40.7128#-74.006': { lat: 40.7128, lon: -74.006, size: 30, color: 'Kobe', opacity: 0.5 },
+    '40.6331#-89.3985': { lat: 40.6331, lon: -89.3985, size: 19, color: 'Kobe', opacity: 0.6 },
+    '41.2033#-77.1945': { lat: 41.2033, lon: -77.1945, size: 47, color: 'Kobe', opacity: 0.3 },
+    '40.4173#-82.9071': { lat: 40.4173, lon: -82.9071, size: 50, color: 'LeBron', opacity: 0.9 },
+    '32.1656#-82.9001': { lat: 32.1656, lon: -82.9001, size: 26, color: 'Kobe', opacity: 0.1 },
+    '35.7596#-79.0193': { lat: 35.7596, lon: -79.0193, size: 25, color: 'Jordan', opacity: 0.1 },
+    '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4 }
+  },
   regions: [],
   columnTypes: {},
   addedColumns: [],
   nameByProperty: 'Name',
   valueByProperty: 'Value',
-  LatByProperty: 'Lat',
-  LonByProperty: 'Lon',
-  colorByProperty: 'Color',
+  LatByProperty: 'lat',
+  LonByProperty: 'lon',
+  colorByProperty: 'color',
   sizeByProperty: 'size',
   fixedSymbolSize: 10,
   fixedOpacity: 0.5,
@@ -136,6 +147,12 @@ const mapGraphicsDataSlice = createSlice({
     },
     setFixedSymbolSize: (state, action) => {
       state.fixedSymbolSize = action.payload;
+    },
+    setFixedOpacity: (state, action) => {
+      state.fixedOpacity = action.payload;
+    },
+    setPropertyNames: (state, action) => {
+      state.propertyNames = action.payload;
     }
   }
 });
@@ -159,6 +176,8 @@ export const {
   validateColumnData,
   toggleLabelVisibility,
   setLabelByProperty,
-  setFixedSymbolSize
+  setFixedSymbolSize,
+  setFixedOpacity,
+  setPropertyNames
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
