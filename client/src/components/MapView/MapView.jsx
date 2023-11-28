@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/mapView.css'
 import Comment from './Comment'
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ShareIcon from '@mui/icons-material/Share';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
@@ -11,14 +10,19 @@ import Button from '@mui/material/Button';
 import InputBase from '@mui/material/InputBase';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import PopUp from '../PopUp';
-import SharePopUp from '../SharePopUp'
-import ForkForm from '../ForkForm'
+import PopUp from '../Explore/PopUp';
+import SharePopUp from '../Explore/SharePopUp'
+import ForkForm from '../Explore/ForkForm';
 import {styled} from "@mui/material/styles";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack.js";
 import {useNavigate} from "react-router-dom";
 import  {addComment} from "../../redux-slices/commentsSlice.js";
 import TextField from "@mui/material/TextField";
+import {Typography} from "@mui/material";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import BookmarkIcon from "@mui/icons-material/Bookmark.js";
+
 
 export default function MapView() {
     const loggedIn = useSelector((state) => state.auth.loggedIn);
@@ -27,6 +31,7 @@ export default function MapView() {
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
+
     const navigate = useNavigate()
     const [commentText, setCommentText] = useState("");
     const user = useSelector((state) => state.auth.user);
@@ -39,6 +44,9 @@ export default function MapView() {
             backgroundColor: 'transparent'
         }
     }));
+    const [liked, setLiked] = useState(false);
+    const [bookmarked, setBookmarked] = useState(false);
+    let likes = 1000
 
     const openPopup = () => {
         setPopupOpen(true);
@@ -65,11 +73,17 @@ export default function MapView() {
     }
 
     const handleLike = () =>{
-        console.log("map was liked")
+        likes = likes + 1
         if(!loggedIn){
             setPopUpTitle("To like a map, please create an account");
             openPopup();
             return;
+        }
+        if (!liked){
+            setLiked(true)
+        }
+        else{
+            setLiked(false)
         }
     }
     const handleShare = () =>{
@@ -93,6 +107,12 @@ export default function MapView() {
             openPopup();
             return;
         }
+        if (!bookmarked){
+            setBookmarked(true);
+        }
+        else{
+            setBookmarked(false);
+        }
     }
 
     const goBack = () => {
@@ -101,7 +121,6 @@ export default function MapView() {
 
     const handleNewComment = () => {
         const author = user.userName
-        console.log(user)
         dispatch(addComment({ author: author, text: commentText, profilePic: user.profilePicPath }));
         setCommentText("")
 
@@ -156,21 +175,27 @@ export default function MapView() {
                     </div>
                 </div>
             </div>
+            <Typography variant = 'subtitle1' sx = {{mt: '20px', ml: '25px'}}>{likes} likes</Typography>
             <div className = "actions">
-                <IconButton onClick = {handleLike}>
-                    <ThumbUpOffAltIcon className = "like"/>
-                 </IconButton>
-                 <IconButton onClick = {handleFork}>
-                    <ShareIcon className = "export"/>
+                <IconButton >
+                    {liked ? (
+                        <FavoriteIcon onClick = {handleLike} className="like" style={{ color: 'red' }} />
+                    ) : (
+                        <FavoriteBorderIcon onClick = {handleLike} className="like" />
+                    )}
                 </IconButton>
-
-                <IconButton onClick = {handleShare}>
-                    <IosShareIcon className = "share"/>
+                <IconButton >
+                    <ShareIcon onClick = {handleFork} className = "export" />
                 </IconButton>
-                 <IconButton onClick = {handleBookmark}>
-                     <BookmarkBorderIcon className = "bookmarks" />
+                <IconButton >
+                    <IosShareIcon onClick = {handleShare} className = "share" />
+                </IconButton >
+                 <IconButton >
+                     {bookmarked ? (
+                         <BookmarkIcon onClick={handleBookmark} className = "bookmarks" style = {{color: '#40e0d0'}}/>
+                     ): (
+                         <BookmarkBorderIcon  onClick={handleBookmark} className = "bookmarks"/>)}
                  </IconButton>
-
         </div>
             {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
             {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}

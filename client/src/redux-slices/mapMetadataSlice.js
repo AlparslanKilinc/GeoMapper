@@ -11,16 +11,15 @@ const mapMetadataInitialState = {
   forkedFrom: { isForked: false, originalMapId: null },
   tags: [],
   comments: [],
-  mapGraphicsType: 'Symbol Map',
+  mapGraphicsType: 'Choropleth Map',
   publishDate: null,
-  title: 'US population Density'
+  title: 'Goat Debate'
 };
 
 const metaDataSlice = createSlice({
   name: 'mapMetadata',
   initialState: mapMetadataInitialState,
   reducers: {
-
     //TODO add reducers
     changeMapTitle: (state, action) => {
       state.title = action.payload;

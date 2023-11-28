@@ -1,13 +1,13 @@
 import React, { useRef } from 'react';
 import '../../styles/templateSelection.css';
-import heatMap from '../../assets/heat_map.jpeg';
+import heatMap from '../../assets/heat_map.png';
 import spikeMap from '../../assets/spike_map.png';
 import symbolMap from '../../assets/symbol_map.png';
 import choroplethMap from '../../assets/choropleth_map.png';
 import dotDensityMap from '../../assets/dot_density_map.png';
 import { Divider, Button } from '@mui/material';
 import mapDataJson from '../../mapData.json';
-import CopyRight from '.././CopyRight';
+import CopyRight from '../Landing/CopyRight';
 import { useDispatch } from 'react-redux';
 import { setMapGraphicsType } from '../../redux-slices/mapMetadataSlice';
 
