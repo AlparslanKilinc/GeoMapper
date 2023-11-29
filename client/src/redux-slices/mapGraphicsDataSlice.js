@@ -34,7 +34,8 @@ const initialState = {
   columnValidationErrors: {},
   randomColumnCounter: 0,
   validationMessage:
-    '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.'
+    '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.',
+  addSymbolMode: false
 };
 
 function isValidValueForType(value, type) {
@@ -192,6 +193,13 @@ const mapGraphicsDataSlice = createSlice({
     },
     setPropertyNames: (state, action) => {
       state.propertyNames = action.payload;
+    },
+    addPoint: (state, action) => {
+      const { lat, lon, properties } = action.payload;
+      state.points[`${lat}#${lon}`] = { lat, lon, ...properties };
+    },
+    toggleAddSymbolMode: (state) => {
+      state.addSymbolMode = !state.addSymbolMode;
     }
   }
 });
@@ -219,6 +227,8 @@ export const {
   setFixedOpacity,
   setPropertyNames,
   generateRandomColumn,
-  resetMapGraphicsData
+  resetMapGraphicsData,
+  addPoint,
+  toggleAddSymbolMode
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

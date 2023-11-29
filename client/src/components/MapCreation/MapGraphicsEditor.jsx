@@ -1,21 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import { Drawer, Button } from '@mui/material';
+import { Drawer } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import GeoJsonMap from './Map/GeoJsonMap';
 import TabMenu from './MapGraphicsEditor/TabMenu';
 import DataEditorTable from './MapDataEditing/DataEditorTable';
 import StylesMenu from './MapGraphicsEditor/StylesMenu/StylesMenus';
 import AnnotateContent from './MapGraphicsEditor/AnnotateMenu/AnnotateContent';
 import RegionEditing from './MapGraphicsEditor/GraphicsTools/RegionEditing';
-import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
-import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import ExportDialog from './MapGraphicsEditor/ExportDialog';
-import Legend from './Legend';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import {
   setColors,
   setSelectedPropUniqueValues,
@@ -118,7 +111,7 @@ export default function MapGraphicsEditor() {
   useEffect(() => {
     initColors();
     initPropertyNames();
-  }, [colorByProperty]);
+  }, [colorByProperty, regions]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);

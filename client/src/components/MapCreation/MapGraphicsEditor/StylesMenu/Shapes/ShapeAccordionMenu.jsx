@@ -9,11 +9,14 @@ import ShapeButtonGroup from './ShapeButtonGroup';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { Divider } from '@mui/material';
+import { Divider, Switch } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeSizeByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import Slider from '@mui/material/Slider';
 import { setFixedSymbolSize } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import SubMenuTitle from '../../SubMenuTitle';
+import { toggleAddSymbolMode } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { FormControlLabel } from '@mui/material';
 
 export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
@@ -21,6 +24,7 @@ export default function ShapeAccordionMenu() {
   const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
   const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
   const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
+  const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
 
   const handleSizeByPropertyChange = (event, newValue) => {
     dispatch(changeSizeByProperty(newValue));
@@ -91,6 +95,22 @@ export default function ShapeAccordionMenu() {
           </Box>
 
           {!sizeByProperty && fixedSymbolSizeSlider}
+
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            sx={{ gap: 2 }}
+          >
+            <SubMenuTitle title="add symbol mode" />
+            <FormControlLabel
+              control={
+                <Switch value={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
+              }
+              label="add symbol mode"
+            />
+          </Box>
         </Box>
       </AccordionDetails>
     </Accordion>
