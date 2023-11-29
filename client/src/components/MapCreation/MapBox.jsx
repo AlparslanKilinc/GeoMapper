@@ -83,7 +83,7 @@ export default function MapBox({ openExportDialog }) {
           {geojson && (
             <>
               <UndoRedoButtonGroup />
-              <div id="mapContainer" style={{ height: '100%', width: '100%', display: 'flex' }}>
+              <div id="mapContainer" style={{ position: 'relative', height: '100%', width: '100%', display: 'flex' }}>
                 <GeoJsonMap styled={true} />
                 <Legend properties={colors} mapType={mapGraphicsType} />
               </div>
