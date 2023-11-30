@@ -3,7 +3,7 @@ import { GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
 import { useMap } from 'react-leaflet';
-import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice';
+import { setSelectedRegionIdx, clearLabels } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
 import '../../../styles/map-label.css';
 // import leaflet css
@@ -28,6 +28,7 @@ export default function GeojsonWrapper({ isStyled }) {
   const borderColor = useSelector((state) => state.mapStyles.borderColor);
   const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
   const opacity = useSelector((state) => state.mapStyles.opacity);
+  let previousProp = useSelector((state) => state.mapGraphics.previousProperty);
 
   const [labels, setLabels] = useState(new Map());
 
@@ -65,6 +66,7 @@ export default function GeojsonWrapper({ isStyled }) {
   const onEachFeature = (feature, layer) => {
     if (isStyled) {
       let regionData = regions[feature.properties.regionIdx];
+
       let labelText = regionData[labelByProperty];
 
       switch (mapGraphicsType) {
@@ -78,6 +80,11 @@ export default function GeojsonWrapper({ isStyled }) {
       }
 
       if (isLabelVisible && labelText) {
+        console.log("previous " + previousProp)
+        if(previousProp){
+          console.log('remove previous')
+          removeLabelLayer();
+        }
         addLabelToMap(layer, labelText);
       }
     }
@@ -122,7 +129,15 @@ export default function GeojsonWrapper({ isStyled }) {
     });
   };
 
+  const removeLabelLayer = () => {
+    labels.forEach((label, layer) => {
+      map.removeLayer(label);
+      labels.delete(layer);
+    });
+  }
+
   const addLabelToMap = (layer, labelText) => {
+
     const label = L.marker(layer.getBounds().getCenter(), {
       icon: L.divIcon({
         className: 'map-label',
@@ -155,6 +170,8 @@ export default function GeojsonWrapper({ isStyled }) {
       setLabels(new Map());
     }
   }, [isLabelVisible]);
+
+
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
