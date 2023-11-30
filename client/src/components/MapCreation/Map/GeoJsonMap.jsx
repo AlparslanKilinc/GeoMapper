@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import GeojsonWrapper from './GeojsonWrapper';
 import SymbolLayer from '../MapGraphicsEditor/StylesMenu/Shapes/SymbolLayer';
+import DotDensityLayer from '../MapGraphicsEditor/StylesMenu/Shapes/DotDensityLayer';
 import { useMapEvents } from 'react-leaflet';
 import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
@@ -59,6 +60,7 @@ const GeoJsonMap = ({ styled }) => {
       <GeojsonWrapper isStyled={styled} />
       {renderSymbolLayer && <SymbolLayer />}
       {renderSymbolLayer && <EventHandlerLayer />}
+      {styled && <DotDensityLayer />}
     </MapContainer>
   );
 };

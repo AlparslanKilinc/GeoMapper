@@ -36,7 +36,9 @@ const initialState = {
   validationMessage:
     '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.',
   addSymbolMode: false,
-  selectedPointKey: null
+  selectedPointKey: null,
+  valuePerDot: 1,
+  dotDensityByProperty: 'density'
 };
 
 function isValidValueForType(value, type) {
@@ -209,6 +211,19 @@ const mapGraphicsDataSlice = createSlice({
       const { propertyName, value } = action.payload;
       const point = state.points[state.selectedPointKey];
       point[propertyName] = value;
+    },
+
+    setValuePerDot: (state, action) => {
+      state.valuePerDot = action.payload;
+    },
+
+    setDotDesityByProperty: (state, action) => {
+      state.dotDensityByProperty = action.payload;
+    },
+    setRegionDotDensity: (state, action) => {
+      const value = action.payload;
+      const region = state.regions[state.selectedRegionIdx];
+      region[state.dotDensityByProperty] = value;
     }
   }
 });
@@ -240,6 +255,9 @@ export const {
   addPoint,
   toggleAddSymbolMode,
   setSelectedPointKey,
-  setPointProperty
+  setPointProperty,
+  setValuePerDot,
+  setDotDesityByProperty,
+  setRegionDotDensity
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

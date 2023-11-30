@@ -28,7 +28,9 @@ const processGeojson = (geojson) => {
       columnTypes[key] = getType(value);
     }
     columnTypes['GOAT'] = 'text';
-    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer() });
+    // generate random density from 1 to 100
+    const density = parseInt(Math.random() * 10);
+    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer(), density });
     feature.properties = { regionIdx: index };
   });
 
