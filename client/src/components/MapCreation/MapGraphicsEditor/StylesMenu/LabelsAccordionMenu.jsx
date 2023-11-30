@@ -50,7 +50,7 @@ export default function LabelsAccordionMenu() {
           justifyContent="center"
           sx={{ gap: 2 }}
         >
-          <PropertySelector propertyName="label" value={labelByProperty} isLabels = {labelsFlag}/>
+          <PropertySelector propertyName="label" value={labelByProperty} isLabel = {labelsFlag}/>
           <Box
             display="flex"
             flexDirection="column"
