@@ -1,16 +1,23 @@
 import React from 'react';
 import { Autocomplete, Divider, Typography, TextField, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeXByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
+import {changeXByProperty,  setPreviousProperty} from '../../../redux-slices/mapGraphicsDataSlice';
 
-export default function PropertySelector({ value, propertyName }) {
+export default function xPropertySelector({ value, propertyName, isLabel }) {
   let propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  let isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible)
+  let propLabel = useSelector((state) => state.mapGraphics.labelByProperty)
+  let previousProp = useSelector((state) => state.mapGraphics.previousProperty);
 
   const dispatch = useDispatch();
   const onChange = (event, newValue) => {
+    if(isLabel){
+      dispatch(setPreviousProperty(propLabel))
+    }
     const payload = {
       property: propertyName + 'ByProperty',
-      propertyBy: newValue
+      propertyBy: newValue,
+
     };
     dispatch(changeXByProperty(payload));
   };

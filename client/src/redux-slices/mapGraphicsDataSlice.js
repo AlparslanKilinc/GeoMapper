@@ -28,6 +28,7 @@ const initialState = {
   opacityByProperty: '',
   fixedColor: '#800080',
   labelByProperty: '',
+  previousProperty: '',
   isLabelVisible: false,
   propertyNames: [],
   selectedRegionIdx: -1,
@@ -184,6 +185,12 @@ const mapGraphicsDataSlice = createSlice({
     setLabelByProperty: (state, action) => {
       state.labelByProperty = action.payload;
     },
+    setPreviousProperty: (state, action) => {
+      state.previousProperty = action.payload
+    },
+    clearLabels:(state, action) => {
+      state.labelByProperty = '';
+    },
     setFixedSymbolSize: (state, action) => {
       state.fixedSymbolSize = action.payload;
     },
@@ -215,6 +222,8 @@ export const {
   validateColumnData,
   toggleLabelVisibility,
   setLabelByProperty,
+    setPreviousProperty,
+  clearLabels,
   setFixedSymbolSize,
   setFixedOpacity,
   setPropertyNames,
