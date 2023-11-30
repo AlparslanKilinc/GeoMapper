@@ -80,9 +80,7 @@ export default function GeojsonWrapper({ isStyled }) {
       }
 
       if (isLabelVisible && labelText) {
-        console.log("previous " + previousProp)
         if(previousProp){
-          console.log('remove previous')
           removeLabelLayer();
         }
         addLabelToMap(layer, labelText);
