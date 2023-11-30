@@ -1,10 +1,12 @@
 import React from 'react';
 import { Marker } from 'react-leaflet';
 import shapeIconMap from './shapeIconMap';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import './ShapeIcons/shape-icon.css';
+import { setSelectedPointKey } from '../../../../../redux-slices/mapGraphicsDataSlice';
 
 const SymbolLayer = () => {
+  const dispatch = useDispatch();
   const points = useSelector((state) => state.mapGraphics.points);
   const shape = useSelector((state) => state.mapStyles.shape);
   const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
@@ -48,9 +50,19 @@ const SymbolLayer = () => {
     if (colorObj && colorByProperty) color = colorObj.color;
 
     const icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
+    const { lat, lon } = point;
 
     return (
-      <Marker key={point.lat + '#' + point.lon} position={[point.lat, point.lon]} icon={icon} />
+      <Marker
+        key={point.lat + '#' + point.lon}
+        position={[point.lat, point.lon]}
+        icon={icon}
+        eventHandlers={{
+          click: (e) => {
+            dispatch(setSelectedPointKey(point.lat + '#' + point.lon));
+          }
+        }}
+      />
     );
   });
 

@@ -17,17 +17,7 @@ import {
 import * as d3 from 'd3';
 import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
 import MapBox from './MapBox';
-
-const drawerWidth = 240;
-const stylesToolboxConfig = [
-  { label: 'Styles', content: <StylesMenu /> },
-  { label: 'Annotate', content: <AnnotateContent /> }
-];
-
-const dataEditingToolboxConfig = [
-  { label: 'Region', content: <RegionEditing /> },
-  { label: 'Tabular', content: <DataEditorTable /> }
-];
+import SymbolEditing from './MapGraphicsEditor/GraphicsTools/SymbolEditing';
 
 export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
@@ -39,8 +29,20 @@ export default function MapGraphicsEditor() {
   const colors = useSelector((state) => state.mapStyles.colors);
   const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
-  const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
-  const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
+
+  const drawerWidth = 240;
+  const stylesToolboxConfig = [
+    { label: 'Styles', content: <StylesMenu /> },
+    { label: 'Annotate', content: <AnnotateContent /> }
+  ];
+
+  let editing = { label: 'Region', content: <RegionEditing /> };
+
+  if (mapGraphicsType === 'Symbol Map') {
+    editing = { label: 'Symbol', content: <SymbolEditing /> };
+  }
+
+  const dataEditingToolboxConfig = [editing, { label: 'Tabular', content: <DataEditorTable /> }];
 
   let propList = regions;
 

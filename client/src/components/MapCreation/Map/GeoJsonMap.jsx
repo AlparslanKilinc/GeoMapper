@@ -23,6 +23,7 @@ const GeoJsonMap = ({ styled }) => {
   const EventHandlerLayer = () => {
     //     '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4
     const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
+
     const map = useMapEvents({
       click: (e) => {
         // console.log(e.latlng);
@@ -31,6 +32,8 @@ const GeoJsonMap = ({ styled }) => {
           const properties = getDefaultPointProperties();
           dispatch(addPoint({ lat, lon, properties }));
         }
+
+        // propogate the event to the map
       }
     });
     return null;
