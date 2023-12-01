@@ -305,7 +305,7 @@ export const {
   generateRandomColumn,
   resetMapGraphicsData,
   validateCell,
-  TableValidation
+  TableValidation,
   addPoint,
   toggleAddSymbolMode,
   setSelectedPointKey,
