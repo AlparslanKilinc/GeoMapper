@@ -1,28 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// '36.7783#-119.4179': { lat: 36.7783, lon: -119.4179, size: 21, color: 'Jordan', opacity: 0.1 },
+// '31.9686#-99.9018': { lat: 31.9686, lon: -99.9018, size: 20, color: 'Kobe', opacity: 0.2 },
+// '27.9944#-81.7603': { lat: 27.9944, lon: -81.7603, size: 15, color: 'LeBron', opacity: 0.6 },
+// '40.7128#-74.006': { lat: 40.7128, lon: -74.006, size: 30, color: 'Kobe', opacity: 0.5 },
+// '40.6331#-89.3985': { lat: 40.6331, lon: -89.3985, size: 19, color: 'Kobe', opacity: 0.6 },
+// '41.2033#-77.1945': { lat: 41.2033, lon: -77.1945, size: 47, color: 'Kobe', opacity: 0.3 },
+// '40.4173#-82.9071': { lat: 40.4173, lon: -82.9071, size: 50, color: 'LeBron', opacity: 0.9 },
+// '32.1656#-82.9001': { lat: 32.1656, lon: -82.9001, size: 26, color: 'Kobe', opacity: 0.1 },
+// '35.7596#-79.0193': { lat: 35.7596, lon: -79.0193, size: 25, color: 'Jordan', opacity: 0.1 },
+// '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4 }
+
 const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
-  points: {
-    '36.7783#-119.4179': { lat: 36.7783, lon: -119.4179, size: 21, color: 'Jordan', opacity: 0.1 },
-    '31.9686#-99.9018': { lat: 31.9686, lon: -99.9018, size: 20, color: 'Kobe', opacity: 0.2 },
-    '27.9944#-81.7603': { lat: 27.9944, lon: -81.7603, size: 15, color: 'LeBron', opacity: 0.6 },
-    '40.7128#-74.006': { lat: 40.7128, lon: -74.006, size: 30, color: 'Kobe', opacity: 0.5 },
-    '40.6331#-89.3985': { lat: 40.6331, lon: -89.3985, size: 19, color: 'Kobe', opacity: 0.6 },
-    '41.2033#-77.1945': { lat: 41.2033, lon: -77.1945, size: 47, color: 'Kobe', opacity: 0.3 },
-    '40.4173#-82.9071': { lat: 40.4173, lon: -82.9071, size: 50, color: 'LeBron', opacity: 0.9 },
-    '32.1656#-82.9001': { lat: 32.1656, lon: -82.9001, size: 26, color: 'Kobe', opacity: 0.1 },
-    '35.7596#-79.0193': { lat: 35.7596, lon: -79.0193, size: 25, color: 'Jordan', opacity: 0.1 },
-    '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4 }
-  },
+  points: [],
   regions: [],
   columnTypes: {},
   addedColumns: [],
-  nameByProperty: 'Name',
-  valueByProperty: 'Value',
+  nameByProperty: 'name',
   LatByProperty: 'lat',
   LonByProperty: 'lon',
   colorByProperty: 'color',
   sizeByProperty: 'size',
+  heightByProperty: 'height',
   fixedSymbolSize: 10,
   fixedOpacity: 0.5,
   opacityByProperty: '',
@@ -30,11 +30,13 @@ const initialState = {
   labelByProperty: '',
   isLabelVisible: false,
   propertyNames: [],
+  pointProperties: [],
   selectedRegionIdx: -1,
   columnValidationErrors: {},
   cellValidationErrors: {},
   randomColumnCounter: 0,
-  validationMessage:' ⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
+  validationMessage:
+    '⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
   addSymbolMode: false,
   selectedPointKey: null,
   valuePerDot: 1,
@@ -47,18 +49,34 @@ const mapGraphicsDataSlice = createSlice({
   reducers: {
     resetMapGraphicsData: () => initialState,
     addProperty: (state, action) => {
-      const newProperty = action.payload;
-      state.propertyNames.push(newProperty);
-      state.regions.forEach((region) => {
-        region[newProperty] = '';
-      });
+      const newProperty = action.payload.columnName;
+      const mapGraphicsType = action.payload.mapGraphicsType;
+
+      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+        state.pointProperties.push(newProperty);
+        Object.keys(state.points).forEach((pointKey) => {
+          state.points[pointKey][newProperty] = '';
+        });
+      } else {
+        state.propertyNames.push(newProperty);
+        state.regions.forEach((region) => {
+          region[newProperty] = '';
+        });
+      }
     },
     deleteProperty: (state, action) => {
-      const propertyToDelete = action.payload;
-      state.propertyNames = state.propertyNames.filter((p) => p !== propertyToDelete);
-      state.regions.forEach((region) => {
-        delete region[propertyToDelete];
-      });
+      const { propertyToDelete, mapGraphicsType } = action.payload;
+      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+        state.pointProperties = state.pointProperties.filter((p) => p !== propertyToDelete);
+        Object.keys(state.points).forEach((pointKey) => {
+          delete state.points[pointKey][propertyToDelete];
+        });
+      } else {
+        state.propertyNames = state.propertyNames.filter((p) => p !== propertyToDelete);
+        state.regions.forEach((region) => {
+          delete region[propertyToDelete];
+        });
+      }
       delete state.columnTypes[propertyToDelete];
     },
     addColumn: (state, action) => {
@@ -72,6 +90,28 @@ const mapGraphicsDataSlice = createSlice({
       delete state.columnTypes[columnToRemove];
       delete state.columnValidationErrors[columnToRemove];
     },
+    updateColumnName: (state, action) => {
+      const { oldName, newName, mapGraphicsType } = action.payload;
+      const columnIndex = state.addedColumns.indexOf(oldName);
+      if (columnIndex !== -1) {
+        state.addedColumns[columnIndex] = newName;
+      }
+      // Update columnTypes
+      if (state.columnTypes[oldName] !== undefined) {
+        state.columnTypes[newName] = state.columnTypes[oldName];
+        delete state.columnTypes[oldName];
+      }
+      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+        state.points;
+      } else {
+        state.regions.forEach((region) => {
+          if (region[oldName] !== undefined) {
+            region[newName] = region[oldName];
+            delete region[oldName];
+          }
+        });
+      }
+    },
     setColumnType: (state, action) => {
       const { columnName, columnType } = action.payload;
       state.columnTypes[columnName] = columnType;
@@ -82,13 +122,20 @@ const mapGraphicsDataSlice = createSlice({
       let isValid = true;
       if (columnType === 'number') {
         Object.values(entities).forEach((entity) => {
-          if (entity[columnName] !== '' && (isNaN(Number(entity[columnName])) || !isFinite(entity[columnName]))) {
+          if (
+            entity[columnName] !== '' &&
+            (isNaN(Number(entity[columnName])) || !isFinite(entity[columnName]))
+          ) {
             isValid = false;
           }
         });
       } else if (columnType === 'text') {
         Object.values(entities).forEach((entity) => {
-          if (entity[columnName] !== '' && typeof entity[columnName] !== 'string'  && typeof entity[columnName] !== 'number') {
+          if (
+            entity[columnName] !== '' &&
+            typeof entity[columnName] !== 'string' &&
+            typeof entity[columnName] !== 'number'
+          ) {
             isValid = false;
           }
         });
@@ -187,9 +234,6 @@ const mapGraphicsDataSlice = createSlice({
     changeNameByProperty: (state, action) => {
       state.nameByProperty = action.payload;
     },
-    changeValueByProperty: (state, action) => {
-      state.valueByProperty = action.payload;
-    },
     changeLatByProperty: (state, action) => {
       state.LatByProperty = action.payload;
     },
@@ -202,6 +246,9 @@ const mapGraphicsDataSlice = createSlice({
     changeSizeByProperty: (state, action) => {
       state.sizeByProperty = action.payload;
     },
+    changeHeightByProperty: (state, action) => {
+      state.heightByProperty = action.payload;
+    },
     changeXByProperty: (state, action) => {
       let { property, propertyBy } = action.payload;
       state[property] = propertyBy;
@@ -211,6 +258,13 @@ const mapGraphicsDataSlice = createSlice({
       state.propertyNames = propertyNames;
       state.regions = regions;
       state.columnTypes = columnTypes;
+    },
+    setPointData: (state, action) => {
+      const points = {};
+      for (let i = 1; i <= 10; i++) {
+        points[`point${i}`] = { lat: 0, lon: 0, size: 0, color: '', size: 0 };
+      }
+      state.points = points;
     },
     setRegionProperty: (state, action) => {
       const { propertyName, value, id } = action.payload;
@@ -284,11 +338,11 @@ export const {
   addProperty,
   deleteProperty,
   changeNameByProperty,
-  changeValueByProperty,
   changeLatByProperty,
   changeLonByProperty,
   changeColorByProperty,
   changeSizeByProperty,
+  changeHeightByProperty,
   changeXByProperty,
   setChoroplethData,
   setRegionProperty,
@@ -312,6 +366,8 @@ export const {
   setPointProperty,
   setValuePerDot,
   addDotDesityByProperty,
-  removeDotDensityProperty
+  removeDotDensityProperty,
+  updateColumnName,
+  setPointData
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

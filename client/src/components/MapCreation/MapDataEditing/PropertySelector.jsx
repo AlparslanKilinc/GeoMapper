@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Autocomplete, Divider, Typography, TextField, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeXByProperty, TableValidation } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function PropertySelector({ value, propertyName }) {
-  let propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  let { propertyNames, pointProperties } = useSelector((state) => state.mapGraphics);
   let mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const [properties, setProperties] = useState([]);
+
+  useEffect(() => {
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+      setProperties(pointProperties);
+    } else {
+      setProperties(propertyNames);
+    }
+  }, [mapGraphicsType, propertyNames, pointProperties]);
 
   const dispatch = useDispatch();
   const onChange = (event, newValue) => {
@@ -30,7 +39,7 @@ export default function PropertySelector({ value, propertyName }) {
         fullWidth
         value={value}
         onChange={onChange}
-        options={propertyNames}
+        options={properties}
         renderInput={(params) => <TextField {...params} variant="outlined" />}
       />
     </Box>

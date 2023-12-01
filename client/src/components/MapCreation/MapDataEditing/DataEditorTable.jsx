@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import '../../../styles/mapDataEditingPage.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { LoadingButton } from '@mui/lab';
@@ -18,7 +18,12 @@ import {
   validateCell,
   changeNameByProperty,
   changeColorByProperty,
-  TableValidation
+  changeLatByProperty,
+  changeLonByProperty,
+  changeSizeByProperty,
+  changeHeightByProperty,
+  TableValidation,
+  updateColumnName
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
@@ -32,6 +37,8 @@ export default function DataEditorTable() {
     nameByProperty,
     LatByProperty,
     LonByProperty,
+    sizeByProperty,
+    heightByProperty,
     columnValidationErrors,
     cellValidationErrors
   } = useSelector((state) => state.mapGraphics);
@@ -42,30 +49,75 @@ export default function DataEditorTable() {
   const [columnErrors, setColumnValidationErrors] = useState({});
   const [cellErrors, setCellValidationErrors] = useState({});
   // This is the data to be displayed in the table
-  let data = mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Heat Map' ? regions : Object.values(points);
+  let data =
+    mapGraphicsType === 'Choropleth Map' ||
+    mapGraphicsType === 'Heat Map' ||
+    mapGraphicsType === 'Dot Density'
+      ? regions
+      : Object.values(points);
 
   // This is the Displayed Columns To avoid showing the geojson properties
   useEffect(() => {
-    if (nameByProperty === null) {
-      dispatch(changeNameByProperty('name'));
-    }
-    if (colorByProperty === null) {
-      dispatch(changeColorByProperty('color'));
-    }
-    let initialProperties =
-      mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Heat Map'
-        ? [nameByProperty, colorByProperty]
-        : [nameByProperty, LatByProperty, LonByProperty];
-
-    setDisplayedProperties([...new Set([...initialProperties, ...addedColumns])]);
+    if (!nameByProperty) dispatch(changeNameByProperty('name'));
+    if (!colorByProperty) dispatch(changeColorByProperty('color'));
+    if (!LatByProperty) dispatch(changeLatByProperty('lat'));
+    if (!LonByProperty) dispatch(changeLonByProperty('lon'));
+    if (!sizeByProperty) dispatch(changeSizeByProperty('size'));
+    if (!heightByProperty) dispatch(changeHeightByProperty('height'));
   }, [
-    addedColumns,
-    mapGraphicsType,
     nameByProperty,
     colorByProperty,
     LatByProperty,
     LonByProperty,
-    columnTypes
+    sizeByProperty,
+    heightByProperty,
+    dispatch
+  ]);
+
+  useEffect(() => {
+    let propertiesBasedOnMapType = [];
+
+    switch (mapGraphicsType) {
+      case 'Choropleth Map':
+      case 'Heat Map':
+        propertiesBasedOnMapType = [nameByProperty, colorByProperty];
+        break;
+      case 'Symbol Map':
+        propertiesBasedOnMapType = [
+          nameByProperty,
+          LatByProperty,
+          LonByProperty,
+          colorByProperty,
+          sizeByProperty
+        ];
+        break;
+      case 'Spike Map':
+        propertiesBasedOnMapType = [
+          nameByProperty,
+          LatByProperty,
+          LonByProperty,
+          colorByProperty,
+          heightByProperty
+        ];
+        break;
+      case 'Dot Density Map':
+        propertiesBasedOnMapType = [nameByProperty];
+        break;
+    }
+
+    setDisplayedProperties((prevProperties) => {
+      const combinedProperties = new Set([...propertiesBasedOnMapType, ...addedColumns]);
+      return [...combinedProperties];
+    });
+  }, [
+    mapGraphicsType,
+    addedColumns,
+    nameByProperty,
+    colorByProperty,
+    LatByProperty,
+    LonByProperty,
+    sizeByProperty,
+    heightByProperty
   ]);
 
   useEffect(() => {
@@ -75,15 +127,21 @@ export default function DataEditorTable() {
 
   const handleAddColumn = () => {
     const newColumnName = prompt('Enter new column name:');
+    if (displayedProperties.includes(newColumnName)) {
+      alert('This column name already exists. Please choose a different name.');
+      return;
+    }
     if (newColumnName && !addedColumns.includes(newColumnName)) {
       dispatch(addColumn(newColumnName));
-      dispatch(addProperty(newColumnName));
+      dispatch(addProperty({ columnName: newColumnName, mapGraphicsType: mapGraphicsType }));
     }
   };
 
   const handleRemoveColumn = (columnNameToDelete) => {
     if (window.confirm(`Are you sure you want to delete the "${columnNameToDelete}" column?`)) {
-      dispatch(deleteProperty(columnNameToDelete));
+      dispatch(
+        deleteProperty({ propertyToDelete: columnNameToDelete, mapGraphicsType: mapGraphicsType })
+      );
       dispatch(removeColumn(columnNameToDelete));
       handleClose();
     }
@@ -92,7 +150,7 @@ export default function DataEditorTable() {
   const handleColumnTypeChange = (newType) => {
     dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
     dispatch(validateColumnData({ columnName: selectedColumn, columnType: newType }));
-    dispatch(TableValidation(mapGraphicsType)); 
+    dispatch(TableValidation(mapGraphicsType));
     handleClose();
   };
 
@@ -100,7 +158,36 @@ export default function DataEditorTable() {
     dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
     dispatch(validateCell({ rowIndex, columnName, value }));
     dispatch(validateColumnData({ columnName, columnType: columnTypes[columnName] }));
-    dispatch(TableValidation(mapGraphicsType)); 
+    dispatch(TableValidation(mapGraphicsType));
+  };
+
+  const handleEditColumn = (columnName) => {
+    const newColumnName = prompt('Enter new column name:', columnName).trim();
+
+    // Check if the name is non-empty
+    if (!newColumnName) {
+      alert('Column name cannot be empty.');
+      return;
+    }
+
+    // Check if the name is unique
+    if (displayedProperties.includes(newColumnName)) {
+      alert('This column name already exists. Please choose a different name.');
+      return;
+    }
+
+    // Check if the name is different from the old name
+    if (newColumnName !== columnName) {
+      dispatch(
+        updateColumnName({
+          oldName: columnName,
+          newName: newColumnName,
+          mapGraphicsType: mapGraphicsType
+        })
+      );
+    }
+
+    handleClose();
   };
 
   const handleDeleteRow = () => {
@@ -110,7 +197,14 @@ export default function DataEditorTable() {
   // Helper Functions
   // This is to check if the column is deletable or not
   const isDeletable = (columnName) => {
-    return ![nameByProperty, colorByProperty, LatByProperty, LonByProperty].includes(columnName);
+    return ![
+      nameByProperty,
+      colorByProperty,
+      LatByProperty,
+      LonByProperty,
+      sizeByProperty,
+      heightByProperty
+    ].includes(columnName);
   };
 
   // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
@@ -123,6 +217,10 @@ export default function DataEditorTable() {
       return 'Latitude';
     } else if (columnName === LonByProperty) {
       return 'Longitude';
+    } else if (columnName === heightByProperty) {
+      return 'Height';
+    } else if (columnName === sizeByProperty) {
+      return 'Size';
     } else {
       return columnName;
     }
@@ -204,7 +302,7 @@ export default function DataEditorTable() {
                       />
                     </TableCell>
                   ))}
-                  {(mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map')  && (
+                  {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
                     <TableCell>
                       <DeleteIcon
                         onClick={() => handleDeleteRow(rowIndex)}
@@ -252,6 +350,9 @@ export default function DataEditorTable() {
             </RadioGroup>
           </FormControl>
         </MenuItem>
+        {isDeletable(selectedColumn) && (
+          <MenuItem onClick={() => handleEditColumn(selectedColumn)}>Edit Column Name</MenuItem>
+        )}
         {isDeletable(selectedColumn) && (
           <MenuItem onClick={() => handleRemoveColumn(selectedColumn)}>Delete Column</MenuItem>
         )}

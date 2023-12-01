@@ -51,7 +51,8 @@
 }
 
 #table-body-container {
-  max-height: 70%; /* Adjust this value based on your layout */
+  max-height: 70%;
+  overflow-y: auto;
 }
 
 .table-label {
