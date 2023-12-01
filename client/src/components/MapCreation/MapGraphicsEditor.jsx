@@ -1,21 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import { Drawer, Button } from '@mui/material';
+import { Drawer } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import GeoJsonMap from './Map/GeoJsonMap';
 import TabMenu from './MapGraphicsEditor/TabMenu';
 import DataEditorTable from './MapDataEditing/DataEditorTable';
 import StylesMenu from './MapGraphicsEditor/StylesMenu/StylesMenus';
 import AnnotateContent from './MapGraphicsEditor/AnnotateMenu/AnnotateContent';
 import RegionEditing from './MapGraphicsEditor/GraphicsTools/RegionEditing';
-import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
-import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import ExportDialog from './MapGraphicsEditor/ExportDialog';
-import Legend from './Legend';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import {
   setColors,
   setSelectedPropUniqueValues,
@@ -24,17 +17,7 @@ import {
 import * as d3 from 'd3';
 import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
 import MapBox from './MapBox';
-
-const drawerWidth = 240;
-const stylesToolboxConfig = [
-  { label: 'Styles', content: <StylesMenu /> },
-  { label: 'Annotate', content: <AnnotateContent /> }
-];
-
-const dataEditingToolboxConfig = [
-  { label: 'Region', content: <RegionEditing /> },
-  { label: 'Tabular', content: <DataEditorTable /> }
-];
+import SymbolEditing from './MapGraphicsEditor/GraphicsTools/SymbolEditing';
 
 export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
@@ -46,8 +29,21 @@ export default function MapGraphicsEditor() {
   const colors = useSelector((state) => state.mapStyles.colors);
   const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
-  const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
-  const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
+  const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
+
+  const drawerWidth = 240;
+  const stylesToolboxConfig = [
+    { label: 'Styles', content: <StylesMenu /> },
+    { label: 'Annotate', content: <AnnotateContent /> }
+  ];
+
+  let editing = { label: 'Region', content: <RegionEditing /> };
+
+  if (mapGraphicsType === 'Symbol Map') {
+    editing = { label: 'Symbol', content: <SymbolEditing /> };
+  }
+
+  const dataEditingToolboxConfig = [editing, { label: 'Tabular', content: <DataEditorTable /> }];
 
   let propList = regions;
 
@@ -99,14 +95,29 @@ export default function MapGraphicsEditor() {
     dispatch(setContinousColorScale(c));
   };
 
+  const initColorsDotDensity = () => {
+    const colorsForDotDensity = dotDensityByProperty.map((name) => {
+      let color = generateRandomColor();
+      let colorObj = colors.find((color) => color.name === name);
+      if (colorObj) color = colorObj.color;
+      return { name, color: color };
+    });
+
+    dispatch(setColors(colorsForDotDensity));
+  };
+
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
     if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
       const isNumeric = !isNaN(propList[0][colorByProperty]);
-      console.log('isNumeric', isNumeric);
       if (isNumeric) initColorsNumerical();
       else initColorsCategorical();
+    }
+
+    if (mapGraphicsType === 'Dot Density Map') {
+      initColorsDotDensity();
+      console.log('dot density');
     }
   };
 
@@ -118,7 +129,7 @@ export default function MapGraphicsEditor() {
   useEffect(() => {
     initColors();
     initPropertyNames();
-  }, [colorByProperty]);
+  }, [colorByProperty, regions, dotDensityByProperty]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);

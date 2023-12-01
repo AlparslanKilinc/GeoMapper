@@ -3,12 +3,13 @@ import { GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
 import { useMap } from 'react-leaflet';
-import { setSelectedRegionIdx, clearLabels } from '../../../redux-slices/mapGraphicsDataSlice';
+import { setSelectedRegionIdx } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
 import '../../../styles/map-label.css';
 // import leaflet css
 import 'leaflet/dist/leaflet.css';
-import { color } from 'd3';
+import LabelLayer from './layers/LabelLayer';
+import { addLabelPosition } from '../../../redux-slices/mapStylesSlice';
 
 export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
@@ -28,9 +29,7 @@ export default function GeojsonWrapper({ isStyled }) {
   const borderColor = useSelector((state) => state.mapStyles.borderColor);
   const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
   const opacity = useSelector((state) => state.mapStyles.opacity);
-  let previousProp = useSelector((state) => state.mapGraphics.previousProperty);
-
-  const [labels, setLabels] = useState(new Map());
+  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
 
   const uniqueKey = [
     JSON.stringify(geoJSON),
@@ -45,6 +44,7 @@ export default function GeojsonWrapper({ isStyled }) {
     borderColor,
     borderWidth,
     opacity,
+    mapBackgroundColor
   ].join('|');
 
   // Default Styles
@@ -67,24 +67,25 @@ export default function GeojsonWrapper({ isStyled }) {
     if (isStyled) {
       let regionData = regions[feature.properties.regionIdx];
 
-      let labelText = regionData[labelByProperty];
-
       switch (mapGraphicsType) {
         case 'Choropleth Map':
           applyChoroplethStyles(feature, layer, regionData);
           break;
         // Add cases for other map types here
+
+        case 'Dot Density Map':
+          layer.on({
+            click: (e) => {
+              dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
+            }
+          });
+          break;
         default:
           // Default behavior if no specific map type is matched
           break;
       }
-
-      if (isLabelVisible && labelText) {
-        if(previousProp){
-          removeLabelLayer();
-        }
-        addLabelToMap(layer, labelText);
-      }
+      const { lat, lng } = layer.getBounds().getCenter();
+      dispatch(addLabelPosition([lat, lng]));
     }
   };
 
@@ -127,49 +128,13 @@ export default function GeojsonWrapper({ isStyled }) {
     });
   };
 
-  const removeLabelLayer = () => {
-    labels.forEach((label, layer) => {
-      map.removeLayer(label);
-      labels.delete(layer);
-    });
-  }
-
-  const addLabelToMap = (layer, labelText) => {
-
-    const label = L.marker(layer.getBounds().getCenter(), {
-      icon: L.divIcon({
-        className: 'map-label',
-        html: labelText,
-        iconSize: [100, 40]
-      })
-    });
-
-    label.on('click', (e) => {
-      L.DomEvent.stopPropagation(e);
-      layer.fire('click');
-    });
-
-    label.addTo(map);
-    setLabels((prev) => new Map(prev).set(layer, label));
-  };
-
   useEffect(() => {
     if (geojsonLayer.current) {
       map.fitBounds(geojsonLayer.current.getBounds());
     }
   }, [geoJSON]);
 
-  useEffect(() => {
-    if (!isLabelVisible) {
-      labels.forEach((label, layer) => {
-        map.removeLayer(label);
-        labels.delete(layer);
-      });
-      setLabels(new Map());
-    }
-  }, [isLabelVisible]);
-
-
+  const renderLabels = isLabelVisible && isStyled && geoJSON;
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -182,6 +147,8 @@ export default function GeojsonWrapper({ isStyled }) {
           key={uniqueKey}
         />
       )}
+
+      {renderLabels && <LabelLayer />}
     </div>
   );
 }

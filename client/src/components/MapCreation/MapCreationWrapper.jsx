@@ -60,7 +60,7 @@ export default function MapCreationWrapper() {
   const stages = [
     <TempleSelection onSelectionComplete={goForward} />,
     <OutlineSelectionPage />,
-    <MapDataEditor />,
+    // <MapDataEditor />,
     <MapGraphicsEditor />
   ];
 
