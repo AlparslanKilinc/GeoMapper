@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -7,23 +7,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TitleIcon from '@mui/icons-material/Title';
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeBorderColor, changeBorderWidth } from '../../../../redux-slices/mapStylesSlice';
 import SubMenuTitle from '../SubMenuTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import {
-  toggleLabelVisibility,
-  setLabelByProperty,
-    clearLabels
-} from '../../../../redux-slices/mapGraphicsDataSlice';
+import { toggleLabelVisibility } from '../../../../redux-slices/mapGraphicsDataSlice';
 import PropertySelector from '../../MapDataEditing/PropertySelector';
 
 export default function LabelsAccordionMenu() {
   const dispatch = useDispatch();
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
-  const[labelsFlag, setLabelsFlag] = useState(true)
-
 
   const handleLabelSwitchChange = () => {
     dispatch(toggleLabelVisibility());
@@ -50,7 +43,7 @@ export default function LabelsAccordionMenu() {
           justifyContent="center"
           sx={{ gap: 2 }}
         >
-          <PropertySelector propertyName="label" value={labelByProperty} isLabel = {labelsFlag}/>
+          <PropertySelector propertyName="label" value={labelByProperty} />
           <Box
             display="flex"
             flexDirection="column"
@@ -60,7 +53,7 @@ export default function LabelsAccordionMenu() {
           >
             <SubMenuTitle title="label visibility" />
             <FormControlLabel
-              control={<Switch value={isLabelVisible} onChange={handleLabelSwitchChange}/>}
+              control={<Switch value={isLabelVisible} onChange={handleLabelSwitchChange} />}
               label="Labels"
             />
           </Box>
