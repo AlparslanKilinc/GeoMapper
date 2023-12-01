@@ -42,7 +42,7 @@ export default function DataEditorTable() {
   const [columnErrors, setColumnValidationErrors] = useState({});
   const [cellErrors, setCellValidationErrors] = useState({});
   // This is the data to be displayed in the table
-  let data = mapGraphicsType === 'Choropleth Map' ? regions : Object.values(points);
+  let data = mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Heat Map' ? regions : Object.values(points);
 
   // This is the Displayed Columns To avoid showing the geojson properties
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function DataEditorTable() {
       dispatch(changeColorByProperty('color'));
     }
     let initialProperties =
-      mapGraphicsType === 'Choropleth Map'
+      mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Heat Map'
         ? [nameByProperty, colorByProperty]
         : [nameByProperty, LatByProperty, LonByProperty];
 
@@ -204,7 +204,7 @@ export default function DataEditorTable() {
                       />
                     </TableCell>
                   ))}
-                  {mapGraphicsType !== 'Choropleth Map' && (
+                  {(mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map')  && (
                     <TableCell>
                       <DeleteIcon
                         onClick={() => handleDeleteRow(rowIndex)}
