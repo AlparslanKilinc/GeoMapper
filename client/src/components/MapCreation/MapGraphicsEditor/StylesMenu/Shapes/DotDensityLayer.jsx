@@ -13,11 +13,10 @@ const DotDensityLayer = () => {
   const valuePerDot = useSelector((state) => state.mapGraphics.valuePerDot);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
+  const colors = useSelector((state) => state.mapStyles.colors);
 
   const iconSize = fixedSymbolSize;
   const opacity = fixedOpacity;
-  const color = fixedColor;
-  const icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
 
   const features = useSelector((state) => state.geojson.geojson.geoJSON.features);
 
@@ -36,14 +35,20 @@ const DotDensityLayer = () => {
   features.forEach((feature) => {
     // calculate how many dots will go inside this feature
     const regionDetails = regions[feature.properties.regionIdx];
-    const dotDensityValue = regionDetails[dotDensityByProperty];
-    const numberOfDots = Math.floor(dotDensityValue / valuePerDot);
-    console.log(dotDensityValue, valuePerDot, numberOfDots);
-    const randomPoints = generateRandomPointsInFeature(feature, numberOfDots);
+    dotDensityByProperty.forEach((property) => {
+      const dotDensityValue = regionDetails[property];
+      if (dotDensityValue === undefined) return;
+      let color = fixedColor;
+      const colorObj = colors.find((c) => c.name === property);
+      if (colorObj) color = colorObj.color;
+      const icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
 
-    randomPoints.forEach((point) => {
-      const latLng = [point.geometry.coordinates[1], point.geometry.coordinates[0]];
-      markers.push(<Marker key={latLng.join('#')} position={latLng} icon={icon} />);
+      const numberOfDots = Math.floor(dotDensityValue / valuePerDot);
+      const randomPoints = generateRandomPointsInFeature(feature, numberOfDots);
+      randomPoints.forEach((point) => {
+        const latLng = [point.geometry.coordinates[1], point.geometry.coordinates[0]];
+        markers.push(<Marker key={latLng.join('#')} position={latLng} icon={icon} />);
+      });
     });
   });
 

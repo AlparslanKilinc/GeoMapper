@@ -60,7 +60,7 @@ const GeoJsonMap = ({ styled }) => {
       <GeojsonWrapper isStyled={styled} />
       {renderSymbolLayer && <SymbolLayer />}
       {renderSymbolLayer && <EventHandlerLayer />}
-      {styled && <DotDensityLayer />}
+      {styled && mapGraphicsType === 'Dot Density Map' && <DotDensityLayer />}
     </MapContainer>
   );
 };

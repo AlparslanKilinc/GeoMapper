@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import '../../../styles/map-label.css';
 // import leaflet css
 import 'leaflet/dist/leaflet.css';
-import { color } from 'd3';
 
 export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
@@ -74,6 +73,14 @@ export default function GeojsonWrapper({ isStyled }) {
           applyChoroplethStyles(feature, layer, regionData);
           break;
         // Add cases for other map types here
+
+        case 'Dot Density Map':
+          layer.on({
+            click: (e) => {
+              dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
+            }
+          });
+          break;
         default:
           // Default behavior if no specific map type is matched
           break;

@@ -38,7 +38,7 @@ const initialState = {
   addSymbolMode: false,
   selectedPointKey: null,
   valuePerDot: 1,
-  dotDensityByProperty: 'density'
+  dotDensityByProperty: ['male', 'female']
 };
 
 function isValidValueForType(value, type) {
@@ -217,13 +217,13 @@ const mapGraphicsDataSlice = createSlice({
       state.valuePerDot = action.payload;
     },
 
-    setDotDesityByProperty: (state, action) => {
-      state.dotDensityByProperty = action.payload;
+    addDotDesityByProperty: (state, action) => {
+      state.dotDensityByProperty.push(action.payload);
     },
-    setRegionDotDensity: (state, action) => {
-      const value = action.payload;
-      const region = state.regions[state.selectedRegionIdx];
-      region[state.dotDensityByProperty] = value;
+    removeDotDensityProperty: (state, action) => {
+      state.dotDensityByProperty = state.dotDensityByProperty.filter(
+        (property) => property !== action.payload
+      );
     }
   }
 });
@@ -257,7 +257,7 @@ export const {
   setSelectedPointKey,
   setPointProperty,
   setValuePerDot,
-  setDotDesityByProperty,
-  setRegionDotDensity
+  addDotDesityByProperty,
+  removeDotDensityProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

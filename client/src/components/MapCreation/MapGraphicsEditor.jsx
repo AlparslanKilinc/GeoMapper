@@ -29,6 +29,7 @@ export default function MapGraphicsEditor() {
   const colors = useSelector((state) => state.mapStyles.colors);
   const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
+  const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
 
   const drawerWidth = 240;
   const stylesToolboxConfig = [
@@ -94,14 +95,29 @@ export default function MapGraphicsEditor() {
     dispatch(setContinousColorScale(c));
   };
 
+  const initColorsDotDensity = () => {
+    const colorsForDotDensity = dotDensityByProperty.map((name) => {
+      let color = generateRandomColor();
+      let colorObj = colors.find((color) => color.name === name);
+      if (colorObj) color = colorObj.color;
+      return { name, color: color };
+    });
+
+    dispatch(setColors(colorsForDotDensity));
+  };
+
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
     if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
       const isNumeric = !isNaN(propList[0][colorByProperty]);
-      console.log('isNumeric', isNumeric);
       if (isNumeric) initColorsNumerical();
       else initColorsCategorical();
+    }
+
+    if (mapGraphicsType === 'Dot Density Map') {
+      initColorsDotDensity();
+      console.log('dot density');
     }
   };
 
@@ -113,7 +129,7 @@ export default function MapGraphicsEditor() {
   useEffect(() => {
     initColors();
     initPropertyNames();
-  }, [colorByProperty, regions]);
+  }, [colorByProperty, regions, dotDensityByProperty]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
