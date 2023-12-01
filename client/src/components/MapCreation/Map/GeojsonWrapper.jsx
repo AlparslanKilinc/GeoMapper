@@ -9,6 +9,7 @@ import '../../../styles/map-label.css';
 // import leaflet css
 import 'leaflet/dist/leaflet.css';
 import LabelLayer from './layers/LabelLayer';
+import { addLabelPosition } from '../../../redux-slices/mapStylesSlice';
 
 export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
@@ -83,6 +84,8 @@ export default function GeojsonWrapper({ isStyled }) {
           // Default behavior if no specific map type is matched
           break;
       }
+      const { lat, lng } = layer.getBounds().getCenter();
+      dispatch(addLabelPosition([lat, lng]));
     }
   };
 
@@ -145,7 +148,7 @@ export default function GeojsonWrapper({ isStyled }) {
         />
       )}
 
-      {renderLabels && <LabelLayer geoJSONRef={geojsonLayer} />}
+      {renderLabels && <LabelLayer />}
     </div>
   );
 }

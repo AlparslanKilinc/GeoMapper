@@ -1,38 +1,77 @@
-import React, { useEffect, useState } from 'react';
+// const addLabelToMap = (layer, labelText) => {
+//   const label = L.marker(layer.getBounds().getCenter(), {
+//     icon: L.divIcon({
+//       className: 'map-label',
+//       html: labelText,
+//       iconSize: [100, 40]
+//     })
+//   });
+
+//   label.on('click', (e) => {
+//     L.DomEvent.stopPropagation(e);
+//     layer.fire('click');
+//   });
+
+//   label.addTo(map);
+//   setLabels((prev) => new Map(prev).set(layer, label));
+// };
+
+import React from 'react';
 import { Marker } from 'react-leaflet';
 import { useSelector } from 'react-redux';
-import L from 'leaflet';
+import { setLabelPositionByIdx } from '../../../../redux-slices/mapStylesSlice';
+import { useDispatch } from 'react-redux';
 
-const LabelLayer = ({ geoJSONRef }) => {
-  const [labels, setLabels] = useState([]);
-
+const LabelLayer = () => {
+  // we need the geometric features to calculate where to place the label
+  const dispatch = useDispatch();
+  const features = useSelector((state) => state.geojson.geojson.geoJSON.features);
+  // we also need the regions from mapgraphics slice
   const regions = useSelector((state) => state.mapGraphics.regions);
+
+  // we also need labelbyproperty
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
 
-  useEffect(() => {
-    if (geoJSONRef.current) {
-      const newLabels = [];
-      geoJSONRef.current.eachLayer((layer) => {
-        const feature = layer.feature;
-        const index = feature.properties.regionIdx; // Ensure your features have an 'index' property
-        const regionDetails = regions[index];
-        const labelText = regionDetails[labelByProperty];
+  const labelPositions = useSelector((state) => state.mapStyles.labelPositions);
 
-        const labelIcon = L.divIcon({
-          className: 'map-label',
-          html: `<p>${labelText}</p>`,
-          iconSize: [100, 40]
-        });
+  const handleDragEnd = (event, idx) => {
+    const { lat, lng } = event.target.getLatLng();
+    const position = [lat, lng];
+    // Dispatch an action to update the position in your Redux store
+    dispatch(setLabelPositionByIdx({ idx, position }));
+  };
 
-        const position = layer.getBounds().getCenter();
+  const labels = features.map((feature, index) => {
+    const regionDetails = regions[index];
+    const labelText = regionDetails[labelByProperty];
 
-        newLabels.push(
-          <Marker key={position.lat + '#' + position.lng} position={position} icon={labelIcon} />
-        );
-      });
-      setLabels(newLabels);
+    // the icon can be controlled by some redux state
+    const labelIcon = L.divIcon({
+      className: 'map-label',
+      html: `<p>${labelText}</p>`,
+      iconSize: [100, 40]
+    });
+
+    const position = labelPositions[index];
+
+    if (position) {
+      const [lat, lon] = position;
+
+      return (
+        <Marker
+          key={lat + '#' + lon}
+          position={position}
+          icon={labelIcon}
+          draggable={true}
+          eventHandlers={{
+            dragend: (event) => handleDragEnd(event, index)
+          }}
+        />
+      );
     }
-  }, [geoJSONRef, regions, labelByProperty]);
+
+    return null;
+  });
 
   return <div>{labels}</div>;
 };
