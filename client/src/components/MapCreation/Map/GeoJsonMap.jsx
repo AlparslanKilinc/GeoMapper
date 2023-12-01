@@ -39,6 +39,10 @@ const GeoJsonMap = ({ styled }) => {
     });
     return null;
   };
+
+
+const GeoJsonMap = ({ styled }) => {
+
   const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
   const isTilelayerVisible = useSelector((state) => state.mapStyles.isTilelayerVisible);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
@@ -52,6 +56,10 @@ const GeoJsonMap = ({ styled }) => {
       }}
     >
       {isTilelayerVisible && (
+
+      key={mapBackgroundColor}
+    >
+      {styled && isTilelayerVisible && (
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -59,8 +67,11 @@ const GeoJsonMap = ({ styled }) => {
       )}
       <GeojsonWrapper isStyled={styled} />
       {renderSymbolLayer && <SymbolLayer />}
+
       {renderSymbolLayer && <EventHandlerLayer />}
       {styled && mapGraphicsType === 'Dot Density Map' && <DotDensityLayer />}
+
+
     </MapContainer>
   );
 };
