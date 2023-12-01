@@ -2,7 +2,6 @@ import React from 'react';
 import { Marker } from 'react-leaflet';
 import shapeIconMap from './shapeIconMap';
 import { useSelector } from 'react-redux';
-import './ShapeIcons/shape-icon.css';
 import * as Turf from '@turf/turf';
 
 const DotDensityLayer = () => {

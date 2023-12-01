@@ -2,7 +2,6 @@ import React from 'react';
 import { Marker } from 'react-leaflet';
 import shapeIconMap from './shapeIconMap';
 import { useSelector, useDispatch } from 'react-redux';
-import './ShapeIcons/shape-icon.css';
 import { setSelectedPointKey } from '../../../../../redux-slices/mapGraphicsDataSlice';
 
 const SymbolLayer = () => {
