@@ -14,7 +14,11 @@ import {
   setColumnType,
   addColumn,
   removeColumn,
-  validateColumnData
+  validateColumnData,
+  validateCell,
+  changeNameByProperty,
+  changeColorByProperty,
+  TableValidation
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
@@ -28,19 +32,26 @@ export default function DataEditorTable() {
     nameByProperty,
     LatByProperty,
     LonByProperty,
-    columnValidationErrors
+    columnValidationErrors,
+    cellValidationErrors
   } = useSelector((state) => state.mapGraphics);
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState('');
   const [displayedProperties, setDisplayedProperties] = useState([]);
-  const [cellErrors, setCellErrors] = useState({});
-  const [columnErrors, setColumnErrors] = useState({});
+  const [columnErrors, setColumnValidationErrors] = useState({});
+  const [cellErrors, setCellValidationErrors] = useState({});
   // This is the data to be displayed in the table
   let data = mapGraphicsType === 'Choropleth Map' ? regions : Object.values(points);
 
   // This is the Displayed Columns To avoid showing the geojson properties
   useEffect(() => {
+    if (nameByProperty === null) {
+      dispatch(changeNameByProperty('name'));
+    }
+    if (colorByProperty === null) {
+      dispatch(changeColorByProperty('color'));
+    }
     let initialProperties =
       mapGraphicsType === 'Choropleth Map'
         ? [nameByProperty, colorByProperty]
@@ -56,10 +67,11 @@ export default function DataEditorTable() {
     LonByProperty,
     columnTypes
   ]);
-  // This is the Column errors to be displayed in the table
+
   useEffect(() => {
-    setColumnErrors(columnValidationErrors);
-  }, [columnValidationErrors]);
+    setColumnValidationErrors(columnValidationErrors);
+    setCellValidationErrors(cellValidationErrors);
+  }, [columnValidationErrors, cellValidationErrors]);
 
   const handleAddColumn = () => {
     const newColumnName = prompt('Enter new column name:');
@@ -79,32 +91,19 @@ export default function DataEditorTable() {
 
   const handleColumnTypeChange = (newType) => {
     dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
-    dispatch(validateColumnData({ columnName: selectedColumn }));
+    dispatch(validateColumnData({ columnName: selectedColumn, columnType: newType }));
+    dispatch(TableValidation(mapGraphicsType)); 
     handleClose();
   };
 
   const handleCellChange = (rowIndex, columnName, value) => {
-    const columnType = columnTypes[columnName];
-    let newErrors = { ...cellErrors };
-    const isEmpty = value === undefined || value.trim() === '';
-
-    if (columnType === 'number') {
-      const isNumber = isEmpty || (!isNaN(Number(value)) && isFinite(value));
-      newErrors[`${rowIndex}-${columnName}`] = !isNumber;
-    } else if (columnType === 'text') {
-      newErrors[`${rowIndex}-${columnName}`] = !isEmpty && value.trim() === '';
-    }
-
-    setCellErrors(newErrors);
     dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
-    dispatch(validateColumnData({ columnName }));
+    dispatch(validateCell({ rowIndex, columnName, value }));
+    dispatch(validateColumnData({ columnName, columnType: columnTypes[columnName] }));
+    dispatch(TableValidation(mapGraphicsType)); 
   };
 
   const handleDeleteRow = () => {
-    // To Do
-  };
-
-  const handleDataCheck = () => {
     // To Do
   };
 
@@ -158,17 +157,26 @@ export default function DataEditorTable() {
           <TableHead>
             <TableRow>
               {displayedProperties.map((colName, index) => (
-                <TableCell sx={{ width: '150px', verticalAlign: 'bottom' }} key={index}>
-                  {isDeletable(colName) ? (
-                    ''
-                  ) : (
+                <TableCell
+                  sx={{ minWidth: '150px', verticalAlign: 'bottom' }}
+                  align="center"
+                  key={index}
+                >
+                  {!isDeletable(colName) && (
                     <div className="table-label">{getColumnLabel(colName)}</div>
                   )}
-                  <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                    {colName}
+                </TableCell>
+              ))}
+            </TableRow>
+
+            <TableRow>
+              {displayedProperties.map((colName, index) => (
+                <TableCell sx={{ minWidth: '150px' }} key={index}>
+                  <div style={{ display: 'flex' }}>
+                    <span>{colName}</span>
                     <MoreVertIcon
                       onClick={(e) => handleClick(e, colName)}
-                      style={{ cursor: 'pointer', margin: '0', padding: '0' }}
+                      style={{ cursor: 'pointer' }}
                     />
                   </div>
                 </TableCell>
@@ -176,24 +184,18 @@ export default function DataEditorTable() {
             </TableRow>
           </TableHead>
         </Table>
-        <div id="table-body-container" style={{ overflowY: 'auto' }}>
+        <div id="table-body-container">
           <Table size="small">
             <TableBody>
               {data.map((row, rowIndex) => (
                 <TableRow key={rowIndex}>
                   {displayedProperties.map((colName, colIndex) => (
-                    <TableCell key={colIndex}>
+                    <TableCell sx={{ minWidth: '150px' }} key={colIndex}>
                       <TextField
                         value={row[colName] || ''}
                         onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
                         error={!!cellErrors[`${rowIndex}-${colName}`]}
-                        helperText={
-                          cellErrors[`${rowIndex}-${colName}`]
-                            ? columnTypes[colName] === 'number'
-                              ? 'Number Required'
-                              : 'Text  Required'
-                            : ''
-                        }
+                        helperText={cellErrors[`${rowIndex}-${colName}`]}
                         sx={{
                           '& input': {
                             padding: '0.3em 0.5em'
@@ -219,7 +221,7 @@ export default function DataEditorTable() {
           <Table size="small">
             <TableRow>
               {displayedProperties.map((colName, index) => (
-                <TableCell sx={{ width: '150px', verticalAlign: 'bottom' }} key={index}>
+                <TableCell sx={{ minWidth: '150px', verticalAlign: 'bottom' }} key={index}>
                   {columnErrors[colName] ? (
                     <span style={{ color: 'red' }}>{columnErrors[colName]}</span>
                   ) : (
