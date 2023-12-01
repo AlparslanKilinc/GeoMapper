@@ -32,59 +32,13 @@ const initialState = {
   propertyNames: [],
   selectedRegionIdx: -1,
   columnValidationErrors: {},
+  cellValidationErrors: {},
   randomColumnCounter: 0,
-  validationMessage:
-    '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.',
+  validationMessage:' ⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
   addSymbolMode: false,
   selectedPointKey: null,
   valuePerDot: 1,
   dotDensityByProperty: ['male', 'female']
-};
-
-function isValidValueForType(value, type) {
-  if (value === '' || value === null || value === undefined) {
-    return true;
-  }
-
-  if (type === 'number') {
-    const number = Number(value);
-    const isValidNumber = !isNaN(number) && isFinite(number);
-    return isValidNumber;
-  } else if (type === 'text') {
-    const isString = typeof value === 'string';
-    return isString;
-  }
-  return false;
-}
-
-const performValidation = (state) => {
-  let isColumnInvalid = false;
-  let message = '✓ No errors found.';
-
-  Object.keys(state.columnTypes).forEach((columnName) => {
-    const columnType = state.columnTypes[columnName];
-
-    state.regions.forEach((region) => {
-      const value = region[columnName];
-      if (!isValidValueForType(value, columnType)) {
-        isColumnInvalid = true;
-        message = 'X Looks like there are some errors in your dataset.';
-      }
-    });
-  });
-
-  if (!isColumnInvalid) {
-    for (let region of state.regions) {
-      if (!region[state.nameByProperty] || !region[state.colorByProperty]) {
-        message =
-          '\u26A0 Looks like your dataset is empty. Please upload data or manually enter values for each region.';
-        break;
-      }
-    }
-  }
-
-  state.validationMessage = message;
-  return isColumnInvalid;
 };
 
 const mapGraphicsDataSlice = createSlice({
@@ -116,20 +70,119 @@ const mapGraphicsDataSlice = createSlice({
       const columnToRemove = action.payload;
       state.addedColumns = state.addedColumns.filter((column) => column !== action.payload);
       delete state.columnTypes[columnToRemove];
+      delete state.columnValidationErrors[columnToRemove];
     },
     setColumnType: (state, action) => {
       const { columnName, columnType } = action.payload;
       state.columnTypes[columnName] = columnType;
     },
     validateColumnData: (state, action) => {
-      const columnName = action.payload.columnName;
-      const isInvalid = performValidation(state);
-
-      if (isInvalid) {
-        state.columnValidationErrors[columnName] = 'Invalid Data Type';
-      } else {
-        delete state.columnValidationErrors[columnName];
+      const { columnName, columnType } = action.payload;
+      const entities = state.regions;
+      let isValid = true;
+      if (columnType === 'number') {
+        Object.values(entities).forEach((entity) => {
+          if (entity[columnName] !== '' && (isNaN(Number(entity[columnName])) || !isFinite(entity[columnName]))) {
+            isValid = false;
+          }
+        });
+      } else if (columnType === 'text') {
+        Object.values(entities).forEach((entity) => {
+          if (entity[columnName] !== '' && typeof entity[columnName] !== 'string'  && typeof entity[columnName] !== 'number') {
+            isValid = false;
+          }
+        });
       }
+      if (isValid) {
+        delete state.columnValidationErrors[columnName];
+      } else {
+        state.columnValidationErrors[columnName] = 'Invalid Data Type';
+      }
+    },
+
+    validateCell: (state, action) => {
+      const { rowIndex, columnName, value } = action.payload;
+      const columnType = state.columnTypes[columnName];
+      let isValid = true;
+
+      if (columnType === 'number') {
+        isValid = value === '' || (!isNaN(Number(value)) && isFinite(value));
+      } else if (columnType === 'text') {
+        isValid = value === '' || typeof value === 'string';
+      }
+
+      const cellKey = `${rowIndex}-${columnName}`;
+      if (isValid) {
+        delete state.cellValidationErrors[cellKey];
+      } else {
+        state.cellValidationErrors[cellKey] =
+          columnType === 'number' ? 'Number Required' : 'Text Required';
+      }
+    },
+    TableValidation: (state, action) => {
+      const mapGraphicsType = action.payload;
+      let message = '✓ No errors found.';
+      let hasErrors = false;
+
+      switch (mapGraphicsType) {
+        case 'Choropleth Map':
+          for (let region of state.regions) {
+            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+              message = '⚠️ Required name field is empty.';
+              hasErrors = true;
+              break;
+            }
+            console.log(state.colorByProperty);
+            if (state.colorByProperty === 'color' || state.colorByProperty === null) {
+              // We will let them make a map with out assigning any color and let them do it in the map
+              break;
+            } else if (state.columnValidationErrors[state.colorByProperty]) {
+              message = `⚠️ Error in '${state.colorByProperty}' column:`;
+              hasErrors = true;
+            } else if (state.columnTypes[state.colorByProperty] !== 'text') {
+              message = 'X Color by property must be of text type for a Choropleth Map.';
+              hasErrors = true;
+              break;
+            }
+          }
+          break;
+
+        case 'Heat Map':
+          for (let region of state.regions) {
+            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+              message = '⚠️ Required name field is empty.';
+              hasErrors = true;
+              break;
+            }
+            if (state.colorByProperty === 'color' || state.colorByProperty === null) {
+              // We will let them make a map with out assigning any color and let them do it in the map
+              break;
+            } else if (state.columnValidationErrors[state.colorByProperty]) {
+              message = `⚠️ Error in '${state.colorByProperty}' column:`;
+              hasErrors = true;
+            } else if (state.columnTypes[state.colorByProperty] !== 'number') {
+              message = 'X Color By property must be of number type for a Heat Map.';
+              hasErrors = true;
+              break;
+            }
+          }
+          break;
+
+        // cases for Symbol Map, Spike Map, and Dot Density Map
+        case 'Symbol Map':
+          break;
+        case 'Spike Map':
+          break;
+        case 'Dot Density Map':
+          break;
+
+        default:
+          message = '⚠️ Unrecognized map type.';
+          hasErrors = true;
+          break;
+      }
+
+      state.validationMessage = hasErrors ? message : '✓ No errors found.';
     },
     changeNameByProperty: (state, action) => {
       state.nameByProperty = action.payload;
@@ -152,7 +205,6 @@ const mapGraphicsDataSlice = createSlice({
     changeXByProperty: (state, action) => {
       let { property, propertyBy } = action.payload;
       state[property] = propertyBy;
-      performValidation(state);
     },
     setChoroplethData: (state, action) => {
       const { propertyNames, regions, columnTypes } = action.payload;
@@ -176,7 +228,7 @@ const mapGraphicsDataSlice = createSlice({
 
       const entities = state.regions;
       Object.values(entities).forEach((entity) => {
-        entity[randomColumnName] = Math.floor(Math.random() * 100);
+        entity[randomColumnName] = Math.floor(Math.random() * 100) + 1;
       });
     },
     setSelectedRegionIdx: (state, action) => {
@@ -252,6 +304,8 @@ export const {
   setPropertyNames,
   generateRandomColumn,
   resetMapGraphicsData,
+  validateCell,
+  TableValidation,
   addPoint,
   toggleAddSymbolMode,
   setSelectedPointKey,

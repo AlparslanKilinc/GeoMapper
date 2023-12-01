@@ -33,17 +33,18 @@ export default function DataEditorLeftPane() {
         >
           upload file (CSV or Excel)
         </LoadingButton>
-
-        <LoadingButton
-          startIcon={<AutoFixHighIcon />}
-          variant="outlined"
-          style={{ color: 'black', borderColor: 'black' }}
-          onClick={handleRandomData}
-        >
-          random data
-        </LoadingButton>
+        {mapGraphicsType === 'Heat Map' && (
+          <LoadingButton
+            startIcon={<AutoFixHighIcon />}
+            variant="outlined"
+            style={{ color: 'black', borderColor: 'black' }}
+            onClick={handleRandomData}
+          >
+            random data
+          </LoadingButton>
+        )}
       </div>
-      {mapGraphicsType !== 'Choropleth Map' && (
+      {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
         <div
           style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}
         >

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Autocomplete, Divider, Typography, TextField, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeXByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
+import { changeXByProperty, TableValidation } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function PropertySelector({ value, propertyName }) {
   let propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  let mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   const dispatch = useDispatch();
   const onChange = (event, newValue) => {
@@ -13,6 +14,7 @@ export default function PropertySelector({ value, propertyName }) {
       propertyBy: newValue
     };
     dispatch(changeXByProperty(payload));
+    dispatch(TableValidation(mapGraphicsType));
   };
   return (
     <Box
