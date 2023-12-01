@@ -20,15 +20,20 @@ const getType = (value) => {
 const processGeojson = (geojson) => {
   let regions = [];
   let columnTypes = {};
-
+  columnTypes['GOAT'] = 'text';
+  columnTypes['male'] = 'number';
+  columnTypes['female'] = 'number';
   geojson.features.forEach((feature, index) => {
     // Extract only the first 5 properties
     let firstFiveProperties = Object.fromEntries(Object.entries(feature.properties).slice(0, 5));
     for (const [key, value] of Object.entries(firstFiveProperties)) {
       columnTypes[key] = getType(value);
     }
-    columnTypes['GOAT'] = 'text';
-    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer() });
+
+    // generate random density from 1 to 100
+    const male = parseInt(Math.random() * 10);
+    const female = parseInt(Math.random() * 10);
+    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer(), male, female });
     feature.properties = { regionIdx: index };
   });
 

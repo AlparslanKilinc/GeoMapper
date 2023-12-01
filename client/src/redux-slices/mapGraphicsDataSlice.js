@@ -28,15 +28,17 @@ const initialState = {
   opacityByProperty: '',
   fixedColor: '#800080',
   labelByProperty: '',
-  previousProperty: '',
   isLabelVisible: false,
   propertyNames: [],
   selectedRegionIdx: -1,
   columnValidationErrors: {},
   cellValidationErrors: {},
   randomColumnCounter: 0,
-  validationMessage:
-    '⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.'
+  validationMessage:' ⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
+  addSymbolMode: false,
+  selectedPointKey: null,
+  valuePerDot: 1,
+  dotDensityByProperty: ['male', 'female']
 };
 
 const mapGraphicsDataSlice = createSlice({
@@ -238,12 +240,6 @@ const mapGraphicsDataSlice = createSlice({
     setLabelByProperty: (state, action) => {
       state.labelByProperty = action.payload;
     },
-    setPreviousProperty: (state, action) => {
-      state.previousProperty = action.payload;
-    },
-    clearLabels: (state, action) => {
-      state.labelByProperty = '';
-    },
     setFixedSymbolSize: (state, action) => {
       state.fixedSymbolSize = action.payload;
     },
@@ -252,6 +248,34 @@ const mapGraphicsDataSlice = createSlice({
     },
     setPropertyNames: (state, action) => {
       state.propertyNames = action.payload;
+    },
+    addPoint: (state, action) => {
+      const { lat, lon, properties } = action.payload;
+      state.points[`${lat}#${lon}`] = { lat, lon, ...properties };
+    },
+    toggleAddSymbolMode: (state) => {
+      state.addSymbolMode = !state.addSymbolMode;
+    },
+    setSelectedPointKey: (state, action) => {
+      state.selectedPointKey = action.payload;
+    },
+    setPointProperty: (state, action) => {
+      const { propertyName, value } = action.payload;
+      const point = state.points[state.selectedPointKey];
+      point[propertyName] = value;
+    },
+
+    setValuePerDot: (state, action) => {
+      state.valuePerDot = action.payload;
+    },
+
+    addDotDesityByProperty: (state, action) => {
+      state.dotDensityByProperty.push(action.payload);
+    },
+    removeDotDensityProperty: (state, action) => {
+      state.dotDensityByProperty = state.dotDensityByProperty.filter(
+        (property) => property !== action.payload
+      );
     }
   }
 });
@@ -275,8 +299,6 @@ export const {
   validateColumnData,
   toggleLabelVisibility,
   setLabelByProperty,
-  setPreviousProperty,
-  clearLabels,
   setFixedSymbolSize,
   setFixedOpacity,
   setPropertyNames,
@@ -284,5 +306,12 @@ export const {
   resetMapGraphicsData,
   validateCell,
   TableValidation
+  addPoint,
+  toggleAddSymbolMode,
+  setSelectedPointKey,
+  setPointProperty,
+  setValuePerDot,
+  addDotDesityByProperty,
+  removeDotDensityProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
