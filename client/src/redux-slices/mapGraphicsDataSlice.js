@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import * as turf from '@turf/turf';
 
 // '36.7783#-119.4179': { lat: 36.7783, lon: -119.4179, size: 21, color: 'Jordan', opacity: 0.1 },
 // '31.9686#-99.9018': { lat: 31.9686, lon: -99.9018, size: 20, color: 'Kobe', opacity: 0.2 },
@@ -10,6 +11,11 @@ import { createSlice } from '@reduxjs/toolkit';
 // '32.1656#-82.9001': { lat: 32.1656, lon: -82.9001, size: 26, color: 'Kobe', opacity: 0.1 },
 // '35.7596#-79.0193': { lat: 35.7596, lon: -79.0193, size: 25, color: 'Jordan', opacity: 0.1 },
 // '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4 }
+
+// Niamey (the capital of Niger):  Latitude: 13.512778 Longitude: 2.112778
+// Zinder (Large city in southern Niger) Latitude: 13.80716 Longitude: 8.9881
+// Agadez (Large city in northern Niger) Latitude: 16.97333 Longitude: 7.99111
+// Maradi (Large city in southern Niger) Latitude: 13.5 Longitude: 7.10111
 
 const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
@@ -41,6 +47,20 @@ const initialState = {
   selectedPointKey: -1,
   valuePerDot: 1,
   dotDensityByProperty: ['male', 'female']
+};
+
+const isPointInPolygon = (point, geojson) => {
+  const turfPoint = turf.point([point.lon, point.lat]);
+  let isInside = false;
+  if (geojson && geojson.geoJSON && geojson.geoJSON.features) {
+    geojson.geoJSON.features.forEach((feature) => {
+      if (turf.booleanPointInPolygon(turfPoint, feature)) {
+        isInside = true;
+      }
+    });
+  }
+
+  return isInside;
 };
 
 const mapGraphicsDataSlice = createSlice({
@@ -117,6 +137,14 @@ const mapGraphicsDataSlice = createSlice({
         state.columnTypes[newName] = state.columnTypes[oldName];
         delete state.columnTypes[oldName];
       }
+      // Update propertyNames and pointProperties
+      state.propertyNames = state.propertyNames.map((propertyName) =>
+        propertyName === oldName ? newName : propertyName
+      );
+      state.pointProperties = state.pointProperties.map((property) =>
+        property === oldName ? newName : property
+      );
+
       if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
         Object.keys(state.points).forEach((pointKey) => {
           if (state.points[pointKey][oldName] !== undefined) {
@@ -154,7 +182,6 @@ const mapGraphicsDataSlice = createSlice({
         });
       } else if (columnType === 'text') {
         Object.values(entities).forEach((entity) => {
-          console.log(entity[columnName]);
           if (
             entity[columnName] !== '' &&
             entity[columnName] !== undefined &&
@@ -172,27 +199,80 @@ const mapGraphicsDataSlice = createSlice({
       }
     },
     validateCell: (state, action) => {
-      const { rowIndex, columnName, value } = action.payload;
+      const { rowIndex, columnName, value, mapGraphicsType, geoJSON } = action.payload;
       const columnType = state.columnTypes[columnName];
+      const cellKey = `${rowIndex}-${columnName}`;
       let isValid = true;
-
+      // General Error Checking
       if (columnType === 'number') {
         isValid = value === '' || (!isNaN(Number(value)) && isFinite(value));
       } else if (columnType === 'text') {
         isValid = value === '' || typeof value === 'string';
       }
-
-      const cellKey = `${rowIndex}-${columnName}`;
       if (isValid) {
         delete state.cellValidationErrors[cellKey];
       } else {
         state.cellValidationErrors[cellKey] =
           columnType === 'number' ? 'Number Required' : 'Text Required';
       }
+      /// Point Error Checking
+      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+        /// Lat or Lon is being changed validate that it is within region
+        if (
+          state.points[rowIndex][state.latByProperty] === value ||
+          state.points[rowIndex][state.lonByProperty] === value
+        ) {
+          // When Field is clear , clear error Message
+          if (
+            state.points[rowIndex][state.latByProperty] === '' &&
+            state.points[rowIndex][state.lonByProperty] === ''
+          ) {
+            delete state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`];
+            delete state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`];
+            return;
+          }
+          // Make Sure Both Lat and Lon are defined and Numbers
+          if (
+            state.points[rowIndex][state.latByProperty] === undefined ||
+            state.points[rowIndex][state.lonByProperty] === undefined ||
+            isNaN(Number(state.points[rowIndex][state.latByProperty])) ||
+            isNaN(Number(state.points[rowIndex][state.lonByProperty]))
+          ) {
+            return;
+          }
+          const point = {
+            lon: state.points[rowIndex][state.lonByProperty],
+            lat: state.points[rowIndex][state.latByProperty]
+          };
+          if (!isPointInPolygon(point, geoJSON)) {
+            state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`] =
+              'Point is not within region';
+            state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`] =
+              'Point is not within region';
+          } else {
+            delete state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`];
+            delete state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`];
+          }
+        }
+      }
+    },
+    addCellValidationErrors: (state, action) => {
+      const { rowIndex, columnName, error } = action.payload;
+      const cellKey = `${rowIndex}-${columnName}`;
+      state.cellValidationErrors[cellKey] = error;
     },
     changeXByProperty: (state, action) => {
       let { property, propertyBy } = action.payload;
       state[property] = propertyBy;
+      if (
+        property === 'sizeByProperty' ||
+        property === 'lonByProperty' ||
+        property === 'latByProperty' ||
+        property === 'heightByProperty' ||
+        property === 'opacityByProperty'
+      ) {
+        state.columnTypes[propertyBy] = 'number';
+      }
     },
     changeNameByProperty: (state, action) => {
       state.nameByProperty = action.payload;
@@ -216,7 +296,14 @@ const mapGraphicsDataSlice = createSlice({
       state.selectedRegionIdx = action.payload;
     },
     addPoint: (state, action) => {
-      state.points.push(action.payload);
+      const { name, color, lat, lon, size, opacity } = action.payload;
+      state.points.push({ name, color, lat, lon, size, opacity });
+    },
+    removePoint: (state, action) => {
+      const index = action.payload.rowIndex;
+      if (index >= 0 && index < state.points.length) {
+        state.points = [...state.points.slice(0, index), ...state.points.slice(index + 1)];
+      }
     },
     setRegionProperty: (state, action) => {
       const { propertyName, value, id } = action.payload;
@@ -237,7 +324,6 @@ const mapGraphicsDataSlice = createSlice({
       state.regions = regions;
       state.columnTypes = columnTypes;
     },
-    setPointData: (state, action) => {},
     toggleLabelVisibility: (state, action) => {
       state.isLabelVisible = !state.isLabelVisible;
     },
@@ -292,7 +378,10 @@ const mapGraphicsDataSlice = createSlice({
             } else if (state.columnValidationErrors[state.colorByProperty]) {
               message = `⚠️ Error in '${state.colorByProperty}' column:`;
               hasErrors = true;
-            } else if (state.columnTypes[state.colorByProperty] !== 'text') {
+            } else if (
+              state.columnTypes[state.colorByProperty] !== 'text' &&
+              state.columnTypes[state.colorByProperty] !== undefined
+            ) {
               message = 'X Color by property must be of text type for a Choropleth Map.';
               hasErrors = true;
               break;
@@ -313,18 +402,67 @@ const mapGraphicsDataSlice = createSlice({
             } else if (state.columnValidationErrors[state.colorByProperty]) {
               message = `⚠️ Error in '${state.colorByProperty}' column:`;
               hasErrors = true;
-            } else if (state.columnTypes[state.colorByProperty] !== 'number') {
+            } else if (
+              state.columnTypes[state.colorByProperty] !== 'number' &&
+              state.columnTypes[state.colorByProperty] !== undefined
+            ) {
               message = 'X Color By property must be of number type for a Heat Map.';
               hasErrors = true;
               break;
             }
           }
           break;
-
-        // cases for Symbol Map, Spike Map, and Dot Density Map
         case 'Symbol Map':
-          break;
         case 'Spike Map':
+          state.points.forEach((point, index) => {
+            console.log('made it out');
+            const latErrorKey = `${index}-${state.latByProperty}`;
+            const lonErrorKey = `${index}-${state.lonByProperty}`;
+            // Required Field Error
+            if (
+              (!point[state.latByProperty] || point[state.latByProperty].trim() === '') &&
+              (!point[state.latByProperty] || point[state.latByProperty].trim() === '')
+            ) {
+              message = '⚠️ Required Latitude and Longitude fields are empty.';
+              hasErrors = true;
+              return;
+            }
+            // Error in Cell
+            if (
+              state.cellValidationErrors[latErrorKey] ||
+              state.cellValidationErrors[lonErrorKey]
+            ) {
+              message = `⚠️ Error in latitude or longitude at row ${index}: ${
+                state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
+              }`;
+              hasErrors = true;
+              return;
+            }
+            // Error in Column
+            if (
+              state.columnValidationErrors[state.latByProperty] ||
+              state.columnValidationErrors[state.lonByProperty]
+            ) {
+              message = 'X Latitude and Longitude must be of number type.';
+              hasErrors = true;
+              return;
+            }
+            if (
+              mapGraphicsType === 'Symbol Map' &&
+              state.columnValidationErrors[state.sizeByProperty]
+            ) {
+              message = 'X Size must be of number type for a Symbol Map.';
+              hasErrors = true;
+              return;
+            } else if (
+              mapGraphicsType === 'Spike Map' &&
+              state.columnValidationErrors[state.heightByProperty]
+            ) {
+              message = 'X Height must be of number type for a Spike Map.';
+              hasErrors = true;
+              return;
+            }
+          });
           break;
         case 'Dot Density Map':
           break;
@@ -373,7 +511,8 @@ export const {
   addDotDesityByProperty,
   removeDotDensityProperty,
   updateColumnName,
-  setPointData,
-  setPointProperties
+  setPointProperties,
+  removePoint,
+  addCellValidationErrors
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apis from '../store-request-api/geojsonRequestApi';
 import geobuf from 'geobuf';
 import Pbf from 'pbf';
-import { setChoroplethData, setPointData } from './mapGraphicsDataSlice';
+import { setChoroplethData } from './mapGraphicsDataSlice';
 
 const getRandomNbaPlayer = () => {
   const teams = ['Lebron', 'Kobe', 'Jordan'];
@@ -51,7 +51,6 @@ export const fetchGeojsonById = createAsyncThunk(
       const geojson = geobuf.decode(new Pbf(response.data));
       const { regions, propertyNames, columnTypes } = processGeojson(geojson);
       thunkApi.dispatch(setChoroplethData({ regions, propertyNames, columnTypes }));
-      thunkApi.dispatch(setPointData());
       return { geoJSON: geojson };
     } catch (error) {
       console.log(error);

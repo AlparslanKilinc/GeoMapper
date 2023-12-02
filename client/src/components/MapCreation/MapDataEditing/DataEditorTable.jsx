@@ -24,7 +24,9 @@ import {
   changeHeightByProperty,
   TableValidation,
   updateColumnName,
-  setPointProperty
+  setPointProperty,
+  addPoint,
+  removePoint
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
@@ -36,19 +38,22 @@ export default function DataEditorTable() {
     columnTypes,
     colorByProperty,
     nameByProperty,
-    LatByProperty,
-    LonByProperty,
+    latByProperty,
+    lonByProperty,
     sizeByProperty,
     heightByProperty,
     columnValidationErrors,
-    cellValidationErrors
+    cellValidationErrors,
+    addCellValidationErrors
   } = useSelector((state) => state.mapGraphics);
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState('');
   const [displayedProperties, setDisplayedProperties] = useState([]);
+  const [labels, setLabels] = useState([]);
   const [columnErrors, setColumnValidationErrors] = useState({});
   const [cellErrors, setCellValidationErrors] = useState({});
+  const geoJSON = useSelector((state) => state.geojson.geojson);
   // This is the data to be displayed in the table
   let data =
     mapGraphicsType === 'Choropleth Map' ||
@@ -57,19 +62,38 @@ export default function DataEditorTable() {
       ? regions
       : Object.values(points);
 
+  // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
+  useEffect(() => {
+    switch (mapGraphicsType) {
+      case 'Choropleth Map':
+      case 'Heat Map':
+        setLabels(['Name', 'Color']);
+        break;
+      case 'Symbol Map':
+        setLabels(['Name', 'Lat', 'Lon', 'Color', 'Size']);
+        break;
+      case 'Spike Map':
+        setLabels(['Name', 'Lat', 'Lon', 'Color', 'Height']);
+        break;
+      case 'Dot Density Map':
+        setLabels(['Name']);
+        break;
+    }
+  }, [mapGraphicsType]);
+
   // This is the Displayed Columns To avoid showing the geojson properties
   useEffect(() => {
     if (!nameByProperty) dispatch(changeNameByProperty('name'));
     if (!colorByProperty) dispatch(changeColorByProperty('color'));
-    if (!LatByProperty) dispatch(changeLatByProperty('lat'));
-    if (!LonByProperty) dispatch(changeLonByProperty('lon'));
+    if (!latByProperty) dispatch(changeLatByProperty('lat'));
+    if (!lonByProperty) dispatch(changeLonByProperty('lon'));
     if (!sizeByProperty) dispatch(changeSizeByProperty('size'));
     if (!heightByProperty) dispatch(changeHeightByProperty('height'));
   }, [
     nameByProperty,
     colorByProperty,
-    LatByProperty,
-    LonByProperty,
+    latByProperty,
+    lonByProperty,
     sizeByProperty,
     heightByProperty,
     dispatch
@@ -86,8 +110,8 @@ export default function DataEditorTable() {
       case 'Symbol Map':
         propertiesBasedOnMapType = [
           nameByProperty,
-          LatByProperty,
-          LonByProperty,
+          latByProperty,
+          lonByProperty,
           colorByProperty,
           sizeByProperty
         ];
@@ -95,8 +119,8 @@ export default function DataEditorTable() {
       case 'Spike Map':
         propertiesBasedOnMapType = [
           nameByProperty,
-          LatByProperty,
-          LonByProperty,
+          latByProperty,
+          lonByProperty,
           colorByProperty,
           heightByProperty
         ];
@@ -106,14 +130,20 @@ export default function DataEditorTable() {
         break;
     }
 
-    setDisplayedProperties([...new Set([...propertiesBasedOnMapType, ...addedColumns])]);
+    let uniqueDisplayedProperties = [...propertiesBasedOnMapType];
+    addedColumns.forEach((column) => {
+      if (!propertiesBasedOnMapType.includes(column)) {
+        uniqueDisplayedProperties.push(column);
+      }
+    });
+    setDisplayedProperties(uniqueDisplayedProperties);
   }, [
     mapGraphicsType,
     addedColumns,
     nameByProperty,
     colorByProperty,
-    LatByProperty,
-    LonByProperty,
+    latByProperty,
+    lonByProperty,
     sizeByProperty,
     heightByProperty
   ]);
@@ -154,25 +184,6 @@ export default function DataEditorTable() {
     handleClose();
   };
 
-  const handleCellChange = (rowIndex, columnName, value) => {
-    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
-      dispatch(
-        setPointProperty({
-          propertyName: columnName,
-          value,
-          pointKey: rowIndex
-        })
-      );
-    } else {
-      dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
-    }
-    dispatch(validateCell({ rowIndex, columnName, value }));
-    dispatch(
-      validateColumnData({ columnName, columnType: columnTypes[columnName], mapGraphicsType })
-    );
-    dispatch(TableValidation(mapGraphicsType));
-  };
-
   const handleEditColumn = (columnName) => {
     const newColumnName = prompt('Enter new column name:', columnName).trim();
 
@@ -202,8 +213,40 @@ export default function DataEditorTable() {
     handleClose();
   };
 
-  const handleDeleteRow = () => {
-    // To Do
+  const handleCellChange = (rowIndex, columnName, value) => {
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+      dispatch(setPointProperty({ propertyName: columnName, value, pointIdx: rowIndex }));
+    } else {
+      dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
+    }
+    dispatch(validateCell({ rowIndex, columnName, value, mapGraphicsType, geoJSON }));
+    dispatch(
+      validateColumnData({ columnName, columnType: columnTypes[columnName], mapGraphicsType })
+    );
+    dispatch(TableValidation(mapGraphicsType));
+  };
+
+  const handleAddPoint = () => {
+    // Default opacity is 0.4
+    const properties = {
+      name: '',
+      color: '',
+      lat: 0,
+      lon: 0,
+      size: 0,
+      opacity: 0.4
+    };
+    dispatch(setColumnType({ columnName: 'size', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'opacity', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'lat', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'lon', columnType: 'number' }));
+    dispatch(addPoint({ properties }));
+  };
+
+  const handleRemovePoint = (rowIndex) => {
+    if (window.confirm('Are you sure you want to delete this point?')) {
+      dispatch(removePoint({ rowIndex }));
+    }
   };
 
   // Helper Functions
@@ -212,30 +255,15 @@ export default function DataEditorTable() {
     return ![
       nameByProperty,
       colorByProperty,
-      LatByProperty,
-      LonByProperty,
+      latByProperty,
+      lonByProperty,
       sizeByProperty,
       heightByProperty
     ].includes(columnName);
   };
 
-  // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
-  const getColumnLabel = (columnName) => {
-    if (columnName === nameByProperty) {
-      return 'Name';
-    } else if (columnName === colorByProperty) {
-      return 'Color';
-    } else if (columnName === LatByProperty) {
-      return 'Latitude';
-    } else if (columnName === LonByProperty) {
-      return 'Longitude';
-    } else if (columnName === heightByProperty) {
-      return 'Height';
-    } else if (columnName === sizeByProperty) {
-      return 'Size';
-    } else {
-      return columnName;
-    }
+  const isNumberProperty = (property) => {
+    return [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property);
   };
 
   // Menu Functions
@@ -250,6 +278,15 @@ export default function DataEditorTable() {
 
   const TableButtons = () => (
     <div id="table-buttons">
+      {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
+        <LoadingButton
+          variant="outlined"
+          style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
+          onClick={handleAddPoint}
+        >
+          Add Point
+        </LoadingButton>
+      )}
       <LoadingButton
         variant="outlined"
         style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
@@ -267,15 +304,11 @@ export default function DataEditorTable() {
           <Table size="small" stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                {displayedProperties.map((colName, index) => (
-                  <TableCell
-                    sx={{ minWidth: '150px', verticalAlign: 'bottom' }}
-                    align="center"
-                    key={index}
-                  >
-                    {!isDeletable(colName) && (
-                      <div className="table-label">{getColumnLabel(colName)}</div>
-                    )}
+                {labels.map((label, index) => (
+                  <TableCell sx={{ minWidth: '150px', borderBottom: "none" }}>
+                    <div style={{ display: 'flex' }}>
+                      <div className="table-label">{label}</div>
+                    </div>
                   </TableCell>
                 ))}
               </TableRow>
@@ -319,7 +352,7 @@ export default function DataEditorTable() {
                   {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
                     <TableCell>
                       <DeleteIcon
-                        onClick={() => handleDeleteRow(rowIndex)}
+                        onClick={() => handleRemovePoint(rowIndex)}
                         sx={{ marginRight: '10px', cursor: 'pointer' }}
                       />
                     </TableCell>
@@ -359,7 +392,9 @@ export default function DataEditorTable() {
               value={columnTypes[selectedColumn] || 'text'}
               onChange={(e) => handleColumnTypeChange(e.target.value)}
             >
-              <FormControlLabel value="text" control={<Radio />} label="Text" />
+              {!isNumberProperty(selectedColumn) && (
+                <FormControlLabel value="text" control={<Radio />} label="Text" />
+              )}
               <FormControlLabel value="number" control={<Radio />} label="Number" />
             </RadioGroup>
           </FormControl>

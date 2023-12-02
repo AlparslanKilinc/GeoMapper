@@ -12,16 +12,16 @@ export default function DataEditorRightPane() {
     colorByProperty,
     sizeByProperty,
     heightByProperty,
-    LatByProperty,
-    LonByProperty,
+    latByProperty,
+    lonByProperty,
     validationMessage
   } = useSelector((state) => state.mapGraphics);
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const [properties, setProperties] = useState([]);
   let name = { propertyName: 'name', value: nameByProperty };
   let color = { propertyName: 'color', value: colorByProperty };
-  let longitude = { propertyName: 'lon', value: LonByProperty };
-  let latitude = { propertyName: 'lat', value: LatByProperty };
+  let longitude = { propertyName: 'lon', value: lonByProperty };
+  let latitude = { propertyName: 'lat', value: latByProperty };
   let size = { propertyName: 'size', value: sizeByProperty };
   let height = { propertyName: 'height', value: heightByProperty };
   let density = { propertyName: 'density', value: densityByProperty };
@@ -46,8 +46,8 @@ export default function DataEditorRightPane() {
     mapGraphicsType,
     nameByProperty,
     colorByProperty,
-    LatByProperty,
-    LonByProperty,
+    latByProperty,
+    lonByProperty,
     sizeByProperty,
     heightByProperty
   ]);
