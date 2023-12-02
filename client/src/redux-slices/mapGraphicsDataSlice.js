@@ -373,6 +373,7 @@ export const {
   addDotDesityByProperty,
   removeDotDensityProperty,
   updateColumnName,
-  setPointData
+  setPointData,
+  setPointProperties
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

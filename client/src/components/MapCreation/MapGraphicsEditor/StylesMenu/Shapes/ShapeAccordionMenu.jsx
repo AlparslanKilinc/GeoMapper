@@ -22,7 +22,7 @@ export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
-  const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  const pointProperties = useSelector((state) => state.mapGraphics.pointProperties);
   const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
 
@@ -88,7 +88,7 @@ export default function ShapeAccordionMenu() {
             <Autocomplete
               value={sizeByProperty}
               onChange={handleSizeByPropertyChange}
-              options={propertyNames}
+              options={pointProperties}
               fullWidth
               renderInput={(params) => <TextField {...params} fullWidth />}
             />

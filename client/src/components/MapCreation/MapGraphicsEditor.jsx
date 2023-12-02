@@ -18,6 +18,7 @@ import * as d3 from 'd3';
 import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
 import MapBox from './MapBox';
 import SymbolEditing from './MapGraphicsEditor/GraphicsTools/SymbolEditing';
+import { setPointProperties } from '../../redux-slices/mapGraphicsDataSlice';
 
 export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
@@ -125,7 +126,11 @@ export default function MapGraphicsEditor() {
   const initPropertyNames = () => {
     if (propList.length === 0) return;
     const propertyNames = Object.keys(propList[0]);
-    dispatch(setPropertyNames(propertyNames));
+
+    if (mapGraphicsType === 'Symbol Map') {
+      dispatch(setPointProperties(propertyNames));
+      dispatch(setPropertyNames(Object.keys(regions[0])));
+    } else dispatch(setPropertyNames(propertyNames));
   };
 
   useEffect(() => {

@@ -6,10 +6,14 @@ import { changeXByProperty, TableValidation } from '../../../redux-slices/mapGra
 export default function PropertySelector({ value, propertyName }) {
   let { propertyNames, pointProperties } = useSelector((state) => state.mapGraphics);
   let mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-  const [properties, setProperties] = useState([]);
+  const defaultProperties = propertyName === 'label' ? propertyNames : [];
+  const [properties, setProperties] = useState(defaultProperties);
 
   useEffect(() => {
-    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map' || value === 'label') {
+    if (
+      mapGraphicsType === 'Symbol Map' ||
+      (mapGraphicsType === 'Spike Map' && propertyName !== 'label')
+    ) {
       setProperties(pointProperties);
     } else {
       setProperties(propertyNames);
