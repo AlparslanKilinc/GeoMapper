@@ -22,7 +22,7 @@
   height: 100%;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 1rem;
   border-left: 1px solid rgb(230, 236, 250);
   border-left: 1px solid grey;
   display: flex;
@@ -47,12 +47,13 @@
 }
 
 #table-container {
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 #table-body-container {
   max-height: 70%;
-  overflow-y: auto;
 }
 
 .table-label {

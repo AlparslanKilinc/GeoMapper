@@ -23,7 +23,8 @@ import {
   changeSizeByProperty,
   changeHeightByProperty,
   TableValidation,
-  updateColumnName
+  updateColumnName,
+  setPointProperty
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
@@ -105,10 +106,7 @@ export default function DataEditorTable() {
         break;
     }
 
-    setDisplayedProperties((prevProperties) => {
-      const combinedProperties = new Set([...propertiesBasedOnMapType, ...addedColumns]);
-      return [...combinedProperties];
-    });
+    setDisplayedProperties([...new Set([...propertiesBasedOnMapType, ...addedColumns])]);
   }, [
     mapGraphicsType,
     addedColumns,
@@ -149,15 +147,29 @@ export default function DataEditorTable() {
 
   const handleColumnTypeChange = (newType) => {
     dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
-    dispatch(validateColumnData({ columnName: selectedColumn, columnType: newType }));
+    dispatch(
+      validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType })
+    );
     dispatch(TableValidation(mapGraphicsType));
     handleClose();
   };
 
   const handleCellChange = (rowIndex, columnName, value) => {
-    dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+      dispatch(
+        setPointProperty({
+          propertyName: columnName,
+          value,
+          pointKey: rowIndex
+        })
+      );
+    } else {
+      dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
+    }
     dispatch(validateCell({ rowIndex, columnName, value }));
-    dispatch(validateColumnData({ columnName, columnType: columnTypes[columnName] }));
+    dispatch(
+      validateColumnData({ columnName, columnType: columnTypes[columnName], mapGraphicsType })
+    );
     dispatch(TableValidation(mapGraphicsType));
   };
 
@@ -251,37 +263,39 @@ export default function DataEditorTable() {
   return (
     <div id="data-editing-page-mid">
       <div id="table-container" style={{ overflow: 'auto', padding: '1rem' }}>
-        <Table size="small" stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {displayedProperties.map((colName, index) => (
-                <TableCell
-                  sx={{ minWidth: '150px', verticalAlign: 'bottom' }}
-                  align="center"
-                  key={index}
-                >
-                  {!isDeletable(colName) && (
-                    <div className="table-label">{getColumnLabel(colName)}</div>
-                  )}
-                </TableCell>
-              ))}
-            </TableRow>
+        <div id="table-header-container">
+          <Table size="small" stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {displayedProperties.map((colName, index) => (
+                  <TableCell
+                    sx={{ minWidth: '150px', verticalAlign: 'bottom' }}
+                    align="center"
+                    key={index}
+                  >
+                    {!isDeletable(colName) && (
+                      <div className="table-label">{getColumnLabel(colName)}</div>
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
 
-            <TableRow>
-              {displayedProperties.map((colName, index) => (
-                <TableCell sx={{ minWidth: '150px' }} key={index}>
-                  <div style={{ display: 'flex' }}>
-                    <span>{colName}</span>
-                    <MoreVertIcon
-                      onClick={(e) => handleClick(e, colName)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                  </div>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-        </Table>
+              <TableRow>
+                {displayedProperties.map((colName, index) => (
+                  <TableCell sx={{ minWidth: '150px' }} key={index}>
+                    <div style={{ display: 'flex' }}>
+                      <span>{colName}</span>
+                      <MoreVertIcon
+                        onClick={(e) => handleClick(e, colName)}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </div>
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+          </Table>
+        </div>
         <div id="table-body-container">
           <Table size="small">
             <TableBody>
@@ -306,7 +320,7 @@ export default function DataEditorTable() {
                     <TableCell>
                       <DeleteIcon
                         onClick={() => handleDeleteRow(rowIndex)}
-                        sx={{ marginTop: '10px', cursor: 'pointer' }}
+                        sx={{ marginRight: '10px', cursor: 'pointer' }}
                       />
                     </TableCell>
                   )}
@@ -329,8 +343,8 @@ export default function DataEditorTable() {
               ))}
             </TableRow>
           </Table>
-          <TableButtons />
         </div>
+        <TableButtons />
       </div>
       <Menu
         id="simple-menu"
