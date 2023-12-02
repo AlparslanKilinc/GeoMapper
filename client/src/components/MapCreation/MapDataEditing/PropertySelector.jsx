@@ -11,11 +11,12 @@ export default function PropertySelector({ value, propertyName }) {
 
   useEffect(() => {
     if (
-      mapGraphicsType === 'Symbol Map' ||
-      (mapGraphicsType === 'Spike Map' && propertyName !== 'label')
+      (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') &&
+      propertyName !== 'label'
     ) {
       setProperties(pointProperties);
     } else {
+      console.log(propertyName);
       setProperties(propertyNames);
     }
   }, [mapGraphicsType, propertyNames, pointProperties]);
