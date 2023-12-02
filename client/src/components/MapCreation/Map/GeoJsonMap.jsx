@@ -27,11 +27,10 @@ const GeoJsonMap = ({ styled }) => {
 
     const map = useMapEvents({
       click: (e) => {
-        // console.log(e.latlng);
         if (addSymbolMode) {
           const [lat, lon] = [e.latlng.lat, e.latlng.lng];
           const properties = getDefaultPointProperties();
-          dispatch(addPoint({ lat, lon, properties }));
+          dispatch(addPoint({ lat, lon, ...properties }));
         }
 
         // propogate the event to the map

@@ -18,9 +18,9 @@ const initialState = {
   columnTypes: {},
   addedColumns: [],
   nameByProperty: 'name',
-  LatByProperty: 'lat',
-  LonByProperty: 'lon',
-  colorByProperty: 'color',
+  latByProperty: 'lat',
+  lonByProperty: 'lon',
+  colorByProperty: '',
   sizeByProperty: 'size',
   heightByProperty: 'height',
   fixedSymbolSize: 10,
@@ -38,7 +38,7 @@ const initialState = {
   validationMessage:
     '⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
   addSymbolMode: false,
-  selectedPointKey: null,
+  selectedPointKey: -1,
   valuePerDot: 1,
   dotDensityByProperty: ['male', 'female']
 };
@@ -198,10 +198,10 @@ const mapGraphicsDataSlice = createSlice({
       state.nameByProperty = action.payload;
     },
     changeLatByProperty: (state, action) => {
-      state.LatByProperty = action.payload;
+      state.latByProperty = action.payload;
     },
     changeLonByProperty: (state, action) => {
-      state.LonByProperty = action.payload;
+      state.lonByProperty = action.payload;
     },
     changeColorByProperty: (state, action) => {
       state.colorByProperty = action.payload;
@@ -216,8 +216,7 @@ const mapGraphicsDataSlice = createSlice({
       state.selectedRegionIdx = action.payload;
     },
     addPoint: (state, action) => {
-      const { lat, lon, properties } = action.payload;
-      state.points[`${lat}#${lon}`] = { lat, lon, ...properties };
+      state.points.push(action.payload);
     },
     setRegionProperty: (state, action) => {
       const { propertyName, value, id } = action.payload;
@@ -227,9 +226,9 @@ const mapGraphicsDataSlice = createSlice({
       region[propertyName] = value;
     },
     setPointProperty: (state, action) => {
-      const { propertyName, value, pointKey } = action.payload;
-      if (state.points[`point${pointKey}`]) {
-        state.points[`point${pointKey}`][propertyName] = value;
+      const { propertyName, value, pointIdx } = action.payload;
+      if (state.points[pointIdx]) {
+        state.points[pointIdx][propertyName] = value;
       }
     },
     setChoroplethData: (state, action) => {
@@ -238,13 +237,7 @@ const mapGraphicsDataSlice = createSlice({
       state.regions = regions;
       state.columnTypes = columnTypes;
     },
-    setPointData: (state, action) => {
-      const points = {};
-      for (let i = 0; i <= 10; i++) {
-        points[`point${i}`] = { name: '', lat: 0, lon: 0, size: 0, color: '', size: 0 };
-      }
-      state.points = points;
-    },
+    setPointData: (state, action) => {},
     toggleLabelVisibility: (state, action) => {
       state.isLabelVisible = !state.isLabelVisible;
     },

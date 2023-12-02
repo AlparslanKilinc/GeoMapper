@@ -48,7 +48,7 @@ export default function MapGraphicsEditor() {
   let propList = regions;
 
   if (mapGraphicsType === 'Symbol Map') {
-    propList = Object.values(points);
+    propList = points;
   }
 
   const exportDialogRef = useRef();
@@ -110,6 +110,8 @@ export default function MapGraphicsEditor() {
     //check if the property associated with the colorByProperty is numeric or not
 
     if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
+      if (propList.length === 0) return;
+      if (!colorByProperty) return;
       const isNumeric = !isNaN(propList[0][colorByProperty]);
       if (isNumeric) initColorsNumerical();
       else initColorsCategorical();
@@ -117,11 +119,11 @@ export default function MapGraphicsEditor() {
 
     if (mapGraphicsType === 'Dot Density Map') {
       initColorsDotDensity();
-      console.log('dot density');
     }
   };
 
   const initPropertyNames = () => {
+    if (propList.length === 0) return;
     const propertyNames = Object.keys(propList[0]);
     dispatch(setPropertyNames(propertyNames));
   };
@@ -129,7 +131,7 @@ export default function MapGraphicsEditor() {
   useEffect(() => {
     initColors();
     initPropertyNames();
-  }, [colorByProperty, regions, dotDensityByProperty]);
+  }, [colorByProperty, regions, dotDensityByProperty, points]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);

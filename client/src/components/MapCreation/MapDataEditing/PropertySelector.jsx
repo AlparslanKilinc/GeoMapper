@@ -9,7 +9,7 @@ export default function PropertySelector({ value, propertyName }) {
   const [properties, setProperties] = useState([]);
 
   useEffect(() => {
-    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map' || value === 'label') {
       setProperties(pointProperties);
     } else {
       setProperties(propertyNames);
@@ -22,6 +22,7 @@ export default function PropertySelector({ value, propertyName }) {
       property: propertyName + 'ByProperty',
       propertyBy: newValue
     };
+
     dispatch(changeXByProperty(payload));
     dispatch(TableValidation(mapGraphicsType));
   };

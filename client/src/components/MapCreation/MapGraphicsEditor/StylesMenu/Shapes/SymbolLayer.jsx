@@ -15,6 +15,9 @@ const SymbolLayer = () => {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const fixedColor = useSelector((state) => state.mapGraphics.fixedColor);
   const colors = useSelector((state) => state.mapStyles.colors);
+  const latByProperty = useSelector((state) => state.mapGraphics.latByProperty);
+  const lonByProperty = useSelector((state) => state.mapGraphics.lonByProperty);
+
   const extractSizeValues = (points) => {
     let min = 10000000,
       max = 0;
@@ -39,26 +42,32 @@ const SymbolLayer = () => {
     return size;
   }
 
-  const markers = Object.values(points).map((point) => {
+  const markers = points.map((point, pointIdx) => {
     const iconSize = calculateMarkerSize(point[sizeByProperty]) || fixedSymbolSize;
     const opacity = point[opacityByProperty] || fixedOpacity;
+
     // Assuming you have a way to determine the color, add that logic here
     let color = fixedColor; // Replace 'someColorLogic' with actual logic to determine color
 
     let colorObj = colors.find((color) => color.name === point[colorByProperty]);
     if (colorObj && colorByProperty) color = colorObj.color;
 
+    // console.log('colorByProperty', colorByProperty, 'color', color);
+
     const icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
-    const { lat, lon } = point;
+    const lat = point[latByProperty];
+    const lon = point[lonByProperty];
+    console.log(latByProperty, lonByProperty);
+    if (lat === undefined || lon === undefined) return null;
 
     return (
       <Marker
-        key={point.lat + '#' + point.lon}
-        position={[point.lat, point.lon]}
+        key={lat + '#' + lon}
+        position={[lat, lon]}
         icon={icon}
         eventHandlers={{
           click: (e) => {
-            dispatch(setSelectedPointKey(point.lat + '#' + point.lon));
+            dispatch(setSelectedPointKey(pointIdx));
           }
         }}
       />

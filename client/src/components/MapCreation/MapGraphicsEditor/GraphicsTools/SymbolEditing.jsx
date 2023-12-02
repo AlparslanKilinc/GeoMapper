@@ -12,39 +12,24 @@ export default function SymbolEditing() {
   );
   const [prop, setProp] = React.useState(nameByProperty);
 
-  console.log('selectedPointKey', selectedPointKey);
-
   const extractSymbolPropertyNames = () => {
-    return Object.keys(Object.values(points)[0]);
+    return points.length > 0 ? Object.keys(points[0]) : [];
   };
   let propertyNames = extractSymbolPropertyNames();
 
   const extractPointPropUniqueValues = () => {
     let uniqueValues = new Set();
-    Object.values(points).forEach((point) => {
+    points.forEach((point) => {
       uniqueValues.add(point[colorByProperty]);
     });
     return [...uniqueValues];
   };
   let selectedPropUniqueValues = extractPointPropUniqueValues();
 
-  //   const { selectedPropUniqueValues } = useSelector((state) => state.mapStyles);
-
-  //   const extractRegionNames = () => {
-  //     let names = [];
-  //     regions.forEach((region, index) => {
-  //       names.push({ label: region[nameByProperty], id: index });
-  //     });
-
-  //     return names;
-  //   };
-
-  //   const regionNames = extractRegionNames();
-
   let pointDetails = {};
   let name = 'New York';
   let type = 'text';
-  if (selectedPointKey) {
+  if (selectedPointKey > -1) {
     pointDetails = points[selectedPointKey];
     name = pointDetails[nameByProperty];
     // lets check the type of the property and render the appropriate input
@@ -54,16 +39,18 @@ export default function SymbolEditing() {
   }
   const handlePropValueChange = (event) => {
     // convert event.target.value to
-    dispatch(setPointProperty({ propertyName: prop, value: Number(event.target.value) }));
+    dispatch(
+      setPointProperty({
+        propertyName: prop,
+        value: Number(event.target.value),
+        pointIdx: selectedPointKey
+      })
+    );
   };
 
   const handlePropValueChangeText = (event, value) => {
-    dispatch(setPointProperty({ propertyName: prop, value: value }));
+    dispatch(setPointProperty({ propertyName: prop, value: value, pointIdx: selectedPointKey }));
   };
-
-  //   const handleOptionSelect = (event, newValue) => {
-  //     dispatch(setSelectedRegionIdx(newValue.id));
-  //   };
 
   const handleColorByPropertyChange = (event, newValue) => {
     setProp(newValue);
@@ -139,7 +126,7 @@ export default function SymbolEditing() {
           <TextField label="Search..." variant="outlined" {...params} fullWidth />
         )}
       />
-      {selectedPointKey ? (
+      {selectedPointKey > -1 ? (
         symbolPropertyEditor
       ) : (
         <Typography variant="subtitle2">Click on a symbol to edit</Typography>

@@ -85,7 +85,9 @@ export default function GeojsonWrapper({ isStyled }) {
           break;
       }
       const { lat, lng } = layer.getBounds().getCenter();
-      dispatch(addLabelPosition([lat, lng]));
+      if (isLabelVisible) {
+        dispatch(addLabelPosition([lat, lng]));
+      }
     }
   };
 

@@ -10,8 +10,12 @@ import ColorsChoroAccordionMenu from './ColorsChoroAccordionMenu';
 import { useSelector } from 'react-redux';
 
 export default function ColorsAccordionMenu() {
-  const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
-  let accordionDetails = <ColorsSymbolAccordionMenu />;
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const points = useSelector((state) => state.mapGraphics.points);
+
+  const noPointsMessage = <Typography>Please add points to start editing</Typography>;
+
+  let accordionDetails = points.length > 0 ? <ColorsSymbolAccordionMenu /> : noPointsMessage;
 
   if (mapGraphicsType === 'Dot Density Map') {
     accordionDetails = <ColorsDotDensityAccordionMenu />;

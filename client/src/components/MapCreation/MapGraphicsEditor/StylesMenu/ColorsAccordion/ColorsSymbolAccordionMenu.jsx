@@ -10,7 +10,6 @@ import SubMenuTitle from '../../SubMenuTitle';
 import { setFixedOpacity } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import PropertySelector from '../../../MapDataEditing/PropertySelector';
 import { MuiColorInput } from 'mui-color-input';
-import { color } from 'd3';
 import { changeXByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 
 export default function ColorsSymbolAccordionMenu() {
@@ -21,9 +20,11 @@ export default function ColorsSymbolAccordionMenu() {
   const fixedOpacity = useSelector((state) => state.mapGraphics.fixedOpacity);
   const opacityByProperty = useSelector((state) => state.mapGraphics.opacityByProperty);
   const fixedColor = useSelector((state) => state.mapGraphics.fixedColor);
-  const pointData = Object.values(points);
 
-  const propertyNames = Object.keys(pointData[0]);
+  let propertyNames = [];
+  if (points.length > 0) {
+    propertyNames = Object.keys(points[0]);
+  }
 
   const handleColorChangeText = (name) => {
     return (color) => {
@@ -72,35 +73,43 @@ export default function ColorsSymbolAccordionMenu() {
   );
 
   // if the colorByProperty is continous, then we need to show the color range
-  if (!isNaN(pointData[0][colorByProperty])) {
-    colorSelectors = <ColorPalette />;
-  } else {
-    colorSelectors = (
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ width: '100%' }}
-      >
-        <Typography variant="subtitle2">select color</Typography>
-        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
 
-        {colors.map(({ name, color }, index) => {
-          return (
-            <ColorSelector
-              title={name}
-              intialColor={color}
-              disableLower
-              disableUpper
-              handleColorChangeCustom={handleColorChangeText(name)}
-              key={index + 'colorSelector'}
-            />
-          );
-        })}
-      </Box>
-    );
+  if (points.length > 0) {
+    // this should be refactored to check from columnTypes
+    if (!isNaN(points[0][colorByProperty])) {
+      colorSelectors = <ColorPalette />;
+    } else {
+      colorSelectors = (
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ width: '100%' }}
+        >
+          <Typography variant="subtitle2">select color</Typography>
+          <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+
+          {colors.map(({ name, color }, index) => {
+            console.log('name', name, ':', color);
+            return (
+              <ColorSelector
+                title={name}
+                intialColor={color}
+                disableLower
+                disableUpper
+                handleColorChangeCustom={handleColorChangeText(name)}
+                key={index + 'colorSelector'}
+              />
+            );
+          })}
+        </Box>
+      );
+    }
   }
+
+  const colorControl = colorByProperty ? colorSelectors : fixedColorSelector;
+  const noPointsMessage = <Typography variant="subtitle2">Add symbols to begin editing</Typography>;
 
   return (
     <Box
@@ -128,7 +137,7 @@ export default function ColorsSymbolAccordionMenu() {
         />
       </Box>
 
-      {colorByProperty ? colorSelectors : fixedColorSelector}
+      {points.length > 0 ? colorControl : noPointsMessage}
 
       <PropertySelector
         property={opacityByProperty}
