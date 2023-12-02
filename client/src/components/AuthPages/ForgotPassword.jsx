@@ -3,6 +3,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { forgotPassword } from '../../redux-slices/authSlice';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
@@ -13,6 +15,7 @@ export default function ForgotPassword() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const dispatch = useDispatch();
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -28,9 +31,21 @@ export default function ForgotPassword() {
     setEmail(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate('/RecoveryCode');
+    const link = await dispatch(forgotPassword({email}));
+    console.log(link);
+    const match = link.payload.match(/\/setNewPassword\/([^\/]+)\/([^\/]+)/);
+    if (match) {
+      const id = match[1];
+      const token = match[2];
+
+      console.log('userId:', id);
+      console.log('token:', token);
+      navigate(`/setNewPassword/${id}/${token}`);
+    } else {
+      console.error('Unable to extract userId and token from the reset link');
+    }
   };
 
   const goBack = () => {

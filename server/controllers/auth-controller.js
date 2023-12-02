@@ -1,9 +1,13 @@
+
 const auth = require('../auth');
 const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
 const { bucket } = require('../googleCloudStorage');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
+const jwt = require("jsonwebtoken");
+require('dotenv').config(); // Load environment variables from .env file
+var nodemailer = require('nodemailer');
 
 const sendUserResponse = (res, user) => {
   return res.status(200).json({
@@ -21,23 +25,21 @@ const sendUserResponse = (res, user) => {
   });
 };
 
+
 loginUser = async (req, res) => {
   try {
     const { userName, password } = req.body;
     if (!userName || !password) {
       return res.status(400).json({ errorMessage: 'Please enter all required fields' });
     }
-
     const existingUser = await User.findOne({ userName });
     if (!existingUser) {
       return res.status(401).json({ errorMessage: 'Wrong username or password provided' });
     }
-
     const passwordCorrect = await bcrypt.compare(password, existingUser.passwordHash);
     if (!passwordCorrect) {
       return res.status(401).json({ errorMessage: 'Wrong username or password provided' });
     }
-
     const token = auth.signToken(existingUser._id);
     res.cookie('token', token, {
       httpOnly: true,
@@ -137,6 +139,80 @@ logoutUser = (req, res) => {
     .send();
 };
 
+forgotPassword = async(req,res) => {
+  //sends email to user from custom geomapper email. change  your email below and then try to reset password
+  const email = req.body.email;
+  console.log(email.email)
+  try {
+    const existingUserByEmail = await User.findOne({email});
+    if (!existingUserByEmail) {
+      return res.status(401).json({errorMessage: 'Invalid Email'});
+    }
+    const id = existingUserByEmail._id
+    const secret = process.env.JWT_SECRET + existingUserByEmail.passwordHash;
+    const token = jwt.sign({email: existingUserByEmail.email, id: id}, secret, {expiresIn: '15m'})
+    const resetLink = `http://localhost:3000/setNewPassword/${id}/${token}`;
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'geomapperapp2024@gmail.com',
+        pass: 'ewhtogjlfmyayulf'
+      }
+    });
+    var mailOptions = {
+      from: 'geomapperapp2024@gmail.com',
+      to: 'tmistry10@gmail.com', //change  your email
+      subject: 'Password Reset',
+      text: 'Hello, \n We received a request to reset the password for your Geomapper account. To proceed with the password reset, please click on the link below:' +
+          '\n If you didn\'t request a password reset, you can ignore this email, and your password will remain unchanged.' + '\nFor security reasons, this link will expire in 10 minutes.' +
+          '\nIf you haven\'t reset your password within this time frame, you can request another password reset by visiting the forgot password page on our app.\nThank you,\n GeoMappper Team\n'
+      + resetLink
+    };
+    console.log('reset link ' + resetLink)
+    res.json(resetLink);
+    transporter.sendMail(mailOptions,function(error, info) {
+      if(error){
+        console.log(error)
+      } else{
+        console.log("Email sent")
+      }
+    });
+    console.log(resetLink)
+  }
+  catch(error){
+    console.error(error);
+    return res.status(500).send({ errorMessage: 'Error resetting password' });
+  }
+}
+updatePassword = async(req, res) => {
+  try {
+    const { userId, token } = req.params;
+    const newPassword = req.body.newPassword;
+    const confirmNewPassword = req.body.confirmNewPassword;
+
+    // Validate the token and user ID
+    const secret = process.env.JWT_SECRET + (await User.findById(userId)).passwordHash;
+    jwt.verify(token, secret);
+
+    // Validate the new password
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ errorMessage: 'Passwords do not match' });
+    }
+
+    // Hash the new password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Update the user's password in the database
+    await User.findByIdAndUpdate(userId, { passwordHash: hashedPassword });
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('An error occurred:', error);
+    res.status(500).json({ errorMessage: 'Internal Server Error' });
+  }
+
+}
 const updateUserData = async (req, res) => {
   try {
     const userId = req.userId;
@@ -240,5 +316,7 @@ module.exports = {
   registerUser,
   loginUser,
   logoutUser,
-  updateUserData
+  updateUserData,
+  forgotPassword,
+  updatePassword
 };
