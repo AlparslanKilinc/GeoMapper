@@ -32,7 +32,7 @@ const initialState = {
   valuePerDot: 1,
   dotDensityByProperty: ['male', 'female'],
   maxSymbolSize: 100,
-  minSymbolSize: 1
+  minSymbolSize: 20
 };
 
 const isPointInPolygon = (point, geojson) => {
