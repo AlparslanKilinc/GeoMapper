@@ -40,7 +40,8 @@ const initialState = {
   selectedPropUniqueValues: [], // Unique values for the selected property,
   selectedFeature: null,
   continousColorScale: [],
-  opacity: 1
+  opacity: 1,
+  labelPositions: []
 };
 
 const mapStylesDataSlice = createSlice({
@@ -83,6 +84,16 @@ const mapStylesDataSlice = createSlice({
     },
     setOpacity: (state, action) => {
       state.opacity = action.payload;
+    },
+    setLabelPositions: (state, action) => {
+      state.labelPositions = action.payload;
+    },
+    setLabelPositionByIdx: (state, action) => {
+      const { idx, position } = action.payload;
+      state.labelPositions[idx] = position;
+    },
+    addLabelPosition: (state, action) => {
+      state.labelPositions.push(action.payload);
     }
   }
 });
@@ -98,7 +109,10 @@ export const {
   changeColorByName,
   setSelectedPropUniqueValues,
   setContinousColorScale,
-  setOpacity
+  setOpacity,
+  setLabelPositions,
+  setLabelPositionByIdx,
+  addLabelPosition
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;

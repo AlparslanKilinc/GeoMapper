@@ -40,7 +40,7 @@
 
 #data-editing-page-mid {
   flex: 1;
-  width: 100%;
+  width: 65%;
   margin-left: 1rem;
   display: flex;
   flex-direction: column;
@@ -52,7 +52,6 @@
 
 #table-body-container {
   max-height: 70%; /* Adjust this value based on your layout */
-  overflow-y: auto;
 }
 
 .table-label {
