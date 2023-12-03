@@ -29,23 +29,13 @@ export default function ForgotPassword() {
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
+
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const link = await dispatch(forgotPassword({email}));
-    console.log(link);
-    const match = link.payload.match(/\/setNewPassword\/([^\/]+)\/([^\/]+)/);
-    if (match) {
-      const id = match[1];
-      const token = match[2];
-
-      console.log('userId:', id);
-      console.log('token:', token);
-      navigate(`/setNewPassword/${id}/${token}`);
-    } else {
-      console.error('Unable to extract userId and token from the reset link');
-    }
+    await dispatch(forgotPassword({email}));
+    navigate('/login');
   };
 
   const goBack = () => {
@@ -77,7 +67,7 @@ export default function ForgotPassword() {
           <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
           <h1>Forgot Password</h1>
         </div>
-        <p>Input your email address and we'll dispatch a recovery code to you.</p>
+        <p>Input your email address and we'll dispatch a recovery link to you.</p>
         <Box component="form" noValidate onSubmit={handleSubmit}>
           <TextField
             size="small"

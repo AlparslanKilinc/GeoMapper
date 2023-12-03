@@ -96,11 +96,10 @@ function App() {
           <Route path="/mapView" element={<MapView />} />
           <Route path="/changePassword" element={<ChangePassword />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/setNewPassword/:id/:token" element={<SetNewPassword/>} />
+          <Route path="/setNewPassword" element={<SetNewPassword/>} />
         </Routes>
       </Router>
     </ThemeProvider>
   );
 }
-
 export default App;

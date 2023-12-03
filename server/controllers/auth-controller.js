@@ -142,7 +142,6 @@ logoutUser = (req, res) => {
 forgotPassword = async(req,res) => {
   //sends email to user from custom geomapper email. change  your email below and then try to reset password
   const email = req.body.email;
-  console.log(email.email)
   try {
     const existingUserByEmail = await User.findOne({email});
     if (!existingUserByEmail) {
@@ -151,7 +150,7 @@ forgotPassword = async(req,res) => {
     const id = existingUserByEmail._id
     const secret = process.env.JWT_SECRET + existingUserByEmail.passwordHash;
     const token = jwt.sign({email: existingUserByEmail.email, id: id}, secret, {expiresIn: '15m'})
-    const resetLink = `http://localhost:3000/setNewPassword/${id}/${token}`;
+    const resetLink =  `https://geomapper-c6jr.onrender.com/setNewPassword?id=${id}&token=${token}`//`http://127.0.0.1:5001/setNewPassword/${id}/${token}`;
     var transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -161,7 +160,7 @@ forgotPassword = async(req,res) => {
     });
     var mailOptions = {
       from: 'geomapperapp2024@gmail.com',
-      to: 'tmistry10@gmail.com', //change  your email
+      to: email,
       subject: 'Password Reset',
       text: 'Hello, \n We received a request to reset the password for your Geomapper account. To proceed with the password reset, please click on the link below:' +
           '\n If you didn\'t request a password reset, you can ignore this email, and your password will remain unchanged.' + '\nFor security reasons, this link will expire in 10 minutes.' +
@@ -189,23 +188,14 @@ updatePassword = async(req, res) => {
     const { userId, token } = req.params;
     const newPassword = req.body.newPassword;
     const confirmNewPassword = req.body.confirmNewPassword;
-
-    // Validate the token and user ID
     const secret = process.env.JWT_SECRET + (await User.findById(userId)).passwordHash;
     jwt.verify(token, secret);
-
-    // Validate the new password
     if (newPassword !== confirmNewPassword) {
       return res.status(400).json({ errorMessage: 'Passwords do not match' });
     }
-
-    // Hash the new password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-
-    // Update the user's password in the database
     await User.findByIdAndUpdate(userId, { passwordHash: hashedPassword });
-
     res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
     console.error('An error occurred:', error);

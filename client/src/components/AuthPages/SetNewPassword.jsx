@@ -13,10 +13,11 @@ import {updatePassword} from "../../redux-slices/authSlice.js";
 export default function SetNewPassword() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-    const { id, token } = useParams();
-    console.log(id)
-    console.log(token)
+    const searchParams = new URLSearchParams(location.search);
+    const id = searchParams.get('id');
+    const token = searchParams.get('token');
     const [formErrors, setFormErrors] = useState('');
+
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
