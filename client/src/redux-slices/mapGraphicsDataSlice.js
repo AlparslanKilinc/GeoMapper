@@ -231,7 +231,7 @@ const mapGraphicsDataSlice = createSlice({
           };
           if (!isPointInPolygon(point, geoJSON)) {
             console.log('Point is not within region');
-            
+
             state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`] =
               'Point is not within region';
             state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`] =
@@ -283,8 +283,8 @@ const mapGraphicsDataSlice = createSlice({
       state.selectedRegionIdx = action.payload;
     },
     addLocationData: (state, action) => {
-      const { name, lat, lon} = action.payload;
-      state.points.push({ name, lat, lon, color: '', size:0, height:0, opacity:0.4});
+      const { name, lat, lon } = action.payload;
+      state.points.push({ name, lat, lon, color: '', size: 0, height: 0, opacity: 0.4 });
     },
     addPoint: (state, action) => {
       const { name, color, lat, lon, size, opacity } = action.payload;
@@ -294,6 +294,7 @@ const mapGraphicsDataSlice = createSlice({
       const index = action.payload.rowIndex;
       if (index >= 0 && index < state.points.length) {
         state.points = [...state.points.slice(0, index), ...state.points.slice(index + 1)];
+        state.selectedPointKey = -1;
       }
     },
     setRegionProperty: (state, action) => {
@@ -409,7 +410,7 @@ const mapGraphicsDataSlice = createSlice({
             const latErrorKey = `${index}-${state.latByProperty}`;
             const lonErrorKey = `${index}-${state.lonByProperty}`;
             // Required Field Error
-            if (!point[state.latByProperty]  && !point[state.latByProperty]) {
+            if (!point[state.latByProperty] && !point[state.latByProperty]) {
               message = '⚠️ Required Latitude and Longitude fields are empty.';
               hasErrors = true;
               return;
