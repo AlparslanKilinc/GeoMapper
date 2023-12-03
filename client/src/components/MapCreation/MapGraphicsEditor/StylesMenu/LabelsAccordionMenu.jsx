@@ -8,6 +8,7 @@ import TitleIcon from '@mui/icons-material/Title';
 import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
 import PropertySelector from '../../MapDataEditing/PropertySelector';
+import LabelsStylesEditor from './LabelStylesEditor';
 
 export default function LabelsAccordionMenu() {
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
@@ -34,6 +35,8 @@ export default function LabelsAccordionMenu() {
           sx={{ gap: 2 }}
         >
           <PropertySelector propertyName="label" value={labelByProperty} />
+
+          {labelByProperty && <LabelsStylesEditor />}
         </Box>
       </AccordionDetails>
     </Accordion>
