@@ -10,7 +10,6 @@ import MapView from './components/MapView/MapView';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ChangePassword from './components/AuthPages/ChangePassword';
 import ForgotPassword from './components/AuthPages/ForgotPassword';
-import RecoveryCode from './components/AuthPages/RecoveryCode';
 import SetNewPassword from './components/AuthPages/SetNewPassword';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -97,12 +96,10 @@ function App() {
           <Route path="/mapView" element={<MapView />} />
           <Route path="/changePassword" element={<ChangePassword />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
-          <Route path="/recoveryCode" element={<RecoveryCode />} />
-          <Route path="/setNewPassword" element={<SetNewPassword />} />
+          <Route path="/setNewPassword" element={<SetNewPassword/>} />
         </Routes>
       </Router>
     </ThemeProvider>
   );
 }
-
 export default App;

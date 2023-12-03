@@ -3,6 +3,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { forgotPassword } from '../../redux-slices/authSlice';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
@@ -13,6 +15,7 @@ export default function ForgotPassword() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const dispatch = useDispatch();
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -26,11 +29,13 @@ export default function ForgotPassword() {
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
+
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate('/RecoveryCode');
+    await dispatch(forgotPassword({email}));
+    navigate('/login');
   };
 
   const goBack = () => {
@@ -62,7 +67,7 @@ export default function ForgotPassword() {
           <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
           <h1>Forgot Password</h1>
         </div>
-        <p>Input your email address and we'll dispatch a recovery code to you.</p>
+        <p>Input your email address and we'll dispatch a recovery link to you.</p>
         <Box component="form" noValidate onSubmit={handleSubmit}>
           <TextField
             size="small"

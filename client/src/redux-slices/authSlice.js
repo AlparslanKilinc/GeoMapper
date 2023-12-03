@@ -30,6 +30,8 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+
+
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ userName, password }, { rejectWithValue }) => {
@@ -72,10 +74,34 @@ export const changePassword = createAsyncThunk(
   }
 );
 
-export const forgotPassword = createAsyncThunk('auth/forgotPassword', async ({ email, id }) => {
-  const response = await api.forgotPassword(email, id);
+export const updatePassword = createAsyncThunk(
+    'auth/updatePassword',
+    async ({ id, token, newPassword, confirmNewPassword }) => {
+      try {
+         console.log(id + ' ' + newPassword + ' ' + token + ' '+ confirmNewPassword)
+        const response = await api.updatePassword({ id, token, newPassword, confirmNewPassword });
+
+        if (response.status === 200) {
+          return { success: true };
+        } else {
+          const errorData = response.data;
+          return { success: false, error: errorData.errorMessage };
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+        return { success: false, error: 'Internal Server Error' };
+      }
+    }
+)
+
+export const forgotPassword = createAsyncThunk('auth/forgotPassword', async ({email}) => {
+  const response = await api.forgotPassword({email});
   return response.data;
 });
+
+
+
+
 
 export const authSlice = createSlice({
   name: 'auth',

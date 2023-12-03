@@ -9,5 +9,7 @@ router.post('/login', AuthController.loginUser);
 router.post('/updateUserData', auth.verify, upload.single('profilePic'), AuthController.updateUserData);
 router.get('/logout', AuthController.logoutUser);
 router.get('/loggedIn', AuthController.getLoggedIn);
+router.post('/forgotPassword', AuthController.forgotPassword)
+router.post('/updatePassword/:userId/:token', AuthController.updatePassword);
 
 module.exports = router;
