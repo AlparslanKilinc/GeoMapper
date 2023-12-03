@@ -374,7 +374,7 @@ export default function DataEditorTable() {
                       />
                     </TableCell>
                   ))}
-                  {mapGraphicsType === 'Symbol Map' && mapGraphicsType === 'Spike Map' && (
+                  {(mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') && (
                     <TableCell>
                       <DeleteIcon
                         onClick={() => handleRemovePoint(rowIndex)}

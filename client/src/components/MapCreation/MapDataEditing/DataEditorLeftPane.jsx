@@ -117,7 +117,7 @@ export default function DataEditorLeftPane() {
           </LoadingButton>
         )}
       </div>
-      {mapGraphicsType === 'Symbol Map' && mapGraphicsType === 'Spike Map' && (
+      {(mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') && (
         <div
           style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}
         >
