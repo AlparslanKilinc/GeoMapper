@@ -184,7 +184,6 @@ const mapGraphicsDataSlice = createSlice({
     },
     validateCell: (state, action) => {
       const { rowIndex, columnName, value, mapGraphicsType, geoJSON } = action.payload;
-      console.log(rowIndex, columnName, value, mapGraphicsType, geoJSON);
       const columnType = state.columnTypes[columnName];
       const cellKey = `${rowIndex}-${columnName}`;
       let isValid = true;
@@ -230,8 +229,6 @@ const mapGraphicsDataSlice = createSlice({
             lat: state.points[rowIndex][state.latByProperty]
           };
           if (!isPointInPolygon(point, geoJSON)) {
-            console.log('Point is not within region');
-            
             state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`] =
               'Point is not within region';
             state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`] =
@@ -283,8 +280,8 @@ const mapGraphicsDataSlice = createSlice({
       state.selectedRegionIdx = action.payload;
     },
     addLocationData: (state, action) => {
-      const { name, lat, lon} = action.payload;
-      state.points.push({ name, lat, lon, color: '', size:0, height:0, opacity:0.4});
+      const { name, lat, lon } = action.payload;
+      state.points.push({ name, lat, lon, color: '', size: 0, height: 0, opacity: 0.4 });
     },
     addPoint: (state, action) => {
       const { name, color, lat, lon, size, opacity } = action.payload;
@@ -409,7 +406,7 @@ const mapGraphicsDataSlice = createSlice({
             const latErrorKey = `${index}-${state.latByProperty}`;
             const lonErrorKey = `${index}-${state.lonByProperty}`;
             // Required Field Error
-            if (!point[state.latByProperty]  && !point[state.latByProperty]) {
+            if (!point[state.latByProperty] && !point[state.latByProperty]) {
               message = '⚠️ Required Latitude and Longitude fields are empty.';
               hasErrors = true;
               return;
@@ -452,6 +449,11 @@ const mapGraphicsDataSlice = createSlice({
           });
           break;
         case 'Dot Density Map':
+          if (state.dotDensityByProperty.length === 0) {
+            message = '⚠️ At least one property must be selected.';
+            hasErrors = true;
+            break;
+          }
           break;
 
         default:

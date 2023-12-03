@@ -30,7 +30,6 @@ import {
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
-  const dispatch = useDispatch();
   const {
     addedColumns,
     regions,
@@ -45,14 +44,15 @@ export default function DataEditorTable() {
     columnValidationErrors,
     cellValidationErrors
   } = useSelector((state) => state.mapGraphics);
-  const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const geoJSON = useSelector((state) => state.geojson.geojson);
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedColumn, setSelectedColumn] = useState('');
   const [displayedProperties, setDisplayedProperties] = useState([]);
   const [labels, setLabels] = useState([]);
   const [columnErrors, setColumnValidationErrors] = useState({});
   const [cellErrors, setCellValidationErrors] = useState({});
-  const geoJSON = useSelector((state) => state.geojson.geojson);
   // This is the data to be displayed in the table
   let data =
     mapGraphicsType === 'Choropleth Map' ||
@@ -146,12 +146,12 @@ export default function DataEditorTable() {
     sizeByProperty,
     heightByProperty
   ]);
-
+ // This is to update the column errors and cell errors
   useEffect(() => {
     setColumnValidationErrors(columnValidationErrors);
     setCellValidationErrors(cellValidationErrors);
   }, [columnValidationErrors, cellValidationErrors]);
-
+// This is to validate the cells of the lat and lon
   useEffect(() => {
     validateAllLatLonCells();
   }, [points]);
