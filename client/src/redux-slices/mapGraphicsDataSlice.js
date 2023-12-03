@@ -30,7 +30,9 @@ const initialState = {
   addSymbolMode: false,
   selectedPointKey: -1,
   valuePerDot: 1,
-  dotDensityByProperty: ['male', 'female']
+  dotDensityByProperty: ['male', 'female'],
+  maxSymbolSize: 100,
+  minSymbolSize: 20
 };
 
 const isPointInPolygon = (point, geojson) => {
@@ -343,6 +345,7 @@ const mapGraphicsDataSlice = createSlice({
       const index = action.payload.rowIndex;
       if (index >= 0 && index < state.points.length) {
         state.points = [...state.points.slice(0, index), ...state.points.slice(index + 1)];
+        state.selectedPointKey = -1;
       }
     },
     setRegionProperty: (state, action) => {
@@ -521,6 +524,16 @@ const mapGraphicsDataSlice = createSlice({
           break;
       }
       state.validationMessage = hasErrors ? message : '✓ No errors found.';
+    },
+
+    disableLabels: (state, action) => {
+      state.isLabelVisible = false;
+    },
+    setMaxSymbolSize: (state, action) => {
+      state.maxSymbolSize = action.payload;
+    },
+    setMinSymbolSize: (state, action) => {
+      state.minSymbolSize = action.payload;
     }
   }
 });
@@ -564,6 +577,8 @@ export const {
   addCellValidationErrors,
   addLocationData,
   dotDensityByProperty,
-  addDataFromCSVorExcel
+  addDataFromCSVorExcel,
+  setMaxSymbolSize,
+  setMinSymbolSize
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

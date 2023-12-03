@@ -24,6 +24,7 @@ export default function GeojsonWrapper({ isStyled }) {
   const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
+  const labels = useSelector((state) => state.mapStyles.labels);
   const colors = useSelector((state) => state.mapStyles.colors);
   const continousColorScale = useSelector((state) => state.mapStyles.continousColorScale);
   const borderColor = useSelector((state) => state.mapStyles.borderColor);
@@ -85,7 +86,8 @@ export default function GeojsonWrapper({ isStyled }) {
           break;
       }
       const { lat, lng } = layer.getBounds().getCenter();
-      if (isLabelVisible) {
+      // check if labels length is not zero
+      if (labelByProperty && labels.length <= feature.properties.regionIdx) {
         dispatch(addLabelPosition([lat, lng]));
       }
     }
@@ -136,7 +138,7 @@ export default function GeojsonWrapper({ isStyled }) {
     }
   }, [geoJSON]);
 
-  const renderLabels = isLabelVisible && isStyled && geoJSON;
+  const renderLabels = isStyled && geoJSON && labelByProperty;
 
   return (
     <div style={{ width: '100%', height: '100%' }}>

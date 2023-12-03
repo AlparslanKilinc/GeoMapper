@@ -17,6 +17,8 @@ const SymbolLayer = () => {
   const colors = useSelector((state) => state.mapStyles.colors);
   const latByProperty = useSelector((state) => state.mapGraphics.latByProperty);
   const lonByProperty = useSelector((state) => state.mapGraphics.lonByProperty);
+  const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
+  const minSymbolSize = useSelector((state) => state.mapGraphics.minSymbolSize);
 
   const extractSizeValues = (points) => {
     let min = 10000000,
@@ -34,11 +36,18 @@ const SymbolLayer = () => {
     if (!value) {
       return null;
     }
-    const minSize = 10,
-      maxSize = 100;
-    const minValue = min,
-      maxValue = max;
-    const size = minSize + ((value - minValue) / (maxValue - minValue)) * (maxSize - minSize);
+    const minValue = min;
+    const maxValue = max;
+
+    // Check if minValue is equal to maxValue
+    if (minValue === maxValue) {
+      // Return a default size or the mid-point between minSymbolSize and maxSymbolSize
+      return (minSymbolSize + maxSymbolSize) / 2;
+    }
+
+    const size =
+      minSymbolSize +
+      ((value - minValue) / (maxValue - minValue)) * (maxSymbolSize - minSymbolSize);
     return size;
   }
 

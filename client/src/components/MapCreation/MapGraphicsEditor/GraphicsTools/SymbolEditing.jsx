@@ -6,11 +6,13 @@ import { setPointProperty } from '../../../../redux-slices/mapGraphicsDataSlice'
 
 export default function SymbolEditing() {
   const dispatch = useDispatch();
+  const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
+  const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
+  const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
+  const points = useSelector((state) => state.mapGraphics.points);
+  const selectedPointKey = useSelector((state) => state.mapGraphics.selectedPointKey);
 
-  const { nameByProperty, colorByProperty, points, selectedPointKey } = useSelector(
-    (state) => state.mapGraphics
-  );
-  const [prop, setProp] = React.useState(nameByProperty);
+  const [prop, setProp] = React.useState(sizeByProperty);
 
   const extractSymbolPropertyNames = () => {
     return points.length > 0 ? Object.keys(points[0]) : [];

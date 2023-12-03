@@ -41,7 +41,10 @@ const initialState = {
   selectedFeature: null,
   continousColorScale: [],
   opacity: 1,
-  labelPositions: []
+  labels: [],
+  defaultLabelColor: 'white',
+  defaultLabelSize: 12,
+  defaultLabelFont: 'Outfit'
 };
 
 const mapStylesDataSlice = createSlice({
@@ -90,10 +93,35 @@ const mapStylesDataSlice = createSlice({
     },
     setLabelPositionByIdx: (state, action) => {
       const { idx, position } = action.payload;
-      state.labelPositions[idx] = position;
+      state.labels[idx][position] = position;
     },
     addLabelPosition: (state, action) => {
-      state.labelPositions.push(action.payload);
+      // modify this to be add label
+      // new structure for labelPositions = [{position:[],color:string,}]
+      state.labels.push({
+        position: action.payload
+      });
+    },
+    setLabelColor: (state, action) => {
+      const { idx, color } = action.payload;
+      state.labels[idx].color = color;
+    },
+    setLabelSize: (state, action) => {
+      const { idx, size } = action.payload;
+      state.labels[idx].size = size;
+    },
+    setLabelFont: (state, action) => {
+      const { idx, font } = action.payload;
+      state.labels[idx].font = font;
+    },
+    setDefaultLabelColor: (state, action) => {
+      state.defaultLabelColor = action.payload;
+    },
+    setDefaultLabelSize: (state, action) => {
+      state.defaultLabelSize = action.payload;
+    },
+    setDefaultLabelFont: (state, action) => {
+      state.defaultLabelFont = action.payload;
     }
   }
 });
@@ -112,7 +140,13 @@ export const {
   setOpacity,
   setLabelPositions,
   setLabelPositionByIdx,
-  addLabelPosition
+  addLabelPosition,
+  setLabelColor,
+  setLabelSize,
+  setLabelFont,
+  setDefaultLabelColor,
+  setDefaultLabelSize,
+  setDefaultLabelFont
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;
