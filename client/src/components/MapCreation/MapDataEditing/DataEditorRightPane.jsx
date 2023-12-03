@@ -6,6 +6,7 @@ import { TextField, Autocomplete } from '@mui/material';
 import { changeXByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import PropertySelector from './PropertySelector';
+import DotDensityPropertySelector from '../MapGraphicsEditor/StylesMenu/ColorsAccordion/DotDensityPropertySelector';
 
 export default function DataEditorRightPane() {
   const {
@@ -94,24 +95,7 @@ export default function DataEditorRightPane() {
         {propertySelectors}
         {mapGraphicsType === 'Dot Density Map' && (
           <>
-            <Typography variant="subtitle2"> dot density by property</Typography>
-            <Divider style={{ margin: '0px 10px', width: '100%', height: 1 }} />
-            <Autocomplete
-              fullWidth
-              multiple
-              id="tags-standard"
-              options={dotDensityByPropertyOptions}
-              value={dotDensityByProperty}
-              onChange={(event, newValue) => {
-                dispatch(
-                  changeXByProperty({ property: 'dotDensityByProperty', propertyBy: newValue })
-                );
-              }}
-              getOptionLabel={(option) => option}
-              renderInput={(params) => (
-                <TextField {...params} variant="outlined" placeholder="dot density" />
-              )}
-            />
+            <DotDensityPropertySelector />
           </>
         )}
       </Box>

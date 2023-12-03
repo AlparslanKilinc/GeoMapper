@@ -9,9 +9,19 @@ import {
 export default function RegionEditing() {
   const dispatch = useDispatch();
 
-  const { propertyNames, selectedRegionIdx, regions, nameByProperty, colorByProperty } =
-    useSelector((state) => state.mapGraphics);
-  const [prop, setProp] = React.useState(nameByProperty);
+  const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  const selectedRegionIdx = useSelector((state) => state.mapGraphics.selectedRegionIdx);
+  const regions = useSelector((state) => state.mapGraphics.regions);
+  const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
+  const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
+  const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+
+  // This will break if dotDesnityByProperty is empty
+  const defaultProperty =
+    mapGraphicsType === 'Choropleth Map' ? colorByProperty : dotDensityByProperty[0];
+
+  const [prop, setProp] = React.useState(defaultProperty);
 
   const { selectedPropUniqueValues } = useSelector((state) => state.mapStyles);
 
