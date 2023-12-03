@@ -43,8 +43,7 @@ export default function DataEditorTable() {
     sizeByProperty,
     heightByProperty,
     columnValidationErrors,
-    cellValidationErrors,
-    addCellValidationErrors
+    cellValidationErrors
   } = useSelector((state) => state.mapGraphics);
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -153,6 +152,10 @@ export default function DataEditorTable() {
     setCellValidationErrors(cellValidationErrors);
   }, [columnValidationErrors, cellValidationErrors]);
 
+  useEffect(() => {
+    validateAllLatLonCells();
+  }, [points]);
+
   const handleAddColumn = () => {
     const newColumnName = prompt('Enter new column name:');
     if (displayedProperties.includes(newColumnName)) {
@@ -249,6 +252,28 @@ export default function DataEditorTable() {
     }
   };
 
+  const validateAllLatLonCells = () => {
+    points.forEach((point, index) => {
+      const latPayload = {
+        rowIndex: index,
+        columnName: latByProperty,
+        value: point[latByProperty],
+        mapGraphicsType: mapGraphicsType,
+        geoJSON
+      };
+      const lonPayload = {
+        rowIndex: index,
+        columnName: lonByProperty,
+        value: point[lonByProperty],
+        mapGraphicsType: mapGraphicsType,
+        geoJSON
+      };
+      // Validate latitude and longitude cells
+      dispatch(validateCell(latPayload));
+      dispatch(validateCell(lonPayload));
+    });
+  };
+
   // Helper Functions
   // This is to check if the column is deletable or not
   const isDeletable = (columnName) => {
@@ -305,7 +330,7 @@ export default function DataEditorTable() {
             <TableHead>
               <TableRow>
                 {labels.map((label, index) => (
-                  <TableCell sx={{ minWidth: '150px', borderBottom: "none" }}>
+                  <TableCell key={index} sx={{ minWidth: '150px', borderBottom: 'none' }}>
                     <div style={{ display: 'flex' }}>
                       <div className="table-label">{label}</div>
                     </div>

@@ -1,22 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import * as turf from '@turf/turf';
 
-// '36.7783#-119.4179': { lat: 36.7783, lon: -119.4179, size: 21, color: 'Jordan', opacity: 0.1 },
-// '31.9686#-99.9018': { lat: 31.9686, lon: -99.9018, size: 20, color: 'Kobe', opacity: 0.2 },
-// '27.9944#-81.7603': { lat: 27.9944, lon: -81.7603, size: 15, color: 'LeBron', opacity: 0.6 },
-// '40.7128#-74.006': { lat: 40.7128, lon: -74.006, size: 30, color: 'Kobe', opacity: 0.5 },
-// '40.6331#-89.3985': { lat: 40.6331, lon: -89.3985, size: 19, color: 'Kobe', opacity: 0.6 },
-// '41.2033#-77.1945': { lat: 41.2033, lon: -77.1945, size: 47, color: 'Kobe', opacity: 0.3 },
-// '40.4173#-82.9071': { lat: 40.4173, lon: -82.9071, size: 50, color: 'LeBron', opacity: 0.9 },
-// '32.1656#-82.9001': { lat: 32.1656, lon: -82.9001, size: 26, color: 'Kobe', opacity: 0.1 },
-// '35.7596#-79.0193': { lat: 35.7596, lon: -79.0193, size: 25, color: 'Jordan', opacity: 0.1 },
-// '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4 }
-
-// Niamey (the capital of Niger):  Latitude: 13.512778 Longitude: 2.112778
-// Zinder (Large city in southern Niger) Latitude: 13.80716 Longitude: 8.9881
-// Agadez (Large city in northern Niger) Latitude: 16.97333 Longitude: 7.99111
-// Maradi (Large city in southern Niger) Latitude: 13.5 Longitude: 7.10111
-
 const initialState = {
   mapId: null, // Assuming you will be using ObjectId to link it
   points: [],
@@ -200,6 +184,7 @@ const mapGraphicsDataSlice = createSlice({
     },
     validateCell: (state, action) => {
       const { rowIndex, columnName, value, mapGraphicsType, geoJSON } = action.payload;
+      console.log(rowIndex, columnName, value, mapGraphicsType, geoJSON);
       const columnType = state.columnTypes[columnName];
       const cellKey = `${rowIndex}-${columnName}`;
       let isValid = true;
@@ -245,6 +230,8 @@ const mapGraphicsDataSlice = createSlice({
             lat: state.points[rowIndex][state.latByProperty]
           };
           if (!isPointInPolygon(point, geoJSON)) {
+            console.log('Point is not within region');
+            
             state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`] =
               'Point is not within region';
             state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`] =
@@ -294,6 +281,10 @@ const mapGraphicsDataSlice = createSlice({
     },
     setSelectedRegionIdx: (state, action) => {
       state.selectedRegionIdx = action.payload;
+    },
+    addLocationData: (state, action) => {
+      const { name, lat, lon} = action.payload;
+      state.points.push({ name, lat, lon, color: '', size:0, height:0, opacity:0.4});
     },
     addPoint: (state, action) => {
       const { name, color, lat, lon, size, opacity } = action.payload;
@@ -415,14 +406,10 @@ const mapGraphicsDataSlice = createSlice({
         case 'Symbol Map':
         case 'Spike Map':
           state.points.forEach((point, index) => {
-            console.log('made it out');
             const latErrorKey = `${index}-${state.latByProperty}`;
             const lonErrorKey = `${index}-${state.lonByProperty}`;
             // Required Field Error
-            if (
-              (!point[state.latByProperty] || point[state.latByProperty].trim() === '') &&
-              (!point[state.latByProperty] || point[state.latByProperty].trim() === '')
-            ) {
+            if (!point[state.latByProperty]  && !point[state.latByProperty]) {
               message = '⚠️ Required Latitude and Longitude fields are empty.';
               hasErrors = true;
               return;
@@ -513,6 +500,7 @@ export const {
   updateColumnName,
   setPointProperties,
   removePoint,
-  addCellValidationErrors
+  addCellValidationErrors,
+  addLocationData,
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
