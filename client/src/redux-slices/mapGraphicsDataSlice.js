@@ -502,5 +502,6 @@ export const {
   removePoint,
   addCellValidationErrors,
   addLocationData,
+  dotDensityByProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

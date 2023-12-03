@@ -2,29 +2,35 @@ import React, { useEffect, useState } from 'react';
 import '../../../styles/mapDataEditingPage.css';
 import { Divider, Box, Typography } from '@mui/material';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
-import { useSelector } from 'react-redux';
+import { TextField, Autocomplete } from '@mui/material';
+import { changeXByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
+import { useSelector, useDispatch } from 'react-redux';
 import PropertySelector from './PropertySelector';
 
 export default function DataEditorRightPane() {
   const {
     nameByProperty,
-    densityByProperty,
+    dotDensityByProperty,
     colorByProperty,
     sizeByProperty,
     heightByProperty,
     latByProperty,
     lonByProperty,
-    validationMessage
+    validationMessage,
+    propertyNames,
+    columnTypes
   } = useSelector((state) => state.mapGraphics);
+  const dispatch = useDispatch();
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const [properties, setProperties] = useState([]);
+  const [dotDensityByPropertyOptions, setDotDensityByPropertyOptions] = useState([]);
+
   let name = { propertyName: 'name', value: nameByProperty };
   let color = { propertyName: 'color', value: colorByProperty };
   let longitude = { propertyName: 'lon', value: lonByProperty };
   let latitude = { propertyName: 'lat', value: latByProperty };
   let size = { propertyName: 'size', value: sizeByProperty };
   let height = { propertyName: 'height', value: heightByProperty };
-  let density = { propertyName: 'density', value: densityByProperty };
 
   useEffect(() => {
     switch (mapGraphicsType) {
@@ -52,6 +58,14 @@ export default function DataEditorRightPane() {
     heightByProperty
   ]);
 
+  useEffect(() => {
+    setDotDensityByPropertyOptions(
+      propertyNames.filter((property) => {
+        return columnTypes[property] === 'number';
+      })
+    );
+  }, [columnTypes, nameByProperty, dispatch, propertyNames]);
+
   let propertySelectors = properties.map((selectorConfig) => {
     return (
       <PropertySelector
@@ -68,9 +82,40 @@ export default function DataEditorRightPane() {
         <h2>match</h2>
         <Divider style={{ width: '50%' }} />
       </div>
-      <Box style={{ display: 'flex', flexDirection: 'column', gap: '0.5em' }}>
+      <Box
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          gap: '0.5em'
+        }}
+      >
         {propertySelectors}
+        {mapGraphicsType === 'Dot Density Map' && (
+          <>
+            <Typography variant="subtitle2"> dot density by property</Typography>
+            <Divider style={{ margin: '0px 10px', width: '100%', height: 1 }} />
+            <Autocomplete
+              fullWidth
+              multiple
+              id="tags-standard"
+              options={dotDensityByPropertyOptions}
+              value={dotDensityByProperty}
+              onChange={(event, newValue) => {
+                dispatch(
+                  changeXByProperty({ property: 'dotDensityByProperty', propertyBy: newValue })
+                );
+              }}
+              getOptionLabel={(option) => option}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" placeholder="dot density" />
+              )}
+            />
+          </>
+        )}
       </Box>
+
       <Box
         sx={{
           display: 'flex',

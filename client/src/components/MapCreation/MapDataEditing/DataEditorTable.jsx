@@ -57,7 +57,7 @@ export default function DataEditorTable() {
   let data =
     mapGraphicsType === 'Choropleth Map' ||
     mapGraphicsType === 'Heat Map' ||
-    mapGraphicsType === 'Dot Density'
+    mapGraphicsType === 'Dot Density Map'
       ? regions
       : Object.values(points);
 
@@ -374,7 +374,7 @@ export default function DataEditorTable() {
                       />
                     </TableCell>
                   ))}
-                  {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
+                  {mapGraphicsType === 'Symbol Map' && mapGraphicsType === 'Spike Map' && (
                     <TableCell>
                       <DeleteIcon
                         onClick={() => handleRemovePoint(rowIndex)}

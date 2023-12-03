@@ -106,7 +106,7 @@ export default function DataEditorLeftPane() {
         >
           Upload File (CSV or Excel)
         </LoadingButton>
-        {mapGraphicsType === 'Heat Map' && (
+        {mapGraphicsType === 'Heat Map' || mapGraphicsType === 'Dot Density Map' && (
           <LoadingButton
             startIcon={<AutoFixHighIcon />}
             variant="outlined"
@@ -117,7 +117,7 @@ export default function DataEditorLeftPane() {
           </LoadingButton>
         )}
       </div>
-      {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
+      {mapGraphicsType === 'Symbol Map' && mapGraphicsType === 'Spike Map' && (
         <div
           style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}
         >
