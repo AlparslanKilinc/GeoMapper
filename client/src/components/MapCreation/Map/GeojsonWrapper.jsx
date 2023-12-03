@@ -85,7 +85,7 @@ export default function GeojsonWrapper({ isStyled }) {
           break;
       }
       const { lat, lng } = layer.getBounds().getCenter();
-      if (isLabelVisible) {
+      if (labelByProperty) {
         dispatch(addLabelPosition([lat, lng]));
       }
     }
@@ -136,7 +136,7 @@ export default function GeojsonWrapper({ isStyled }) {
     }
   }, [geoJSON]);
 
-  const renderLabels = isLabelVisible && isStyled && geoJSON;
+  const renderLabels = isStyled && geoJSON && labelByProperty;
 
   return (
     <div style={{ width: '100%', height: '100%' }}>

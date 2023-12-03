@@ -461,6 +461,10 @@ const mapGraphicsDataSlice = createSlice({
           break;
       }
       state.validationMessage = hasErrors ? message : '✓ No errors found.';
+    },
+
+    disableLabels: (state, action) => {
+      state.isLabelVisible = false;
     }
   }
 });
@@ -503,6 +507,7 @@ export const {
   removePoint,
   addCellValidationErrors,
   addLocationData,
-  dotDensityByProperty
+  dotDensityByProperty,
+  disableLabels
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

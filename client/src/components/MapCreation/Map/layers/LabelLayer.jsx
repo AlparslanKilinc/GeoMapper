@@ -1,21 +1,3 @@
-// const addLabelToMap = (layer, labelText) => {
-//   const label = L.marker(layer.getBounds().getCenter(), {
-//     icon: L.divIcon({
-//       className: 'map-label',
-//       html: labelText,
-//       iconSize: [100, 40]
-//     })
-//   });
-
-//   label.on('click', (e) => {
-//     L.DomEvent.stopPropagation(e);
-//     layer.fire('click');
-//   });
-
-//   label.addTo(map);
-//   setLabels((prev) => new Map(prev).set(layer, label));
-// };
-
 import React from 'react';
 import { Marker } from 'react-leaflet';
 import { useSelector } from 'react-redux';
