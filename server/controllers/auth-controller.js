@@ -1,4 +1,3 @@
-
 const auth = require('../auth');
 const User = require('../models/user-model');
 const bcrypt = require('bcryptjs');
@@ -54,6 +53,7 @@ loginUser = async (req, res) => {
 };
 
 registerUser = async (req, res) => {
+
   try {
     const { userName, firstName, lastName, email, password, passwordVerify } = req.body;
     if (!userName || !firstName || !lastName || !email || !password || !passwordVerify) {
@@ -203,7 +203,7 @@ updatePassword = async(req, res) => {
   }
 
 }
-const updateUserData = async (req, res) => {
+ updateUserData = async (req, res) => {
   try {
     const userId = req.userId;
     const updateFields = {};
