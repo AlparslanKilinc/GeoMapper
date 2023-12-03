@@ -19,7 +19,7 @@ export default function MapCreationWrapper() {
   const location = useLocation();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const mapOutline = useSelector((state) => state.geojson.geojson.geoJSON);
-  const { validationMessage } = useSelector((state) => state.mapGraphics);
+  const validationMessage  = useSelector((state) => state.mapGraphics.validationMessage);
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -33,7 +33,7 @@ export default function MapCreationWrapper() {
   const isNextButtonDisabled = () => {
     return (
       (currentStage === 1 && !mapOutline) ||
-      (currentStage === 2 && !validationMessage.startsWith('✓') && mapGraphicsType !== 'Symbol Map')
+      (currentStage === 2 && !validationMessage.startsWith('✓'))
     );
   };
 

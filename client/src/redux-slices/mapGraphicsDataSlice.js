@@ -43,7 +43,6 @@ const isPointInPolygon = (point, geojson) => {
       }
     });
   }
-
   return isInside;
 };
 
@@ -97,6 +96,54 @@ const mapGraphicsDataSlice = createSlice({
     setColumnType: (state, action) => {
       const { columnName, columnType } = action.payload;
       state.columnTypes[columnName] = columnType;
+    },
+    addDataFromCSVorExcel: (state, action) => {
+      const { data, mapGraphicsType } = action.payload;
+      const expectedRegionLength = state.regions.length;
+
+      data.forEach((row, rowIndex) => {
+        // Check and add new properties/columns
+        Object.keys(row).forEach((key) => {
+          const isNumeric = !isNaN(row[key]);
+          const columnType = isNumeric ? 'number' : 'text';
+
+          if (!state.addedColumns.includes(key)) {
+            // Add as a column and set its type
+            state.addedColumns.push(key);
+            state.columnTypes[key] = columnType;
+          }
+
+          // Add as a property
+          if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+            if (!state.pointProperties.includes(key)) {
+              state.pointProperties.push(key);
+            }
+          } else {
+            if (!state.propertyNames.includes(key)) {
+              state.propertyNames.push(key);
+            }
+          }
+        });
+
+        // Add or merge the row data to points or regions
+        if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+          // For points, add new points directly
+          state.points.push(row);
+        } else {
+          // For regions, merge data into existing rows as new columns
+          if (rowIndex < expectedRegionLength) {
+            const existingRegion = state.regions[rowIndex];
+            for (const key in row) {
+              existingRegion[key] = row[key];
+            }
+          } else {
+            // Handle case where the data row exceeds the existing region rows
+            state.validationMessage = `Row ${
+              rowIndex + 1
+            } exceeds the existing region data length and was not added.`;
+          }
+        }
+      });
     },
     generateRandomColumn: (state) => {
       state.randomColumnCounter += 1;
@@ -187,6 +234,11 @@ const mapGraphicsDataSlice = createSlice({
       const columnType = state.columnTypes[columnName];
       const cellKey = `${rowIndex}-${columnName}`;
       let isValid = true;
+      // Don't Validate if cell empty
+      if (value === '' || value === undefined) {
+        delete state.cellValidationErrors[cellKey];
+        return;
+      }
       // General Error Checking
       if (columnType === 'number') {
         isValid = value === '' || (!isNaN(Number(value)) && isFinite(value));
@@ -449,6 +501,13 @@ const mapGraphicsDataSlice = createSlice({
           });
           break;
         case 'Dot Density Map':
+          for (let region of state.regions) {
+            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+              message = '⚠️ Required name field is empty.';
+              hasErrors = true;
+              break;
+            }
+          }
           if (state.dotDensityByProperty.length === 0) {
             message = '⚠️ At least one property must be selected.';
             hasErrors = true;
@@ -504,6 +563,7 @@ export const {
   removePoint,
   addCellValidationErrors,
   addLocationData,
-  dotDensityByProperty
+  dotDensityByProperty,
+  addDataFromCSVorExcel
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

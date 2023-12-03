@@ -4,10 +4,13 @@ import { LoadingButton } from '@mui/lab';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { Divider, TextField, Typography, Autocomplete } from '@mui/material';
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 import loadScript from '../../../googleMapsLoad';
 import {
   generateRandomColumn,
   addLocationData,
+  addDataFromCSVorExcel
 } from '../../../redux-slices/mapGraphicsDataSlice';
 import '../../../styles/mapDataEditingPage.css';
 
@@ -90,6 +93,42 @@ export default function DataEditorLeftPane() {
     dispatch(generateRandomColumn());
   };
 
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const fileExtension = file.name.split('.').pop();
+      if (fileExtension === 'csv') {
+        parseCSV(file);
+      } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+        parseExcel(file);
+      } else {
+        setError('Unsupported file format. Please upload a CSV or Excel file.');
+      }
+    }
+  };
+
+  const parseCSV = (file) => {
+    Papa.parse(file, {
+      complete: (result) => {
+        dispatch(addDataFromCSVorExcel({ data: result.data, mapGraphicsType }));
+      },
+      header: true
+    });
+  };
+
+  const parseExcel = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+      dispatch(addDataFromCSVorExcel({ data: json, mapGraphicsType }));
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   return (
     <div id="data-editing-page-left">
       <div className="header-primary">
@@ -100,22 +139,31 @@ export default function DataEditorLeftPane() {
       <h3 className="secondary-title">Add Data</h3>
       <div className="actions" style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}>
         <LoadingButton
+          component="label"
           startIcon={<CloudUploadIcon />}
           variant="outlined"
           style={{ color: 'black', borderColor: 'black' }}
         >
           Upload File (CSV or Excel)
+          <input
+            type="file"
+            hidden
+            onChange={handleFileUpload}
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          />
         </LoadingButton>
-        {mapGraphicsType === 'Heat Map' || mapGraphicsType === 'Dot Density Map' && (
-          <LoadingButton
-            startIcon={<AutoFixHighIcon />}
-            variant="outlined"
-            style={{ color: 'black', borderColor: 'black' }}
-            onClick={handleRandomData}
-          >
-            Random Data
-          </LoadingButton>
-        )}
+        {error && <Typography color="error">{error}</Typography>}
+        {mapGraphicsType === 'Heat Map' ||
+          (mapGraphicsType === 'Dot Density Map' && (
+            <LoadingButton
+              startIcon={<AutoFixHighIcon />}
+              variant="outlined"
+              style={{ color: 'black', borderColor: 'black' }}
+              onClick={handleRandomData}
+            >
+              Random Data
+            </LoadingButton>
+          ))}
       </div>
       {(mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') && (
         <div

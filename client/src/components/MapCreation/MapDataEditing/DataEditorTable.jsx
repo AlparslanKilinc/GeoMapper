@@ -42,7 +42,8 @@ export default function DataEditorTable() {
     sizeByProperty,
     heightByProperty,
     columnValidationErrors,
-    cellValidationErrors
+    cellValidationErrors,
+    dotDensityByProperty
   } = useSelector((state) => state.mapGraphics);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const geoJSON = useSelector((state) => state.geojson.geojson);
@@ -60,7 +61,6 @@ export default function DataEditorTable() {
     mapGraphicsType === 'Dot Density Map'
       ? regions
       : Object.values(points);
-
   // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
   useEffect(() => {
     switch (mapGraphicsType) {
@@ -146,15 +146,19 @@ export default function DataEditorTable() {
     sizeByProperty,
     heightByProperty
   ]);
- // This is to update the column errors and cell errors
+  // This is to update the column errors and cell errors
   useEffect(() => {
     setColumnValidationErrors(columnValidationErrors);
     setCellValidationErrors(cellValidationErrors);
   }, [columnValidationErrors, cellValidationErrors]);
-// This is to validate the cells of the lat and lon
+  // This is to validate the cells of the lat and lon
   useEffect(() => {
     validateAllLatLonCells();
-  }, [points]);
+  }, [points, columnTypes, latByProperty, lonByProperty]);
+
+  useEffect(() => {
+    dispatch(TableValidation(mapGraphicsType));
+  }, [points, regions, mapGraphicsType, columnTypes, dotDensityByProperty]);
 
   const handleAddColumn = () => {
     const newColumnName = prompt('Enter new column name:');
@@ -306,7 +310,7 @@ export default function DataEditorTable() {
       {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
         <LoadingButton
           variant="outlined"
-          style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
+          style={{ color: 'black', borderColor: 'black' }}
           onClick={handleAddPoint}
         >
           Add Point
@@ -314,7 +318,7 @@ export default function DataEditorTable() {
       )}
       <LoadingButton
         variant="outlined"
-        style={{ color: '#40e0d0', borderColor: '#40e0d0' }}
+        style={{ color: 'black', borderColor: 'black' }}
         onClick={handleAddColumn}
       >
         Add Column
@@ -324,13 +328,22 @@ export default function DataEditorTable() {
 
   return (
     <div id="data-editing-page-mid">
-      <div id="table-container" style={{ overflow: 'auto', padding: '1rem' }}>
-        <div id="table-header-container">
+      <div id="table-container">
+        <div
+          id="table-header-container"
+          style={{
+            marginLeft:
+              mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map' ? '58px' : '0px'
+          }}
+        >
           <Table size="small" stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
                 {labels.map((label, index) => (
-                  <TableCell key={index} sx={{ minWidth: '150px', borderBottom: 'none' }}>
+                  <TableCell
+                    key={index}
+                    sx={{ minWidth: '150px', width: '100%', borderBottom: 'none' }}
+                  >
                     <div style={{ display: 'flex' }}>
                       <div className="table-label">{label}</div>
                     </div>
@@ -353,12 +366,36 @@ export default function DataEditorTable() {
               </TableRow>
             </TableHead>
           </Table>
+          <div id="table-column-errors">
+            <Table size="small">
+              <TableRow>
+                {displayedProperties.map((colName, index) => (
+                  <TableCell sx={{ minWidth: '150px', verticalAlign: 'bottom' }} key={index}>
+                    {columnErrors[colName] ? (
+                      <span style={{ color: 'red' }}>{columnErrors[colName]}</span>
+                    ) : (
+                      <span style={{ color: 'green' }}>✓</span>
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </Table>
+          </div>
         </div>
+
         <div id="table-body-container">
           <Table size="small">
             <TableBody>
               {data.map((row, rowIndex) => (
                 <TableRow key={rowIndex}>
+                  {(mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') && (
+                    <TableCell>
+                      <DeleteIcon
+                        onClick={() => handleRemovePoint(rowIndex)}
+                        sx={{ cursor: 'pointer' }}
+                      />
+                    </TableCell>
+                  )}
                   {displayedProperties.map((colName, colIndex) => (
                     <TableCell sx={{ minWidth: '150px' }} key={colIndex}>
                       <TextField
@@ -374,36 +411,13 @@ export default function DataEditorTable() {
                       />
                     </TableCell>
                   ))}
-                  {(mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') && (
-                    <TableCell>
-                      <DeleteIcon
-                        onClick={() => handleRemovePoint(rowIndex)}
-                        sx={{ marginRight: '10px', cursor: 'pointer' }}
-                      />
-                    </TableCell>
-                  )}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
-        <div id="table-footer">
-          <Table size="small">
-            <TableRow>
-              {displayedProperties.map((colName, index) => (
-                <TableCell sx={{ minWidth: '150px', verticalAlign: 'bottom' }} key={index}>
-                  {columnErrors[colName] ? (
-                    <span style={{ color: 'red' }}>{columnErrors[colName]}</span>
-                  ) : (
-                    <span style={{ color: 'green' }}>✓</span>
-                  )}
-                </TableCell>
-              ))}
-            </TableRow>
-          </Table>
-        </div>
-        <TableButtons />
       </div>
+      <TableButtons />
       <Menu
         id="simple-menu"
         anchorEl={anchorEl}
