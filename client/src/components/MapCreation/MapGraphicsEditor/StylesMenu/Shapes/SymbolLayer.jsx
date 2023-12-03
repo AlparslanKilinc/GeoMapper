@@ -6,9 +6,9 @@ import { setSelectedPointKey } from '../../../../../redux-slices/mapGraphicsData
 
 const SymbolLayer = () => {
   const dispatch = useDispatch();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const points = useSelector((state) => state.mapGraphics.points);
   const shape = useSelector((state) => state.mapStyles.shape);
-  const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   const fixedSymbolSize = useSelector((state) => state.mapGraphics.fixedSymbolSize);
   const fixedOpacity = useSelector((state) => state.mapGraphics.fixedOpacity);
   const opacityByProperty = useSelector((state) => state.mapGraphics.opacityByProperty);
@@ -19,6 +19,12 @@ const SymbolLayer = () => {
   const lonByProperty = useSelector((state) => state.mapGraphics.lonByProperty);
   const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
   const minSymbolSize = useSelector((state) => state.mapGraphics.minSymbolSize);
+  let sizeByProperty;
+  if (mapGraphicsType === "Symbol Map") {
+    sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
+  } else if (mapGraphicsType === "Spike Map") {
+    sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
+  }
 
   const extractSizeValues = (points) => {
     let min = 10000000,
@@ -63,7 +69,13 @@ const SymbolLayer = () => {
 
     // console.log('colorByProperty', colorByProperty, 'color', color);
 
-    const icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
+    let icon;
+    if (mapGraphicsType === "Spike Map") {
+      icon = shapeIconMap["spike"](iconSize, color, opacity);
+    } else {
+      icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
+    }
+
     const lat = point[latByProperty];
     const lon = point[lonByProperty];
     console.log(latByProperty, lonByProperty);

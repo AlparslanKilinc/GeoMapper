@@ -13,7 +13,7 @@ const initialState = {
   colorByProperty: '',
   sizeByProperty: 'size',
   heightByProperty: 'height',
-  fixedSymbolSize: 10,
+  fixedSymbolSize: 100,
   fixedOpacity: 0.5,
   opacityByProperty: '',
   fixedColor: '#800080',
@@ -422,9 +422,8 @@ const mapGraphicsDataSlice = createSlice({
               state.cellValidationErrors[latErrorKey] ||
               state.cellValidationErrors[lonErrorKey]
             ) {
-              message = `⚠️ Error in latitude or longitude at row ${index}: ${
-                state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
-              }`;
+              message = `⚠️ Error in latitude or longitude at row ${index}: ${state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
+                }`;
               hasErrors = true;
               return;
             }

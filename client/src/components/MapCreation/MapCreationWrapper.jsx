@@ -33,7 +33,9 @@ export default function MapCreationWrapper() {
   const isNextButtonDisabled = () => {
     return (
       (currentStage === 1 && !mapOutline) ||
-      (currentStage === 2 && !validationMessage.startsWith('✓') && mapGraphicsType !== 'Symbol Map')
+      (currentStage === 2 && !validationMessage.startsWith('✓')
+        && mapGraphicsType !== 'Symbol Map'
+        && mapGraphicsType !== 'Spike Map')
     );
   };
 

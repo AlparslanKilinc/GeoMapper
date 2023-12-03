@@ -8,6 +8,7 @@ const shapeIconMap = {
   diamond: (size, color, opacity) => shapeFactory.createDiamondIcon(size, color, opacity),
   star: (size, color, opacity) => shapeFactory.createStarIcon(size, color, opacity),
   hexagon: (size, color, opacity) => shapeFactory.createHexagonIcon(size, color, opacity),
+  spike: (size, color, opacity) => shapeFactory.createSpikeIcon(size, color, opacity),
   // Add more shapes and their respective icons here
   default: L.icon({ iconUrl: 'default-icon.png' })
 };

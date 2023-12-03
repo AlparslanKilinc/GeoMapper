@@ -55,7 +55,7 @@ const SliderTextField = ({ value, onChange }) => {
         type="number"
         // size="small"
         variant="outlined"
-        // sx={{ width: 60, mr: 1 }}
+      // sx={{ width: 60, mr: 1 }}
       />
     </Box>
   );
@@ -64,7 +64,7 @@ const SliderTextField = ({ value, onChange }) => {
 export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphics);
-  const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
+  const fixedSymbolSize = useSelector((state) => state.mapGraphics.fixedSymbolSize);
   const pointProperties = useSelector((state) => state.mapGraphics.pointProperties);
   const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
@@ -92,7 +92,8 @@ export default function ShapeAccordionMenu() {
       justifyContent="center"
       sx={{ width: '100%' }}
     >
-      <SubMenuTitle title="Max Size" />
+      <SubMenuTitle title="fixed size" />
+      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
       <SliderTextField value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
     </Box>
   );
@@ -105,7 +106,7 @@ export default function ShapeAccordionMenu() {
       justifyContent="center"
       sx={{ width: '100%' }}
     >
-      <Typography variant="subtitle2">fixed size</Typography>
+      <Typography variant="subtitle2">max size</Typography>
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
       <SliderTextField value={maxSymbolSize} onChange={handleMaxSymbolSizeChange} />
     </Box>

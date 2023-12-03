@@ -42,6 +42,8 @@ const GeoJsonMap = ({ styled }) => {
   const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
+  const renderSpikeLayer = mapGraphicsType === 'Spike Map' && styled;
+  const renderDotDensityLayer = mapGraphicsType === 'Dot Density Map' && styled;
 
   return (
     <MapContainer
@@ -51,10 +53,10 @@ const GeoJsonMap = ({ styled }) => {
       }}
     >
       <GeojsonWrapper isStyled={styled} />
-      {renderSymbolLayer && <SymbolLayer />}
+      {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
+      {renderDotDensityLayer && <DotDensityLayer />}
 
-      {renderSymbolLayer && <EventHandlerLayer />}
-      {styled && mapGraphicsType === 'Dot Density Map' && <DotDensityLayer />}
+      {(renderSymbolLayer || renderSpikeLayer) && <EventHandlerLayer />}
     </MapContainer>
   );
 };

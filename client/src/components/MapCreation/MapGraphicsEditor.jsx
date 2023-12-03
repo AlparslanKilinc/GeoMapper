@@ -40,7 +40,7 @@ export default function MapGraphicsEditor() {
 
   let editing = { label: 'Region', content: <RegionEditing /> };
 
-  if (mapGraphicsType === 'Symbol Map') {
+  if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
     editing = { label: 'Symbol', content: <SymbolEditing /> };
   }
 
@@ -48,7 +48,7 @@ export default function MapGraphicsEditor() {
 
   let propList = regions;
 
-  if (mapGraphicsType === 'Symbol Map') {
+  if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
     propList = points;
   }
 
@@ -110,7 +110,7 @@ export default function MapGraphicsEditor() {
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
-    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
+    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
       if (propList.length === 0) return;
       if (!colorByProperty) return;
       const isNumeric = !isNaN(propList[0][colorByProperty]);
@@ -127,7 +127,8 @@ export default function MapGraphicsEditor() {
     if (propList.length === 0) return;
     const propertyNames = Object.keys(propList[0]);
 
-    if (mapGraphicsType === 'Symbol Map') {
+    // TODO: Check this line changes, I am not sure.
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
       dispatch(setPointProperties(propertyNames));
       dispatch(setPropertyNames(Object.keys(regions[0])));
     } else dispatch(setPropertyNames(propertyNames));

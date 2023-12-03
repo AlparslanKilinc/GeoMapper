@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import * as d3 from 'd3';
 
 export const createCircleIcon = (size, color, opacity) => {
   const circleSvg = `<svg width="${size}px" height="${size}px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -72,12 +73,60 @@ export const createHexagonIcon = (size, color, opacity) => {
   });
 };
 
+export const createSpikeIcon = (size, color, opacity) => {
+  const baseWidth = 10;
+  const height = size;
+
+  const gradientId = "gradient-" + Math.random().toString(36).substr(2, 9);
+
+  const svg = d3.create("svg")
+    .attr("width", baseWidth)
+    .attr("height", height)
+    .attr("viewBox", `0 0 ${baseWidth} ${height}`)
+    .attr("xmlns", "http://www.w3.org/2000/svg");
+
+  const gradient = svg.append("defs")
+    .append("linearGradient")
+    .attr("id", gradientId)
+    .attr("x1", "0%")
+    .attr("y1", "100%")
+    .attr("x2", "0%")
+    .attr("y2", "0%");
+
+  gradient.append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", d3.rgb(color).brighter(3))
+    .attr("stop-opacity", opacity);
+
+  gradient.append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", d3.rgb(color).darker(3))
+    .attr("stop-opacity", opacity);
+
+  svg.append("polygon")
+    .attr("points", `0,${height} ${baseWidth / 2},0 ${baseWidth},${height}`)
+    .attr("fill", `url(#${gradientId})`)
+    .attr("stroke", d3.rgb(color).darker(3))
+    .attr("stroke-opacity", opacity)
+    .attr("stroke-width", "1");
+
+  const spikeSvgString = svg.node().outerHTML;
+
+  return L.divIcon({
+    className: 'custom-icon spike',
+    html: spikeSvgString,
+    iconSize: [baseWidth, height],
+    iconAnchor: [baseWidth / 2, height]
+  });
+};
+
 const shapeFactory = {
   createCircleIcon,
   createTriangleIcon,
   createDiamondIcon,
   createSquareIcon,
   createStarIcon,
-  createHexagonIcon
+  createHexagonIcon,
+  createSpikeIcon,
 };
 export default shapeFactory;
