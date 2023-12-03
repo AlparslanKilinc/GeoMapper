@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { loginUser, resetErrorMessage } from '../../redux-slices/authSlice';
 import GoogleIcon from '@mui/icons-material/Google';
+import { gapi } from 'gapi-script';
 import CopyRight from '../Landing/CopyRight';
 import Box from '@mui/material/Box';
 
@@ -23,6 +24,17 @@ export default function LoginPage() {
   const [formErrors, setFormErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Load the Google API script
+    function start() {
+      gapi.client.init({
+        clientId: '463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com',
+        scope: 'email'
+      });
+    }
+    gapi.load('client:auth2', start);
+  }, []);
 
   useEffect(() => {
     // reset on component mount
@@ -52,6 +64,26 @@ export default function LoginPage() {
     } else {
       setFormErrors(errors);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    const GoogleAuth = gapi.auth2.getAuthInstance();
+    GoogleAuth.signIn().then(
+      (googleUser) => {
+        const profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        console.log('Email: ' + profile.getEmail());
+
+        // TODO: Login Logic After user successfully logs in Could include a redirect or updating redux loggedIn state
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   };
 
   return (
@@ -94,7 +126,7 @@ export default function LoginPage() {
             fullWidth
             error={!!formErrors.userName}
             helperText={formErrors.userName}
-            InputLabelProps={{ shrink: true }}  
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             name="password"
@@ -108,7 +140,7 @@ export default function LoginPage() {
             fullWidth
             error={!!formErrors.password}
             helperText={formErrors.password}
-            InputLabelProps={{ shrink: true }}  
+            InputLabelProps={{ shrink: true }}
           />
           <div style={{ minHeight: '12px', color: 'red', margin: '5px' }}>
             {errorMessage && <span>{errorMessage}</span>}
@@ -127,9 +159,14 @@ export default function LoginPage() {
 
         <Divider className="divider">OR</Divider>
         <div className="login-button-group">
-          <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+          <Button
+            style={{ backgroundColor: '#40E0D0' }}
+            variant="contained"
+            id="googleLogin"
+            onClick={handleGoogleLogin}
+          >
             <GoogleIcon />
-            Sign in
+            Sign in with Google
           </Button>
           <Link className="link" to={'/register'}>
             <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
