@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -14,17 +14,67 @@ import { useSelector, useDispatch } from 'react-redux';
 import { changeSizeByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import Slider from '@mui/material/Slider';
 import { setFixedSymbolSize } from '../../../../../redux-slices/mapGraphicsDataSlice';
-import SubMenuTitle from '../../SubMenuTitle';
 import { toggleAddSymbolMode } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import { FormControlLabel } from '@mui/material';
+import {
+  setMaxSymbolSize,
+  setMinSymbolSize
+} from '../../../../../redux-slices/mapGraphicsDataSlice';
+import SubMenuTitle from '../../SubMenuTitle';
+
+const SliderTextField = ({ value, onChange }) => {
+  // Handling change from Slider
+  const handleSliderChange = (event, newValue) => {
+    onChange(event, newValue);
+  };
+
+  // Handling change from TextField
+  const handleTextFieldChange = (event) => {
+    // Convert string value to number and use null as the event
+    const newValue = Number(event.target.value);
+    console.log(newValue);
+    onChange(null, newValue);
+  };
+
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%', gap: 2 }}
+    >
+      <Slider
+        value={typeof value === 'number' ? value : 0}
+        onChange={handleSliderChange}
+        max={600}
+      />
+      <TextField
+        value={value}
+        onChange={handleTextFieldChange}
+        type="number"
+        // size="small"
+        variant="outlined"
+        // sx={{ width: 60, mr: 1 }}
+      />
+    </Box>
+  );
+};
 
 export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
-  const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphics);
   const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
   const pointProperties = useSelector((state) => state.mapGraphics.pointProperties);
   const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
+  const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
+  const minSymbolSize = useSelector((state) => state.mapGraphics.minSymbolSize);
+
+  const handleMaxSymbolSizeChange = (event, newValue) => {
+    console.log('newValue', newValue);
+    dispatch(setMaxSymbolSize(Number(newValue)));
+  };
 
   const handleSizeByPropertyChange = (event, newValue) => {
     dispatch(changeSizeByProperty(newValue));
@@ -42,9 +92,22 @@ export default function ShapeAccordionMenu() {
       justifyContent="center"
       sx={{ width: '100%' }}
     >
+      <SubMenuTitle title="Max Size" />
+      <SliderTextField value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
+    </Box>
+  );
+
+  const maxSymbolSizeSlider = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%' }}
+    >
       <Typography variant="subtitle2">fixed size</Typography>
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-      <Slider value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
+      <SliderTextField value={maxSymbolSize} onChange={handleMaxSymbolSizeChange} />
     </Box>
   );
 
@@ -94,7 +157,7 @@ export default function ShapeAccordionMenu() {
             />
           </Box>
 
-          {!sizeByProperty && fixedSymbolSizeSlider}
+          {sizeByProperty ? maxSymbolSizeSlider : fixedSymbolSizeSlider}
 
           <Box
             display="flex"

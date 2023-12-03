@@ -30,7 +30,9 @@ const initialState = {
   addSymbolMode: false,
   selectedPointKey: -1,
   valuePerDot: 1,
-  dotDensityByProperty: ['male', 'female']
+  dotDensityByProperty: ['male', 'female'],
+  maxSymbolSize: 100,
+  minSymbolSize: 1
 };
 
 const isPointInPolygon = (point, geojson) => {
@@ -465,6 +467,12 @@ const mapGraphicsDataSlice = createSlice({
 
     disableLabels: (state, action) => {
       state.isLabelVisible = false;
+    },
+    setMaxSymbolSize: (state, action) => {
+      state.maxSymbolSize = action.payload;
+    },
+    setMinSymbolSize: (state, action) => {
+      state.minSymbolSize = action.payload;
     }
   }
 });
@@ -508,6 +516,8 @@ export const {
   addCellValidationErrors,
   addLocationData,
   dotDensityByProperty,
-  disableLabels
+  disableLabels,
+  setMaxSymbolSize,
+  setMinSymbolSize
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

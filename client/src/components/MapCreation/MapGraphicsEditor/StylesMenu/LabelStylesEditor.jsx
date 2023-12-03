@@ -7,7 +7,6 @@ import {
   setDefaultLabelFont,
   setDefaultLabelSize
 } from '../../../../redux-slices/mapStylesSlice';
-import { styled } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { MuiColorInput } from 'mui-color-input';
