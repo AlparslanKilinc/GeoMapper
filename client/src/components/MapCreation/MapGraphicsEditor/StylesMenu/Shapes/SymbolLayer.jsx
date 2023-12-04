@@ -2,7 +2,7 @@ import React from 'react';
 import { Marker } from 'react-leaflet';
 import shapeIconMap from './shapeIconMap';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedPointKey } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { setSelectedPointKey, setMinProperty, setMaxProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 
 const SymbolLayer = () => {
   const dispatch = useDispatch();
@@ -39,6 +39,8 @@ const SymbolLayer = () => {
   };
 
   const { min, max } = extractSizeValues(points);
+  dispatch(setMinProperty(min))
+  dispatch(setMaxProperty(max))
 
   function calculateMarkerSize(value) {
     if (!value) {

@@ -32,7 +32,9 @@ const initialState = {
   valuePerDot: 7,
   dotDensityByProperty: ['male', 'female'],
   maxSymbolSize: 100,
-  minSymbolSize: 20
+  minSymbolSize: 20,
+  minProperty: 0,
+  maxProperty: 0,
 };
 
 const isPointInPolygon = (point, geojson) => {
@@ -408,6 +410,12 @@ const mapGraphicsDataSlice = createSlice({
         (property) => property !== action.payload
       );
     },
+    setMinProperty: (state, action) => {
+      state.minProperty = action.payload;
+    },
+    setMaxProperty: (state, action) => {
+      state.maxProperty = action.payload;
+    },
     TableValidation: (state, action) => {
       const mapGraphicsType = action.payload;
       let message = '✓ No errors found.';
@@ -531,12 +539,7 @@ const mapGraphicsDataSlice = createSlice({
       }
       state.validationMessage = hasErrors ? message : '✓ No errors found.';
     },
-    setMaxSymbolSize: (state, action) => {
-      state.maxSymbolSize = action.payload;
-    },
-    setMinSymbolSize: (state, action) => {
-      state.minSymbolSize = action.payload;
-    }
+
   }
 });
 
@@ -580,6 +583,8 @@ export const {
   dotDensityByProperty,
   addDataFromCSVorExcel,
   setMaxSymbolSize,
-  setMinSymbolSize
+  setMinSymbolSize,
+    setMinProperty,
+    setMaxProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
