@@ -60,8 +60,8 @@ export default function DataEditorTable() {
   // This is the data to be displayed in the table
   let data =
     mapGraphicsType === 'Choropleth Map' ||
-    mapGraphicsType === 'Heat Map' ||
-    mapGraphicsType === 'Dot Density Map'
+      mapGraphicsType === 'Heat Map' ||
+      mapGraphicsType === 'Dot Density Map'
       ? regions
       : Object.values(points);
   // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
@@ -330,8 +330,16 @@ export default function DataEditorTable() {
     ].includes(columnName);
   };
 
-  const isNumberProperty = (property) => {
-    return [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property);
+  const isNumericalProperty = (property) => {
+    const shouldBeNumerical =
+      [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property)
+      || ((colorByProperty === property) && (mapGraphicsType === "Heat Map"));
+    return shouldBeNumerical;
+  };
+
+  const isTextualProperty = (property) => {
+    const shouldBeTextual = ((colorByProperty === property) && (mapGraphicsType === "Choropleth Map"));
+    return shouldBeTextual;
   };
 
   // Menu Functions
@@ -467,10 +475,12 @@ export default function DataEditorTable() {
               value={columnTypes[selectedColumn] || 'text'}
               onChange={(e) => handleColumnTypeChange(e.target.value)}
             >
-              {!isNumberProperty(selectedColumn) && (
+              {!isNumericalProperty(selectedColumn) && (
                 <FormControlLabel value="text" control={<Radio />} label="Text" />
               )}
-              <FormControlLabel value="number" control={<Radio />} label="Number" />
+              {!isTextualProperty(selectedColumn) && (
+                <FormControlLabel value="number" control={<Radio />} label="Number" />
+              )}
             </RadioGroup>
           </FormControl>
         </MenuItem>

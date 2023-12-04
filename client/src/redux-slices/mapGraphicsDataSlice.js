@@ -143,9 +143,8 @@ const mapGraphicsDataSlice = createSlice({
             }
           } else {
             // Handle case where the data row exceeds the existing region rows
-            state.validationMessage = `Row ${
-              rowIndex + 1
-            } exceeds the existing region data length and was not added.`;
+            state.validationMessage = `Row ${rowIndex + 1
+              } exceeds the existing region data length and was not added.`;
           }
         }
       });
@@ -209,9 +208,10 @@ const mapGraphicsDataSlice = createSlice({
       if (columnType === 'number') {
         Object.values(entities).forEach((entity) => {
           if (
-            entity[columnName] !== '' &&
-            entity[columnName] !== undefined &&
-            (isNaN(Number(entity[columnName])) || !isFinite(entity[columnName]))
+            entity[columnName] === '' ||
+            entity[columnName] === undefined ||
+            isNaN(Number(entity[columnName])) ||
+            !isFinite(Number(entity[columnName]))
           ) {
             isValid = false;
           }
@@ -219,10 +219,10 @@ const mapGraphicsDataSlice = createSlice({
       } else if (columnType === 'text') {
         Object.values(entities).forEach((entity) => {
           if (
-            entity[columnName] !== '' &&
-            entity[columnName] !== undefined &&
-            typeof entity[columnName] !== 'string' &&
-            typeof entity[columnName] !== 'number'
+            entity[columnName] === '' ||
+            entity[columnName] === undefined ||
+            typeof entity[columnName] !== 'string' ||
+            typeof entity[columnName] === 'number'
           ) {
             isValid = false;
           }
@@ -477,13 +477,16 @@ const mapGraphicsDataSlice = createSlice({
               state.cellValidationErrors[latErrorKey] ||
               state.cellValidationErrors[lonErrorKey]
             ) {
-              message = `⚠️ Error in latitude or longitude at row ${index}: ${
-                state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
-              }`;
+              message = `⚠️ Error in latitude or longitude at row ${index}: ${state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
+                }`;
               hasErrors = true;
               return;
             }
             // Error in Column
+            if (state.columnValidationErrors[state.colorByProperty]) {
+              message = `⚠️ Error in '${state.colorByProperty}' column:`;
+              hasErrors = true;
+            }
             if (
               state.columnValidationErrors[state.latByProperty] ||
               state.columnValidationErrors[state.lonByProperty]
