@@ -20,6 +20,7 @@ import Switch from '@mui/material/Switch';
 
 export default function MapStyleAccordionMenu() {
   const dispatch = useDispatch();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const { mapBackgroundColor, isTilelayerVisible, fillColor } = useSelector(
     (state) => state.mapStyles
   );
@@ -34,6 +35,28 @@ export default function MapStyleAccordionMenu() {
   const handleTilelayerSwitchChange = () => {
     dispatch(toggleTilelayerVisibility());
   };
+
+  function rederMapFillColorInput() {
+    if (mapGraphicsType === "Choropleth Map" || mapGraphicsType === "Heat Map") {
+      return null;
+    }
+
+    return (<Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%' }}
+    >
+      <Typography variant="subtitle2">fill color</Typography>
+      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+      <MuiColorInput
+        format="hex"
+        value={fillColor}
+        onChange={handleFillColorChange}
+      />
+    </Box>);
+  }
 
   return (
     <Accordion>
@@ -73,6 +96,8 @@ export default function MapStyleAccordionMenu() {
             />
           </Box>
 
+          {rederMapFillColorInput()}
+
           <Box
             display="flex"
             flexDirection="column"
@@ -80,26 +105,13 @@ export default function MapStyleAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <Typography variant="subtitle2">fill color</Typography>
-            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <MuiColorInput  value={fillColor} onChange={handleFillColorChange} />
+            <SubMenuTitle title="tilelayer visibility" />
+            <FormControlLabel
+              control={<Switch value={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
+              label="Tilelayer"
+            />
           </Box>
         </Box>
-
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ width: '100%' }}
-        >
-          <SubMenuTitle title="tilelayer visibility" />
-          <FormControlLabel
-            control={<Switch value={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
-            label="Tilelayer"
-          />
-        </Box>
-        {/* </Box> */}
       </AccordionDetails>
     </Accordion>
   );

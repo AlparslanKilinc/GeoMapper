@@ -26,6 +26,7 @@ const isPointInPolygon = (point, geojson) => {
 
 const GeoJsonMap = ({ styled }) => {
   const dispatch = useDispatch();
+  const isTilelayerVisible = useSelector((state) => state.mapStyles.isTilelayerVisible);
   const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
@@ -71,6 +72,10 @@ const GeoJsonMap = ({ styled }) => {
       }}
       key={mapBackgroundColor}
     >
+      {isTilelayerVisible && styled && <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />}
       <GeojsonWrapper isStyled={styled} />
       {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
       {renderDotDensityLayer && <DotDensityLayer />}
