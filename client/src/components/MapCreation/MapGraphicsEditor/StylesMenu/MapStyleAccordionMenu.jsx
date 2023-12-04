@@ -9,17 +9,26 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import { MuiColorInput } from 'mui-color-input';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeBackgroundColor, toggleTilelayerVisibility } from '../../../../redux-slices/mapStylesSlice';
+import {
+  changeBackgroundColor,
+  toggleTilelayerVisibility,
+  setFillColor
+} from '../../../../redux-slices/mapStylesSlice';
 import SubMenuTitle from '../SubMenuTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 
 export default function MapStyleAccordionMenu() {
   const dispatch = useDispatch();
-  const { mapBackgroundColor, isTilelayerVisible } = useSelector((state) => state.mapStyles);
+  const { mapBackgroundColor, isTilelayerVisible, fillColor } = useSelector(
+    (state) => state.mapStyles
+  );
 
   const handleBackgroundColorChange = (color) => {
     dispatch(changeBackgroundColor(color));
+  };
+  const handleFillColorChange = (color) => {
+    dispatch(setFillColor(color));
   };
 
   const handleTilelayerSwitchChange = () => {
@@ -57,7 +66,11 @@ export default function MapStyleAccordionMenu() {
           >
             <Typography variant="subtitle2">background color</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <MuiColorInput format="hex" value={mapBackgroundColor} onChange={handleBackgroundColorChange} />
+            <MuiColorInput
+              format="hex"
+              value={mapBackgroundColor}
+              onChange={handleBackgroundColorChange}
+            />
           </Box>
 
           <Box
@@ -67,13 +80,26 @@ export default function MapStyleAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <SubMenuTitle title="tilelayer visibility" />
-            <FormControlLabel
-              control={<Switch value={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
-              label="Tilelayer"
-            />
+            <Typography variant="subtitle2">fill color</Typography>
+            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+            <MuiColorInput  value={fillColor} onChange={handleFillColorChange} />
           </Box>
         </Box>
+
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ width: '100%' }}
+        >
+          <SubMenuTitle title="tilelayer visibility" />
+          <FormControlLabel
+            control={<Switch value={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
+            label="Tilelayer"
+          />
+        </Box>
+        {/* </Box> */}
       </AccordionDetails>
     </Accordion>
   );

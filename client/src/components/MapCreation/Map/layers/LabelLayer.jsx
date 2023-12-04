@@ -1,21 +1,3 @@
-// const addLabelToMap = (layer, labelText) => {
-//   const label = L.marker(layer.getBounds().getCenter(), {
-//     icon: L.divIcon({
-//       className: 'map-label',
-//       html: labelText,
-//       iconSize: [100, 40]
-//     })
-//   });
-
-//   label.on('click', (e) => {
-//     L.DomEvent.stopPropagation(e);
-//     layer.fire('click');
-//   });
-
-//   label.addTo(map);
-//   setLabels((prev) => new Map(prev).set(layer, label));
-// };
-
 import React from 'react';
 import { Marker } from 'react-leaflet';
 import { useSelector } from 'react-redux';
@@ -29,10 +11,14 @@ const LabelLayer = () => {
   // we also need the regions from mapgraphics slice
   const regions = useSelector((state) => state.mapGraphics.regions);
 
+  const defaultLabelColor = useSelector((state) => state.mapStyles.defaultLabelColor);
+  const defaultLabelFont = useSelector((state) => state.mapStyles.defaultLabelFont);
+  const defaultLabelSize = useSelector((state) => state.mapStyles.defaultLabelSize);
+
   // we also need labelbyproperty
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
 
-  const labelPositions = useSelector((state) => state.mapStyles.labelPositions);
+  const labels = useSelector((state) => state.mapStyles.labels);
 
   const handleDragEnd = (event, idx) => {
     const { lat, lng } = event.target.getLatLng();
@@ -41,18 +27,25 @@ const LabelLayer = () => {
     dispatch(setLabelPositionByIdx({ idx, position }));
   };
 
-  const labels = features.map((feature, index) => {
+  const labelIconDivs = features.map((feature, index) => {
     const regionDetails = regions[index];
     const labelText = regionDetails[labelByProperty];
 
-    // the icon can be controlled by some redux state
+    let { position, color, size, font } = labels[index];
+
+    if (!color) color = defaultLabelColor;
+    if (!size) size = defaultLabelSize;
+    if (!font) font = defaultLabelFont;
+
+    // Construct the style string
+    const style = `color: ${color}; font-size: ${size}px; font-family: ${font};`;
+
+    // Modify the labelIcon with the new style
     const labelIcon = L.divIcon({
       className: 'map-label',
-      html: `<p>${labelText}</p>`,
+      html: `<p style="${style}">${labelText}</p>`,
       iconSize: [100, 40]
     });
-
-    const position = labelPositions[index];
 
     if (position) {
       const [lat, lon] = position;
@@ -73,7 +66,7 @@ const LabelLayer = () => {
     return null;
   });
 
-  return <div>{labels}</div>;
+  return <div>{labelIconDivs}</div>;
 };
 
 export default LabelLayer;

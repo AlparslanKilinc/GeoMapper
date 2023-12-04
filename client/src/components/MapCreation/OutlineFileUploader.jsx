@@ -4,9 +4,9 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 import {
-  setUploadedGeoJSON,
   startLoadingGeojson,
-  stopLoadingGeojson
+  stopLoadingGeojson,
+  uploadGeoJSON
 } from '../../redux-slices/geoJSONSlice';
 import { openShp, read } from 'shapefile';
 import jszip from 'jszip';
@@ -32,7 +32,7 @@ const OutlineFileUploader = () => {
   const processGeoJSON = (file) => {
     const reader = createFileReader((fileData) => {
       const geojsonData = JSON.parse(fileData);
-      dispatch(setUploadedGeoJSON(geojsonData));
+      dispatch(uploadGeoJSON(geojsonData));
     });
     reader.readAsText(file);
   };
@@ -42,7 +42,7 @@ const OutlineFileUploader = () => {
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(fileData, 'text/xml');
       const geojsonData = toGeoJSON.kml(xmlDoc);
-      dispatch(setUploadedGeoJSON(geojsonData));
+      dispatch(uploadGeoJSON(geojsonData));
     });
     reader.readAsText(file);
   };
@@ -55,7 +55,7 @@ const OutlineFileUploader = () => {
       while ((result = await source.read()).done === false) {
         featureCollection.features.push(result.value);
       }
-      dispatch(setUploadedGeoJSON(featureCollection));
+      dispatch(uploadGeoJSON(geojsonData));
     });
     reader.readAsArrayBuffer(file);
   };
@@ -68,7 +68,7 @@ const OutlineFileUploader = () => {
       for (const shpFilename in shpFiles) {
         const dbfFilename = shpFilename.replace('.shp', '.dbf');
         const geojsonData = await read(shpFiles[shpFilename], dbfFiles[dbfFilename]);
-        dispatch(setUploadedGeoJSON(geojsonData));
+        dispatch(uploadGeoJSON(geojsonData));
         break; // Process only the first SHP/DBF pair found
       }
     } catch (e) {
@@ -133,7 +133,7 @@ const OutlineFileUploader = () => {
     <div>
       <Button
         startIcon={<CloudUploadIcon />}
-        className ="upload-file-button"
+        className="upload-file-button"
         component="label"
         variant="outlined"
         style={{ color: 'black', borderColor: 'black' }}
@@ -142,7 +142,7 @@ const OutlineFileUploader = () => {
         <VisuallyHiddenInput
           type="file"
           multiple
-          className = "file-input"
+          className="file-input"
           onChange={handleFileChange}
           accept=".json, .geojson, .kml, .zip"
         />

@@ -24,13 +24,14 @@ export default function GeojsonWrapper({ isStyled }) {
   const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
   const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
   const isLabelVisible = useSelector((state) => state.mapGraphics.isLabelVisible);
+  const labels = useSelector((state) => state.mapStyles.labels);
   const colors = useSelector((state) => state.mapStyles.colors);
   const continousColorScale = useSelector((state) => state.mapStyles.continousColorScale);
   const borderColor = useSelector((state) => state.mapStyles.borderColor);
   const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
   const opacity = useSelector((state) => state.mapStyles.opacity);
   const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
-
+  const fillColor = useSelector((state) => state.mapStyles.fillColor);
   const uniqueKey = [
     JSON.stringify(geoJSON),
     mapGraphicsType,
@@ -44,18 +45,27 @@ export default function GeojsonWrapper({ isStyled }) {
     borderColor,
     borderWidth,
     opacity,
-    mapBackgroundColor
+    mapBackgroundColor,
+    fillColor
   ].join('|');
 
-  // Default Styles
+  // // Default Styles
+  // const defaultStyles = {
+  //   color: 'black',
+  //   weight: 1
+  // };
+
   const defaultStyles = {
-    color: 'black',
-    weight: 1
+    fillColor: '#EDEDED',
+    weight: 2,
+    color: '#808080',
+    fillOpacity:1
   };
 
   if (isStyled) {
     defaultStyles.color = borderColor;
     defaultStyles.weight = borderWidth;
+    defaultStyles.fillColor = fillColor;
   }
 
   const generateRandomColor = () => {
@@ -74,30 +84,71 @@ export default function GeojsonWrapper({ isStyled }) {
         // Add cases for other map types here
 
         case 'Dot Density Map':
+          layer.setStyle(defaultStyles);
           layer.on({
             click: (e) => {
               dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
             }
           });
           break;
+
+        case 'Heat Map':
+          applyHeatMapStyles(feature, layer, regionData);
+          break;
+
         default:
           // Default behavior if no specific map type is matched
+          layer.setStyle(defaultStyles);
           break;
       }
       const { lat, lng } = layer.getBounds().getCenter();
-      dispatch(addLabelPosition([lat, lng]));
+      // check if labels length is not zero
+      if (labelByProperty && labels.length <= feature.properties.regionIdx) {
+        dispatch(addLabelPosition([lat, lng]));
+      }
+    } else {
+      layer.setStyle(defaultStyles);
     }
+  };
+
+  const applyHeatMapStyles = (feature, layer, regionData) => {
+    let colorPropVal = regionData[colorByProperty];
+    let color = continousColorScale[feature.properties.regionIdx];
+
+    layer.setStyle({
+      fillColor: color,
+      fillOpacity: opacity,
+      weight: borderWidth,
+      color: borderColor
+    });
+
+    const hoverStyle = {
+      fillOpacity: 0.7
+    };
+
+    layer.on({
+      click: (e) => {
+        dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
+      },
+      mouseover: (e) => {
+        layer.setStyle(hoverStyle);
+      },
+      mouseout: (e) => {
+        layer.setStyle({
+          fillColor: color,
+          fillOpacity: opacity,
+          weight: borderWidth,
+          color: borderColor
+        });
+      }
+    });
   };
 
   const applyChoroplethStyles = (feature, layer, regionData) => {
     let color = generateRandomColor();
     let colorPropVal = regionData[colorByProperty];
-    if (!isNaN(colorPropVal)) {
-      color = continousColorScale[feature.properties.regionIdx];
-    } else {
-      let colorObj = colors.find((color) => color.name === regionData[colorByProperty]);
-      if (colorObj) color = colorObj.color;
-    }
+    let colorObj = colors.find((color) => color.name === colorPropVal);
+    if (colorObj) color = colorObj.color;
 
     layer.setStyle({
       fillColor: color,
@@ -134,18 +185,12 @@ export default function GeojsonWrapper({ isStyled }) {
     }
   }, [geoJSON]);
 
-  const renderLabels = isLabelVisible && isStyled && geoJSON;
+  const renderLabels = isStyled && geoJSON && labelByProperty;
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
       {geoJSON && (
-        <GeoJSON
-          data={geoJSON}
-          style={defaultStyles}
-          onEachFeature={onEachFeature}
-          ref={geojsonLayer}
-          key={uniqueKey}
-        />
+        <GeoJSON data={geoJSON} onEachFeature={onEachFeature} ref={geojsonLayer} key={uniqueKey} />
       )}
 
       {renderLabels && <LabelLayer />}

@@ -1,20 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Autocomplete, Divider, Typography, TextField, Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeXByProperty, TableValidation } from '../../../redux-slices/mapGraphicsDataSlice';
+import {
+  changeXByProperty,
+  TableValidation,
+  validateColumnData,
+} from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function PropertySelector({ value, propertyName }) {
-  let propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  let { propertyNames, pointProperties, columnTypes } = useSelector((state) => state.mapGraphics);
   let mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-
+  const defaultProperties = propertyName === 'label' ? propertyNames : [];
+  const [properties, setProperties] = useState(defaultProperties);
+  const [colName, setColName] = useState('');
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (
+      (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') &&
+      propertyName !== 'label'
+    ) {
+      setProperties(pointProperties);
+    } else {
+      setProperties(propertyNames);
+    }
+  }, [mapGraphicsType, propertyNames, pointProperties]);
+
+  useEffect(() => {
+    if (columnTypes[colName]) {
+      dispatch(
+        validateColumnData({
+          columnName: colName,
+          columnType: columnTypes[colName],
+          mapGraphicsType
+        })
+      );
+      dispatch(TableValidation(mapGraphicsType));
+    }
+  }, [columnTypes, colName, mapGraphicsType, dispatch]);
+
   const onChange = (event, newValue) => {
     const payload = {
       property: propertyName + 'ByProperty',
       propertyBy: newValue
     };
+    setColName(newValue);
     dispatch(changeXByProperty(payload));
-    dispatch(TableValidation(mapGraphicsType));
   };
   return (
     <Box
@@ -30,7 +61,7 @@ export default function PropertySelector({ value, propertyName }) {
         fullWidth
         value={value}
         onChange={onChange}
-        options={propertyNames}
+        options={properties}
         renderInput={(params) => <TextField {...params} variant="outlined" />}
       />
     </Box>
