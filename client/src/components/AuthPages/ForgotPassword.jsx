@@ -40,7 +40,7 @@ export default function ForgotPassword() {
     const response = await dispatch(forgotPassword({ email }));
     if(response.type.endsWith('/rejected')){
       setValidation('');
-      setError("Email is associated with a Google Account. Please use the 'Sign In With Google' option");
+      setError("Email is not associated with a GeoMapper Account");
     }
     else{
       setError('');
