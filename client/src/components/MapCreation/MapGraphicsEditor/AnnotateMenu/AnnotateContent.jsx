@@ -43,10 +43,12 @@ const AnnotateContent = () => {
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
         <Typography variant="subtitle2">description</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-        <BaseTextareaAutosize
+        <TextField
           value={description}
           onChange={handleChangeDescription}
-          minRows={6}
+          multiline
+          minRows={8}
+          maxRows = {20}
           style={{ width: '200px !important', fontFamily: 'Outfit', fontSize: '15px' }}
         />
       </Box>

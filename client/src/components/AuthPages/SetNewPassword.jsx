@@ -2,14 +2,22 @@ import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { styled } from '@mui/material/styles';
 import GeoMapperImage from '../../assets/GeoMapperLogo.svg';
 import '../../styles/loginPage.css';
+import {useDispatch} from "react-redux";
+import {updatePassword} from "../../redux-slices/authSlice.js";
 
 export default function SetNewPassword() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+    const searchParams = new URLSearchParams(location.search);
+    const id = searchParams.get('id');
+    const token = searchParams.get('token');
+    const [formErrors, setFormErrors] = useState('');
+
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -21,12 +29,25 @@ export default function SetNewPassword() {
     }
   }));
 
-  const handleSubmit = (event) => {
-    console.log('Submit New Password');
+  const handleSubmit = async (event) => {
+       event.preventDefault(); // Prevent the default form submission behavior
+      const newPassword = event.target.elements.newPassword.value;
+      const confirmNewPassword = event.target.elements.confirmNewPassword.value;
+      if (newPassword.length < 8) {
+          setFormErrors('Password must be at least 8 characters');
+          return;
+      }
+      if (newPassword !== confirmNewPassword) {
+          setFormErrors('Passwords do not match');
+          return;
+      }
+
+      dispatch(updatePassword({ id, token, newPassword, confirmNewPassword }));
+      navigate('/login');
   };
 
   const goBack = () => {
-    navigate('/RecoveryCode');
+    navigate('/login');
   };
 
   return (
@@ -60,8 +81,10 @@ export default function SetNewPassword() {
             id="newPassword"
             label="New Password"
             name="New Password"
-            type="text"
+            type="password"
             autoComplete="New Password"
+            error = {formErrors}
+            helperText={formErrors}
           />
           <TextField
             size="small"
@@ -71,8 +94,10 @@ export default function SetNewPassword() {
             id="confirmNewPassword"
             label="Confirm New Password"
             name="Confirm New Password"
-            type="text"
+            type="password"
             autoComplete="Confirm New Password"
+            error = {formErrors}
+            helperText={formErrors}
           />
           <Button
             type="submit"

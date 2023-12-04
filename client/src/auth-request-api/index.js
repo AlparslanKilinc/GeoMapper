@@ -40,11 +40,26 @@ export const updateUserData = (formData) => {
   });
 };
 
+export const forgotPassword = ({email}) => {
+  console.log('api request ' + email)
+  return api.post('/forgotPassword/', {email:email })
+}
+
+export const updatePassword = ({ id, token, newPassword, confirmNewPassword }) => {
+  return api.post(`/updatePassword/${id}/${token}`, {
+    newPassword: newPassword,
+    confirmNewPassword: confirmNewPassword,
+  });
+};
+
+
 const apis = {
   getLoggedIn,
   registerUser,
   loginUser,
   logoutUser,
-  updateUserData
+  updateUserData,
+  forgotPassword,
+  updatePassword
 };
 export default apis;
