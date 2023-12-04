@@ -43,8 +43,11 @@ export default function DataEditorTable() {
     heightByProperty,
     columnValidationErrors,
     cellValidationErrors,
-    dotDensityByProperty
+    dotDensityByProperty,
+    propertyNames,
+    pointProperties,
   } = useSelector((state) => state.mapGraphics);
+  const mapGraphics = useSelector((state) => state.mapGraphics);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const geoJSON = useSelector((state) => state.geojson.geojson);
   const dispatch = useDispatch();
@@ -98,6 +101,7 @@ export default function DataEditorTable() {
     dispatch
   ]);
 
+  // Get the displayed properties based on the map type
   useEffect(() => {
     let propertiesBasedOnMapType = [];
 
@@ -146,20 +150,58 @@ export default function DataEditorTable() {
     sizeByProperty,
     heightByProperty
   ]);
+
+  // This is to validate each of the cells
+  useEffect(() => {
+    validateAllCells();
+  }, [points, regions, columnTypes]);
+
+  // This is to validate the Requirements of the Each Map Type
+  useEffect(() => {
+    dispatch(TableValidation(mapGraphicsType));
+  }, [
+    columnTypes,
+    nameByProperty,
+    colorByProperty,
+    latByProperty,
+    lonByProperty,
+    sizeByProperty,
+    dotDensityByProperty,
+    heightByProperty,
+    propertyNames,
+    pointProperties,
+    mapGraphicsType,
+    columnValidationErrors,
+    cellValidationErrors
+  ]);
+
   // This is to update the column errors and cell errors
   useEffect(() => {
     setColumnValidationErrors(columnValidationErrors);
     setCellValidationErrors(cellValidationErrors);
   }, [columnValidationErrors, cellValidationErrors]);
-  // This is to validate the cells of the lat and lon
-  useEffect(() => {
-    validateAllLatLonCells();
-  }, [points, columnTypes, latByProperty, lonByProperty]);
 
+  // This is to adjust the width of the table for sticky header
   useEffect(() => {
-    dispatch(TableValidation(mapGraphicsType));
-  }, [points, regions, mapGraphicsType, columnTypes, dotDensityByProperty]);
+    const header = document.getElementById('table-header-container');
+    const body = document.getElementById('table-container');
 
+    function adjustHeaderWidth() {
+      if (header && body) {
+        if (body.scrollWidth > body.clientWidth) {
+          header.style.width = 'fit-content';
+        } else {
+          header.style.width = '100%';
+        }
+      }
+    }
+    adjustHeaderWidth();
+    window.addEventListener('resize', adjustHeaderWidth);
+
+    return () => window.removeEventListener('resize', adjustHeaderWidth);
+  }, [displayedProperties]);
+
+  /// Column Functions
   const handleAddColumn = () => {
     const newColumnName = prompt('Enter new column name:');
     if (displayedProperties.includes(newColumnName)) {
@@ -186,6 +228,7 @@ export default function DataEditorTable() {
     dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
     dispatch(
       validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType })
+      /// To do validate cells for all the rows of the column
     );
     dispatch(TableValidation(mapGraphicsType));
     handleClose();
@@ -220,27 +263,13 @@ export default function DataEditorTable() {
     handleClose();
   };
 
-  const handleCellChange = (rowIndex, columnName, value) => {
-    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
-      dispatch(setPointProperty({ propertyName: columnName, value, pointIdx: rowIndex }));
-    } else {
-      dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
-    }
-    dispatch(validateCell({ rowIndex, columnName, value, mapGraphicsType, geoJSON }));
-    dispatch(
-      validateColumnData({ columnName, columnType: columnTypes[columnName], mapGraphicsType })
-    );
-    dispatch(TableValidation(mapGraphicsType));
-  };
-
+  /// Point Functions
   const handleAddPoint = () => {
-    // Default opacity is 0.4
     const properties = {
       name: '',
       color: '',
       lat: 0,
       lon: 0,
-      size: 0,
       opacity: 0.4
     };
     dispatch(setColumnType({ columnName: 'size', columnType: 'number' }));
@@ -256,29 +285,38 @@ export default function DataEditorTable() {
     }
   };
 
-  const validateAllLatLonCells = () => {
-    points.forEach((point, index) => {
-      const latPayload = {
-        rowIndex: index,
-        columnName: latByProperty,
-        value: point[latByProperty],
-        mapGraphicsType: mapGraphicsType,
-        geoJSON
-      };
-      const lonPayload = {
-        rowIndex: index,
-        columnName: lonByProperty,
-        value: point[lonByProperty],
-        mapGraphicsType: mapGraphicsType,
-        geoJSON
-      };
-      // Validate latitude and longitude cells
-      dispatch(validateCell(latPayload));
-      dispatch(validateCell(lonPayload));
+  /// Cell Functions
+  const handleCellChange = (rowIndex, columnName, value) => {
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+      dispatch(setPointProperty({ propertyName: columnName, value, pointIdx: rowIndex }));
+    } else {
+      dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
+    }
+    dispatch(validateCell({ rowIndex, columnName, value, mapGraphicsType, geoJSON }));
+    dispatch(
+      validateColumnData({ columnName, columnType: columnTypes[columnName], mapGraphicsType })
+    );
+    dispatch(TableValidation(mapGraphicsType));
+  };
+
+  const validateAllCells = () => {
+    data.forEach((row, rowIndex) => {
+      Object.keys(row).forEach((columnName) => {
+        dispatch(
+          validateCell({
+            rowIndex,
+            columnName,
+            value: row[columnName],
+            mapGraphicsType,
+            geoJSON
+          })
+        );
+      });
     });
   };
 
   // Helper Functions
+
   // This is to check if the column is deletable or not
   const isDeletable = (columnName) => {
     return ![
@@ -307,7 +345,7 @@ export default function DataEditorTable() {
 
   const TableButtons = () => (
     <div id="table-buttons">
-      {mapGraphicsType !== 'Choropleth Map' && mapGraphicsType !== 'Heat Map' && (
+      {(mapGraphicsType === 'Symbol Map' && mapGraphicsType !== 'Spike Map') && (
         <LoadingButton
           variant="outlined"
           style={{ color: 'black', borderColor: 'black' }}
@@ -340,10 +378,7 @@ export default function DataEditorTable() {
             <TableHead>
               <TableRow>
                 {labels.map((label, index) => (
-                  <TableCell
-                    key={index}
-                    sx={{ minWidth: '150px', width: '100%', borderBottom: 'none' }}
-                  >
+                  <TableCell key={index} sx={{ minWidth: '150px', borderBottom: 'none' }}>
                     <div style={{ display: 'flex' }}>
                       <div className="table-label">{label}</div>
                     </div>

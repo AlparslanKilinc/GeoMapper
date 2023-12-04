@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import ColorsSymbolAccordionMenu from './ColorsSymbolAccordionMenu';
 import ColorsDotDensityAccordionMenu from './ColorsDotDensityAccordionMenu';
 import ColorsChoroAccordionMenu from './ColorsChoroAccordionMenu';
+import ColorsHeatMapAccordionMenu from './ColorsHeatMapAccordionMenu';
 
 import { useSelector } from 'react-redux';
 
@@ -23,6 +24,10 @@ export default function ColorsAccordionMenu() {
 
   if (mapGraphicsType === 'Choropleth Map') {
     accordionDetails = <ColorsChoroAccordionMenu />;
+  }
+
+  if(mapGraphicsType === 'Heat Map'){
+    accordionDetails = <ColorsHeatMapAccordionMenu/>
   }
 
   return (

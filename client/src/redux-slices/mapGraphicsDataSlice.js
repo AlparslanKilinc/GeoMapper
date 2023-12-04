@@ -91,6 +91,7 @@ const mapGraphicsDataSlice = createSlice({
     },
     removeColumn: (state, action) => {
       const columnToRemove = action.payload;
+      state.dotDensityByProperty = state.dotDensityByProperty.filter((column) => column !== columnToRemove);
       state.addedColumns = state.addedColumns.filter((column) => column !== action.payload);
       delete state.columnTypes[columnToRemove];
       delete state.columnValidationErrors[columnToRemove];
@@ -243,53 +244,56 @@ const mapGraphicsDataSlice = createSlice({
       }
       // General Error Checking
       if (columnType === 'number') {
-        isValid = value === '' || (!isNaN(Number(value)) && isFinite(value));
+        isValid = !isNaN(Number(value)) && isFinite(value);
       } else if (columnType === 'text') {
-        isValid = value === '' || typeof value === 'string';
+        isValid = typeof value === 'string';
       }
+
       if (isValid) {
         delete state.cellValidationErrors[cellKey];
       } else {
         state.cellValidationErrors[cellKey] =
           columnType === 'number' ? 'Number Required' : 'Text Required';
       }
+
       /// Point Error Checking
       if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
-        /// Lat or Lon is being changed validate that it is within region
-        if (
-          state.points[rowIndex][state.latByProperty] === value ||
-          state.points[rowIndex][state.lonByProperty] === value
-        ) {
-          // When Field is clear , clear error Message
-          if (
-            state.points[rowIndex][state.latByProperty] === '' &&
-            state.points[rowIndex][state.lonByProperty] === ''
-          ) {
-            delete state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`];
-            delete state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`];
-            return;
-          }
-          // Make Sure Both Lat and Lon are defined and Numbers
-          if (
-            state.points[rowIndex][state.latByProperty] === undefined ||
-            state.points[rowIndex][state.lonByProperty] === undefined ||
-            isNaN(Number(state.points[rowIndex][state.latByProperty])) ||
-            isNaN(Number(state.points[rowIndex][state.lonByProperty]))
-          ) {
-            return;
-          }
-          const point = {
-            lon: state.points[rowIndex][state.lonByProperty],
-            lat: state.points[rowIndex][state.latByProperty]
-          };
+        const latProperty = state.latByProperty;
+        const lonProperty = state.lonByProperty;
+        const currentLat = state.points[rowIndex][latProperty];
+        const currentLon = state.points[rowIndex][lonProperty];
+
+        // Check for unique lat-lon pair
+        const isDuplicate = state.points.some((point, index) => {
+          const existingLat = parseFloat(point[latProperty]);
+          const existingLon = parseFloat(point[lonProperty]);
+          const newLat = parseFloat(currentLat);
+          const newLon = parseFloat(currentLon);
+
+          const tolerance = 0.00001;
+          return (
+            index !== rowIndex &&
+            Math.abs(existingLat - newLat) < tFolerance &&
+            Math.abs(existingLon - newLon) < tolerance
+          );
+        });
+
+        console.log(isDuplicate);
+
+        if (isDuplicate) {
+          state.cellValidationErrors[`${rowIndex}-${latProperty}`] = 'Duplicate lat-lon pair';
+          state.cellValidationErrors[`${rowIndex}-${lonProperty}`] = 'Duplicate lat-lon pair';
+          return;
+        }
+        // Validate if lat and lon are within the region only if both are present
+        if (currentLat && currentLon && !isNaN(Number(currentLat)) && !isNaN(Number(currentLon))) {
+          const point = { lat: currentLat, lon: currentLon };
           if (!isPointInPolygon(point, geoJSON)) {
-            state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`] =
-              'Point is not within region';
-            state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`] =
-              'Point is not within region';
+            state.cellValidationErrors[`${rowIndex}-${latProperty}`] = 'Point is not within region';
+            state.cellValidationErrors[`${rowIndex}-${lonProperty}`] = 'Point is not within region';
           } else {
-            delete state.cellValidationErrors[`${rowIndex}-${state.lonByProperty}`];
-            delete state.cellValidationErrors[`${rowIndex}-${state.latByProperty}`];
+            delete state.cellValidationErrors[`${rowIndex}-${latProperty}`];
+            delete state.cellValidationErrors[`${rowIndex}-${lonProperty}`];
           }
         }
       }
@@ -333,13 +337,11 @@ const mapGraphicsDataSlice = createSlice({
     setSelectedRegionIdx: (state, action) => {
       state.selectedRegionIdx = action.payload;
     },
-    addLocationData: (state, action) => {
-      const { name, lat, lon } = action.payload;
-      state.points.push({ name, lat, lon, color: '', size: 0, height: 0, opacity: 0.4 });
-    },
     addPoint: (state, action) => {
-      const { name, color, lat, lon, size, opacity } = action.payload;
-      state.points.push({ name, color, lat, lon, size, opacity });
+      action.payload.size = state.fixedSymbolSize;
+      if (state.colorByProperty) action.payload[state.colorByProperty] = 'default';
+      else action.payload.color = 'default';
+      state.points.push(action.payload);
     },
     removePoint: (state, action) => {
       const index = action.payload.rowIndex;
@@ -374,6 +376,7 @@ const mapGraphicsDataSlice = createSlice({
       state.labelByProperty = action.payload;
     },
     setFixedSymbolSize: (state, action) => {
+      console.log(action.payload);
       state.fixedSymbolSize = action.payload;
     },
     setFixedOpacity: (state, action) => {
@@ -461,7 +464,7 @@ const mapGraphicsDataSlice = createSlice({
             const latErrorKey = `${index}-${state.latByProperty}`;
             const lonErrorKey = `${index}-${state.lonByProperty}`;
             // Required Field Error
-            if (!point[state.latByProperty] && !point[state.latByProperty]) {
+            if (!point[state.latByProperty] && !point[state.lonByProperty]) {
               message = '⚠️ Required Latitude and Longitude fields are empty.';
               hasErrors = true;
               return;
@@ -525,10 +528,6 @@ const mapGraphicsDataSlice = createSlice({
       }
       state.validationMessage = hasErrors ? message : '✓ No errors found.';
     },
-
-    disableLabels: (state, action) => {
-      state.isLabelVisible = false;
-    },
     setMaxSymbolSize: (state, action) => {
       state.maxSymbolSize = action.payload;
     },
@@ -575,7 +574,6 @@ export const {
   setPointProperties,
   removePoint,
   addCellValidationErrors,
-  addLocationData,
   dotDensityByProperty,
   addDataFromCSVorExcel,
   setMaxSymbolSize,

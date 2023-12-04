@@ -64,8 +64,7 @@
   z-index: 10;
   font-size: 20px;
   background: var(--white);
-  /* background-color: brown; */
-  width: fit-content;
+  width: 100%;
 }
 
 #table-column-errors {

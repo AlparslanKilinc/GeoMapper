@@ -81,7 +81,7 @@ export default function ShapeAccordionMenu() {
   };
 
   const handleSymbolSizeChange = (event, newValue) => {
-    dispatch(setFixedSymbolSize(event.target.value));
+    dispatch(setFixedSymbolSize(newValue));
   };
 
   const fixedSymbolSizeSlider = (
@@ -92,8 +92,8 @@ export default function ShapeAccordionMenu() {
       justifyContent="center"
       sx={{ width: '100%' }}
     >
-      <SubMenuTitle title="Max Size" />
-      <SliderTextField value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
+      <SubMenuTitle title="fixed size" />
+      <Slider value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
     </Box>
   );
 
@@ -105,7 +105,7 @@ export default function ShapeAccordionMenu() {
       justifyContent="center"
       sx={{ width: '100%' }}
     >
-      <Typography variant="subtitle2">fixed size</Typography>
+      <Typography variant="subtitle2">max size</Typography>
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
       <SliderTextField value={maxSymbolSize} onChange={handleMaxSymbolSizeChange} />
     </Box>

@@ -4,19 +4,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { changeColorByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import { changeColorByName, setOpacity } from '../../../../../redux-slices/mapStylesSlice';
 import Box from '@mui/material/Box';
-import ColorSelector from './ColorSelector';
+import ColorPalette from './ColorPalette';
 import SubMenuTitle from '../../SubMenuTitle';
 
-export default function ColorsChoroAccordionMenu() {
+export default function ColorsHeatMapAccordionMenu() {
   const dispatch = useDispatch();
-  const { propertyNames, colorByProperty, regions } = useSelector((state) => state.mapGraphics);
-  const { colors, opacity } = useSelector((state) => state.mapStyles);
+  const colorByProperty = useSelector(state=>state.mapGraphics.colorByProperty);
+  const propertyNames = useSelector(state=>state.mapGraphics.propertyNames)
+  const  opacity  = useSelector((state) => state.mapStyles.opacity);
+  const columnTypes = useSelector(state => state.mapGraphics.columnTypes)
 
-  const handleColorChangeText = (name) => {
-    return (color) => {
-      dispatch(changeColorByName({ name, color }));
-    };
-  };
+  let propertyNamesNumeric = propertyNames.filter((prop) => {
+    return columnTypes[prop] === 'number';
+  });
 
   const handleColorByPropertyChange = (event, newValue) => {
     dispatch(changeColorByProperty(newValue));
@@ -25,36 +25,6 @@ export default function ColorsChoroAccordionMenu() {
   const handleChangeOpacity = (event, newValue) => {
     dispatch(setOpacity(newValue));
   };
-
-  let colorSelectors;
-
-  // if the colorByProperty is continous, then we need to show the color range
-    colorSelectors = (
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ width: '100%' }}
-      >
-        <Typography variant="subtitle2">select color</Typography>
-        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-
-        {colors.map(({ name, color }, index) => {
-          return (
-            <ColorSelector
-              title={name}
-              name={name}
-              color={color}
-              disableLower
-              disableUpper
-              handleColorChangeCustom={handleColorChangeText(name)}
-              key={index + 'colorSelector'}
-            />
-          );
-        })}
-      </Box>
-    );
 
   return (
     <Box
@@ -76,13 +46,23 @@ export default function ColorsChoroAccordionMenu() {
         <Autocomplete
           value={colorByProperty}
           onChange={handleColorByPropertyChange}
-          options={propertyNames}
+          options={propertyNamesNumeric}
           fullWidth
           renderInput={(params) => <TextField {...params} fullWidth />}
         />
       </Box>
 
-      {colorSelectors}
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ width: '100%' }}
+      >
+        <Typography variant="subtitle2">select color</Typography>
+        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+        <ColorPalette />
+      </Box>
 
       <Box
         display="flex"

@@ -9,7 +9,7 @@ import * as XLSX from 'xlsx';
 import loadScript from '../../../googleMapsLoad';
 import {
   generateRandomColumn,
-  addLocationData,
+  addPoint,
   addDataFromCSVorExcel
 } from '../../../redux-slices/mapGraphicsDataSlice';
 import '../../../styles/mapDataEditingPage.css';
@@ -73,10 +73,14 @@ export default function DataEditorLeftPane() {
         (place, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK) {
             dispatch(
-              addLocationData({
+              addPoint({
                 name: place.name,
                 lat: place.geometry.location.lat(),
-                lon: place.geometry.location.lng()
+                lon: place.geometry.location.lng(),
+                color: '',
+                size: 10,
+                opacity: 0.6,
+                height: 10
               })
             );
           } else {
@@ -153,8 +157,7 @@ export default function DataEditorLeftPane() {
           />
         </LoadingButton>
         {error && <Typography color="error">{error}</Typography>}
-        {mapGraphicsType === 'Heat Map' ||
-          (mapGraphicsType === 'Dot Density Map' && (
+        {( (mapGraphicsType === 'Heat Map' || mapGraphicsType === 'Dot Density Map') && (
             <LoadingButton
               startIcon={<AutoFixHighIcon />}
               variant="outlined"

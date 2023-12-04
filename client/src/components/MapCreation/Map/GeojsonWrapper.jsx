@@ -50,8 +50,9 @@ export default function GeojsonWrapper({ isStyled }) {
 
   // Default Styles
   const defaultStyles = {
-    color: 'black',
-    weight: 1
+    fillColor: '#EDEDED',
+    weight: 2,
+    color: '#D3D3D3'
   };
 
   if (isStyled) {
@@ -81,6 +82,11 @@ export default function GeojsonWrapper({ isStyled }) {
             }
           });
           break;
+
+        case 'Heat Map':
+          applyHeatMapStyles(feature, layer, regionData);
+          break;
+
         default:
           // Default behavior if no specific map type is matched
           break;
@@ -91,6 +97,39 @@ export default function GeojsonWrapper({ isStyled }) {
         dispatch(addLabelPosition([lat, lng]));
       }
     }
+  };
+
+  const applyHeatMapStyles = (feature, layer, regionData) => {
+    let colorPropVal = regionData[colorByProperty];
+    let color = continousColorScale[feature.properties.regionIdx];
+
+    layer.setStyle({
+      fillColor: color,
+      fillOpacity: opacity,
+      weight: borderWidth,
+      color: borderColor
+    });
+
+    const hoverStyle = {
+      fillOpacity: 0.7
+    };
+
+    layer.on({
+      click: (e) => {
+        dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
+      },
+      mouseover: (e) => {
+        layer.setStyle(hoverStyle);
+      },
+      mouseout: (e) => {
+        layer.setStyle({
+          fillColor: color,
+          fillOpacity: opacity,
+          weight: borderWidth,
+          color: borderColor
+        });
+      }
+    });
   };
 
   const applyChoroplethStyles = (feature, layer, regionData) => {

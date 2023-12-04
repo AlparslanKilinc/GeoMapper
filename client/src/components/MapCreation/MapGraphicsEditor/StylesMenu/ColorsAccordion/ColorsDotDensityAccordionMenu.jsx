@@ -71,11 +71,10 @@ export default function ColorsDotDensityAccordionMenu() {
         {colors.map(({ name, color }, index) => {
           return (
             <ColorSelector
-              title={name}
-              intialColor={color}
+              name={name}
+              color={color}
               disableLower
               disableUpper
-              handleColorChangeCustom={handleColorChangeText(name)}
               key={index + 'colorSelector'}
             />
           );

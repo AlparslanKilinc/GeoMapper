@@ -7,6 +7,22 @@ import DotDensityLayer from '../MapGraphicsEditor/StylesMenu/Shapes/DotDensityLa
 import { useMapEvents } from 'react-leaflet';
 import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
+import * as turf from '@turf/turf';
+
+const isPointInPolygon = (point, geojson) => {
+  const turfPoint = turf.point([point.lon, point.lat]);
+  let isInside = false;
+  if (geojson && geojson.geoJSON && geojson.geoJSON.features) {
+    geojson.geoJSON.features.forEach((feature) => {
+      if (turf.booleanPointInPolygon(turfPoint, feature)) {
+        isInside = true;
+      }
+    });
+  }
+  return isInside;
+};
+
+// rename this layer to SymbolLayerEventHandler
 
 const GeoJsonMap = ({ styled }) => {
   const dispatch = useDispatch();
@@ -20,17 +36,24 @@ const GeoJsonMap = ({ styled }) => {
     };
   };
 
-  // rename this layer to SymbolLayerEventHandler
+  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
+
   const EventHandlerLayer = () => {
     //     '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4
     const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
+    const geojson = useSelector((state) => state.geojson.geojson);
 
     const map = useMapEvents({
       click: (e) => {
         if (addSymbolMode) {
           const [lat, lon] = [e.latlng.lat, e.latlng.lng];
-          const properties = getDefaultPointProperties();
-          dispatch(addPoint({ lat, lon, ...properties }));
+
+          if (isPointInPolygon({ lat, lon }, geojson)) {
+            const properties = getDefaultPointProperties();
+            dispatch(addPoint({ lat, lon, ...properties }));
+          } else alert('POINT OUTSIDE');
         }
 
         // propogate the event to the map
@@ -38,10 +61,6 @@ const GeoJsonMap = ({ styled }) => {
     });
     return null;
   };
-
-  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
-  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-  const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
 
   return (
     <MapContainer

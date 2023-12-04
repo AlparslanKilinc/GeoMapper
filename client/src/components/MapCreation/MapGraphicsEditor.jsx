@@ -44,7 +44,7 @@ export default function MapGraphicsEditor() {
     editing = { label: 'Symbol', content: <SymbolEditing /> };
   }
 
-  const dataEditingToolboxConfig = [editing, { label: 'Tabular', content: <DataEditorTable /> }];
+  const dataEditingToolboxConfig = [editing];
 
   let propList = regions;
 
@@ -112,14 +112,15 @@ export default function MapGraphicsEditor() {
 
     if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
       if (propList.length === 0) return;
-      if (!colorByProperty) return;
-      const isNumeric = !isNaN(propList[0][colorByProperty]);
-      if (isNumeric) initColorsNumerical();
-      else initColorsCategorical();
+      initColorsCategorical();
     }
 
     if (mapGraphicsType === 'Dot Density Map') {
       initColorsDotDensity();
+    }
+
+    if(mapGraphicsType === 'Heat Map'){
+      initColorsNumerical();
     }
   };
 

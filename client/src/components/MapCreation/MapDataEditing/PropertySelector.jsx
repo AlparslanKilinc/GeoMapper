@@ -5,7 +5,6 @@ import {
   changeXByProperty,
   TableValidation,
   validateColumnData,
-  disableLabels
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function PropertySelector({ value, propertyName }) {
@@ -47,10 +46,6 @@ export default function PropertySelector({ value, propertyName }) {
     };
     setColName(newValue);
     dispatch(changeXByProperty(payload));
-
-    if (!newValue && propertyName === 'label') {
-      dispatch(disableLabels());
-    }
   };
   return (
     <Box

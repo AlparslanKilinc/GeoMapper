@@ -67,6 +67,16 @@ const mapStylesDataSlice = createSlice({
       state.isTilelayerVisible = !state.isTilelayerVisible;
     },
     setColors: (state, action) => {
+      //
+      action.payload.sort((a, b) => {
+    if (a.name < b.name) {
+        return -1;
+    }
+    if (a.name > b.name) {
+        return 1;
+    }
+    return 0;
+});
       state.colors = action.payload;
     },
     setColorPaletteIdx: (state, action) => {
@@ -74,10 +84,14 @@ const mapStylesDataSlice = createSlice({
     },
     changeColorByName: (state, action) => {
       const { name, color } = action.payload;
-      const colorCopy = [...state.colors];
-      const colorConfig = colorCopy.find((c) => c.name === name);
-      colorConfig.color = color;
-      state.colors = colorCopy;
+
+    // Find the index of the color configuration to update
+    const index = state.colors.findIndex(c => c.name === name);
+
+    // If found, directly update the color configuration
+    if (index !== -1) {
+        state.colors[index].color = color;
+    }
     },
     setSelectedPropUniqueValues: (state, action) => {
       state.selectedPropUniqueValues = action.payload;

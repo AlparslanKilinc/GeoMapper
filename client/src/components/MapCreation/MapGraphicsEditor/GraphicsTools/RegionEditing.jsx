@@ -19,7 +19,7 @@ export default function RegionEditing() {
 
   // This will break if dotDesnityByProperty is empty
   const defaultProperty =
-    mapGraphicsType === 'Choropleth Map' ? colorByProperty : dotDensityByProperty[0];
+    (mapGraphicsType === 'Choropleth Map' || mapGraphicsType=== 'Heat Map') ? colorByProperty : dotDensityByProperty[0];
 
   const [prop, setProp] = React.useState(defaultProperty);
 

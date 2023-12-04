@@ -1,24 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { MuiColorInput } from 'mui-color-input';
 import { Typography } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
 
-const ColorSelector = ({
-  lower,
-  upper,
-  disableUpper,
-  disableLower,
-  intialColor,
-  title,
-  handleColorChangeCustom
-}) => {
-  const [color, setColor] = React.useState(intialColor);
+const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color, name }) => {
+  const dispatch = useDispatch();
+  const colors = useSelector((state) => state.mapStyles.colors);
 
-  let handleChange = (color) => {
-    setColor(color);
-    if (handleColorChangeCustom) {
-      handleColorChangeCustom(color);
-    }
+  useEffect(() => {
+    console.log({color,name})
+  }, []);
+
+  let handleChange = (newColor) => {
+    dispatch(changeColorByName({ color: newColor, name }));
   };
 
   const colorByRange =

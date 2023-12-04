@@ -55,18 +55,16 @@ const SymbolLayer = () => {
     const iconSize = calculateMarkerSize(point[sizeByProperty]) || fixedSymbolSize;
     const opacity = point[opacityByProperty] || fixedOpacity;
 
-    // Assuming you have a way to determine the color, add that logic here
-    let color = fixedColor; // Replace 'someColorLogic' with actual logic to determine color
+    let color = fixedColor; 
 
     let colorObj = colors.find((color) => color.name === point[colorByProperty]);
     if (colorObj && colorByProperty) color = colorObj.color;
 
-    // console.log('colorByProperty', colorByProperty, 'color', color);
 
     const icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
     const lat = point[latByProperty];
     const lon = point[lonByProperty];
-    console.log(latByProperty, lonByProperty);
+
     if (lat === undefined || lon === undefined) return null;
 
     return (

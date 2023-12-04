@@ -74,39 +74,37 @@ export default function ColorsSymbolAccordionMenu() {
 
   // if the colorByProperty is continous, then we need to show the color range
 
-  if (points.length > 0) {
-    // this should be refactored to check from columnTypes
-    if (!isNaN(points[0][colorByProperty])) {
-      colorSelectors = <ColorPalette />;
-    } else {
-      colorSelectors = (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ width: '100%' }}
-        >
-          <Typography variant="subtitle2">select color</Typography>
-          <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+  // if (points.length > 0) {
+  // this should be refactored to check from columnTypes
 
-          {colors.map(({ name, color }, index) => {
-            console.log('name', name, ':', color);
-            return (
-              <ColorSelector
-                title={name}
-                intialColor={color}
-                disableLower
-                disableUpper
-                handleColorChangeCustom={handleColorChangeText(name)}
-                key={index + 'colorSelector'}
-              />
-            );
-          })}
-        </Box>
-      );
-    }
-  }
+  colorSelectors = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%' }}
+    >
+      <Typography variant="subtitle2">select color</Typography>
+      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+
+      {colors.map(({ name, color }, index) => {
+        console.log('name', name, ':', color);
+        return (
+          <ColorSelector
+            title={name}
+            color={color}
+            disableLower
+            disableUpper
+            handleColorChangeCustom={handleColorChangeText(name)}
+            key={index + 'colorSelector'}
+            name={name}
+          />
+        );
+      })}
+    </Box>
+  );
+  // }
 
   const colorControl = colorByProperty ? colorSelectors : fixedColorSelector;
   const noPointsMessage = <Typography variant="subtitle2">Add symbols to begin editing</Typography>;

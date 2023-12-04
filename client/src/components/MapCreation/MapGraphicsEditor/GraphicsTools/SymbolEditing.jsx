@@ -123,6 +123,7 @@ export default function SymbolEditing() {
       sx={{ gap: 2 }}
     >
       <Autocomplete
+        disabled
         sx={{ width: '100%' }}
         renderInput={(params) => (
           <TextField label="Search..." variant="outlined" {...params} fullWidth />
