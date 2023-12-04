@@ -6,11 +6,18 @@ import { setPointProperty } from '../../../../redux-slices/mapGraphicsDataSlice'
 
 export default function SymbolEditing() {
   const dispatch = useDispatch();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const nameByProperty = useSelector((state) => state.mapGraphics.nameByProperty);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
-  const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   const points = useSelector((state) => state.mapGraphics.points);
   const selectedPointKey = useSelector((state) => state.mapGraphics.selectedPointKey);
+
+  let sizeByProperty;
+  if (mapGraphicsType === 'Spike Map') {
+    sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
+  } else {
+    sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
+  }
 
   const [prop, setProp] = React.useState(sizeByProperty);
 

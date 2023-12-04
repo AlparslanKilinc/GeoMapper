@@ -39,18 +39,14 @@ export default function MapGraphicsEditor() {
   ];
 
   let editing = { label: 'Region', content: <RegionEditing /> };
-
-  if (mapGraphicsType === 'Symbol Map') {
-    editing = { label: 'Symbol', content: <SymbolEditing /> };
-  }
-
-  const dataEditingToolboxConfig = [editing];
-
   let propList = regions;
 
-  if (mapGraphicsType === 'Symbol Map') {
+  if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+    editing = { label: 'Symbol', content: <SymbolEditing /> };
     propList = points;
   }
+  const dataEditingToolboxConfig = [editing];
+
 
   const exportDialogRef = useRef();
   const openExportDialog = () => {
@@ -110,7 +106,7 @@ export default function MapGraphicsEditor() {
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
-    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
+    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
       if (propList.length === 0) return;
       initColorsCategorical();
     }
@@ -128,7 +124,7 @@ export default function MapGraphicsEditor() {
     if (propList.length === 0) return;
     const propertyNames = Object.keys(propList[0]);
 
-    if (mapGraphicsType === 'Symbol Map') {
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
       dispatch(setPointProperties(propertyNames));
       dispatch(setPropertyNames(Object.keys(regions[0])));
     } else dispatch(setPropertyNames(propertyNames));

@@ -14,7 +14,7 @@ const initialState = {
   sizeByProperty: 'size',
   heightByProperty: 'height',
   fixedSymbolSize: 10,
-  fixedOpacity: 0.5,
+  fixedOpacity: 1,
   opacityByProperty: '',
   fixedColor: '#800080',
   labelByProperty: '',
@@ -29,7 +29,7 @@ const initialState = {
     '⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
   addSymbolMode: false,
   selectedPointKey: -1,
-  valuePerDot: 1,
+  valuePerDot: 7,
   dotDensityByProperty: ['male', 'female'],
   maxSymbolSize: 100,
   minSymbolSize: 20
@@ -91,7 +91,9 @@ const mapGraphicsDataSlice = createSlice({
     },
     removeColumn: (state, action) => {
       const columnToRemove = action.payload;
-      state.dotDensityByProperty = state.dotDensityByProperty.filter((column) => column !== columnToRemove);
+      state.dotDensityByProperty = state.dotDensityByProperty.filter(
+        (column) => column !== columnToRemove
+      );
       state.addedColumns = state.addedColumns.filter((column) => column !== action.payload);
       delete state.columnTypes[columnToRemove];
       delete state.columnValidationErrors[columnToRemove];
@@ -273,7 +275,7 @@ const mapGraphicsDataSlice = createSlice({
           const tolerance = 0.00001;
           return (
             index !== rowIndex &&
-            Math.abs(existingLat - newLat) < tFolerance &&
+            Math.abs(existingLat - newLat) < tolerance &&
             Math.abs(existingLon - newLon) < tolerance
           );
         });
@@ -339,6 +341,7 @@ const mapGraphicsDataSlice = createSlice({
     },
     addPoint: (state, action) => {
       action.payload.size = state.fixedSymbolSize;
+      action.payload.height = state.fixedSymbolSize;
       if (state.colorByProperty) action.payload[state.colorByProperty] = 'default';
       else action.payload.color = 'default';
       state.points.push(action.payload);

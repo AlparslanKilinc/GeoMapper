@@ -31,7 +31,7 @@ export default function GeojsonWrapper({ isStyled }) {
   const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
   const opacity = useSelector((state) => state.mapStyles.opacity);
   const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
-
+  const fillColor = useSelector((state) => state.mapStyles.fillColor);
   const uniqueKey = [
     JSON.stringify(geoJSON),
     mapGraphicsType,
@@ -45,19 +45,27 @@ export default function GeojsonWrapper({ isStyled }) {
     borderColor,
     borderWidth,
     opacity,
-    mapBackgroundColor
+    mapBackgroundColor,
+    fillColor
   ].join('|');
 
-  // Default Styles
+  // // Default Styles
+  // const defaultStyles = {
+  //   color: 'black',
+  //   weight: 1
+  // };
+
   const defaultStyles = {
     fillColor: '#EDEDED',
     weight: 2,
-    color: '#D3D3D3'
+    color: '#808080',
+    fillOpacity:1
   };
 
   if (isStyled) {
     defaultStyles.color = borderColor;
     defaultStyles.weight = borderWidth;
+    defaultStyles.fillColor = fillColor;
   }
 
   const generateRandomColor = () => {
@@ -76,6 +84,7 @@ export default function GeojsonWrapper({ isStyled }) {
         // Add cases for other map types here
 
         case 'Dot Density Map':
+          layer.setStyle(defaultStyles);
           layer.on({
             click: (e) => {
               dispatch(setSelectedRegionIdx(feature.properties.regionIdx));
@@ -89,6 +98,7 @@ export default function GeojsonWrapper({ isStyled }) {
 
         default:
           // Default behavior if no specific map type is matched
+          layer.setStyle(defaultStyles);
           break;
       }
       const { lat, lng } = layer.getBounds().getCenter();
@@ -96,6 +106,8 @@ export default function GeojsonWrapper({ isStyled }) {
       if (labelByProperty && labels.length <= feature.properties.regionIdx) {
         dispatch(addLabelPosition([lat, lng]));
       }
+    } else {
+      layer.setStyle(defaultStyles);
     }
   };
 
@@ -135,12 +147,8 @@ export default function GeojsonWrapper({ isStyled }) {
   const applyChoroplethStyles = (feature, layer, regionData) => {
     let color = generateRandomColor();
     let colorPropVal = regionData[colorByProperty];
-    if (!isNaN(colorPropVal)) {
-      color = continousColorScale[feature.properties.regionIdx];
-    } else {
-      let colorObj = colors.find((color) => color.name === regionData[colorByProperty]);
-      if (colorObj) color = colorObj.color;
-    }
+    let colorObj = colors.find((color) => color.name === colorPropVal);
+    if (colorObj) color = colorObj.color;
 
     layer.setStyle({
       fillColor: color,
@@ -182,13 +190,7 @@ export default function GeojsonWrapper({ isStyled }) {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       {geoJSON && (
-        <GeoJSON
-          data={geoJSON}
-          style={defaultStyles}
-          onEachFeature={onEachFeature}
-          ref={geojsonLayer}
-          key={uniqueKey}
-        />
+        <GeoJSON data={geoJSON} onEachFeature={onEachFeature} ref={geojsonLayer} key={uniqueKey} />
       )}
 
       {renderLabels && <LabelLayer />}

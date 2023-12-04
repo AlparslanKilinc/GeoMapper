@@ -33,8 +33,9 @@ const initialState = {
   shape: 'circle', // Shape type for the map symbols
   size: 0, // Size of the map symbols
   height: 0, // Height for 3D elements
-  borderColor: 'black', // black hex code
-  borderWidth: 1, // Width of borders of map elements
+  borderColor: '#808080', // black hex code
+  borderWidth: 2, // Width of borders of map elements
+  fillColor: '#EDEDED',
   mapBackgroundColor: 'white',
   isTilelayerVisible: false,
   selectedPropUniqueValues: [], // Unique values for the selected property,
@@ -69,14 +70,14 @@ const mapStylesDataSlice = createSlice({
     setColors: (state, action) => {
       //
       action.payload.sort((a, b) => {
-    if (a.name < b.name) {
-        return -1;
-    }
-    if (a.name > b.name) {
-        return 1;
-    }
-    return 0;
-});
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
       state.colors = action.payload;
     },
     setColorPaletteIdx: (state, action) => {
@@ -85,13 +86,13 @@ const mapStylesDataSlice = createSlice({
     changeColorByName: (state, action) => {
       const { name, color } = action.payload;
 
-    // Find the index of the color configuration to update
-    const index = state.colors.findIndex(c => c.name === name);
+      // Find the index of the color configuration to update
+      const index = state.colors.findIndex((c) => c.name === name);
 
-    // If found, directly update the color configuration
-    if (index !== -1) {
+      // If found, directly update the color configuration
+      if (index !== -1) {
         state.colors[index].color = color;
-    }
+      }
     },
     setSelectedPropUniqueValues: (state, action) => {
       state.selectedPropUniqueValues = action.payload;
@@ -136,6 +137,9 @@ const mapStylesDataSlice = createSlice({
     },
     setDefaultLabelFont: (state, action) => {
       state.defaultLabelFont = action.payload;
+    },
+    setFillColor: (state, action) => {
+      state.fillColor = action.payload;
     }
   }
 });
@@ -160,7 +164,8 @@ export const {
   setLabelFont,
   setDefaultLabelColor,
   setDefaultLabelSize,
-  setDefaultLabelFont
+  setDefaultLabelFont,
+  setFillColor
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;

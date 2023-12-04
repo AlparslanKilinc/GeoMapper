@@ -26,6 +26,11 @@ const isPointInPolygon = (point, geojson) => {
 
 const GeoJsonMap = ({ styled }) => {
   const dispatch = useDispatch();
+  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
+  const renderSpikeLayer = mapGraphicsType === 'Spike Map' && styled;
+  const renderDotDensityLayer = mapGraphicsType === 'Dot Density Map' && styled;
 
   // give it default propertie values extracted from a single point
   const getDefaultPointProperties = () => {
@@ -35,10 +40,6 @@ const GeoJsonMap = ({ styled }) => {
       opacity: 1
     };
   };
-
-  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
-  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-  const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
 
   const EventHandlerLayer = () => {
     //     '44.3148#-85.6024': { lat: 44.3148, lon: -85.6024, size: 12, color: 'Kobe', opacity: 0.4
@@ -68,12 +69,13 @@ const GeoJsonMap = ({ styled }) => {
         flexGrow: 1,
         backgroundColor: styled ? mapBackgroundColor : 'white'
       }}
+      key={mapBackgroundColor}
     >
       <GeojsonWrapper isStyled={styled} />
-      {renderSymbolLayer && <SymbolLayer />}
+      {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
+      {renderDotDensityLayer && <DotDensityLayer />}
 
-      {renderSymbolLayer && <EventHandlerLayer />}
-      {styled && mapGraphicsType === 'Dot Density Map' && <DotDensityLayer />}
+      {(renderSymbolLayer || renderSpikeLayer) && <EventHandlerLayer />}
     </MapContainer>
   );
 };

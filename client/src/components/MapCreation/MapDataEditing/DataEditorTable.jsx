@@ -273,6 +273,7 @@ export default function DataEditorTable() {
       opacity: 0.4
     };
     dispatch(setColumnType({ columnName: 'size', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'height', columnType: 'number' }));
     dispatch(setColumnType({ columnName: 'opacity', columnType: 'number' }));
     dispatch(setColumnType({ columnName: 'lat', columnType: 'number' }));
     dispatch(setColumnType({ columnName: 'lon', columnType: 'number' }));
