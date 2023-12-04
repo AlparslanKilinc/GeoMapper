@@ -1,4 +1,5 @@
 //these are for commmon use not just leaflet
+import * as d3 from 'd3';
 export const createCircleSvg = (size, color) => {
     return`<svg width="${size}px" height="${size}px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <circle cx="50" cy="50" r="50" fill="${color}"  />
@@ -36,13 +37,29 @@ export const createHexagonSvg = (size, color) => {
   </svg>`;
 };
 
+export const createSpikeSvg = (size, color) => {
+    const baseWidth = 10;
+    const height = size;
+
+    const gradientId = "gradient-" + Math.random().toString(36).substr(2, 9);
+    return `<svg width="${baseWidth}" height="${height}" viewBox="0 0 ${baseWidth} ${height}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="${gradientId}" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stop-color="${d3.rgb(color).brighter(3)}"></stop>
+        <stop offset="100%" stop-color="${d3.rgb(color).darker(3)}"></stop>
+      </linearGradient>
+    </defs>
+    <polygon points="0,${height} ${baseWidth / 2},0 ${baseWidth},${height}" fill="url(#${gradientId})" stroke="${d3.rgb(color).darker(3)}" stroke-width="1"></polygon>
+  </svg>`;
+};
 const shapeFactory = {
     createCircleSvg,
     createTriangleSvg,
     createDiamondSvg,
     createSquareSvg,
     createStarSvg,
-    createHexagonSvg
+    createHexagonSvg,
+    createSpikeSvg
 };
 
 export default shapeFactory;

@@ -14,6 +14,8 @@ export default function LegendWrapper({properties}) {
             return <ChoroplethMapLegend properties = {properties}/>;
         case "Dot Density Map":
             return <DotDensityLegend properties = {properties}/>
+        case "Spike Map":
+            return <SymbolMapLegend properties = {properties}/>;
         default:
             return <ChoroplethMapLegend properties = {properties}/>;
     }

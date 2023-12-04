@@ -3,6 +3,7 @@ import { Marker } from 'react-leaflet';
 import shapeIconMap from './shapeIconMap';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedPointKey, setMinProperty, setMaxProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import {changeSelectedShape} from '../../../../../redux-slices/mapStylesSlice'
 
 const SymbolLayer = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const SymbolLayer = () => {
 
   let sizeByProperty;
   if (mapGraphicsType === 'Spike Map') {
+    dispatch(changeSelectedShape('spike'))
     sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
   } else {
     sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);

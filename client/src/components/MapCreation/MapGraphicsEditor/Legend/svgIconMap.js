@@ -7,6 +7,7 @@ const shapeIconMap = {
     diamond: (size, color) => shapeFactory.createDiamondIcon(size, color),
     star: (size, color) => shapeFactory.createStarIcon(size, color),
     hexagon: (size, color) => shapeFactory.createHexagonIcon(size, color),
+    spike: (size, color) => shapeFactory.createSpikeSvg(size, color),
     default: icon({ iconUrl: 'default-icon.png' })
 };
 

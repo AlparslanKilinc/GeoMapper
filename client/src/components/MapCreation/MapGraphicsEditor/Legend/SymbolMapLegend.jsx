@@ -9,14 +9,16 @@ import shapeFactory from "./svgShapes.js";
 export default function SymbolMapLegend({ properties}) {
     const legendRef = useRef(null);
     const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
-    const shape = useSelector((state) => state.mapStyles.shape);
+    let shape = useSelector((state) => state.mapStyles.shape);
     const maxSymbolSize = useSelector((state) => state.mapGraphics.maxProperty);
     const minSymbolSize = useSelector((state) => state.mapGraphics.minProperty);
     const [smallIcon, setSmallIcon] = useState('');
     const [mediumIcon, setMediumIcon] = useState('');
     const [largeIcon, setLargeIcon] = useState('');
     const mediumSize = (minSymbolSize + maxSymbolSize) / 2
-
+    if (shape == 'Spike'){
+        shape = 'spike'
+    }
     useEffect(() => {
         const shapeMappings = {
             'circle': shapeFactory.createCircleSvg,
@@ -25,6 +27,7 @@ export default function SymbolMapLegend({ properties}) {
             'diamond': shapeFactory.createDiamondSvg,
             'star': shapeFactory.createStarSvg,
             'hexagon': shapeFactory.createHexagonSvg,
+            'spike': shapeFactory.createSpikeSvg,
         };
         const createShapeIcons = (size) => ({
             small: shapeMappings[shape](size, 'grey'),
@@ -32,6 +35,7 @@ export default function SymbolMapLegend({ properties}) {
             large: shapeMappings[shape](size + 25, 'grey'),
         });
         const { small, medium, large } = createShapeIcons(15);
+        console.log(shape);
         setSmallIcon(small);
         setMediumIcon(medium);
         setLargeIcon(large);
@@ -77,28 +81,28 @@ export default function SymbolMapLegend({ properties}) {
                 {properties.map((props, index) => (
                     <div key={index} style={itemStyle}>
                         <Box sx={{ bgcolor: props.color, height: '20px', width: '20px', marginRight: '5px' }} />
-                        <Typography>
+                        <Typography style = {{marginRight: '-10px'}}>
                             {props.name}
                         </Typography>
                     </div>
                 ))}
                 <div style={{ display: 'flex', alignItems: 'center'}}>
-                    <div dangerouslySetInnerHTML={{ __html: smallIcon }} style={{ marginRight: '24px'}}></div>
-                    <Typography>
+                    <div dangerouslySetInnerHTML={{ __html: smallIcon }} ></div>
+                    <Typography style = {{marginLeft: '20px'}}>
                         {minSymbolSize} - {mediumSize}
                     </Typography>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div dangerouslySetInnerHTML={{ __html: mediumIcon }} style={{ marginRight: '15px', marginLeft: '-2px' }} />
-                    <Typography>
+                    <div dangerouslySetInnerHTML={{ __html: mediumIcon }}  />
+                    <Typography style = {{marginLeft: '20px'}} >
                         {mediumSize} - {maxSymbolSize}
                     </Typography>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div dangerouslySetInnerHTML={{ __html: largeIcon }} style={{ marginRight: '5px', marginLeft: '-5px' }} />
-                    <Typography>
+                    <div dangerouslySetInnerHTML={{ __html: largeIcon }}  />
+                    <Typography style = {{marginLeft: '20px'}}>
                         {maxSymbolSize} +
                     </Typography>
                 </div>
