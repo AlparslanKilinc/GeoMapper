@@ -37,14 +37,16 @@ const MapTitleEditor = () => {
           value={title}
           onChange={handleTitleChange}
           variant="outlined"
-          placeholder="Enter document title"
+          placeholder="Add a Title"
           sx={{
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: 'transparent' // Hide border by default
+                borderColor: 'transparent',
               },
               '&:hover fieldset': {
-                borderColor: 'grey' // Show border on hover
+                borderColor: 'var(--main-color)',
+                borderWidth: '2px'
+
               },
               '& input': {
                 fontSize: '1.25rem',
@@ -52,9 +54,9 @@ const MapTitleEditor = () => {
                 padding: '0.7em 0.4em'
               },
             },
-            width: `${width}px`
           }}
         />
+
       </div>
     </Box>
   );
