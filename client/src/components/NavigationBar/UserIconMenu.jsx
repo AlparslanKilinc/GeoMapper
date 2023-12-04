@@ -101,18 +101,6 @@ export default function UserIconMenu() {
           <AccountCircleIcon sx={{ color: '#BBBBBB' }} />
           Your Profile
         </MenuItem>
-        <MenuItem onClick={handleMenuClick} sx={{ padding: '5px' }}>
-          <MapIcon sx={{ color: '#BBBBBB' }} />
-          Your Maps
-        </MenuItem>
-        <MenuItem onClick={handleMenuClick} sx={{ padding: '5px' }}>
-          <AssignmentIcon sx={{ color: '#BBBBBB' }} />
-          Your Drafts
-        </MenuItem>
-        <MenuItem onClick={handleMenuClick} sx={{ padding: '5px' }}>
-          <BookmarkBorderIcon sx={{ color: '#BBBBBB' }} />
-          Your Bookmarks
-        </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
