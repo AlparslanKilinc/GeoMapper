@@ -5,7 +5,7 @@ const { bucket } = require('../googleCloudStorage');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
 const jwt = require("jsonwebtoken");
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 var nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client('463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com');
@@ -96,7 +96,7 @@ googleLogin = async(req, res) => {
 
   } catch (error) {
     console.error(error);
-    return res.status(500).json({errorMessage: "error in logging in user"});
+    return res.status(200).json({errorMessage: "User already exists"});
     console.error(error);
   }
 
@@ -121,7 +121,6 @@ registerUser = async (req, res) => {
       console.log('Please enter the same password twice');
       return res.status(400).json({ errorMessage: 'Please enter the same password twice' });
     }
-
     const existingUserByEmail = await User.findOne({ email });
     const existingUserByUserName = await User.findOne({ userName });
 
