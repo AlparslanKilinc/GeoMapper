@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import MapIcon from '@mui/icons-material/Map';
 import { Divider } from '@mui/material';
 import Sidebar from './SideBar';
+import {useSelector} from "react-redux";
 
 const NavState = {
   DRAFTS: 'Drafts',

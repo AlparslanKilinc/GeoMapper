@@ -20,7 +20,8 @@ const sendUserResponse = (res, user) => {
       userName: user.userName,
       bio: user.bio,
       id: user._id,
-      profilePicPath: user.profilePicPath
+      profilePicPath: user.profilePicPath,
+      googleUserId: user.googleUserId,
     },
     loggedIn: true
   });

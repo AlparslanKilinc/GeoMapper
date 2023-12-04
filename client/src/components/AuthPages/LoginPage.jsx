@@ -19,6 +19,7 @@ export default function LoginPage() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isLoading = useSelector((state) => state.auth.isLoading);
   const errorMessage = useSelector((state) => state.auth.message);
+  const user = useSelector((state) => state.auth.user)
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [formErrors, setFormErrors] = useState({});
@@ -74,6 +75,7 @@ export default function LoginPage() {
       const idToken = googleUser.getAuthResponse().id_token;
 
       const response = await dispatch(googleLogin({idToken}));
+      console.log(user)
      if(response.type.endsWith('/rejected')){
        setGoogleError('Error signing in with Google, please create an account');
      }

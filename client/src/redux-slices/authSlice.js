@@ -146,6 +146,7 @@ export const authSlice = createSlice({
       })
         .addCase(googleLogin.fulfilled, (state, action) => {
             state.user = action.payload.user;
+             console.log(action.payload.user)
             state.loggedIn = action.payload.loggedIn;
             state.isLoading = false;
         })
