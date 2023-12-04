@@ -33,15 +33,19 @@ const initialState = {
   shape: 'circle', // Shape type for the map symbols
   size: 0, // Size of the map symbols
   height: 0, // Height for 3D elements
-  borderColor: 'black', // black hex code
-  borderWidth: 1, // Width of borders of map elements
+  borderColor: '#808080', // black hex code
+  borderWidth: 2, // Width of borders of map elements
+  fillColor: '#EDEDED',
   mapBackgroundColor: 'white',
   isTilelayerVisible: false,
   selectedPropUniqueValues: [], // Unique values for the selected property,
   selectedFeature: null,
   continousColorScale: [],
   opacity: 1,
-  labelPositions: []
+  labels: [],
+  defaultLabelColor: 'white',
+  defaultLabelSize: 12,
+  defaultLabelFont: 'Outfit'
 };
 
 const mapStylesDataSlice = createSlice({
@@ -64,6 +68,16 @@ const mapStylesDataSlice = createSlice({
       state.isTilelayerVisible = !state.isTilelayerVisible;
     },
     setColors: (state, action) => {
+      //
+      action.payload.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
       state.colors = action.payload;
     },
     setColorPaletteIdx: (state, action) => {
@@ -71,10 +85,14 @@ const mapStylesDataSlice = createSlice({
     },
     changeColorByName: (state, action) => {
       const { name, color } = action.payload;
-      const colorCopy = [...state.colors];
-      const colorConfig = colorCopy.find((c) => c.name === name);
-      colorConfig.color = color;
-      state.colors = colorCopy;
+
+      // Find the index of the color configuration to update
+      const index = state.colors.findIndex((c) => c.name === name);
+
+      // If found, directly update the color configuration
+      if (index !== -1) {
+        state.colors[index].color = color;
+      }
     },
     setSelectedPropUniqueValues: (state, action) => {
       state.selectedPropUniqueValues = action.payload;
@@ -90,10 +108,38 @@ const mapStylesDataSlice = createSlice({
     },
     setLabelPositionByIdx: (state, action) => {
       const { idx, position } = action.payload;
-      state.labelPositions[idx] = position;
+      state.labels[idx][position] = position;
     },
     addLabelPosition: (state, action) => {
-      state.labelPositions.push(action.payload);
+      // modify this to be add label
+      // new structure for labelPositions = [{position:[],color:string,}]
+      state.labels.push({
+        position: action.payload
+      });
+    },
+    setLabelColor: (state, action) => {
+      const { idx, color } = action.payload;
+      state.labels[idx].color = color;
+    },
+    setLabelSize: (state, action) => {
+      const { idx, size } = action.payload;
+      state.labels[idx].size = size;
+    },
+    setLabelFont: (state, action) => {
+      const { idx, font } = action.payload;
+      state.labels[idx].font = font;
+    },
+    setDefaultLabelColor: (state, action) => {
+      state.defaultLabelColor = action.payload;
+    },
+    setDefaultLabelSize: (state, action) => {
+      state.defaultLabelSize = action.payload;
+    },
+    setDefaultLabelFont: (state, action) => {
+      state.defaultLabelFont = action.payload;
+    },
+    setFillColor: (state, action) => {
+      state.fillColor = action.payload;
     }
   }
 });
@@ -112,7 +158,14 @@ export const {
   setOpacity,
   setLabelPositions,
   setLabelPositionByIdx,
-  addLabelPosition
+  addLabelPosition,
+  setLabelColor,
+  setLabelSize,
+  setLabelFont,
+  setDefaultLabelColor,
+  setDefaultLabelSize,
+  setDefaultLabelFont,
+  setFillColor
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;

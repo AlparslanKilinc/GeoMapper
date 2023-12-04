@@ -71,6 +71,22 @@ export const fetchGeojson = createAsyncThunk(
   }
 );
 
+export const uploadGeoJSON = createAsyncThunk(
+  'geojson/uploadGeoJSON',
+  async (geoJSON, thunkApi) => {
+    try {
+      const pbfData = geobuf.encode(geoJSON, new Pbf());
+      const decodedGeojson = geobuf.decode(new Pbf(pbfData));
+      const { regions, propertyNames, columnTypes } = processGeojson(decodedGeojson);
+      thunkApi.dispatch(setChoroplethData({ regions, propertyNames, columnTypes }));
+
+      return { geoJSON: decodedGeojson };
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const searchGeojson = createAsyncThunk(
   'geojson/searchGeojson',
   async (query, { rejectWithValue }) => {
@@ -92,10 +108,6 @@ const geoJsonSlice = createSlice({
     isLoadingGeojson: false
   },
   reducers: {
-    setUploadedGeoJSON: (state, action) => {
-      state.geojson = { geoJSON: action.payload };
-      state.isLoadingGeojson = false;
-    },
     startLoadingGeojson: (state) => {
       state.isLoadingGeojson = true;
     },
@@ -131,6 +143,13 @@ const geoJsonSlice = createSlice({
       .addCase(searchGeojson.pending, (state) => {
         state.isLoadingItems = true;
       })
+      .addCase(uploadGeoJSON.fulfilled, (state, action) => {
+        state.geojson = action.payload;
+        state.isLoadingGeojson = false;
+      })
+      .addCase(uploadGeoJSON.rejected, (state) => {
+        state.isLoadingGeojson = false;
+      })
       .addCase(searchGeojson.fulfilled, (state, action) => {
         state.items = action.payload;
         state.isLoadingItems = false;
@@ -141,6 +160,5 @@ const geoJsonSlice = createSlice({
   }
 });
 
-export const { setUploadedGeoJSON, startLoadingGeojson, stopLoadingGeojson, clearGeojson } =
-  geoJsonSlice.actions;
+export const {startLoadingGeojson, stopLoadingGeojson, clearGeojson } = geoJsonSlice.actions;
 export default geoJsonSlice.reducer;

@@ -26,3 +26,17 @@
   justify-content: space-around;
   width: 80%;
 }
+
+.outer-box{
+  background-color: #f9f9f9; 
+  border: 1px solid #ddd;     
+  border-radius: 8px;         
+  padding: 20px;              
+  transition: all 0.3s ease;  
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); 
+  cursor: pointer;          
+}
+.outer-box:hover {
+  transform: scale(1.05);    
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.3); 
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Slider, TextField, Autocomplete } from '@mui/material';
+import { Slider, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import SubMenuTitle from '../../SubMenuTitle';
 import { MuiColorInput } from 'mui-color-input';
@@ -8,6 +8,8 @@ import { changeXByProperty } from '../../../../../redux-slices/mapGraphicsDataSl
 import { setFixedOpacity, setValuePerDot } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import ColorSelector from './ColorSelector';
 import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
+import DotDensityPropertySelector from './DotDensityPropertySelector';
+
 export default function ColorsDotDensityAccordionMenu() {
   const dispatch = useDispatch();
   const fixedOpacity = useSelector((state) => state.mapGraphics.fixedOpacity);
@@ -15,13 +17,6 @@ export default function ColorsDotDensityAccordionMenu() {
   const valuePerDot = useSelector((state) => state.mapGraphics.valuePerDot);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const colors = useSelector((state) => state.mapStyles.colors);
-  const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
-  const columnTypes = useSelector((state) => state.mapGraphics.columnTypes);
-
-  // filter numerical properties from the propertyNames
-  const dotDensityByPropertyOptions = propertyNames.filter((property) => {
-    return columnTypes[property] === 'number';
-  });
 
   const handleFixedColorChange = (color) => {
     dispatch(changeXByProperty({ property: 'fixedColor', propertyBy: color }));
@@ -76,11 +71,10 @@ export default function ColorsDotDensityAccordionMenu() {
         {colors.map(({ name, color }, index) => {
           return (
             <ColorSelector
-              title={name}
-              intialColor={color}
+              name={name}
+              color={color}
               disableLower
               disableUpper
-              handleColorChangeCustom={handleColorChangeText(name)}
               key={index + 'colorSelector'}
             />
           );
@@ -97,28 +91,7 @@ export default function ColorsDotDensityAccordionMenu() {
       justifyContent="center"
       sx={{ gap: 2 }}
     >
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ gap: 2 }}
-      >
-        <SubMenuTitle title="color by property" />
-        <Autocomplete
-          multiple
-          id="tags-standard"
-          options={dotDensityByPropertyOptions}
-          value={dotDensityByProperty}
-          onChange={(event, newValue) => {
-            dispatch(changeXByProperty({ property: 'dotDensityByProperty', propertyBy: newValue }));
-          }}
-          getOptionLabel={(option) => option}
-          renderInput={(params) => (
-            <TextField {...params} variant="outlined" placeholder="dot density" />
-          )}
-        />
-      </Box>
+      <DotDensityPropertySelector />
       {dotDensityByProperty && colorSelectors}
 
       <Box

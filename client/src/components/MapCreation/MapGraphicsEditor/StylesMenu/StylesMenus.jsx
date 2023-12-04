@@ -9,17 +9,18 @@ import { useSelector } from 'react-redux';
 
 export default function StylesMenus() {
   const SYMBOL_MAP = 'Symbol Map';
-  const CHORO_MAP = 'Choropleth Map';
+  const SPIKE_MAP = 'Spike Map';
+  const DOT_DENSITY = 'Dot Density';
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   return (
     <div>
       <ColorsAccordionMenu />
-      {mapGraphicsType !== CHORO_MAP && <ShapeAccordionMenu />}
+      {(mapGraphicsType === SYMBOL_MAP || mapGraphicsType === SPIKE_MAP || mapGraphicsType === DOT_DENSITY) && <ShapeAccordionMenu />}
       <BorderAccordionMenu />
       <LabelsAccordionMenu />
       <MapStyleAccordionMenu />
-        <LegendAccordionMenu/>
+      <LegendAccordionMenu/>
     </div>
   );
 }

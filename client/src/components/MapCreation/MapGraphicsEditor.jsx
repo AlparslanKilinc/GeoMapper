@@ -18,6 +18,7 @@ import * as d3 from 'd3';
 import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
 import MapBox from './MapBox';
 import SymbolEditing from './MapGraphicsEditor/GraphicsTools/SymbolEditing';
+import { setPointProperties } from '../../redux-slices/mapGraphicsDataSlice';
 
 export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
@@ -38,18 +39,14 @@ export default function MapGraphicsEditor() {
   ];
 
   let editing = { label: 'Region', content: <RegionEditing /> };
-
-  if (mapGraphicsType === 'Symbol Map') {
-    editing = { label: 'Symbol', content: <SymbolEditing /> };
-  }
-
-  const dataEditingToolboxConfig = [editing, { label: 'Tabular', content: <DataEditorTable /> }];
-
   let propList = regions;
 
-  if (mapGraphicsType === 'Symbol Map') {
-    propList = Object.values(points);
+  if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+    editing = { label: 'Symbol', content: <SymbolEditing /> };
+    propList = points;
   }
+  const dataEditingToolboxConfig = [editing];
+
 
   const exportDialogRef = useRef();
   const openExportDialog = () => {
@@ -109,27 +106,34 @@ export default function MapGraphicsEditor() {
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
-    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map') {
-      const isNumeric = !isNaN(propList[0][colorByProperty]);
-      if (isNumeric) initColorsNumerical();
-      else initColorsCategorical();
+    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+      if (propList.length === 0) return;
+      initColorsCategorical();
     }
 
     if (mapGraphicsType === 'Dot Density Map') {
       initColorsDotDensity();
-      console.log('dot density');
+    }
+
+    if(mapGraphicsType === 'Heat Map'){
+      initColorsNumerical();
     }
   };
 
   const initPropertyNames = () => {
+    if (propList.length === 0) return;
     const propertyNames = Object.keys(propList[0]);
-    dispatch(setPropertyNames(propertyNames));
+
+    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+      dispatch(setPointProperties(propertyNames));
+      dispatch(setPropertyNames(Object.keys(regions[0])));
+    } else dispatch(setPropertyNames(propertyNames));
   };
 
   useEffect(() => {
     initColors();
     initPropertyNames();
-  }, [colorByProperty, regions, dotDensityByProperty]);
+  }, [colorByProperty, regions, dotDensityByProperty, points]);
 
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);

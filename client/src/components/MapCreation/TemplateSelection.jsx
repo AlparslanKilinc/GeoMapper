@@ -47,7 +47,7 @@ export default function TemplateSelection({ onSelectionComplete }) {
       <div className="container">
         <div className="selections">
           {mapData.map((map, index) => (
-            <div key={index} className="outer-box">
+            <div key={index} className="outer-box" onClick={() => {handleSelection(map.title);}}>
               <img className="image" src={getImageSrc(map.title)} alt={map.alt} />
               <Divider />
               <div className="info-box">
