@@ -12,10 +12,10 @@ export default function SymbolEditing() {
   const points = useSelector((state) => state.mapGraphics.points);
   const selectedPointKey = useSelector((state) => state.mapGraphics.selectedPointKey);
   let sizeByProperty;
-  if (mapGraphicsType === "Symbol Map") {
-    sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
-  } else if (mapGraphicsType === "Spike Map") {
+  if (mapGraphicsType === "Spike Map") {
     sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
+  } else {
+    sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   }
 
   const [prop, setProp] = React.useState(sizeByProperty);

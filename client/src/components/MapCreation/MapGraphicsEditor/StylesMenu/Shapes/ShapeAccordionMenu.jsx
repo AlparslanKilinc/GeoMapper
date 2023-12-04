@@ -7,11 +7,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
 import ShapeButtonGroup from './ShapeButtonGroup';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import LandscapeOutlinedIcon from '@mui/icons-material/LandscapeOutlined';
+import GrainIcon from '@mui/icons-material/Grain';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { Divider, Switch } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeSizeByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { changeHeightByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import Slider from '@mui/material/Slider';
 import { setFixedSymbolSize } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import { toggleAddSymbolMode } from '../../../../../redux-slices/mapGraphicsDataSlice';
@@ -61,15 +64,52 @@ const SliderTextField = ({ value, onChange }) => {
   );
 };
 
+const getMapTypeTitle = (mapGraphicsType) => {
+  console.log(mapGraphicsType);
+  switch (mapGraphicsType) {
+    case "Symbol Map":
+      return (
+        <Typography>
+          <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+            <CategoryOutlinedIcon sx={{ mr: 0.5 }} /> shape
+          </Box>
+        </Typography>
+      );
+    case "Spike Map":
+      return (
+        <Typography>
+          <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+            <LandscapeOutlinedIcon sx={{ mr: 0.5 }} /> spike
+          </Box>
+        </Typography>
+      );
+    case "Dot Density Map":
+      return (
+        <Typography>
+          <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+            <GrainIcon sx={{ mr: 0.5 }} /> dots
+          </Box>
+        </Typography>
+      );
+    default:
+      return null;
+  }
+};
+
 export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
-  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphics);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const fixedSymbolSize = useSelector((state) => state.mapGraphics.fixedSymbolSize);
   const pointProperties = useSelector((state) => state.mapGraphics.pointProperties);
-  const sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
   const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
   const minSymbolSize = useSelector((state) => state.mapGraphics.minSymbolSize);
+  let sizeByProperty;
+  if (mapGraphicsType === "Spike Map") {
+    sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
+  } else {
+    sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
+  }
 
   const handleMaxSymbolSizeChange = (event, newValue) => {
     console.log('newValue', newValue);
@@ -77,7 +117,11 @@ export default function ShapeAccordionMenu() {
   };
 
   const handleSizeByPropertyChange = (event, newValue) => {
-    dispatch(changeSizeByProperty(newValue));
+    if (mapGraphicsType === "Spike Map") {
+      dispatch(changeHeightByProperty(newValue));
+    } else {
+      dispatch(changeSizeByProperty(newValue));
+    }
   };
 
   const handleSymbolSizeChange = (event, newValue) => {
@@ -92,7 +136,7 @@ export default function ShapeAccordionMenu() {
       justifyContent="center"
       sx={{ width: '100%' }}
     >
-      <SubMenuTitle title="fixed size" />
+      <SubMenuTitle title={mapGraphicsType === 'Spike Map' ? "fixed height" : "fixed size"} />
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
       <SliderTextField value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
     </Box>
@@ -106,7 +150,7 @@ export default function ShapeAccordionMenu() {
       justifyContent="center"
       sx={{ width: '100%' }}
     >
-      <Typography variant="subtitle2">max size</Typography>
+      <Typography variant="subtitle2">{mapGraphicsType === 'Spike Map' ? "max height" : "max size"}</Typography>
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
       <SliderTextField value={maxSymbolSize} onChange={handleMaxSymbolSizeChange} />
     </Box>
@@ -119,11 +163,7 @@ export default function ShapeAccordionMenu() {
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography>
-          <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-            <CategoryOutlinedIcon sx={{ mr: 0.5 }} /> shape
-          </Box>
-        </Typography>
+        {getMapTypeTitle(mapGraphicsType)}
         {/* Emoji included */}
       </AccordionSummary>
       <AccordionDetails>
@@ -134,11 +174,13 @@ export default function ShapeAccordionMenu() {
           justifyContent="center"
           sx={{ gap: 2 }}
         >
-          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <Typography variant="subtitle2">select shape</Typography>
-            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <ShapeButtonGroup />
-          </Box>
+          {mapGraphicsType !== "Spike Map" && (
+            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+              <Typography variant="subtitle2">select shape</Typography>
+              <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+              <ShapeButtonGroup />
+            </Box>
+          )}
 
           <Box
             display="flex"
@@ -147,7 +189,7 @@ export default function ShapeAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%', display: mapGraphicsType === 'Dot Density Map' ? 'none' : 'flex' }}
           >
-            <Typography variant="subtitle2">size by property</Typography>
+            <Typography variant="subtitle2">{mapGraphicsType === 'Spike Map' ? "height by property" : "size by property"}</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
             <Autocomplete
               value={sizeByProperty}
@@ -167,12 +209,12 @@ export default function ShapeAccordionMenu() {
             justifyContent="center"
             sx={{ gap: 2 }}
           >
-            <SubMenuTitle title="add symbol mode" />
+            <SubMenuTitle title={mapGraphicsType === 'Spike Map' ? "add spike mode" : "add symbol mode"} />
             <FormControlLabel
               control={
                 <Switch value={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
               }
-              label="add symbol mode"
+              label={mapGraphicsType === 'Spike Map' ? "add spike mode" : "add symbol mode"}
             />
           </Box>
         </Box>

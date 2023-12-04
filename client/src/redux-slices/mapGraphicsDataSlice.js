@@ -13,7 +13,7 @@ const initialState = {
   colorByProperty: '',
   sizeByProperty: 'size',
   heightByProperty: 'height',
-  fixedSymbolSize: 100,
+  fixedSymbolSize: 10,
   fixedOpacity: 0.5,
   opacityByProperty: '',
   fixedColor: '#800080',
@@ -289,8 +289,8 @@ const mapGraphicsDataSlice = createSlice({
       state.points.push({ name, lat, lon, color: '', size: 0, height: 0, opacity: 0.4 });
     },
     addPoint: (state, action) => {
-      const { name, color, lat, lon, size, opacity } = action.payload;
-      state.points.push({ name, color, lat, lon, size, opacity });
+      const { name, color, lat, lon, size, height, opacity } = action.payload;
+      state.points.push({ name, color, lat, lon, size, height, opacity });
     },
     removePoint: (state, action) => {
       const index = action.payload.rowIndex;

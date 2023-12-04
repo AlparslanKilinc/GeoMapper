@@ -20,10 +20,10 @@ const SymbolLayer = () => {
   const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
   const minSymbolSize = useSelector((state) => state.mapGraphics.minSymbolSize);
   let sizeByProperty;
-  if (mapGraphicsType === "Symbol Map") {
-    sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
-  } else if (mapGraphicsType === "Spike Map") {
+  if (mapGraphicsType === "Spike Map") {
     sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
+  } else {
+    sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
   }
 
   const extractSizeValues = (points) => {

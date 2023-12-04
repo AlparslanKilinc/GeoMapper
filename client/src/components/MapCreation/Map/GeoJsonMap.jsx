@@ -10,14 +10,26 @@ import { useDispatch } from 'react-redux';
 
 const GeoJsonMap = ({ styled }) => {
   const dispatch = useDispatch();
+  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
+  const renderSpikeLayer = mapGraphicsType === 'Spike Map' && styled;
+  const renderDotDensityLayer = mapGraphicsType === 'Dot Density Map' && styled;
 
   // give it default propertie values extracted from a single point
+  // TODO: BUG: the adding points still goes into the default column after change sizeByProperty 
   const getDefaultPointProperties = () => {
-    return {
+    const symbolPointProperties = {
       size: 28,
       color: 'Kobe',
       opacity: 1
     };
+    const spikePointProperties = {
+      height: 28,
+      color: 'Kobe',
+      opacity: 1
+    };
+    return mapGraphicsType === "Spike Map" ? spikePointProperties : symbolPointProperties;
   };
 
   // rename this layer to SymbolLayerEventHandler
@@ -38,12 +50,6 @@ const GeoJsonMap = ({ styled }) => {
     });
     return null;
   };
-
-  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
-  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-  const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
-  const renderSpikeLayer = mapGraphicsType === 'Spike Map' && styled;
-  const renderDotDensityLayer = mapGraphicsType === 'Dot Density Map' && styled;
 
   return (
     <MapContainer
