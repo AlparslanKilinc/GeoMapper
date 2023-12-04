@@ -52,6 +52,12 @@ export const updatePassword = ({ id, token, newPassword, confirmNewPassword }) =
   });
 };
 
+export const googleLogin = ({idToken}) => {
+  return api.post('/googleLogin/', {
+    idToken: idToken
+  });
+}
+
 
 const apis = {
   getLoggedIn,
@@ -60,6 +66,7 @@ const apis = {
   logoutUser,
   updateUserData,
   forgotPassword,
-  updatePassword
+  updatePassword,
+  googleLogin
 };
 export default apis;

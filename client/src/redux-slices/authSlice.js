@@ -90,6 +90,7 @@ export const updatePassword = createAsyncThunk(
       } catch (error) {
         console.error('An error occurred:', error);
         return { success: false, error: 'Internal Server Error' };
+
       }
     }
 )
@@ -99,8 +100,19 @@ export const forgotPassword = createAsyncThunk('auth/forgotPassword', async ({em
   return response.data;
 });
 
+export const googleLogin = createAsyncThunk('auth/googleLogin', async({idToken},  { rejectWithValue }) => {
+    try {
+        const response = await api.googleLogin({idToken})
+        return response.data
+    } catch (error) {
+        console.error('Google login failed:', error);
+        if (error.response.status === 500) {
+            console.log('Internal Server Error');
+        }
+        return rejectWithValue(error.response.data);
+    }
 
-
+});
 
 
 export const authSlice = createSlice({
@@ -123,6 +135,11 @@ export const authSlice = createSlice({
         state.loggedIn = action.payload.loggedIn;
         state.isLoading = false;
       })
+        .addCase(googleLogin.fulfilled, (state, action) => {
+            state.user = action.payload.user;
+            state.loggedIn = action.payload.loggedIn;
+            state.isLoading = false;
+        })
       .addCase(getLoggedIn.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;

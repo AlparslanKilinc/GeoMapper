@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { loginUser, resetErrorMessage } from '../../redux-slices/authSlice';
+import { loginUser, resetErrorMessage, googleLogin } from '../../redux-slices/authSlice';
 import GoogleIcon from '@mui/icons-material/Google';
 import { gapi } from 'gapi-script';
 import CopyRight from '../Landing/CopyRight';
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [formErrors, setFormErrors] = useState({});
+  const[googleError, setGoogleError] = useState('')
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -66,24 +67,20 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     const GoogleAuth = gapi.auth2.getAuthInstance();
-    GoogleAuth.signIn().then(
-      (googleUser) => {
-        const profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Full Name: ' + profile.getName());
-        console.log('Given Name: ' + profile.getGivenName());
-        console.log('Family Name: ' + profile.getFamilyName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail());
+    try {
+      const googleUser = await GoogleAuth.signIn();
+      const idToken = googleUser.getAuthResponse().id_token;
 
-        // TODO: Login Logic After user successfully logs in Could include a redirect or updating redux loggedIn state
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
+      const response = await dispatch(googleLogin({idToken}));
+     if(response.type.endsWith('/rejected')){
+       setGoogleError('Error signing in with Google, please create an account');
+     }
+
+    } catch (error) {
+      setGoogleError('Error signing in with Google, please create an account');
+    }
   };
 
   return (
@@ -143,7 +140,8 @@ export default function LoginPage() {
             InputLabelProps={{ shrink: true }}
           />
           <div style={{ minHeight: '12px', color: 'red', margin: '5px' }}>
-            {errorMessage && <span>{errorMessage}</span>}
+            {errorMessage && !googleError && <span>{errorMessage}</span>}
+            {googleError && <span>{googleError}</span>}
           </div>
           <LoadingButton
             type="submit"

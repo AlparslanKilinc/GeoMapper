@@ -7,6 +7,8 @@ const fetch = require('node-fetch');
 const jwt = require("jsonwebtoken");
 require('dotenv').config(); // Load environment variables from .env file
 var nodemailer = require('nodemailer');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client('463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com');
 
 const sendUserResponse = (res, user) => {
   return res.status(200).json({
@@ -51,6 +53,54 @@ loginUser = async (req, res) => {
     return res.status(500).send();
   }
 };
+
+googleLogin = async(req, res) => {
+  const idToken = req.body.idToken
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: idToken,
+      audience: '463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com',
+    });
+    const payload = ticket.getPayload();
+    const userid = payload['sub'];
+    const existingUser = await User.findOne({ googleUserId: userid });
+    if (!existingUser) {
+      const newUser = new User({
+        googleUserId: userid,
+        userName: payload['email'],
+        firstName: payload['given_name'],
+        lastName: payload['family_name'],
+        email: payload['email'],
+        profilePicPath:payload['picture'],
+        passwordHash: await hashPassword(generateRandomPassword()),
+      });
+      const savedUser = await newUser.save();
+      const token = auth.signToken(savedUser._id);
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+      });
+      return sendUserResponse(res, savedUser);
+    }
+    else{
+      const token = auth.signToken(existingUser._id);
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+      });
+
+      return sendUserResponse(res, existingUser);
+    }
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({errorMessage: "error in logging in user"});
+    console.error(error);
+  }
+
+}
 
 registerUser = async (req, res) => {
 
@@ -300,6 +350,15 @@ async function deleteFileFromGCS(filePath) {
   const fileName = filePath.split('/').pop();
   await bucket.file(fileName).delete();
 }
+const generateRandomPassword = () => {
+  const randomPassword = Math.random().toString(36).slice(-10); // Generate a random string
+  return randomPassword;
+};
+const hashPassword = async (password) => {
+  const saltRounds = 10; // Salt rounds for bcrypt
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  return hashedPassword;
+};
 
 module.exports = {
   getLoggedIn,
@@ -308,5 +367,6 @@ module.exports = {
   logoutUser,
   updateUserData,
   forgotPassword,
-  updatePassword
+  updatePassword,
+  googleLogin
 };

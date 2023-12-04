@@ -14,7 +14,8 @@ const UserSchema = new Schema({
   bookmarkedMaps: [{ type: ObjectId, ref: 'map' }],
   profileCreated: { type: Date, default: Date.now },
   bio: { type: String, default: '' },
-  profilePicPath: { type: String, default: '' }
+  profilePicPath: { type: String, default: '' },
+  googleUserId: { type: String, unique: true, default: '' },
 });
 
 module.exports = mongoose.model('user', UserSchema);
