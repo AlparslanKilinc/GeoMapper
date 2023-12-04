@@ -188,50 +188,62 @@ logoutUser = (req, res) => {
     .send();
 };
 
-forgotPassword = async(req,res) => {
-  //sends email to user from custom geomapper email. change  your email below and then try to reset password
+const forgotPassword = async (req, res) => {
   const email = req.body.email;
+
   try {
-    const existingUserByEmail = await User.findOne({email});
-    if (!existingUserByEmail) {
-      return res.status(401).json({errorMessage: 'Invalid Email'});
+    const existingUserByEmail = await User.findOne({ email });
+    if (existingUserByEmail.googleUserId.length > 0 ) {
+      return res
+          .status(401)
+          .json({
+            errorMessage:
+                'Cannot reset password of a Google Account. Please use the "Login with Google" option',
+          });
     }
-    const id = existingUserByEmail._id
+
+    if (!existingUserByEmail) {
+      return res.status(401).json({ errorMessage: 'Invalid Email' });
+    }
+
+    const id = existingUserByEmail._id;
     const secret = process.env.JWT_SECRET + existingUserByEmail.passwordHash;
-    const token = jwt.sign({email: existingUserByEmail.email, id: id}, secret, {expiresIn: '15m'})
-    const resetLink =  `https://geomapper-c6jr.onrender.com/setNewPassword?id=${id}&token=${token}`//`http://127.0.0.1:5001/setNewPassword/${id}/${token}`;
-    var transporter = nodemailer.createTransport({
+    const token = jwt.sign({ email: existingUserByEmail.email, id: id }, secret, {
+      expiresIn: '15m',
+    });
+
+    const resetLink = `https://geomapper-c6jr.onrender.com/setNewPassword?id=${id}&token=${token}`;
+
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'geomapperapp2024@gmail.com',
-        pass: 'ewhtogjlfmyayulf'
-      }
+        pass: 'ewhtogjlfmyayulf',
+      },
     });
-    var mailOptions = {
+
+    const mailOptions = {
       from: 'geomapperapp2024@gmail.com',
       to: email,
       subject: 'Password Reset',
-      text: 'Hello, \n We received a request to reset the password for your Geomapper account. To proceed with the password reset, please click on the link below:' +
-          '\n If you didn\'t request a password reset, you can ignore this email, and your password will remain unchanged.' + '\nFor security reasons, this link will expire in 10 minutes.' +
-          '\nIf you haven\'t reset your password within this time frame, you can request another password reset by visiting the forgot password page on our app.\nThank you,\n GeoMappper Team\n'
-      + resetLink
+      text:
+          'Hello, \n We received a request to reset the password for your Geomapper account. To proceed with the password reset, please click on the link below:' +
+          '\n If you didn\'t request a password reset, you can ignore this email, and your password will remain unchanged.' +
+          '\nFor security reasons, this link will expire in 10 minutes.' +
+          '\nIf you haven\'t reset your password within this time frame, you can request another password reset by visiting the forgot password page on our app.\nThank you,\n GeoMappper Team\n' +
+          resetLink,
     };
-    console.log('reset link ' + resetLink)
-    res.json(resetLink);
-    transporter.sendMail(mailOptions,function(error, info) {
-      if(error){
-        console.log(error)
-      } else{
-        console.log("Email sent")
-      }
-    });
-    console.log(resetLink)
-  }
-  catch(error){
+
+    await transporter.sendMail(mailOptions); // Wait for the email to be sent
+
+    // Respond after the email is sent
+    res.json({ message: 'Password reset link sent successfully' });
+  } catch (error) {
     console.error(error);
-    return res.status(500).send({ errorMessage: 'Error resetting password' });
+    return res.status(500).json({ errorMessage: 'Error resetting password' });
   }
-}
+};
+
 updatePassword = async(req, res) => {
   try {
     const { userId, token } = req.params;

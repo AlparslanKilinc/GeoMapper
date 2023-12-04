@@ -65,6 +65,18 @@ export const updateUserData = createAsyncThunk(
     }
   }
 );
+export const forgotPassword = createAsyncThunk(
+    'auth/forgotPassword',
+    async ({ email }, { rejectWithValue }) => {
+        try {
+            const response = await api.forgotPassword({ email });
+            return response.data;
+        } catch (error) {
+            console.log(error)
+            throw rejectWithValue(error.response.data);
+        }
+    }
+);
 
 export const changePassword = createAsyncThunk(
   'auth/changePassword',
@@ -73,6 +85,7 @@ export const changePassword = createAsyncThunk(
     return response.data;
   }
 );
+
 
 export const updatePassword = createAsyncThunk(
     'auth/updatePassword',
@@ -95,10 +108,6 @@ export const updatePassword = createAsyncThunk(
     }
 )
 
-export const forgotPassword = createAsyncThunk('auth/forgotPassword', async ({email}) => {
-  const response = await api.forgotPassword({email});
-  return response.data;
-});
 
 export const googleLogin = createAsyncThunk('auth/googleLogin', async({idToken},  { rejectWithValue }) => {
     try {
@@ -164,6 +173,7 @@ export const authSlice = createSlice({
       .addCase(registerUser.pending, (state, action) => {
         state.isLoading = true;
       })
+
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
