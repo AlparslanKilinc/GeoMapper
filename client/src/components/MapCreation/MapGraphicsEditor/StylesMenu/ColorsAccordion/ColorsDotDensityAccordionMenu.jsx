@@ -9,6 +9,7 @@ import { setFixedOpacity, setValuePerDot } from '../../../../../redux-slices/map
 import ColorSelector from './ColorSelector';
 import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
 import DotDensityPropertySelector from './DotDensityPropertySelector';
+import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 
 export default function ColorsDotDensityAccordionMenu() {
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ export default function ColorsDotDensityAccordionMenu() {
     }
   };
 
-  const handleChangeOpacity = (event, newValue) => {
+  const handleChangeOpacity = (newValue) => {
     dispatch(setFixedOpacity(newValue));
   };
 
@@ -102,7 +103,7 @@ export default function ColorsDotDensityAccordionMenu() {
         sx={{ width: '100%' }}
       >
         <SubMenuTitle title="opacity" />
-        <Slider value={fixedOpacity} onChange={handleChangeOpacity} />
+        <DebouncedSlider value={fixedOpacity} onChange={handleChangeOpacity} />
       </Box>
 
       <Box

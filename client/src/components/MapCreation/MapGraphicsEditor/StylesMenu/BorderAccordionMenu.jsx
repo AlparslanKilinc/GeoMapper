@@ -70,6 +70,7 @@ export default function BorderAccordionMenu() {
             <DebouncedSlider
               min={0}
               max={10}
+              step={0.1}
               value={borderWidth}
               onChange={handleChangeBorderWidth}
               style={{ width: '100%' }}
