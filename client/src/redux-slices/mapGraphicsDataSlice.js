@@ -381,7 +381,6 @@ const mapGraphicsDataSlice = createSlice({
       state.labelByProperty = action.payload;
     },
     setFixedSymbolSize: (state, action) => {
-      console.log(action.payload);
       state.fixedSymbolSize = action.payload;
     },
     setFixedOpacity: (state, action) => {

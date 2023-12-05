@@ -10,6 +10,7 @@ import ColorSelector from './ColorSelector';
 import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
 import DotDensityPropertySelector from './DotDensityPropertySelector';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import Typography from "@mui/material/Typography";
 
 export default function ColorsDotDensityAccordionMenu() {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function ColorsDotDensityAccordionMenu() {
   const valuePerDot = useSelector((state) => state.mapGraphics.valuePerDot);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const colors = useSelector((state) => state.mapStyles.colors);
-
+console.log(colors)
   const handleFixedColorChange = (color) => {
     dispatch(changeXByProperty({ property: 'fixedColor', propertyBy: color }));
   };
@@ -72,12 +73,14 @@ export default function ColorsDotDensityAccordionMenu() {
         {colors.map(({ name, color }, index) => {
           return (
             <ColorSelector
-              name={name}
+                title={name}
+                name = {name}
               color={color}
               disableLower
               disableUpper
-              key={index + 'colorSelector'}
-            />
+              key={index + 'colorSelector'}>
+            </ColorSelector>
+
           );
         })}
       </Box>
@@ -111,8 +114,7 @@ export default function ColorsDotDensityAccordionMenu() {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        sx={{ width: '100%' }}
-      >
+        sx={{ width: '100%' }}>
         <SubMenuTitle title="dot value" />
         <TextField type="number" value={valuePerDot} onChange={handleChangeValuePerDot} fullWidth />
       </Box>
