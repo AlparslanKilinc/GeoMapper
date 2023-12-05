@@ -4,6 +4,10 @@ import { useDebounce } from '../../hooks/useDebounce';
 export default function DebouncedColorInput({
     format = "hex",
     value = "#000000",
+    label = "",
+    inputProps = {},
+    style = {},
+    sx = {},
     onChange }) {
     const [localValue, setLocalValue] = useDebounce(value, 200, (newLocalValue) => {
         onChange(newLocalValue);
@@ -13,6 +17,10 @@ export default function DebouncedColorInput({
         <MuiColorInput
             format={format}
             value={localValue}
+            label={label}
+            inputProps={inputProps}
+            style={style}
+            sx={sx}
             onChange={(event, newLocalValue) => { setLocalValue(newLocalValue.hex); }}
         />
     );

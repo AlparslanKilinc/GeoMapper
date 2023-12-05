@@ -17,6 +17,7 @@ import {
 import SubMenuTitle from '../SubMenuTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
 
 export default function MapStyleAccordionMenu() {
   const dispatch = useDispatch();
@@ -51,7 +52,7 @@ export default function MapStyleAccordionMenu() {
     >
       <Typography variant="subtitle2">fill color</Typography>
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-      <MuiColorInput
+      <DebouncedColorInput
         format="hex"
         value={fillColor}
         onChange={handleFillColorChange}
@@ -90,7 +91,7 @@ export default function MapStyleAccordionMenu() {
           >
             <Typography variant="subtitle2">background color</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <MuiColorInput
+            <DebouncedColorInput
               format="hex"
               value={mapBackgroundColor}
               onChange={handleBackgroundColorChange}

@@ -10,6 +10,7 @@ import {
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { MuiColorInput } from 'mui-color-input';
+import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
 
 export default function LabelStylesEditor() {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ export default function LabelStylesEditor() {
       sx={{ gap: 2 }}
     >
       <SubMenuTitle title="label styles" />
-      <MuiColorInput
+      <DebouncedColorInput
         value={defaultLabelColor}
         onChange={handleChangeDefaultLabelColor}
         label="Default Label Color"
