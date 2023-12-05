@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -24,6 +24,7 @@ export default function MapStyleAccordionMenu() {
   const { mapBackgroundColor, isTilelayerVisible, fillColor } = useSelector(
     (state) => state.mapStyles
   );
+
 
   const handleBackgroundColorChange = (color) => {
     dispatch(changeBackgroundColor(color));
@@ -107,9 +108,11 @@ export default function MapStyleAccordionMenu() {
           >
             <SubMenuTitle title="tilelayer visibility" />
             <FormControlLabel
-              control={<Switch value={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
+                key={String(isTilelayerVisible)}
+              control={<Switch checked={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
               label="Tilelayer"
             />
+            {console.log(isTilelayerVisible)}
           </Box>
         </Box>
       </AccordionDetails>
