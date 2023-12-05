@@ -4,7 +4,7 @@ import ShapeAccordionMenu from './Shapes/ShapeAccordionMenu';
 import BorderAccordionMenu from './BorderAccordionMenu';
 import MapStyleAccordionMenu from './MapStyleAccordionMenu';
 import LabelsAccordionMenu from './LabelsAccordionMenu';
-import LegendAccordionMenu from "./LegendAccordionMenu.jsx";
+import LegendAccordionMenu from "../Legend/LegendAccordionMenu.jsx";
 import { useSelector } from 'react-redux';
 
 export default function StylesMenus() {
