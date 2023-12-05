@@ -6,6 +6,7 @@ export default function DebouncedSlider({
     max = 100,
     step = 1,
     value = 0,
+    style = {},
     onChange }) {
     const [localValue, setLocalValue] = useDebounce(value, 200, (newLocalValue) => {
         onChange(newLocalValue);
@@ -17,6 +18,7 @@ export default function DebouncedSlider({
             max={max}
             step={step}
             value={localValue}
+            style={style}
             onChange={(event, newLocalValue) => { setLocalValue(newLocalValue); }}
         />
     );

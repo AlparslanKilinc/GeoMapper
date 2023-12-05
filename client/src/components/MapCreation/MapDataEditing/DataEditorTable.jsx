@@ -443,7 +443,7 @@ export default function DataEditorTable() {
                   {displayedProperties.map((colName, colIndex) => (
                     <TableCell sx={{ minWidth: '150px' }} key={colIndex}>
                       <TextField
-                        value={row[colName] || ''}
+                        value={row[colName] !== null && row[colName] !== undefined ? row[colName] : ''}
                         onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
                         error={!!cellErrors[`${rowIndex}-${colName}`]}
                         helperText={cellErrors[`${rowIndex}-${colName}`]}

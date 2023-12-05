@@ -11,6 +11,7 @@ import { MuiColorInput } from 'mui-color-input';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeBorderColor, changeBorderWidth } from '../../../../redux-slices/mapStylesSlice';
 import SubMenuTitle from '../SubMenuTitle';
+import DebouncedSlider from '../../../DebouncedElement/DebouncedSlider';
 import { Slider } from '@mui/material';
 
 export default function BorderAccordionMenu() {
@@ -21,7 +22,7 @@ export default function BorderAccordionMenu() {
     dispatch(changeBorderColor(color));
   };
 
-  const handleChangeBorderWidth = (event, newValue) => {
+  const handleChangeBorderWidth = (newValue) => {
     dispatch(changeBorderWidth(newValue));
   };
   return (
@@ -66,7 +67,7 @@ export default function BorderAccordionMenu() {
             sx={{ width: '100%' }}
           >
             <SubMenuTitle title="border width" />
-            <Slider
+            <DebouncedSlider
               min={0}
               max={10}
               value={borderWidth}
