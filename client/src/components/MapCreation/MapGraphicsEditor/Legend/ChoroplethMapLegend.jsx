@@ -11,7 +11,8 @@ export default function ChoroplethMapLegend({ properties }) {
     const { regions, colorByProperty } = useSelector((state) => state.mapGraphics);
     const { colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
     const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
-    const isNumeric = !isNaN(regions[0][colorByProperty]);
+    const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType)
+    const isNumeric = (mapGraphicsType === "Heat Map") ? true : false;
 
     const horizontalPaper = {
         display: 'flex',
