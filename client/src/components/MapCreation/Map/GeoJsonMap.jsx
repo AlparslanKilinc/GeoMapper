@@ -57,7 +57,13 @@ const GeoJsonMap = ({ styled }) => {
           console.log([lat, lon])
           if (isPointInPolygon({lat, lon}, geojson)) {
               const properties = getDefaultPointProperties();
-              dispatch(addPoint({lat, lon, ...properties}));
+              const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+            );
+            const data = await response.json();
+            const parts = data.display_name.split(','); // Split the display name by commas
+            const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`; // Combine city and country
+              dispatch(addPoint({name: locationName,lat, lon,...properties}));
             }
           else
             alert('POINT OUTSIDE');
