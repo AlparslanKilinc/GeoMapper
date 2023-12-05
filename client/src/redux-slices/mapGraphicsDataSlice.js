@@ -210,10 +210,10 @@ const mapGraphicsDataSlice = createSlice({
       if (columnType === 'number') {
         Object.values(entities).forEach((entity) => {
           if (
-            entity[columnName] === '' ||
-            entity[columnName] === undefined ||
-            isNaN(Number(entity[columnName])) ||
-            !isFinite(Number(entity[columnName]))
+            entity[columnName] !== '' &&
+            entity[columnName] !== undefined &&
+            (isNaN(Number(entity[columnName])) ||
+            !isFinite(Number(entity[columnName])))
           ) {
             isValid = false;
           }
@@ -221,10 +221,10 @@ const mapGraphicsDataSlice = createSlice({
       } else if (columnType === 'text') {
         Object.values(entities).forEach((entity) => {
           if (
-            entity[columnName] === '' ||
-            entity[columnName] === undefined ||
-            typeof entity[columnName] !== 'string' ||
-            typeof entity[columnName] === 'number'
+            entity[columnName] !== '' &&
+            entity[columnName] !== undefined &&
+            typeof entity[columnName] !== 'string' &&
+            typeof entity[columnName] !== 'number'
           ) {
             isValid = false;
           }

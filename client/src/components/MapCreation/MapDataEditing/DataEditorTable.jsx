@@ -45,7 +45,7 @@ export default function DataEditorTable() {
     cellValidationErrors,
     dotDensityByProperty,
     propertyNames,
-    pointProperties,
+    pointProperties
   } = useSelector((state) => state.mapGraphics);
   const mapGraphics = useSelector((state) => state.mapGraphics);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
@@ -60,8 +60,8 @@ export default function DataEditorTable() {
   // This is the data to be displayed in the table
   let data =
     mapGraphicsType === 'Choropleth Map' ||
-      mapGraphicsType === 'Heat Map' ||
-      mapGraphicsType === 'Dot Density Map'
+    mapGraphicsType === 'Heat Map' ||
+    mapGraphicsType === 'Dot Density Map'
       ? regions
       : Object.values(points);
   // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
@@ -152,10 +152,17 @@ export default function DataEditorTable() {
     dotDensityByProperty
   ]);
 
+  useEffect(() => {
+    dispatch(setColumnType({ columnName: 'lat', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'lon', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'size', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'height', columnType: 'number' }));
+  },[]);
+
   // This is to validate each of the cells
   useEffect(() => {
     validateAllCells();
-  }, [points, regions, columnTypes]);
+  }, [points, regions, columnTypes,cellValidationErrors,columnValidationErrors]);
 
   // This is to validate the Requirements of the Each Map Type
   useEffect(() => {
@@ -163,21 +170,13 @@ export default function DataEditorTable() {
   }, [
     points,
     regions,
-    propertyNames,
-    pointProperties,
     columnTypes,
-    nameByProperty,
-    colorByProperty,
-    latByProperty,
-    lonByProperty,
-    sizeByProperty,
-    dotDensityByProperty,
-    heightByProperty,
     propertyNames,
     pointProperties,
     mapGraphicsType,
     columnValidationErrors,
-    cellValidationErrors
+    cellValidationErrors,
+    dotDensityByProperty
   ]);
 
   // This is to update the column errors and cell errors
@@ -337,13 +336,13 @@ export default function DataEditorTable() {
 
   const isNumericalProperty = (property) => {
     const shouldBeNumerical =
-      [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property)
-      || ((colorByProperty === property) && (mapGraphicsType === "Heat Map"));
+      [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property) ||
+      (colorByProperty === property && mapGraphicsType === 'Heat Map');
     return shouldBeNumerical;
   };
 
   const isTextualProperty = (property) => {
-    const shouldBeTextual = ((colorByProperty === property) && (mapGraphicsType === "Choropleth Map"));
+    const shouldBeTextual = colorByProperty === property && mapGraphicsType === 'Choropleth Map';
     return shouldBeTextual;
   };
 
@@ -448,7 +447,9 @@ export default function DataEditorTable() {
                   {displayedProperties.map((colName, colIndex) => (
                     <TableCell sx={{ minWidth: '150px' }} key={colIndex}>
                       <TextField
-                        value={row[colName] !== null && row[colName] !== undefined ? row[colName] : ''}
+                        value={
+                          row[colName] !== null && row[colName] !== undefined ? row[colName] : ''
+                        }
                         onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
                         error={!!cellErrors[`${rowIndex}-${colName}`]}
                         helperText={cellErrors[`${rowIndex}-${colName}`]}
