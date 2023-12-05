@@ -4,13 +4,14 @@ import { MuiColorInput } from 'mui-color-input';
 import { Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
+import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
 
 const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color, name }) => {
   const dispatch = useDispatch();
   const colors = useSelector((state) => state.mapStyles.colors);
 
   useEffect(() => {
-    console.log({color,name})
+    console.log({ color, name })
   }, []);
 
   let handleChange = (newColor) => {
@@ -63,7 +64,7 @@ const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color,
       justifyContent="center"
       sx={{ gap: 2 }}
     >
-      <MuiColorInput
+      <DebouncedColorInput
         value={color}
         onChange={handleChange}
         inputProps={{ style: { width: '0', border: 'none' } }}

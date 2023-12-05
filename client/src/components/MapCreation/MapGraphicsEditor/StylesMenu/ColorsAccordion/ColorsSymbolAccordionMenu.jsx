@@ -12,6 +12,7 @@ import PropertySelector from '../../../MapDataEditing/PropertySelector';
 import { MuiColorInput } from 'mui-color-input';
 import { changeXByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
 
 export default function ColorsSymbolAccordionMenu() {
   const dispatch = useDispatch();
@@ -56,7 +57,7 @@ export default function ColorsSymbolAccordionMenu() {
       sx={{ width: '100%' }}
     >
       <SubMenuTitle title="fixed color" />
-      <MuiColorInput format="hex" value={fixedColor} onChange={handleFixedColorChange} />
+      <DebouncedColorInput format="hex" value={fixedColor} onChange={handleFixedColorChange} />
     </Box>
   );
 
