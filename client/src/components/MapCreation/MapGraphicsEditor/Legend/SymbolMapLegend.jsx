@@ -13,10 +13,6 @@ export default function SymbolMapLegend({ properties }) {
     const maxSymbolSize = useSelector((state) => state.mapGraphics.maxProperty);
     const minSymbolSize = useSelector((state) => state.mapGraphics.minProperty);
     const mediumSize = (minSymbolSize + maxSymbolSize) / 2;
-    console.log(properties)
-    console.log(properties.length)
-    console.log(minSymbolSize)
-    console.log(maxSymbolSize)
     const [iconSizes, setIconSizes] = useState({
         small: '',
         medium: '',
