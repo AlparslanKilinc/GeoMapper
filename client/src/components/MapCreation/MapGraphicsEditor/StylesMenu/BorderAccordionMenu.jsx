@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { changeBorderColor, changeBorderWidth } from '../../../../redux-slices/mapStylesSlice';
 import SubMenuTitle from '../SubMenuTitle';
 import DebouncedSlider from '../../../DebouncedElement/DebouncedSlider';
+import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
 import { Slider } from '@mui/material';
 
 export default function BorderAccordionMenu() {
@@ -56,7 +57,11 @@ export default function BorderAccordionMenu() {
           >
             <Typography variant="subtitle2">border color</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <MuiColorInput format="hex" value={borderColor} onChange={handleBorderColorChange} />
+            <DebouncedColorInput
+              format="hex"
+              value={borderColor}
+              onChange={handleBorderColorChange}
+            />
           </Box>
 
           <Box
@@ -70,6 +75,7 @@ export default function BorderAccordionMenu() {
             <DebouncedSlider
               min={0}
               max={10}
+              step={0.1}
               value={borderWidth}
               onChange={handleChangeBorderWidth}
               style={{ width: '100%' }}
