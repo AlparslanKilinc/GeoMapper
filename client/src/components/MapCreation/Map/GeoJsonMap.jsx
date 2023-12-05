@@ -8,6 +8,7 @@ import { useMapEvents } from 'react-leaflet';
 import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
+import axios from "axios";
 
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
@@ -15,6 +16,7 @@ const isPointInPolygon = (point, geojson) => {
   if (geojson && geojson.geoJSON && geojson.geoJSON.features) {
     geojson.geoJSON.features.forEach((feature) => {
       if (turf.booleanPointInPolygon(turfPoint, feature)) {
+
         isInside = true;
       }
     });
@@ -26,6 +28,7 @@ const isPointInPolygon = (point, geojson) => {
 
 const GeoJsonMap = ({ styled }) => {
   const dispatch = useDispatch();
+  const isTilelayerVisible = useSelector((state) => state.mapStyles.isTilelayerVisible);
   const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
@@ -47,19 +50,28 @@ const GeoJsonMap = ({ styled }) => {
     const geojson = useSelector((state) => state.geojson.geojson);
 
     const map = useMapEvents({
-      click: (e) => {
+      click: async (e) => {
+        console.log(e)
         if (addSymbolMode) {
           const [lat, lon] = [e.latlng.lat, e.latlng.lng];
+          console.log([lat, lon])
+          if (isPointInPolygon({lat, lon}, geojson)) {
+              const properties = getDefaultPointProperties();
+              const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+            );
+            const data = await response.json();
+            const parts = data.display_name.split(','); // Split the display name by commas
+            const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`; // Combine city and country
+              dispatch(addPoint({name: locationName,lat, lon,...properties}));
+            }
+          else
+            alert('POINT OUTSIDE');
+          }
 
-          if (isPointInPolygon({ lat, lon }, geojson)) {
-            const properties = getDefaultPointProperties();
-            dispatch(addPoint({ lat, lon, ...properties }));
-          } else alert('POINT OUTSIDE');
+          // propogate the event to the map
         }
-
-        // propogate the event to the map
-      }
-    });
+      });
     return null;
   };
 
@@ -71,6 +83,10 @@ const GeoJsonMap = ({ styled }) => {
       }}
       key={mapBackgroundColor}
     >
+      {isTilelayerVisible && styled && <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />}
       <GeojsonWrapper isStyled={styled} />
       {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
       {renderDotDensityLayer && <DotDensityLayer />}

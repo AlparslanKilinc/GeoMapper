@@ -45,7 +45,7 @@ export default function DataEditorTable() {
     cellValidationErrors,
     dotDensityByProperty,
     propertyNames,
-    pointProperties,
+    pointProperties
   } = useSelector((state) => state.mapGraphics);
   const mapGraphics = useSelector((state) => state.mapGraphics);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
@@ -129,7 +129,7 @@ export default function DataEditorTable() {
         ];
         break;
       case 'Dot Density Map':
-        propertiesBasedOnMapType = [nameByProperty];
+        propertiesBasedOnMapType = [nameByProperty, ...dotDensityByProperty];
         break;
     }
 
@@ -148,31 +148,30 @@ export default function DataEditorTable() {
     latByProperty,
     lonByProperty,
     sizeByProperty,
-    heightByProperty
+    heightByProperty,
+    dotDensityByProperty
   ]);
 
-  // This is to validate each of the cells
   useEffect(() => {
-    validateAllCells();
-  }, [points, regions, columnTypes]);
+    dispatch(setColumnType({ columnName: 'lat', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'lon', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'size', columnType: 'number' }));
+    dispatch(setColumnType({ columnName: 'height', columnType: 'number' }));
+  },[]);
 
-  // This is to validate the Requirements of the Each Map Type
+
   useEffect(() => {
     dispatch(TableValidation(mapGraphicsType));
   }, [
+    points,
+    regions,
     columnTypes,
-    nameByProperty,
-    colorByProperty,
-    latByProperty,
-    lonByProperty,
-    sizeByProperty,
-    dotDensityByProperty,
-    heightByProperty,
     propertyNames,
     pointProperties,
     mapGraphicsType,
     columnValidationErrors,
-    cellValidationErrors
+    cellValidationErrors,
+    dotDensityByProperty
   ]);
 
   // This is to update the column errors and cell errors
@@ -330,8 +329,16 @@ export default function DataEditorTable() {
     ].includes(columnName);
   };
 
-  const isNumberProperty = (property) => {
-    return [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property);
+  const isNumericalProperty = (property) => {
+    const shouldBeNumerical =
+      [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property) ||
+      (colorByProperty === property && mapGraphicsType === 'Heat Map');
+    return shouldBeNumerical;
+  };
+
+  const isTextualProperty = (property) => {
+    const shouldBeTextual = colorByProperty === property && mapGraphicsType === 'Choropleth Map';
+    return shouldBeTextual;
   };
 
   // Menu Functions
@@ -435,7 +442,9 @@ export default function DataEditorTable() {
                   {displayedProperties.map((colName, colIndex) => (
                     <TableCell sx={{ minWidth: '150px' }} key={colIndex}>
                       <TextField
-                        value={row[colName] || ''}
+                        value={
+                          row[colName] !== null && row[colName] !== undefined ? row[colName] : ''
+                        }
                         onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
                         error={!!cellErrors[`${rowIndex}-${colName}`]}
                         helperText={cellErrors[`${rowIndex}-${colName}`]}
@@ -467,10 +476,12 @@ export default function DataEditorTable() {
               value={columnTypes[selectedColumn] || 'text'}
               onChange={(e) => handleColumnTypeChange(e.target.value)}
             >
-              {!isNumberProperty(selectedColumn) && (
+              {!isNumericalProperty(selectedColumn) && (
                 <FormControlLabel value="text" control={<Radio />} label="Text" />
               )}
-              <FormControlLabel value="number" control={<Radio />} label="Number" />
+              {!isTextualProperty(selectedColumn) && (
+                <FormControlLabel value="number" control={<Radio />} label="Number" />
+              )}
             </RadioGroup>
           </FormControl>
         </MenuItem>

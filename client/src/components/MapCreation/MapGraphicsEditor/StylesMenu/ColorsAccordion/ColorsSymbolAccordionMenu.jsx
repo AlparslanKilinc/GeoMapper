@@ -11,6 +11,8 @@ import { setFixedOpacity } from '../../../../../redux-slices/mapGraphicsDataSlic
 import PropertySelector from '../../../MapDataEditing/PropertySelector';
 import { MuiColorInput } from 'mui-color-input';
 import { changeXByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
 
 export default function ColorsSymbolAccordionMenu() {
   const dispatch = useDispatch();
@@ -40,7 +42,7 @@ export default function ColorsSymbolAccordionMenu() {
     dispatch(changeColorByProperty(newValue));
   };
 
-  const handleChangeOpacity = (event, newValue) => {
+  const handleChangeOpacity = (newValue) => {
     dispatch(setFixedOpacity(newValue));
   };
 
@@ -55,7 +57,7 @@ export default function ColorsSymbolAccordionMenu() {
       sx={{ width: '100%' }}
     >
       <SubMenuTitle title="fixed color" />
-      <MuiColorInput format="hex" value={fixedColor} onChange={handleFixedColorChange} />
+      <DebouncedColorInput format="hex" value={fixedColor} onChange={handleFixedColorChange} />
     </Box>
   );
 
@@ -68,7 +70,7 @@ export default function ColorsSymbolAccordionMenu() {
       sx={{ width: '100%' }}
     >
       <SubMenuTitle title="opacity" />
-      <Slider min={0} max={1} step={0.01} value={fixedOpacity} onChange={handleChangeOpacity} />
+      <DebouncedSlider min={0} max={1} step={0.01} value={fixedOpacity} onChange={handleChangeOpacity} />
     </Box>
   );
 

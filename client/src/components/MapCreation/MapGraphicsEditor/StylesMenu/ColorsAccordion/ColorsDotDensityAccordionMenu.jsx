@@ -9,6 +9,9 @@ import { setFixedOpacity, setValuePerDot } from '../../../../../redux-slices/map
 import ColorSelector from './ColorSelector';
 import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
 import DotDensityPropertySelector from './DotDensityPropertySelector';
+import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
+import Typography from "@mui/material/Typography";
 
 export default function ColorsDotDensityAccordionMenu() {
   const dispatch = useDispatch();
@@ -29,7 +32,8 @@ export default function ColorsDotDensityAccordionMenu() {
     }
   };
 
-  const handleChangeOpacity = (event, newValue) => {
+  const handleChangeOpacity = (newValue) => {
+    console.log(newValue)
     dispatch(setFixedOpacity(newValue));
   };
 
@@ -48,7 +52,7 @@ export default function ColorsDotDensityAccordionMenu() {
       sx={{ width: '100%' }}
     >
       <SubMenuTitle title="select color" />
-      <MuiColorInput
+      <DebouncedColorInput
         format="hex"
         value={fixedColor}
         onChange={handleFixedColorChange}
@@ -71,12 +75,13 @@ export default function ColorsDotDensityAccordionMenu() {
         {colors.map(({ name, color }, index) => {
           return (
             <ColorSelector
+              title={name}
               name={name}
               color={color}
               disableLower
               disableUpper
-              key={index + 'colorSelector'}
-            />
+              key={index + 'colorSelector'}>
+            </ColorSelector>
           );
         })}
       </Box>
@@ -102,7 +107,7 @@ export default function ColorsDotDensityAccordionMenu() {
         sx={{ width: '100%' }}
       >
         <SubMenuTitle title="opacity" />
-        <Slider value={fixedOpacity} onChange={handleChangeOpacity} />
+        <DebouncedSlider value={fixedOpacity} onChange={handleChangeOpacity} />
       </Box>
 
       <Box
@@ -110,8 +115,7 @@ export default function ColorsDotDensityAccordionMenu() {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        sx={{ width: '100%' }}
-      >
+        sx={{ width: '100%' }}>
         <SubMenuTitle title="dot value" />
         <TextField type="number" value={valuePerDot} onChange={handleChangeValuePerDot} fullWidth />
       </Box>

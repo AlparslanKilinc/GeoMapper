@@ -26,18 +26,18 @@ import {
   setMinSymbolSize
 } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import SubMenuTitle from '../../SubMenuTitle';
+import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 
 const SliderTextField = ({ value, onChange }) => {
   // Handling change from Slider
-  const handleSliderChange = (event, newValue) => {
-    onChange(event, newValue);
+  const handleSliderChange = (newValue) => {
+    onChange(newValue);
   };
 
   // Handling change from TextField
   const handleTextFieldChange = (event) => {
     // Convert string value to number and use null as the event
     const newValue = Number(event.target.value);
-    console.log(newValue);
     onChange(null, newValue);
   };
 
@@ -49,7 +49,7 @@ const SliderTextField = ({ value, onChange }) => {
       justifyContent="center"
       sx={{ width: '100%', gap: 2 }}
     >
-      <Slider
+      <DebouncedSlider
         value={typeof value === 'number' ? value : 0}
         onChange={handleSliderChange}
         max={600}
@@ -60,7 +60,7 @@ const SliderTextField = ({ value, onChange }) => {
         type="number"
         // size="small"
         variant="outlined"
-        // sx={{ width: 60, mr: 1 }}
+      // sx={{ width: 60, mr: 1 }}
       />
     </Box>
   );
@@ -113,8 +113,7 @@ export default function ShapeAccordionMenu() {
     }
   };
 
-  const handleMaxSymbolSizeChange = (event, newValue) => {
-    console.log('newValue', newValue);
+  const handleMaxSymbolSizeChange = (newValue) => {
     dispatch(setMaxSymbolSize(Number(newValue)));
   };
 
@@ -126,7 +125,7 @@ export default function ShapeAccordionMenu() {
     }
   };
 
-  const handleSymbolSizeChange = (event, newValue) => {
+  const handleSymbolSizeChange = (newValue) => {
     dispatch(setFixedSymbolSize(newValue));
   };
 
@@ -139,7 +138,7 @@ export default function ShapeAccordionMenu() {
       sx={{ width: '100%' }}
     >
       <SubMenuTitle title={mapGraphicsType === 'Spike Map' ? 'fixed height' : 'fixed size'} />
-      <Slider value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
+      <DebouncedSlider value={fixedSymbolSize} onChange={handleSymbolSizeChange} />
     </Box>
   );
 
@@ -218,8 +217,9 @@ export default function ShapeAccordionMenu() {
               title={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
             />
             <FormControlLabel
+              key={String(addSymbolMode)}
               control={
-                <Switch value={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
+                <Switch checked={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
               }
               label={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
             />

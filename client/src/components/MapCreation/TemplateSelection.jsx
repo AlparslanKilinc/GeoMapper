@@ -10,10 +10,12 @@ import mapDataJson from '../../mapData.json';
 import CopyRight from '../Landing/CopyRight';
 import { useDispatch } from 'react-redux';
 import { setMapGraphicsType } from '../../redux-slices/mapMetadataSlice';
+import { resetMapStylesData } from '../../redux-slices/mapStylesSlice'
 
 export default function TemplateSelection({ onSelectionComplete }) {
   const dispatch = useDispatch();
   const mapData = mapDataJson.mapData;
+  dispatch(resetMapStylesData())
 
   const handleSelection = (title) => {
     dispatch(setMapGraphicsType(title));
