@@ -20,16 +20,23 @@ const ExportDialog = forwardRef((props, ref) => {
   function handleExportChoice(exportType) {
     const mapElement = document.getElementById("mapContainer");
     const elementsToExclude = document.querySelectorAll('.exclude-from-capture');
+    const elementsToInclude = document.querySelectorAll('.include-from-capture');
 
-    const hideElementsForCapture = () => {
+    const processElementsBeforeCapture = () => {
       elementsToExclude.forEach(el => {
-        el.style.display = 'none';
+        el.style.visibility = 'hidden';
+      });
+      elementsToInclude.forEach(el => {
+        el.style.visibility = 'visible';
       });
     };
 
-    const showElementsAfterCapture = () => {
+    const processElementsAfterCapture = () => {
       elementsToExclude.forEach(el => {
-        el.style.display = '';
+        el.style.visibility = 'visible';
+      });
+      elementsToInclude.forEach(el => {
+        el.style.visibility = 'hidden';
       });
     };
 
@@ -46,14 +53,14 @@ const ExportDialog = forwardRef((props, ref) => {
     };
 
     if (mapElement) {
-      hideElementsForCapture();
+      processElementsBeforeCapture();
       setTimeout(() => {
         let exportFunction = exportType === 'jpg' ? domtoimage.toJpeg : domtoimage.toPng;
         let fileExtension = exportType === 'jpg' ? '.jpg' : '.png';
 
         exportFunction(mapElement, exportOptions)
           .then((dataUrl) => {
-            showElementsAfterCapture();
+            processElementsAfterCapture();
             const link = document.createElement('a');
             link.href = dataUrl;
             link.download = title + fileExtension;
@@ -61,7 +68,7 @@ const ExportDialog = forwardRef((props, ref) => {
             handleCloseExportDialog();
           })
           .catch((error) => {
-            showElementsAfterCapture();
+            processElementsAfterCapture();
             handleCloseExportDialog();
             console.error('Error exporting map: ', error);
           });

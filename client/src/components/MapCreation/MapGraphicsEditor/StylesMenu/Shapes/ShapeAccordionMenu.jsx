@@ -217,8 +217,9 @@ export default function ShapeAccordionMenu() {
               title={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
             />
             <FormControlLabel
+              key={String(addSymbolMode)}
               control={
-                <Switch value={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
+                <Switch checked={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
               }
               label={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
             />

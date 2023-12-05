@@ -8,11 +8,13 @@ import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import Typography from '@mui/material/Typography';
 import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper'
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
   const colors = useSelector((state) => state.mapStyles.colors);
+  const title = useSelector((state) => state.mapMetadata.title);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   const buttonStyle = {
@@ -84,8 +86,23 @@ export default function MapBox({ openExportDialog }) {
             <>
               <UndoRedoButtonGroup />
               <div id="mapContainer" style={{ position: 'relative', height: '100%', width: '100%', display: 'flex' }}>
+                <Typography
+                  className="include-from-capture"
+                  visibility='hidden'
+                  sx={{
+                    position: 'absolute',
+                    top: '2%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    whiteSpace: 'nowrap',
+                    fontWeight: 'bold',
+                    fontSize: '1.25rem',
+                    zIndex: 999,
+                  }}>
+                  {title}
+                </Typography>
                 <GeoJsonMap styled={true} />
-               <LegendWrapper properties={colors}></LegendWrapper>
+                <LegendWrapper properties={colors}></LegendWrapper>
               </div>
             </>
           )}

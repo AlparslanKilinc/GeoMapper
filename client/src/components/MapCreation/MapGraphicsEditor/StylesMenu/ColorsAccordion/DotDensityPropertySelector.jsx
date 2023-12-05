@@ -9,7 +9,6 @@ export default function DotDensityPropertySelector({ hideTitle }) {
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
   const columnTypes = useSelector((state) => state.mapGraphics.columnTypes);
-  
 
   // filter numerical properties from the propertyNames
   const dotDensityByPropertyOptions = propertyNames.filter((property) => {

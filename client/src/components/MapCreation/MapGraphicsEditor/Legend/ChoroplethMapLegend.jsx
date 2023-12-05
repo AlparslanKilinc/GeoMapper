@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import Paper from "@mui/material/Paper";
 import Draggable from 'react-draggable';
 import { Typography } from "@mui/material";
@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import { useSelector } from "react-redux";
 import * as d3 from 'd3';
 
-export default function ChoroplethMapLegend({ properties}) {
+export default function ChoroplethMapLegend({ properties }) {
     const legendRef = useRef(null);
     const { regions, colorByProperty } = useSelector((state) => state.mapGraphics);
     const { colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
@@ -46,7 +46,7 @@ export default function ChoroplethMapLegend({ properties}) {
                     position: 'absolute',
                     top: (orientation === 'horizontal') ? '85%' : '70%',
                     left: (orientation === 'horizontal') ? '65%' : '85%',
-                    zIndex: 999,
+                    zIndex: 998,
                     cursor: 'move'
                 }}>
                 {properties.map((props, index) => (
@@ -80,7 +80,7 @@ export default function ChoroplethMapLegend({ properties}) {
                     position: 'absolute',
                     top: (orientation === 'horizontal') ? '85%' : '60%',
                     left: (orientation === 'horizontal') ? '75%' : '90%',
-                    zIndex: 999,
+                    zIndex: 998,
                     cursor: 'move'
                 }}>
                 <Box

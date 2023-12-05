@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, { useRef, useEffect } from 'react';
 import Paper from "@mui/material/Paper";
 import Draggable from 'react-draggable';
 import { Typography } from "@mui/material";
@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import { useSelector } from "react-redux";
 import shapeFactory from "./svgShapes.js";
 
-export default function DotDensityLegend({ properties}) {
+export default function DotDensityLegend({ properties }) {
     const legendRef = useRef(null);
     const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
     const valuePerDot = useSelector((state) => state.mapGraphics.valuePerDot);
@@ -65,7 +65,7 @@ export default function DotDensityLegend({ properties}) {
                     position: 'absolute',
                     top: (orientation === 'horizontal') ? '85%' : '70%',
                     left: (orientation === 'horizontal') ? '65%' : '85%',
-                    zIndex: 999,
+                    zIndex: 998,
                     cursor: 'move'
                 }}>
                 {properties.map((props, index) => (

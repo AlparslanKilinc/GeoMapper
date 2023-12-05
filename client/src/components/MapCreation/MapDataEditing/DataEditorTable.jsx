@@ -129,7 +129,7 @@ export default function DataEditorTable() {
         ];
         break;
       case 'Dot Density Map':
-        propertiesBasedOnMapType = [nameByProperty];
+        propertiesBasedOnMapType = [nameByProperty, ...dotDensityByProperty];
         break;
     }
 
@@ -148,7 +148,8 @@ export default function DataEditorTable() {
     latByProperty,
     lonByProperty,
     sizeByProperty,
-    heightByProperty
+    heightByProperty,
+    dotDensityByProperty
   ]);
 
   // This is to validate each of the cells
