@@ -52,6 +52,7 @@ const mapStylesDataSlice = createSlice({
   name: 'mapStyles',
   initialState,
   reducers: {
+    resetMapStylesData: () => initialState,
     changeSelectedShape: (state, action) => {
       state.shape = action.payload;
     },
@@ -165,7 +166,8 @@ export const {
   setDefaultLabelColor,
   setDefaultLabelSize,
   setDefaultLabelFont,
-  setFillColor
+  setFillColor,
+  resetMapStylesData
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;
