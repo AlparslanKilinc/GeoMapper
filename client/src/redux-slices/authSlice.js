@@ -65,6 +65,18 @@ export const updateUserData = createAsyncThunk(
     }
   }
 );
+export const forgotPassword = createAsyncThunk(
+    'auth/forgotPassword',
+    async ({ email }, { rejectWithValue }) => {
+        try {
+            const response = await api.forgotPassword({ email });
+            return response.data;
+        } catch (error) {
+            console.log(error)
+            throw rejectWithValue(error.response.data);
+        }
+    }
+);
 
 export const changePassword = createAsyncThunk(
   'auth/changePassword',
@@ -73,6 +85,7 @@ export const changePassword = createAsyncThunk(
     return response.data;
   }
 );
+
 
 export const updatePassword = createAsyncThunk(
     'auth/updatePassword',
@@ -90,17 +103,25 @@ export const updatePassword = createAsyncThunk(
       } catch (error) {
         console.error('An error occurred:', error);
         return { success: false, error: 'Internal Server Error' };
+
       }
     }
 )
 
-export const forgotPassword = createAsyncThunk('auth/forgotPassword', async ({email}) => {
-  const response = await api.forgotPassword({email});
-  return response.data;
+
+export const googleLogin = createAsyncThunk('auth/googleLogin', async({idToken},  { rejectWithValue }) => {
+    try {
+        const response = await api.googleLogin({idToken})
+        return response.data
+    } catch (error) {
+        console.error('Google login failed:', error);
+        if (error.response.status === 500) {
+            console.log('Internal Server Error');
+        }
+        return rejectWithValue(error.response.data);
+    }
+
 });
-
-
-
 
 
 export const authSlice = createSlice({
@@ -123,6 +144,12 @@ export const authSlice = createSlice({
         state.loggedIn = action.payload.loggedIn;
         state.isLoading = false;
       })
+        .addCase(googleLogin.fulfilled, (state, action) => {
+            state.user = action.payload.user;
+             console.log(action.payload.user)
+            state.loggedIn = action.payload.loggedIn;
+            state.isLoading = false;
+        })
       .addCase(getLoggedIn.fulfilled, (state, action) => {
         state.user = action.payload.user;
         state.loggedIn = action.payload.loggedIn;
@@ -147,6 +174,7 @@ export const authSlice = createSlice({
       .addCase(registerUser.pending, (state, action) => {
         state.isLoading = true;
       })
+
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {

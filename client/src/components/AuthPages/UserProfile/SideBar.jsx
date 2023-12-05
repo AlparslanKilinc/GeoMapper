@@ -17,8 +17,8 @@ export default function Sidebar() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [editMode, setEditMode] = useState(false);
-
-  useEffect(() => {
+  const[isGoogleUser, setGoogleUser] = useState(false)
+    useEffect(() => {
     dispatch(getLoggedIn());
   }, [dispatch]);
 
@@ -27,10 +27,12 @@ export default function Sidebar() {
     lastName: user?.lastName || '',
     userName: user?.userName || '',
     bio: user?.bio || '',
-    picPath: user?.profilePicPath || ''
+    picPath: user?.profilePicPath || '',
+      googleUserId: user?.googleUserId || ''
   };
 
   const [userData, setUserData] = useState(initialUserData);
+
 
   useEffect(() => {
     setUserData({
@@ -38,6 +40,9 @@ export default function Sidebar() {
       picPath: user?.profilePicPath || ''
     });
 
+  if(userData.googleUserId != ''){
+      setGoogleUser(true)
+  }
     if (errorMessage) {
       setEditMode(true);
     }
@@ -111,7 +116,7 @@ export default function Sidebar() {
           </div>
           <div className="personal-info">
             {!editMode ? (
-              <ProfileView userData={userData} setEditMode={setEditMode} />
+              <ProfileView userData={userData} setEditMode={setEditMode} isGoogleUser = {isGoogleUser}/>
             ) : (
               <ProfileEdit
                 userData={userData}
@@ -120,6 +125,7 @@ export default function Sidebar() {
                 handleSave={handleSave}
                 handleCancel={handleCancel}
                 errorMessage={errorMessage}
+                isGoogleUser = {isGoogleUser}
               />
             )}
           </div>
@@ -140,8 +146,9 @@ export default function Sidebar() {
   );
 }
 
-function ProfileView({ userData, setEditMode }) {
-  return (
+function ProfileView({ userData, setEditMode, isGoogleUser }) {
+
+    return (
     <>
       <div className="userName">
         <h1>
@@ -153,9 +160,11 @@ function ProfileView({ userData, setEditMode }) {
       <button className="editProfileButton" onClick={() => setEditMode(true)}>
         Edit Profile
       </button>
-      <Link className="link" to={'/ChangePassword'}>
-        Change Password
-      </Link>
+        {!isGoogleUser && <Link className="link" to={'/ChangePassword'}>
+            Change Password
+        </Link>}
+
+
     </>
   );
 }
@@ -166,7 +175,8 @@ function ProfileEdit({
   handleProfilePicChange,
   handleSave,
   handleCancel,
-  errorMessage
+  errorMessage,
+  isGoogleUser
 }) {
   return (
     <>
@@ -178,11 +188,9 @@ function ProfileEdit({
         id="profile-pic-upload"
       />
       <label htmlFor="profile-pic-upload">
-        <Button variant="contained" component="span">
-          Upload Profile Picture
-        </Button>
+          {!isGoogleUser && <Button variant="contained" component="span">Upload Profile Picture</Button>}
       </label>
-      <TextField
+        {!isGoogleUser && <TextField
         name="firstName"
         value={userData.firstName}
         onChange={handleInputChange}
@@ -190,8 +198,8 @@ function ProfileEdit({
         variant="outlined"
         fullWidth
         margin="normal"
-      />
-      <TextField
+      />}
+        {!isGoogleUser && <TextField
         name="lastName"
         value={userData.lastName}
         onChange={handleInputChange}
@@ -199,8 +207,8 @@ function ProfileEdit({
         variant="outlined"
         fullWidth
         margin="normal"
-      />
-      <TextField
+      />}
+      {!isGoogleUser && <TextField
         name="userName"
         value={userData.userName}
         onChange={handleInputChange}
@@ -208,7 +216,7 @@ function ProfileEdit({
         variant="outlined"
         fullWidth
         margin="normal"
-      />
+      />}
       <TextField
         name="bio"
         value={userData.bio}
