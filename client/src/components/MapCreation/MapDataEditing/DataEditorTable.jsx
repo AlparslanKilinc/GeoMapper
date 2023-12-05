@@ -159,12 +159,7 @@ export default function DataEditorTable() {
     dispatch(setColumnType({ columnName: 'height', columnType: 'number' }));
   },[]);
 
-  // This is to validate each of the cells
-  useEffect(() => {
-    validateAllCells();
-  }, [points, regions, columnTypes,cellValidationErrors,columnValidationErrors]);
 
-  // This is to validate the Requirements of the Each Map Type
   useEffect(() => {
     dispatch(TableValidation(mapGraphicsType));
   }, [
