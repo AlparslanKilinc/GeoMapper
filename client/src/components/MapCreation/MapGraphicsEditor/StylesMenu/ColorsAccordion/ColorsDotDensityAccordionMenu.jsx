@@ -32,6 +32,7 @@ console.log(colors)
   };
 
   const handleChangeOpacity = (newValue) => {
+    console.log(newValue)
     dispatch(setFixedOpacity(newValue));
   };
 

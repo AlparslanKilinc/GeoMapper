@@ -40,13 +40,13 @@ const DotDensityLayer = () => {
       let color = fixedColor;
       const colorObj = colors.find((c) => c.name === property);
       if (colorObj) color = colorObj.color;
-      const icon = shapeIconMap[shape](iconSize, color, opacity) || shapeIconMap.default;
+      const icon = shapeIconMap['circle'](iconSize, color, opacity) || shapeIconMap.default;
 
       const numberOfDots = Math.floor(dotDensityValue / valuePerDot);
       const randomPoints = generateRandomPointsInFeature(feature, numberOfDots);
       randomPoints.forEach((point) => {
         const latLng = [point.geometry.coordinates[1], point.geometry.coordinates[0]];
-        markers.push(<Marker key={latLng.join('#')} position={latLng} icon={icon} />);
+        markers.push(<Marker key={latLng.join('#')} position={latLng} icon={icon}  style={{opacity: opacity}} />);
       });
     });
   });
