@@ -161,6 +161,10 @@ export default function DataEditorTable() {
   useEffect(() => {
     dispatch(TableValidation(mapGraphicsType));
   }, [
+    points,
+    regions,
+    propertyNames,
+    pointProperties,
     columnTypes,
     nameByProperty,
     colorByProperty,

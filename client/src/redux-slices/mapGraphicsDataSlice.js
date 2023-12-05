@@ -30,7 +30,7 @@ const initialState = {
   addSymbolMode: false,
   selectedPointKey: -1,
   valuePerDot: 7,
-  dotDensityByProperty: ['male', 'female'],
+  dotDensityByProperty: [],
   maxSymbolSize: 100,
   minSymbolSize: 20,
   minProperty: 0,
@@ -423,7 +423,7 @@ const mapGraphicsDataSlice = createSlice({
       switch (mapGraphicsType) {
         case 'Choropleth Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+            if (!region[state.nameByProperty]) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -447,7 +447,7 @@ const mapGraphicsDataSlice = createSlice({
 
         case 'Heat Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+            if (!region[state.nameByProperty]) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -521,7 +521,8 @@ const mapGraphicsDataSlice = createSlice({
           break;
         case 'Dot Density Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+            // TODO: Try to keep region[state.nameByProperty].trim() === ''
+            if (!region[state.nameByProperty]) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -592,7 +593,7 @@ export const {
   addDataFromCSVorExcel,
   setMaxSymbolSize,
   setMinSymbolSize,
-    setMinProperty,
-    setMaxProperty
+  setMinProperty,
+  setMaxProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

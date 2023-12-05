@@ -8,7 +8,7 @@ export default function DebouncedSlider({
     value = 0,
     style = {},
     onChange }) {
-    const [localValue, setLocalValue] = useDebounce(value, 200, (newLocalValue) => {
+    const [localValue, setLocalValue] = useDebounce(value, 100, (newLocalValue) => {
         onChange(newLocalValue);
     });
 

@@ -9,7 +9,7 @@ export default function DebouncedColorInput({
     style = {},
     sx = {},
     onChange }) {
-    const [localValue, setLocalValue] = useDebounce(value, 200, (newLocalValue) => {
+    const [localValue, setLocalValue] = useDebounce(value, 100, (newLocalValue) => {
         onChange(newLocalValue);
     });
 
