@@ -10,12 +10,15 @@ import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import GeoMapperImage from '../../assets/GeoMapperLogo.svg';
 import '../../styles/loginPage.css';
+import Typography from "@mui/material/Typography";
 
 export default function ForgotPassword() {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const dispatch = useDispatch();
+  const[error, setError] = useState('')
+  const[validation, setValidation] = useState('')
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -34,8 +37,17 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await dispatch(forgotPassword({email}));
-    navigate('/login');
+    const response = await dispatch(forgotPassword({ email }));
+    if(response.type.endsWith('/rejected')){
+      setValidation('');
+      setError("Email is not associated with a GeoMapper Account");
+    }
+    else{
+      setError('');
+      setValidation('Email was sent successfully! Please check your inbox to reset your password');
+    }
+
+
   };
 
   const goBack = () => {
@@ -63,6 +75,11 @@ export default function ForgotPassword() {
           gap: '0.5rem'
         }}
       >
+        {validation && (
+            <Typography variant="body1" color="textSecondary">
+              {validation}
+            </Typography>
+        )}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img src={GeoMapperImage} alt="GeoMapper Logo" width="50" height="50" />
           <h1>Forgot Password</h1>
@@ -79,6 +96,8 @@ export default function ForgotPassword() {
             name="email"
             type="email"
             value={email}
+            error={!!error}
+            helperText={error}
             onChange={handleEmailChange}
             autoComplete="email"
           />
