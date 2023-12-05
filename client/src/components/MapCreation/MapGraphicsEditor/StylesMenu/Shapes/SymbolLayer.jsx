@@ -19,7 +19,6 @@ const SymbolLayer = () => {
   const lonByProperty = useSelector((state) => state.mapGraphics.lonByProperty);
   const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
   const minSymbolSize = useSelector((state) => state.mapGraphics.minSymbolSize);
-
   let mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   let sizeByProperty;

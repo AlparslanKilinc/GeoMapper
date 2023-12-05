@@ -8,6 +8,7 @@ import { useMapEvents } from 'react-leaflet';
 import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
+import axios from "axios";
 
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
@@ -15,6 +16,7 @@ const isPointInPolygon = (point, geojson) => {
   if (geojson && geojson.geoJSON && geojson.geoJSON.features) {
     geojson.geoJSON.features.forEach((feature) => {
       if (turf.booleanPointInPolygon(turfPoint, feature)) {
+
         isInside = true;
       }
     });
@@ -48,19 +50,22 @@ const GeoJsonMap = ({ styled }) => {
     const geojson = useSelector((state) => state.geojson.geojson);
 
     const map = useMapEvents({
-      click: (e) => {
+      click: async (e) => {
+        console.log(e)
         if (addSymbolMode) {
           const [lat, lon] = [e.latlng.lat, e.latlng.lng];
+          console.log([lat, lon])
+          if (isPointInPolygon({lat, lon}, geojson)) {
+              const properties = getDefaultPointProperties();
+              dispatch(addPoint({lat, lon, ...properties}));
+            }
+          else
+            alert('POINT OUTSIDE');
+          }
 
-          if (isPointInPolygon({ lat, lon }, geojson)) {
-            const properties = getDefaultPointProperties();
-            dispatch(addPoint({ lat, lon, ...properties }));
-          } else alert('POINT OUTSIDE');
+          // propogate the event to the map
         }
-
-        // propogate the event to the map
-      }
-    });
+      });
     return null;
   };
 

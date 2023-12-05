@@ -542,6 +542,12 @@ const mapGraphicsDataSlice = createSlice({
       }
       state.validationMessage = hasErrors ? message : '✓ No errors found.';
     },
+    setMaxSymbolSize: (state, action) => {
+      state.maxSymbolSize = action.payload;
+    },
+    setMinSymbolSize: (state, action) => {
+      state.minSymbolSize = action.payload;
+    }
 
   }
 });
