@@ -10,6 +10,7 @@ import ColorSelector from './ColorSelector';
 import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
 import DotDensityPropertySelector from './DotDensityPropertySelector';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
 import Typography from "@mui/material/Typography";
 
 export default function ColorsDotDensityAccordionMenu() {
@@ -19,7 +20,7 @@ export default function ColorsDotDensityAccordionMenu() {
   const valuePerDot = useSelector((state) => state.mapGraphics.valuePerDot);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const colors = useSelector((state) => state.mapStyles.colors);
-console.log(colors)
+
   const handleFixedColorChange = (color) => {
     dispatch(changeXByProperty({ property: 'fixedColor', propertyBy: color }));
   };
@@ -50,7 +51,7 @@ console.log(colors)
       sx={{ width: '100%' }}
     >
       <SubMenuTitle title="select color" />
-      <MuiColorInput
+      <DebouncedColorInput
         format="hex"
         value={fixedColor}
         onChange={handleFixedColorChange}
@@ -73,14 +74,13 @@ console.log(colors)
         {colors.map(({ name, color }, index) => {
           return (
             <ColorSelector
-                title={name}
-                name = {name}
+              title={name}
+              name={name}
               color={color}
               disableLower
               disableUpper
               key={index + 'colorSelector'}>
             </ColorSelector>
-
           );
         })}
       </Box>
