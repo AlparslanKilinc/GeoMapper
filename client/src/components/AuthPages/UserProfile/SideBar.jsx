@@ -176,7 +176,6 @@ function ProfileEdit({
   handleSave,
   handleCancel,
   errorMessage,
-  isGoogleUser
 }) {
   return (
     <>
@@ -188,9 +187,9 @@ function ProfileEdit({
         id="profile-pic-upload"
       />
       <label htmlFor="profile-pic-upload">
-          {!isGoogleUser && <Button variant="contained" component="span">Upload Profile Picture</Button>}
+          <Button variant="contained" component="span">Upload Profile Picture</Button>
       </label>
-        {!isGoogleUser && <TextField
+         <TextField
         name="firstName"
         value={userData.firstName}
         onChange={handleInputChange}
@@ -198,8 +197,8 @@ function ProfileEdit({
         variant="outlined"
         fullWidth
         margin="normal"
-      />}
-        {!isGoogleUser && <TextField
+      />
+       <TextField
         name="lastName"
         value={userData.lastName}
         onChange={handleInputChange}
@@ -207,8 +206,8 @@ function ProfileEdit({
         variant="outlined"
         fullWidth
         margin="normal"
-      />}
-      {!isGoogleUser && <TextField
+      />
+      <TextField
         name="userName"
         value={userData.userName}
         onChange={handleInputChange}
@@ -216,7 +215,7 @@ function ProfileEdit({
         variant="outlined"
         fullWidth
         margin="normal"
-      />}
+      />
       <TextField
         name="bio"
         value={userData.bio}
