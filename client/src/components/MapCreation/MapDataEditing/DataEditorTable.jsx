@@ -159,6 +159,9 @@ export default function DataEditorTable() {
     dispatch(setColumnType({ columnName: 'height', columnType: 'number' }));
   },[]);
 
+useEffect(() => {
+  validateAllCells();
+}, [points,regions,columnTypes,cellValidationErrors,columnValidationErrors]);
 
   useEffect(() => {
     dispatch(TableValidation(mapGraphicsType));
