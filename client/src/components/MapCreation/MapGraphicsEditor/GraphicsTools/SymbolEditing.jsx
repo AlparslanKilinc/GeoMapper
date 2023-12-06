@@ -3,6 +3,7 @@ import { Box, Typography, Divider, TextField, Autocomplete } from '@mui/material
 import { useDispatch, useSelector } from 'react-redux';
 
 import { setPointProperty } from '../../../../redux-slices/mapGraphicsDataSlice';
+import DebouncedTextField from '../../../DebouncedElement/DebouncedTextField';
 
 export default function SymbolEditing() {
   const dispatch = useDispatch();
@@ -44,11 +45,10 @@ export default function SymbolEditing() {
     name = pointDetails[nameByProperty];
     // lets check the type of the property and render the appropriate input
   }
-  const handlePropValueChange = (event) => {
+  const handlePropValueChange = (value) => {
     // convert event.target.value to
-    let value = event.target.value;
     if (type === 'number') {
-      value = Number(event.target.value);
+      value = Number(value);
     }
     dispatch(
       setPointProperty({
@@ -67,8 +67,16 @@ export default function SymbolEditing() {
     setProp(newValue);
   };
 
+  let key = prop + '#' + selectedPointKey;
+
   let inputField = (
-    <TextField type={type} value={pointDetails[prop]} onChange={handlePropValueChange} fullWidth />
+    <DebouncedTextField
+      type={type}
+      value={pointDetails[prop]}
+      onChange={handlePropValueChange}
+      fullWidth
+      key={key}
+    />
   );
 
   if (prop === colorByProperty && isNaN(pointDetails[prop])) {
