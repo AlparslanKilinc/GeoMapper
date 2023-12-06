@@ -50,6 +50,78 @@ const isPointInPolygon = (point, geojson) => {
   return isInside;
 };
 
+const validateSingleCell = (state, rowIndex, columnName, value, mapGraphicsType, geoJSON) => {
+  const columnType = state.columnTypes[columnName];
+  const cellKey = `${rowIndex}-${columnName}`;
+  let isValid = true;
+  // Don't Validate if cell empty
+  if (value === '' || value === undefined) {
+    delete state.cellValidationErrors[cellKey];
+    return;
+  }
+  // General Error Checking
+  if (columnType === 'number') {
+    isValid = !isNaN(Number(value)) && isFinite(value);
+  } else if (columnType === 'text') {
+    isValid = typeof value === 'string';
+  }
+
+  if (isValid) {
+    delete state.cellValidationErrors[cellKey];
+  } else {
+    state.cellValidationErrors[cellKey] =
+      columnType === 'number' ? 'Number Required' : 'Text Required';
+  }
+
+  /// Point Error Checking
+  if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+    const latProperty = state.latByProperty;
+    const lonProperty = state.lonByProperty;
+    if (!latProperty || !lonProperty) return;
+
+    const currentLat = state.points[rowIndex][latProperty];
+    const currentLon = state.points[rowIndex][lonProperty];
+
+    if (currentLat === 0 && currentLon === 0) {
+      delete state.cellValidationErrors[`${rowIndex}-${latProperty}`];
+      delete state.cellValidationErrors[`${rowIndex}-${lonProperty}`];
+      return;
+    }
+
+    // Check for unique lat-lon pair
+    const isDuplicate = state.points.some((point, index) => {
+      const existingLat = parseFloat(point[latProperty]);
+      const existingLon = parseFloat(point[lonProperty]);
+      const newLat = parseFloat(currentLat);
+      const newLon = parseFloat(currentLon);
+
+      const tolerance = 0.00001;
+      return (
+        index !== rowIndex &&
+        Math.abs(existingLat - newLat) < tolerance &&
+        Math.abs(existingLon - newLon) < tolerance
+      );
+    });
+
+    if (isDuplicate) {
+      state.cellValidationErrors[`${rowIndex}-${latProperty}`] = 'Duplicate lat-lon pair';
+      state.cellValidationErrors[`${rowIndex}-${lonProperty}`] = 'Duplicate lat-lon pair';
+      return;
+    }
+    // Validate if lat and lon are within the boundaries of geojson only if both are present
+    if (currentLat && currentLon && !isNaN(Number(currentLat)) && !isNaN(Number(currentLon))) {
+      const point = { lat: currentLat, lon: currentLon };
+      if (!isPointInPolygon(point, geoJSON)) {
+        state.cellValidationErrors[`${rowIndex}-${latProperty}`] = 'Point is not within region';
+        state.cellValidationErrors[`${rowIndex}-${lonProperty}`] = 'Point is not within region';
+      } else {
+        delete state.cellValidationErrors[`${rowIndex}-${latProperty}`];
+        delete state.cellValidationErrors[`${rowIndex}-${lonProperty}`];
+      }
+    }
+  }
+};
+
 const mapGraphicsDataSlice = createSlice({
   name: 'mapGraphics',
   initialState,
@@ -219,7 +291,7 @@ const mapGraphicsDataSlice = createSlice({
           ) {
             isValid = false;
             state.cellValidationErrors[cellKey] = 'Number Required';
-          } else if (state.cellValidationErrors[cellKey] === 'Number Required') {
+          } else if (state.cellValidationErrors[cellKey] === 'Text Required') {
             delete state.cellValidationErrors[cellKey];
           }
         });
@@ -234,7 +306,7 @@ const mapGraphicsDataSlice = createSlice({
           ) {
             isValid = false;
             state.cellValidationErrors[cellKey] = 'Text Required';
-          } else if (state.cellValidationErrors[cellKey] === 'Text Required') {
+          } else if (state.cellValidationErrors[cellKey] === 'Number Required') {
             delete state.cellValidationErrors[cellKey];
           }
         });
@@ -248,74 +320,25 @@ const mapGraphicsDataSlice = createSlice({
     validateCell: (state, action) => {
       console.log('validateCell');
       const { rowIndex, columnName, value, mapGraphicsType, geoJSON } = action.payload;
-      const columnType = state.columnTypes[columnName];
-      const cellKey = `${rowIndex}-${columnName}`;
-      let isValid = true;
-      // Don't Validate if cell empty
-      if (value === '' || value === undefined) {
-        delete state.cellValidationErrors[cellKey];
-        return;
-      }
-      // General Error Checking
-      if (columnType === 'number') {
-        isValid = !isNaN(Number(value)) && isFinite(value);
-      } else if (columnType === 'text') {
-        isValid = typeof value === 'string';
-      }
-
-      if (isValid) {
-        delete state.cellValidationErrors[cellKey];
-      } else {
-        state.cellValidationErrors[cellKey] =
-          columnType === 'number' ? 'Number Required' : 'Text Required';
-      }
-
-      /// Point Error Checking
-      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
-        const latProperty = state.latByProperty;
-        const lonProperty = state.lonByProperty;
-        if (!latProperty || !lonProperty) return;
-
-        const currentLat = state.points[rowIndex][latProperty];
-        const currentLon = state.points[rowIndex][lonProperty];
-
-        if (currentLat === 0 && currentLon === 0) {
-          delete state.cellValidationErrors[`${rowIndex}-${latProperty}`];
-          delete state.cellValidationErrors[`${rowIndex}-${lonProperty}`];
-          return;
-        }
-
-        // Check for unique lat-lon pair
-        const isDuplicate = state.points.some((point, index) => {
-          const existingLat = parseFloat(point[latProperty]);
-          const existingLon = parseFloat(point[lonProperty]);
-          const newLat = parseFloat(currentLat);
-          const newLon = parseFloat(currentLon);
-
-          const tolerance = 0.00001;
-          return (
-            index !== rowIndex &&
-            Math.abs(existingLat - newLat) < tolerance &&
-            Math.abs(existingLon - newLon) < tolerance
-          );
+      validateSingleCell(state, rowIndex, columnName, value, mapGraphicsType, geoJSON);
+    },
+    validateAllCells: (state, action) => {
+      console.log('validateAllCells');
+      const { mapGraphicsType, geoJSON } = action.payload;
+      if (mapGraphicsType === 'Spike Map' || mapGraphicsType === 'Symbol Map') {
+        state.points.forEach((point, rowIndex) => {
+          Object.keys(point).forEach((columnName) => {
+            const value = point[columnName];
+            validateSingleCell(state, rowIndex, columnName, value, mapGraphicsType, geoJSON);
+          });
         });
-
-        if (isDuplicate) {
-          state.cellValidationErrors[`${rowIndex}-${latProperty}`] = 'Duplicate lat-lon pair';
-          state.cellValidationErrors[`${rowIndex}-${lonProperty}`] = 'Duplicate lat-lon pair';
-          return;
-        }
-        // Validate if lat and lon are within the boundaries of geojson only if both are present
-        if (currentLat && currentLon && !isNaN(Number(currentLat)) && !isNaN(Number(currentLon))) {
-          const point = { lat: currentLat, lon: currentLon };
-          if (!isPointInPolygon(point, geoJSON)) {
-            state.cellValidationErrors[`${rowIndex}-${latProperty}`] = 'Point is not within region';
-            state.cellValidationErrors[`${rowIndex}-${lonProperty}`] = 'Point is not within region';
-          } else {
-            delete state.cellValidationErrors[`${rowIndex}-${latProperty}`];
-            delete state.cellValidationErrors[`${rowIndex}-${lonProperty}`];
-          }
-        }
+      } else {
+        state.regions.forEach((region, rowIndex) => {
+          Object.keys(region).forEach((columnName) => {
+            const value = region[columnName];
+            validateSingleCell(state, rowIndex, columnName, value, mapGraphicsType, geoJSON);
+          });
+        });
       }
     },
     addCellValidationErrors: (state, action) => {
@@ -570,7 +593,7 @@ const mapGraphicsDataSlice = createSlice({
             const latErrorKey = `${index}-${state.latByProperty}`;
             const lonErrorKey = `${index}-${state.lonByProperty}`;
             // Required Field Error
-            if (!point[state.latByProperty] && !point[state.lonByProperty]) {
+            if (!point[state.latByProperty] || !point[state.lonByProperty]) {
               message = '⚠️ Required Latitude and Longitude fields are empty.';
               hasErrors = true;
               return;
@@ -708,6 +731,7 @@ export const {
   setMinProperty,
   setMaxProperty,
   validateRow,
-  changeNameColor
+  changeNameColor,
+  validateAllCells
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import '../../../styles/mapDataEditingPage.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -28,7 +27,8 @@ import {
   setPointProperty,
   addPoint,
   removePoint,
-  validateRow
+  validateRow,
+  validateAllCells
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
@@ -212,9 +212,7 @@ export default function DataEditorTable() {
 
   const handleColumnTypeChange = (newType) => {
     dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
-    dispatch(
-      validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType })
-    );
+    dispatch(validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType }));
     dispatch(TableValidation(mapGraphicsType));
     handleClose();
   };
@@ -269,24 +267,16 @@ export default function DataEditorTable() {
   const handleRemovePoint = (rowIndex) => {
     if (window.confirm('Are you sure you want to delete this point?')) {
       dispatch(removePoint({ rowIndex }));
-      validateAllCells();
+      dispatch(validateRow({ rowIndex, mapGraphicsType, geoJSON }));
+      dispatch(validateAllCells({ mapGraphicsType, geoJSON}));
       dispatch(TableValidation(mapGraphicsType));
     }
   };
 
   useEffect(() => {
-    validateAllCells();
+    dispatch(validateAllCells({ mapGraphicsType, geoJSON}));
     dispatch(TableValidation(mapGraphicsType));
-  }, [points]);
-
-  const validateAllCells = () => {
-    data.forEach((row, rowIndex) => {
-      Object.keys(row).forEach((columnName) => {
-        const value = row[columnName];
-        dispatch(validateCell({ rowIndex, columnName, value, mapGraphicsType, geoJSON }));
-      });
-    });
-  };
+  }, [points, latByProperty, lonByProperty, sizeByProperty, heightByProperty]);
 
   const handleCellChange = (rowIndex, columnName, value) => {
     setCellEdits({
@@ -342,7 +332,7 @@ export default function DataEditorTable() {
 
   const TableButtons = () => (
     <div id="table-buttons">
-      {mapGraphicsType === 'Symbol Map' && mapGraphicsType !== 'Spike Map' && (
+      {(mapGraphicsType === 'Symbol Map' && mapGraphicsType !== 'Spike Map') && (
         <LoadingButton
           variant="outlined"
           style={{ color: 'black', borderColor: 'black' }}
