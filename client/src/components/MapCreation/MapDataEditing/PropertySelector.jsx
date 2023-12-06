@@ -63,6 +63,11 @@ export default function PropertySelector({ value, propertyName }) {
           selections = propertyNames.filter((property) => columnTypes[property] === 'number');
         }
       }
+      if (mapGraphicsType === 'Dot Density Map') {
+        if (propertyName === 'name') {
+          selections = propertyNames;
+        }
+      }
       setProperties(selections);
     }
   }, [mapGraphicsType, propertyNames, pointProperties, columnTypes]);

@@ -268,6 +268,16 @@ export default function DataEditorTable() {
     if (window.confirm('Are you sure you want to delete this point?')) {
       dispatch(removePoint({ rowIndex }));
       dispatch(validateRow({ rowIndex, mapGraphicsType, geoJSON }));
+      // validate all columns in the points also get the column names from the object to validate everything
+      for (let property in points[rowIndex]) {
+        dispatch(
+          validateColumnData({
+            columnName: property,
+            columnType: columnTypes[property],
+            mapGraphicsType
+          })
+        );
+      }
       dispatch(validateAllCells({ mapGraphicsType, geoJSON}));
       dispatch(TableValidation(mapGraphicsType));
     }
