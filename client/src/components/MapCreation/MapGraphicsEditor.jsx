@@ -68,7 +68,9 @@ export default function MapGraphicsEditor() {
   const initColorsCategorical = () => {
     let uniqueValues = Array.from(extractUniqueColorValues(propList, colorByProperty));
     // get rid of undefined values
-    uniqueValues = uniqueValues.filter((value) => value && value.trim() !== '');
+    uniqueValues = uniqueValues.filter((value) => value !== undefined);
+
+    uniqueValues = uniqueValues.map((value) => value.trim());
 
     const c = uniqueValues.map((name) => {
       let color = generateRandomColor();
