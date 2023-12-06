@@ -16,10 +16,15 @@ export default function RegionEditing() {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const columnTypes = useSelector((state) => state.mapGraphics.columnTypes);
 
   // This will break if dotDesnityByProperty is empty
+
+  const defaultDotDensityProperty = dotDensityByProperty[0] || nameByProperty;
   const defaultProperty =
-    (mapGraphicsType === 'Choropleth Map' || mapGraphicsType=== 'Heat Map') ? colorByProperty : dotDensityByProperty[0];
+    mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Heat Map'
+      ? colorByProperty
+      : defaultDotDensityProperty;
 
   const [prop, setProp] = React.useState(defaultProperty);
 
@@ -38,26 +43,23 @@ export default function RegionEditing() {
 
   let regionDetails = {};
   let name = 'New York';
-  let type = 'text';
+  let type = columnTypes[prop] || 'text';
   let isRegionSelected = selectedRegionIdx > -1;
   if (isRegionSelected) {
     regionDetails = regions[selectedRegionIdx];
     name = regionDetails[nameByProperty];
-    // lets check the type of the property and render the appropriate input
-    if (typeof regionDetails[prop] === 'number') {
-      type = 'number';
-    }
   }
   const handlePropValueChange = (event) => {
     // convert event.target.value to
-    dispatch(setRegionProperty({ propertyName: prop, value: Number(event.target.value) }));
+    let value = event.target.value;
+    if (type === 'number') {
+      value = Number(event.target.value);
+    }
+    dispatch(setRegionProperty({ propertyName: prop, value }));
   };
 
   const handlePropValueChangeText = (event, value) => {
     dispatch(setRegionProperty({ propertyName: prop, value: value }));
-    // find the color for the region by the colorByProperty inside colors array
-    // let color = colors.find((color) => color.name === value);
-    // selectedFeature.setStyle({ fillColor: color.color });
   };
 
   const handleOptionSelect = (event, newValue) => {
