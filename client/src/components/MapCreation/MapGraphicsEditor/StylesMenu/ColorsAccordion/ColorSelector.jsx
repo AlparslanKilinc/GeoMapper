@@ -55,7 +55,13 @@ const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color,
 
   let key = JSON.stringify({ color, name });
   colorBy = (
-    <DebouncedTextField value={name} onChange={handleNameChange} variant="outlined" key={key} />
+    <DebouncedTextField
+      value={name}
+      onChange={handleNameChange}
+      variant="outlined"
+      key={key}
+      size="small"
+    />
   );
 
   return (
