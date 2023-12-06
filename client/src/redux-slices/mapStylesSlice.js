@@ -141,6 +141,9 @@ const mapStylesDataSlice = createSlice({
     },
     setFillColor: (state, action) => {
       state.fillColor = action.payload;
+    },
+    resetLabels: (state) => {
+      state.labels = [];
     }
   }
 });
@@ -167,7 +170,8 @@ export const {
   setDefaultLabelSize,
   setDefaultLabelFont,
   setFillColor,
-  resetMapStylesData
+  resetMapStylesData,
+  resetLabels
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;

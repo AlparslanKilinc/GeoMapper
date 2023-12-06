@@ -6,7 +6,6 @@ import {
   TableValidation,
   validateColumnData
 } from '../../../redux-slices/mapGraphicsDataSlice';
-import { point } from '@turf/turf';
 
 export default function PropertySelector({ value, propertyName }) {
   let { propertyNames, pointProperties, columnTypes } = useSelector((state) => state.mapGraphics);
@@ -18,6 +17,10 @@ export default function PropertySelector({ value, propertyName }) {
 
   useEffect(() => {
     // Filtering Selections depending on propertyName for each type of map
+    if (propertyName === 'label') {
+      setProperties(propertyNames);
+      return;
+    }
     let selections = [];
     if (
       (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') &&
