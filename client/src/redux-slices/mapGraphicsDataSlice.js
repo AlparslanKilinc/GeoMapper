@@ -219,7 +219,7 @@ const mapGraphicsDataSlice = createSlice({
           ) {
             isValid = false;
             state.cellValidationErrors[cellKey] = 'Number Required';
-          } else if(state.cellValidationErrors[cellKey] === 'Number Required') {
+          } else if (state.cellValidationErrors[cellKey] === 'Number Required') {
             delete state.cellValidationErrors[cellKey];
           }
         });
@@ -234,7 +234,7 @@ const mapGraphicsDataSlice = createSlice({
           ) {
             isValid = false;
             state.cellValidationErrors[cellKey] = 'Text Required';
-          } else if(state.cellValidationErrors[cellKey] === 'Text Required') {
+          } else if (state.cellValidationErrors[cellKey] === 'Text Required') {
             delete state.cellValidationErrors[cellKey];
           }
         });
@@ -274,7 +274,7 @@ const mapGraphicsDataSlice = createSlice({
       if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
         const latProperty = state.latByProperty;
         const lonProperty = state.lonByProperty;
-        if(!latProperty || !lonProperty) return;
+        if (!latProperty || !lonProperty) return;
 
         const currentLat = state.points[rowIndex][latProperty];
         const currentLon = state.points[rowIndex][lonProperty];
@@ -418,7 +418,7 @@ const mapGraphicsDataSlice = createSlice({
       // Check for unique lat-lon pair and geojson boundary
       const currentLat = row[latProperty];
       const currentLon = row[lonProperty];
-      if(currentLat === undefined && currentLon === undefined) {
+      if (currentLat === undefined && currentLon === undefined) {
         delete state.cellValidationErrors[`${rowIndex}-${latProperty}`];
         delete state.cellValidationErrors[`${rowIndex}-${lonProperty}`];
         return;
@@ -644,6 +644,22 @@ const mapGraphicsDataSlice = createSlice({
     },
     setMinSymbolSize: (state, action) => {
       state.minSymbolSize = action.payload;
+    },
+
+    changeNameColor: (state, action) => {
+      const { oldColorValue, newColorValue, mapGraphicsType } = action.payload;
+      let propList = state.regions;
+      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+        propList = state.points;
+      }
+
+      let colorByProperty = state.colorByProperty;
+
+      propList.forEach((prop) => {
+        if (prop[colorByProperty] === oldColorValue) {
+          prop[colorByProperty] = newColorValue;
+        }
+      });
     }
   }
 });
@@ -691,6 +707,7 @@ export const {
   setMinSymbolSize,
   setMinProperty,
   setMaxProperty,
-  validateRow
+  validateRow,
+  changeNameColor
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;
