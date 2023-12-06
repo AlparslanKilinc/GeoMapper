@@ -11,6 +11,7 @@ export default function SymbolEditing() {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const points = useSelector((state) => state.mapGraphics.points);
   const selectedPointKey = useSelector((state) => state.mapGraphics.selectedPointKey);
+  const columnTypes = useSelector((state) => state.mapGraphics.columnTypes);
 
   let sizeByProperty;
   if (mapGraphicsType === 'Spike Map') {
@@ -37,21 +38,22 @@ export default function SymbolEditing() {
 
   let pointDetails = {};
   let name = 'New York';
-  let type = 'text';
+  let type = columnTypes[prop] || 'text';
   if (selectedPointKey > -1) {
     pointDetails = points[selectedPointKey];
     name = pointDetails[nameByProperty];
     // lets check the type of the property and render the appropriate input
-    if (typeof pointDetails[prop] === 'number') {
-      type = 'number';
-    }
   }
   const handlePropValueChange = (event) => {
     // convert event.target.value to
+    let value = event.target.value;
+    if (type === 'number') {
+      value = Number(event.target.value);
+    }
     dispatch(
       setPointProperty({
         propertyName: prop,
-        value: Number(event.target.value),
+        value,
         pointIdx: selectedPointKey
       })
     );
