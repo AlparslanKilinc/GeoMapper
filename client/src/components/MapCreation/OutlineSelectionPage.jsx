@@ -14,6 +14,7 @@ import PlaceIcon from '@mui/icons-material/Place';
 import GeoJsonMap from './Map/GeoJsonMap';
 import OutlineFileUploader from './OutlineFileUploader';
 import { fetchGeojson, fetchGeojsonById, searchGeojson } from '../../redux-slices/geoJSONSlice';
+import { resetMapStylesData } from '../../redux-slices/mapStylesSlice';
 
 export default function OutlineSelectionPage() {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ export default function OutlineSelectionPage() {
 
   useEffect(() => {
     dispatch(fetchGeojson());
+    dispatch(resetMapStylesData());
   }, [dispatch]);
 
   const handleSearchChange = (event) => {

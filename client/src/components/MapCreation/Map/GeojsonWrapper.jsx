@@ -180,9 +180,7 @@ export default function GeojsonWrapper({ isStyled }) {
   useEffect(() => {
     if (geojsonLayer.current) {
       map.fitBounds(geojsonLayer.current.getBounds());
-      dispatch(resetLabels());
     }
-    // reset label positions
   }, [geoJSON]);
 
   const renderLabels = isStyled && geoJSON && labelByProperty;

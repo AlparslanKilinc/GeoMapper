@@ -667,6 +667,22 @@ const mapGraphicsDataSlice = createSlice({
     },
     setMinSymbolSize: (state, action) => {
       state.minSymbolSize = action.payload;
+    },
+
+    changeNameColor: (state, action) => {
+      const { oldColorValue, newColorValue, mapGraphicsType } = action.payload;
+      let propList = state.regions;
+      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+        propList = state.points;
+      }
+
+      let colorByProperty = state.colorByProperty;
+
+      propList.forEach((prop) => {
+        if (prop[colorByProperty] === oldColorValue) {
+          prop[colorByProperty] = newColorValue;
+        }
+      });
     }
   }
 });
@@ -715,6 +731,7 @@ export const {
   setMinProperty,
   setMaxProperty,
   validateRow,
+  changeNameColor,
   validateAllCells
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

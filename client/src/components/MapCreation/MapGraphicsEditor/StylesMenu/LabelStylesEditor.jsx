@@ -49,7 +49,7 @@ export default function LabelStylesEditor() {
       <DebouncedColorInput
         value={defaultLabelColor}
         onChange={handleChangeDefaultLabelColor}
-        label="Default Label Color"
+        label="Label Color"
       />
       <TextField
         value={defaultLabelSize}

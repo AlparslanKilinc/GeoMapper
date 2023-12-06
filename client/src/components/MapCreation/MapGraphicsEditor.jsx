@@ -47,7 +47,6 @@ export default function MapGraphicsEditor() {
   }
   const dataEditingToolboxConfig = [editing];
 
-
   const exportDialogRef = useRef();
   const openExportDialog = () => {
     exportDialogRef.current.handleOpenExportDialog();
@@ -67,8 +66,8 @@ export default function MapGraphicsEditor() {
   };
 
   const initColorsCategorical = () => {
-    const uniqueValues = extractUniqueColorValues(propList, colorByProperty);
-    const c = Array.from(uniqueValues).map((name) => {
+    const uniqueValues = Array.from(extractUniqueColorValues(propList, colorByProperty));
+    const c = uniqueValues.map((name) => {
       let color = generateRandomColor();
       let colorObj = colors.find((color) => color.name === name);
       if (colorObj) color = colorObj.color;
@@ -76,7 +75,7 @@ export default function MapGraphicsEditor() {
     });
 
     dispatch(setColors(c));
-    dispatch(setSelectedPropUniqueValues(Array.from(uniqueValues)));
+    dispatch(setSelectedPropUniqueValues(uniqueValues));
   };
 
   const initColorsNumerical = () => {
@@ -102,14 +101,17 @@ export default function MapGraphicsEditor() {
       if (colorObj) color = colorObj.color;
       return { name, color: color };
     });
-
     dispatch(setColors(colorsForDotDensity));
   };
 
   const initColors = () => {
     //check if the property associated with the colorByProperty is numeric or not
 
-    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+    if (
+      mapGraphicsType === 'Choropleth Map' ||
+      mapGraphicsType === 'Symbol Map' ||
+      mapGraphicsType === 'Spike Map'
+    ) {
       if (propList.length === 0) return;
       initColorsCategorical();
     }
