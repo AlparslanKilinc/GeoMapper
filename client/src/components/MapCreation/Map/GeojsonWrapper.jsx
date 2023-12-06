@@ -143,10 +143,12 @@ export default function GeojsonWrapper({ isStyled }) {
   };
 
   const applyChoroplethStyles = (feature, layer, regionData) => {
-    let color = generateRandomColor();
+    let color = fillColor;
     let colorPropVal = regionData[colorByProperty];
-    let colorObj = colors.find((color) => color.name === colorPropVal);
-    if (colorObj) color = colorObj.color;
+    if (colorPropVal) {
+      let colorObj = colors.find((color) => color.name === colorPropVal);
+      if (colorObj) color = colorObj.color;
+    }
 
     layer.setStyle({
       fillColor: color,
