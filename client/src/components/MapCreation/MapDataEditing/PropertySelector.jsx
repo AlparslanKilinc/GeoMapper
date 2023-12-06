@@ -4,8 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   changeXByProperty,
   TableValidation,
-  validateColumnData,
+  validateColumnData
 } from '../../../redux-slices/mapGraphicsDataSlice';
+import { point } from '@turf/turf';
 
 export default function PropertySelector({ value, propertyName }) {
   let { propertyNames, pointProperties, columnTypes } = useSelector((state) => state.mapGraphics);
@@ -16,15 +17,52 @@ export default function PropertySelector({ value, propertyName }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // Filtering Selections depending on propertyName for each type of map
+    let selections = [];
     if (
       (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') &&
       propertyName !== 'label'
     ) {
-      setProperties(pointProperties);
+      // Point Properties Filtering
+      if (propertyName === 'name') {
+        selections = pointProperties;
+      }
+      if (propertyName === 'color') {
+        selections = pointProperties.filter((property) => columnTypes[property] === 'text');
+      }
+      if (
+        propertyName === 'size' ||
+        propertyName === 'height' ||
+        propertyName === 'lat' ||
+        propertyName === 'lon'
+      ) {
+        selections = pointProperties.filter((property) => columnTypes[property] === 'number');
+      }
+      if (selections.length === 0) {
+        selections = pointProperties;
+      }
+      setProperties(selections);
     } else {
-      setProperties(propertyNames);
+      /// Region Data Selection Filtering
+      if (mapGraphicsType === 'Choropleth Map') {
+        if (propertyName === 'name') {
+          selections = propertyNames;
+        }
+        if (propertyName === 'color') {
+          selections = propertyNames.filter((property) => columnTypes[property] === 'text');
+        }
+      }
+      if (mapGraphicsType === 'Heat Map') {
+        if (propertyName === 'name') {
+          selections = propertyNames;
+        }
+        if (propertyName === 'color') {
+          selections = propertyNames.filter((property) => columnTypes[property] === 'number');
+        }
+      }
+      setProperties(selections);
     }
-  }, [mapGraphicsType, propertyNames, pointProperties]);
+  }, [mapGraphicsType, propertyNames, pointProperties, columnTypes]);
 
   useEffect(() => {
     if (columnTypes[colName]) {

@@ -2,29 +2,22 @@ import React, { useEffect, useState } from 'react';
 import '../../../styles/mapDataEditingPage.css';
 import { Divider, Box, Typography } from '@mui/material';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
-import { TextField, Autocomplete } from '@mui/material';
-import { changeXByProperty } from '../../../redux-slices/mapGraphicsDataSlice';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PropertySelector from './PropertySelector';
 import DotDensityPropertySelector from '../MapGraphicsEditor/StylesMenu/ColorsAccordion/DotDensityPropertySelector';
 
 export default function DataEditorRightPane() {
   const {
     nameByProperty,
-    dotDensityByProperty,
     colorByProperty,
     sizeByProperty,
     heightByProperty,
     latByProperty,
     lonByProperty,
     validationMessage,
-    propertyNames,
-    columnTypes
   } = useSelector((state) => state.mapGraphics);
-  const dispatch = useDispatch();
   const { mapGraphicsType } = useSelector((state) => state.mapMetadata);
   const [properties, setProperties] = useState([]);
-  const [dotDensityByPropertyOptions, setDotDensityByPropertyOptions] = useState([]);
 
   let name = { propertyName: 'name', value: nameByProperty };
   let color = { propertyName: 'color', value: colorByProperty };
@@ -58,14 +51,6 @@ export default function DataEditorRightPane() {
     sizeByProperty,
     heightByProperty
   ]);
-
-  useEffect(() => {
-    setDotDensityByPropertyOptions(
-      propertyNames.filter((property) => {
-        return columnTypes[property] === 'number';
-      })
-    );
-  }, [columnTypes, nameByProperty, dispatch, propertyNames]);
 
   let propertySelectors = properties.map((selectorConfig) => {
     return (

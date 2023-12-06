@@ -10,13 +10,16 @@ import loadScript from '../../../googleMapsLoad';
 import {
   generateRandomColumn,
   addPoint,
-  addDataFromCSVorExcel
+  addDataFromCSVorExcel,
+  validateRow
 } from '../../../redux-slices/mapGraphicsDataSlice';
 import '../../../styles/mapDataEditingPage.css';
 
 export default function DataEditorLeftPane() {
   const dispatch = useDispatch();
+  const points = useSelector((state) => state.mapGraphics.points);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const geoJSON = useSelector((state) => state.geojson.geojson);
   const [autocompleteService, setAutocompleteService] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const debounceDelay = 500;
@@ -33,6 +36,7 @@ export default function DataEditorLeftPane() {
       clearTimeout(handler);
     };
   }, [searchTerm, debounceDelay]);
+
   // This Basically loads the google maps api and allows the user to search for a place
   // It is like adding script tag to html but dynamically and only when needed
   useEffect(() => {
@@ -97,6 +101,8 @@ export default function DataEditorLeftPane() {
                 height: 10
               })
             );
+            const newIndex = points.length; 
+            dispatch(validateRow({ rowIndex: newIndex, mapGraphicsType, geoJSON }));
           } else {
             setError('Error fetching place details');
           }
