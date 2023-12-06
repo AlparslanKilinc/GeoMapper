@@ -9,7 +9,7 @@ import '../../../styles/map-label.css';
 // import leaflet css
 import 'leaflet/dist/leaflet.css';
 import LabelLayer from './layers/LabelLayer';
-import { addLabelPosition } from '../../../redux-slices/mapStylesSlice';
+import { addLabelPosition, resetLabels } from '../../../redux-slices/mapStylesSlice';
 
 export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
@@ -180,7 +180,9 @@ export default function GeojsonWrapper({ isStyled }) {
   useEffect(() => {
     if (geojsonLayer.current) {
       map.fitBounds(geojsonLayer.current.getBounds());
+      dispatch(resetLabels());
     }
+    // reset label positions
   }, [geoJSON]);
 
   const renderLabels = isStyled && geoJSON && labelByProperty;

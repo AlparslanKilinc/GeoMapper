@@ -5,6 +5,7 @@ import {
   setRegionProperty,
   setSelectedRegionIdx
 } from '../../../../redux-slices/mapGraphicsDataSlice';
+import DebouncedTextField from '../../../DebouncedElement/DebouncedTextField';
 
 export default function RegionEditing() {
   const dispatch = useDispatch();
@@ -49,11 +50,10 @@ export default function RegionEditing() {
     regionDetails = regions[selectedRegionIdx];
     name = regionDetails[nameByProperty];
   }
-  const handlePropValueChange = (event) => {
+  const handlePropValueChange = (value) => {
     // convert event.target.value to
-    let value = event.target.value;
     if (type === 'number') {
-      value = Number(event.target.value);
+      value = Number(value);
     }
     dispatch(setRegionProperty({ propertyName: prop, value }));
   };
@@ -70,8 +70,16 @@ export default function RegionEditing() {
     setProp(newValue);
   };
 
+  let key = prop + '#' + selectedRegionIdx;
+
   let inputField = (
-    <TextField type={type} value={regionDetails[prop]} onChange={handlePropValueChange} fullWidth />
+    <DebouncedTextField
+      type={type}
+      value={regionDetails[prop]}
+      onChange={handlePropValueChange}
+      fullWidth
+      key={key}
+    />
   );
 
   if (prop === colorByProperty && isNaN(regionDetails[prop])) {
