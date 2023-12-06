@@ -50,7 +50,6 @@ export default function LabelStylesEditor() {
         value={defaultLabelColor}
         onChange={handleChangeDefaultLabelColor}
         label="Label Color"
-        isAlphaHidden
       />
       <TextField
         value={defaultLabelSize}

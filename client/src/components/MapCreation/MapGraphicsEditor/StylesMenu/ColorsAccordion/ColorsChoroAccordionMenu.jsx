@@ -37,6 +37,7 @@ export default function ColorsChoroAccordionMenu() {
       alignItems="center"
       justifyContent="center"
       sx={{ width: '100%' }}
+      key={JSON.stringify(colors)}
     >
       <Typography variant="subtitle2">select color</Typography>
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
@@ -93,7 +94,13 @@ export default function ColorsChoroAccordionMenu() {
         sx={{ width: '100%' }}
       >
         <SubMenuTitle title="opacity" />
-        <DebouncedSlider min={0} max={1} step={0.01} value={opacity} onChange={handleChangeOpacity} />
+        <DebouncedSlider
+          min={0}
+          max={1}
+          step={0.01}
+          value={opacity}
+          onChange={handleChangeOpacity}
+        />
       </Box>
     </Box>
   );

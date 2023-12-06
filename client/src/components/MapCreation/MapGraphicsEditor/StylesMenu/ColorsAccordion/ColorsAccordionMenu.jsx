@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 export default function ColorsAccordionMenu() {
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const points = useSelector((state) => state.mapGraphics.points);
+  const colors = useSelector((state) => state.mapStyles.colors);
 
   const noPointsMessage = <Typography>Please add points to start editing</Typography>;
 
@@ -26,8 +27,8 @@ export default function ColorsAccordionMenu() {
     accordionDetails = <ColorsChoroAccordionMenu />;
   }
 
-  if(mapGraphicsType === 'Heat Map'){
-    accordionDetails = <ColorsHeatMapAccordionMenu/>
+  if (mapGraphicsType === 'Heat Map') {
+    accordionDetails = <ColorsHeatMapAccordionMenu />;
   }
 
   return (

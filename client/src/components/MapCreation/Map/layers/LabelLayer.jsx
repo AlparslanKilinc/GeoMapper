@@ -31,6 +31,8 @@ const LabelLayer = () => {
     const regionDetails = regions[index];
     const labelText = regionDetails[labelByProperty];
 
+    if (labels.length === 0) return null;
+
     let { position, color, size, font } = labels[index];
 
     if (!color) color = defaultLabelColor;
