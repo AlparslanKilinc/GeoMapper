@@ -26,7 +26,9 @@ import {
   updateColumnName,
   setPointProperty,
   addPoint,
-  removePoint
+  removePoint,
+  validateRow,
+  validateAllCells
 } from '../../../redux-slices/mapGraphicsDataSlice';
 
 export default function DataEditorTable() {
@@ -43,11 +45,8 @@ export default function DataEditorTable() {
     heightByProperty,
     columnValidationErrors,
     cellValidationErrors,
-    dotDensityByProperty,
-    propertyNames,
-    pointProperties
+    dotDensityByProperty
   } = useSelector((state) => state.mapGraphics);
-  const mapGraphics = useSelector((state) => state.mapGraphics);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const geoJSON = useSelector((state) => state.geojson.geojson);
   const dispatch = useDispatch();
@@ -57,6 +56,8 @@ export default function DataEditorTable() {
   const [labels, setLabels] = useState([]);
   const [columnErrors, setColumnValidationErrors] = useState({});
   const [cellErrors, setCellValidationErrors] = useState({});
+  const [cellEdits, setCellEdits] = useState({});
+
   // This is the data to be displayed in the table
   let data =
     mapGraphicsType === 'Choropleth Map' ||
@@ -157,22 +158,7 @@ export default function DataEditorTable() {
     dispatch(setColumnType({ columnName: 'lon', columnType: 'number' }));
     dispatch(setColumnType({ columnName: 'size', columnType: 'number' }));
     dispatch(setColumnType({ columnName: 'height', columnType: 'number' }));
-  },[]);
-
-
-  useEffect(() => {
-    dispatch(TableValidation(mapGraphicsType));
-  }, [
-    points,
-    regions,
-    columnTypes,
-    propertyNames,
-    pointProperties,
-    mapGraphicsType,
-    columnValidationErrors,
-    cellValidationErrors,
-    dotDensityByProperty
-  ]);
+  }, []);
 
   // This is to update the column errors and cell errors
   useEffect(() => {
@@ -219,16 +205,14 @@ export default function DataEditorTable() {
         deleteProperty({ propertyToDelete: columnNameToDelete, mapGraphicsType: mapGraphicsType })
       );
       dispatch(removeColumn(columnNameToDelete));
+      dispatch(TableValidation(mapGraphicsType));
       handleClose();
     }
   };
 
   const handleColumnTypeChange = (newType) => {
     dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
-    dispatch(
-      validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType })
-      /// To do validate cells for all the rows of the column
-    );
+    dispatch(validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType }));
     dispatch(TableValidation(mapGraphicsType));
     handleClose();
   };
@@ -277,42 +261,59 @@ export default function DataEditorTable() {
     dispatch(setColumnType({ columnName: 'lat', columnType: 'number' }));
     dispatch(setColumnType({ columnName: 'lon', columnType: 'number' }));
     dispatch(addPoint({ properties }));
+    dispatch(validateRow({ rowIndex: points.length, mapGraphicsType, geoJSON }));
   };
 
   const handleRemovePoint = (rowIndex) => {
     if (window.confirm('Are you sure you want to delete this point?')) {
       dispatch(removePoint({ rowIndex }));
-    }
-  };
-
-  /// Cell Functions
-  const handleCellChange = (rowIndex, columnName, value) => {
-    if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
-      dispatch(setPointProperty({ propertyName: columnName, value, pointIdx: rowIndex }));
-    } else {
-      dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
-    }
-    dispatch(validateCell({ rowIndex, columnName, value, mapGraphicsType, geoJSON }));
-    dispatch(
-      validateColumnData({ columnName, columnType: columnTypes[columnName], mapGraphicsType })
-    );
-    dispatch(TableValidation(mapGraphicsType));
-  };
-
-  const validateAllCells = () => {
-    data.forEach((row, rowIndex) => {
-      Object.keys(row).forEach((columnName) => {
+      dispatch(validateRow({ rowIndex, mapGraphicsType, geoJSON }));
+      // validate all columns in the points also get the column names from the object to validate everything
+      for (let property in points[rowIndex]) {
         dispatch(
-          validateCell({
-            rowIndex,
-            columnName,
-            value: row[columnName],
-            mapGraphicsType,
-            geoJSON
+          validateColumnData({
+            columnName: property,
+            columnType: columnTypes[property],
+            mapGraphicsType
           })
         );
-      });
+      }
+      dispatch(validateAllCells({ mapGraphicsType, geoJSON}));
+      dispatch(TableValidation(mapGraphicsType));
+    }
+  };
+
+  useEffect(() => {
+    dispatch(validateAllCells({ mapGraphicsType, geoJSON}));
+    dispatch(TableValidation(mapGraphicsType));
+  }, [points, latByProperty, lonByProperty, sizeByProperty, heightByProperty]);
+
+  const handleCellChange = (rowIndex, columnName, value) => {
+    setCellEdits({
+      ...cellEdits,
+      [`${rowIndex}-${columnName}`]: value
     });
+  };
+
+  const handleCellCommit = (rowIndex, columnName) => {
+    const cellKey = `${rowIndex}-${columnName}`;
+    const value = cellEdits[cellKey];
+    if (value !== undefined) {
+      if (mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') {
+        dispatch(setPointProperty({ propertyName: columnName, value, pointIdx: rowIndex }));
+      } else {
+        dispatch(setRegionProperty({ propertyName: columnName, value, id: rowIndex }));
+      }
+      dispatch(
+        validateColumnData({ columnName, columnType: columnTypes[columnName], mapGraphicsType })
+      );
+      dispatch(validateCell({ rowIndex, columnName, value, mapGraphicsType, geoJSON }));
+      dispatch(TableValidation(mapGraphicsType));
+    }
+    // remove the cell edit from local state
+    const newCellEdits = { ...cellEdits };
+    delete newCellEdits[cellKey];
+    setCellEdits(newCellEdits);
   };
 
   // Helper Functions
@@ -327,18 +328,6 @@ export default function DataEditorTable() {
       sizeByProperty,
       heightByProperty
     ].includes(columnName);
-  };
-
-  const isNumericalProperty = (property) => {
-    const shouldBeNumerical =
-      [sizeByProperty, heightByProperty, latByProperty, lonByProperty].includes(property) ||
-      (colorByProperty === property && mapGraphicsType === 'Heat Map');
-    return shouldBeNumerical;
-  };
-
-  const isTextualProperty = (property) => {
-    const shouldBeTextual = colorByProperty === property && mapGraphicsType === 'Choropleth Map';
-    return shouldBeTextual;
   };
 
   // Menu Functions
@@ -443,9 +432,17 @@ export default function DataEditorTable() {
                     <TableCell sx={{ minWidth: '150px' }} key={colIndex}>
                       <TextField
                         value={
-                          row[colName] !== null && row[colName] !== undefined ? row[colName] : ''
+                          cellEdits[`${rowIndex}-${colName}`] ??
+                          (row[colName] !== null && row[colName] !== undefined ? row[colName] : '')
                         }
                         onChange={(e) => handleCellChange(rowIndex, colName, e.target.value)}
+                        onBlur={() => handleCellCommit(rowIndex, colName)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            handleCellCommit(rowIndex, colName);
+                            e.target.blur();
+                          }
+                        }}
                         error={!!cellErrors[`${rowIndex}-${colName}`]}
                         helperText={cellErrors[`${rowIndex}-${colName}`]}
                         sx={{
@@ -476,12 +473,8 @@ export default function DataEditorTable() {
               value={columnTypes[selectedColumn] || 'text'}
               onChange={(e) => handleColumnTypeChange(e.target.value)}
             >
-              {!isNumericalProperty(selectedColumn) && (
-                <FormControlLabel value="text" control={<Radio />} label="Text" />
-              )}
-              {!isTextualProperty(selectedColumn) && (
-                <FormControlLabel value="number" control={<Radio />} label="Number" />
-              )}
+              <FormControlLabel value="text" control={<Radio />} label="Text" />
+              <FormControlLabel value="number" control={<Radio />} label="Number" />
             </RadioGroup>
           </FormControl>
         </MenuItem>

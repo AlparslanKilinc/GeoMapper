@@ -9,7 +9,7 @@ import '../../../styles/map-label.css';
 // import leaflet css
 import 'leaflet/dist/leaflet.css';
 import LabelLayer from './layers/LabelLayer';
-import { addLabelPosition } from '../../../redux-slices/mapStylesSlice';
+import { addLabelPosition, resetLabels } from '../../../redux-slices/mapStylesSlice';
 
 export default function GeojsonWrapper({ isStyled }) {
   const dispatch = useDispatch();
@@ -143,10 +143,12 @@ export default function GeojsonWrapper({ isStyled }) {
   };
 
   const applyChoroplethStyles = (feature, layer, regionData) => {
-    let color = generateRandomColor();
+    let color = fillColor;
     let colorPropVal = regionData[colorByProperty];
-    let colorObj = colors.find((color) => color.name === colorPropVal);
-    if (colorObj) color = colorObj.color;
+    if (colorPropVal !== undefined) {
+      let colorObj = colors.find((color) => color.name === colorPropVal);
+      if (colorObj) color = colorObj.color;
+    }
 
     layer.setStyle({
       fillColor: color,

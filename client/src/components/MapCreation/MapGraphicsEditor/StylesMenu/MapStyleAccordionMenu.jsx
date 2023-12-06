@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -26,7 +26,6 @@ export default function MapStyleAccordionMenu() {
     (state) => state.mapStyles
   );
 
-
   const handleBackgroundColorChange = (color) => {
     dispatch(changeBackgroundColor(color));
   };
@@ -39,25 +38,23 @@ export default function MapStyleAccordionMenu() {
   };
 
   function rederMapFillColorInput() {
-    if (mapGraphicsType === "Choropleth Map" || mapGraphicsType === "Heat Map") {
+    if (mapGraphicsType === 'Choropleth Map' || mapGraphicsType === 'Heat Map') {
       return null;
     }
 
-    return (<Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      sx={{ width: '100%' }}
-    >
-      <Typography variant="subtitle2">fill color</Typography>
-      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-      <DebouncedColorInput
-        format="hex"
-        value={fillColor}
-        onChange={handleFillColorChange}
-      />
-    </Box>);
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ width: '100%' }}
+      >
+        <Typography variant="subtitle2">fill color</Typography>
+        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+        <DebouncedColorInput format="hex" value={fillColor} onChange={handleFillColorChange} />
+      </Box>
+    );
   }
 
   return (
@@ -109,11 +106,12 @@ export default function MapStyleAccordionMenu() {
           >
             <SubMenuTitle title="tilelayer visibility" />
             <FormControlLabel
-                key={String(isTilelayerVisible)}
-              control={<Switch checked={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
+              key={String(isTilelayerVisible)}
+              control={
+                <Switch checked={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />
+              }
               label="Tilelayer"
             />
-            {console.log(isTilelayerVisible)}
           </Box>
         </Box>
       </AccordionDetails>

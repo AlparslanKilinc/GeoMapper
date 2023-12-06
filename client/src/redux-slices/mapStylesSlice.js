@@ -69,17 +69,13 @@ const mapStylesDataSlice = createSlice({
       state.isTilelayerVisible = !state.isTilelayerVisible;
     },
     setColors: (state, action) => {
-      //
-      action.payload.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      });
-      state.colors = action.payload;
+      // create a deep copy of colors array
+      // sort array by name property
+      let deepCopy = JSON.parse(JSON.stringify(action.payload));
+
+      // Sort the deep copy by the 'name' property
+      deepCopy.sort((a, b) => a.name.localeCompare(b.name));
+      state.colors = deepCopy;
     },
     setColorPaletteIdx: (state, action) => {
       state.colorPaletteIdx = action.payload;
@@ -94,6 +90,12 @@ const mapStylesDataSlice = createSlice({
       if (index !== -1) {
         state.colors[index].color = color;
       }
+    },
+    changeName: (state, action) => {
+      const { oldName, newName } = action.payload;
+      console.log(oldName, newName);
+      const idx = state.colors.findIndex((clrObj) => clrObj.name === oldName);
+      state.colors[idx].name = newName;
     },
     setSelectedPropUniqueValues: (state, action) => {
       state.selectedPropUniqueValues = action.payload;
@@ -141,6 +143,9 @@ const mapStylesDataSlice = createSlice({
     },
     setFillColor: (state, action) => {
       state.fillColor = action.payload;
+    },
+    resetLabels: (state) => {
+      state.labels = [];
     }
   }
 });
@@ -167,7 +172,9 @@ export const {
   setDefaultLabelSize,
   setDefaultLabelFont,
   setFillColor,
-  resetMapStylesData
+  resetMapStylesData,
+  resetLabels,
+  changeName
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;

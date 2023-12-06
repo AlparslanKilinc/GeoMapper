@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { MuiColorInput } from 'mui-color-input';
-import { Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeColorByName } from '../../../../../redux-slices/mapStylesSlice';
+import { changeColorByName, changeName } from '../../../../../redux-slices/mapStylesSlice';
 import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
+import DebouncedTextField from '../../../../DebouncedElement/DebouncedTextField';
+import { changeNameColor } from '../../../../../redux-slices/mapGraphicsDataSlice';
 
 const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color, name }) => {
   const dispatch = useDispatch();
   const colors = useSelector((state) => state.mapStyles.colors);
-
-  useEffect(() => {
-    console.log({ color, name })
-  }, []);
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   let handleChange = (newColor) => {
     dispatch(changeColorByName({ color: newColor, name }));
@@ -47,14 +44,23 @@ const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color,
     );
 
   let colorBy = colorByRange;
+  const handleNameChange = (newColorValue) => {
+    // oldColorValue, newColorValue, mapGraphicsType
+    // we should also call change
+    dispatch(changeName({ oldName: name, newName: newColorValue }));
+    dispatch(changeNameColor({ oldColorValue: name, newColorValue, mapGraphicsType }));
+  };
 
-  if (title) {
-    colorBy = (
-      <Typography sx={{ minWidth: '5ch' }} variant="subtitle2">
-        {title}
-      </Typography>
-    );
-  }
+  let key = JSON.stringify({ color, name });
+  colorBy = (
+    <DebouncedTextField
+      value={name}
+      onChange={handleNameChange}
+      variant="outlined"
+      key={key}
+      size="small"
+    />
+  );
 
   return (
     <Box

@@ -60,7 +60,7 @@ const SliderTextField = ({ value, onChange }) => {
         type="number"
         // size="small"
         variant="outlined"
-      // sx={{ width: 60, mr: 1 }}
+        // sx={{ width: 60, mr: 1 }}
       />
     </Box>
   );
