@@ -21,8 +21,6 @@ const processGeojson = (geojson) => {
   let regions = [];
   let columnTypes = {};
   columnTypes['GOAT'] = 'text';
-  columnTypes['male'] = 'number';
-  columnTypes['female'] = 'number';
   geojson.features.forEach((feature, index) => {
     // Extract only the first 5 properties
     let firstFiveProperties = Object.fromEntries(Object.entries(feature.properties).slice(0, 5));
@@ -30,10 +28,7 @@ const processGeojson = (geojson) => {
       columnTypes[key] = getType(value);
     }
 
-    // generate random density from 1 to 100
-    const male = parseInt(Math.random() * 10);
-    const female = parseInt(Math.random() * 10);
-    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer(), male, female });
+    regions.push({ ...firstFiveProperties, GOAT: getRandomNbaPlayer() });
     feature.properties = { regionIdx: index };
   });
 
@@ -160,5 +155,5 @@ const geoJsonSlice = createSlice({
   }
 });
 
-export const {startLoadingGeojson, stopLoadingGeojson, clearGeojson } = geoJsonSlice.actions;
+export const { startLoadingGeojson, stopLoadingGeojson, clearGeojson } = geoJsonSlice.actions;
 export default geoJsonSlice.reducer;

@@ -3,6 +3,7 @@ import { Autocomplete, Divider, Typography, TextField, Slider } from '@mui/mater
 import { useSelector, useDispatch } from 'react-redux';
 import { changeColorByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import { changeColorByName, setOpacity } from '../../../../../redux-slices/mapStylesSlice';
+import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 import Box from '@mui/material/Box';
 import ColorSelector from './ColorSelector';
 import SubMenuTitle from '../../SubMenuTitle';
@@ -22,39 +23,39 @@ export default function ColorsChoroAccordionMenu() {
     dispatch(changeColorByProperty(newValue));
   };
 
-  const handleChangeOpacity = (event, newValue) => {
+  const handleChangeOpacity = (newValue) => {
     dispatch(setOpacity(newValue));
   };
 
   let colorSelectors;
 
   // if the colorByProperty is continous, then we need to show the color range
-    colorSelectors = (
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ width: '100%' }}
-      >
-        <Typography variant="subtitle2">select color</Typography>
-        <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+  colorSelectors = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%' }}
+    >
+      <Typography variant="subtitle2">select color</Typography>
+      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
 
-        {colors.map(({ name, color }, index) => {
-          return (
-            <ColorSelector
-              title={name}
-              name={name}
-              color={color}
-              disableLower
-              disableUpper
-              handleColorChangeCustom={handleColorChangeText(name)}
-              key={index + 'colorSelector'}
-            />
-          );
-        })}
-      </Box>
-    );
+      {colors.map(({ name, color }, index) => {
+        return (
+          <ColorSelector
+            title={name}
+            name={name}
+            color={color}
+            disableLower
+            disableUpper
+            handleColorChangeCustom={handleColorChangeText(name)}
+            key={index + 'colorSelector'}
+          />
+        );
+      })}
+    </Box>
+  );
 
   return (
     <Box
@@ -92,7 +93,7 @@ export default function ColorsChoroAccordionMenu() {
         sx={{ width: '100%' }}
       >
         <SubMenuTitle title="opacity" />
-        <Slider min={0} max={1} step={0.01} value={opacity} onChange={handleChangeOpacity} />
+        <DebouncedSlider min={0} max={1} step={0.01} value={opacity} onChange={handleChangeOpacity} />
       </Box>
     </Box>
   );

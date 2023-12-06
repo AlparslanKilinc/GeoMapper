@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -17,12 +17,15 @@ import {
 import SubMenuTitle from '../SubMenuTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
 
 export default function MapStyleAccordionMenu() {
   const dispatch = useDispatch();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const { mapBackgroundColor, isTilelayerVisible, fillColor } = useSelector(
     (state) => state.mapStyles
   );
+
 
   const handleBackgroundColorChange = (color) => {
     dispatch(changeBackgroundColor(color));
@@ -34,6 +37,28 @@ export default function MapStyleAccordionMenu() {
   const handleTilelayerSwitchChange = () => {
     dispatch(toggleTilelayerVisibility());
   };
+
+  function rederMapFillColorInput() {
+    if (mapGraphicsType === "Choropleth Map" || mapGraphicsType === "Heat Map") {
+      return null;
+    }
+
+    return (<Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: '100%' }}
+    >
+      <Typography variant="subtitle2">fill color</Typography>
+      <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
+      <DebouncedColorInput
+        format="hex"
+        value={fillColor}
+        onChange={handleFillColorChange}
+      />
+    </Box>);
+  }
 
   return (
     <Accordion>
@@ -66,12 +91,14 @@ export default function MapStyleAccordionMenu() {
           >
             <Typography variant="subtitle2">background color</Typography>
             <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <MuiColorInput
+            <DebouncedColorInput
               format="hex"
               value={mapBackgroundColor}
               onChange={handleBackgroundColorChange}
             />
           </Box>
+
+          {rederMapFillColorInput()}
 
           <Box
             display="flex"
@@ -80,26 +107,15 @@ export default function MapStyleAccordionMenu() {
             justifyContent="center"
             sx={{ width: '100%' }}
           >
-            <Typography variant="subtitle2">fill color</Typography>
-            <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-            <MuiColorInput  value={fillColor} onChange={handleFillColorChange} />
+            <SubMenuTitle title="tilelayer visibility" />
+            <FormControlLabel
+                key={String(isTilelayerVisible)}
+              control={<Switch checked={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
+              label="Tilelayer"
+            />
+            {console.log(isTilelayerVisible)}
           </Box>
         </Box>
-
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ width: '100%' }}
-        >
-          <SubMenuTitle title="tilelayer visibility" />
-          <FormControlLabel
-            control={<Switch value={isTilelayerVisible} onChange={handleTilelayerSwitchChange} />}
-            label="Tilelayer"
-          />
-        </Box>
-        {/* </Box> */}
       </AccordionDetails>
     </Accordion>
   );

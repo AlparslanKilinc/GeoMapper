@@ -19,8 +19,20 @@ export default function DataEditorLeftPane() {
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [autocompleteService, setAutocompleteService] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const debounceDelay = 500;
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [options, setOptions] = useState([]);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, debounceDelay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm, debounceDelay]);
   // This Basically loads the google maps api and allows the user to search for a place
   // It is like adding script tag to html but dynamically and only when needed
   useEffect(() => {
@@ -38,9 +50,7 @@ export default function DataEditorLeftPane() {
     loadScript(scriptUrl, initAutocomplete);
   }, []);
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-
+  useEffect(() => {
     if (autocompleteService && searchTerm) {
       autocompleteService.getPlacePredictions({ input: searchTerm }, (predictions, status) => {
         if (status !== window.google.maps.places.PlacesServiceStatus.OK || !predictions) {
@@ -55,6 +65,10 @@ export default function DataEditorLeftPane() {
         );
       });
     }
+  }, [debouncedSearchTerm, autocompleteService]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
   };
 
   const handleOptionSelected = async (event, value) => {
@@ -157,16 +171,16 @@ export default function DataEditorLeftPane() {
           />
         </LoadingButton>
         {error && <Typography color="error">{error}</Typography>}
-        {( (mapGraphicsType === 'Heat Map' || mapGraphicsType === 'Dot Density Map') && (
-            <LoadingButton
-              startIcon={<AutoFixHighIcon />}
-              variant="outlined"
-              style={{ color: 'black', borderColor: 'black' }}
-              onClick={handleRandomData}
-            >
-              Random Data
-            </LoadingButton>
-          ))}
+        {(mapGraphicsType === 'Heat Map' || mapGraphicsType === 'Dot Density Map') && (
+          <LoadingButton
+            startIcon={<AutoFixHighIcon />}
+            variant="outlined"
+            style={{ color: 'black', borderColor: 'black' }}
+            onClick={handleRandomData}
+          >
+            Random Data
+          </LoadingButton>
+        )}
       </div>
       {(mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map') && (
         <div

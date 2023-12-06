@@ -61,7 +61,10 @@ export default function MapGraphicsEditor() {
     });
     return uniqueValues;
   };
-  const generateRandomColor = () => '#' + Math.floor(Math.random() * 16777215).toString(16);
+  const generateRandomColor = () => {
+    let color = Math.floor(Math.random() * 16777215).toString(16);
+    return '#' + color.padStart(6, '0');
+  };
 
   const initColorsCategorical = () => {
     const uniqueValues = extractUniqueColorValues(propList, colorByProperty);
@@ -115,7 +118,7 @@ export default function MapGraphicsEditor() {
       initColorsDotDensity();
     }
 
-    if(mapGraphicsType === 'Heat Map'){
+    if (mapGraphicsType === 'Heat Map') {
       initColorsNumerical();
     }
   };

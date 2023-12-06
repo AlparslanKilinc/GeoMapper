@@ -30,7 +30,6 @@ export default function GeojsonWrapper({ isStyled }) {
   const borderColor = useSelector((state) => state.mapStyles.borderColor);
   const borderWidth = useSelector((state) => state.mapStyles.borderWidth);
   const opacity = useSelector((state) => state.mapStyles.opacity);
-  const mapBackgroundColor = useSelector((state) => state.mapStyles.mapBackgroundColor);
   const fillColor = useSelector((state) => state.mapStyles.fillColor);
   const uniqueKey = [
     JSON.stringify(geoJSON),
@@ -45,7 +44,6 @@ export default function GeojsonWrapper({ isStyled }) {
     borderColor,
     borderWidth,
     opacity,
-    mapBackgroundColor,
     fillColor
   ].join('|');
 
@@ -59,7 +57,7 @@ export default function GeojsonWrapper({ isStyled }) {
     fillColor: '#EDEDED',
     weight: 2,
     color: '#808080',
-    fillOpacity:1
+    fillOpacity: 1
   };
 
   if (isStyled) {

@@ -30,9 +30,11 @@ const initialState = {
   addSymbolMode: false,
   selectedPointKey: -1,
   valuePerDot: 7,
-  dotDensityByProperty: ['male', 'female'],
+  dotDensityByProperty: [],
   maxSymbolSize: 100,
-  minSymbolSize: 20
+  minSymbolSize: 20,
+  minProperty: 0,
+  maxProperty: 0,
 };
 
 const isPointInPolygon = (point, geojson) => {
@@ -143,9 +145,8 @@ const mapGraphicsDataSlice = createSlice({
             }
           } else {
             // Handle case where the data row exceeds the existing region rows
-            state.validationMessage = `Row ${
-              rowIndex + 1
-            } exceeds the existing region data length and was not added.`;
+            state.validationMessage = `Row ${rowIndex + 1
+              } exceeds the existing region data length and was not added.`;
           }
         }
       });
@@ -211,7 +212,8 @@ const mapGraphicsDataSlice = createSlice({
           if (
             entity[columnName] !== '' &&
             entity[columnName] !== undefined &&
-            (isNaN(Number(entity[columnName])) || !isFinite(entity[columnName]))
+            (isNaN(Number(entity[columnName])) ||
+            !isFinite(Number(entity[columnName])))
           ) {
             isValid = false;
           }
@@ -379,7 +381,6 @@ const mapGraphicsDataSlice = createSlice({
       state.labelByProperty = action.payload;
     },
     setFixedSymbolSize: (state, action) => {
-      console.log(action.payload);
       state.fixedSymbolSize = action.payload;
     },
     setFixedOpacity: (state, action) => {
@@ -408,6 +409,12 @@ const mapGraphicsDataSlice = createSlice({
         (property) => property !== action.payload
       );
     },
+    setMinProperty: (state, action) => {
+      state.minProperty = action.payload;
+    },
+    setMaxProperty: (state, action) => {
+      state.maxProperty = action.payload;
+    },
     TableValidation: (state, action) => {
       const mapGraphicsType = action.payload;
       let message = '✓ No errors found.';
@@ -416,7 +423,7 @@ const mapGraphicsDataSlice = createSlice({
       switch (mapGraphicsType) {
         case 'Choropleth Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+            if (!region[state.nameByProperty]) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -440,7 +447,7 @@ const mapGraphicsDataSlice = createSlice({
 
         case 'Heat Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+            if (!region[state.nameByProperty]) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -477,13 +484,16 @@ const mapGraphicsDataSlice = createSlice({
               state.cellValidationErrors[latErrorKey] ||
               state.cellValidationErrors[lonErrorKey]
             ) {
-              message = `⚠️ Error in latitude or longitude at row ${index}: ${
-                state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
-              }`;
+              message = `⚠️ Error in latitude or longitude at row ${index}: ${state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
+                }`;
               hasErrors = true;
               return;
             }
             // Error in Column
+            if (state.columnValidationErrors[state.colorByProperty]) {
+              message = `⚠️ Error in '${state.colorByProperty}' column:`;
+              hasErrors = true;
+            }
             if (
               state.columnValidationErrors[state.latByProperty] ||
               state.columnValidationErrors[state.lonByProperty]
@@ -511,7 +521,8 @@ const mapGraphicsDataSlice = createSlice({
           break;
         case 'Dot Density Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty] || region[state.nameByProperty].trim() === '') {
+            // TODO: Try to keep region[state.nameByProperty].trim() === ''
+            if (!region[state.nameByProperty]) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -537,6 +548,7 @@ const mapGraphicsDataSlice = createSlice({
     setMinSymbolSize: (state, action) => {
       state.minSymbolSize = action.payload;
     }
+
   }
 });
 
@@ -580,6 +592,8 @@ export const {
   dotDensityByProperty,
   addDataFromCSVorExcel,
   setMaxSymbolSize,
-  setMinSymbolSize
+  setMinSymbolSize,
+  setMinProperty,
+  setMaxProperty
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

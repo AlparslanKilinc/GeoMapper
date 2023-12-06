@@ -2,7 +2,8 @@ import React from 'react';
 import { Marker } from 'react-leaflet';
 import shapeIconMap from './shapeIconMap';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedPointKey } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { setSelectedPointKey, setMinProperty, setMaxProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { changeSelectedShape } from '../../../../../redux-slices/mapStylesSlice'
 
 const SymbolLayer = () => {
   const dispatch = useDispatch();
@@ -18,11 +19,11 @@ const SymbolLayer = () => {
   const lonByProperty = useSelector((state) => state.mapGraphics.lonByProperty);
   const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
   const minSymbolSize = useSelector((state) => state.mapGraphics.minSymbolSize);
-
   let mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   let sizeByProperty;
   if (mapGraphicsType === 'Spike Map') {
+    dispatch(changeSelectedShape('spike'))
     sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
   } else {
     sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
@@ -39,8 +40,11 @@ const SymbolLayer = () => {
   };
 
   const { min, max } = extractSizeValues(points);
+  console.log({min,max});
+  dispatch(setMinProperty(min))
+  dispatch(setMaxProperty(max))
 
-  function calculateMarkerSize(value) {
+  function oldCalculateMarkerSize(value) {
     if (!value) {
       return null;
     }
@@ -56,6 +60,30 @@ const SymbolLayer = () => {
     const size =
       minSymbolSize +
       ((value - minValue) / (maxValue - minValue)) * (maxSymbolSize - minSymbolSize);
+    return size;
+  }
+
+  function calculateMarkerSize(value) {
+    if (!value && value !== 0) {
+      return null;
+    }
+
+    const minValue = min;
+    const maxValue = max;
+
+    if (minValue === maxValue) {
+      return (minSymbolSize + maxSymbolSize) / 2;
+    }
+
+    const exponent = 0.5;
+    const normalizedMin = Math.pow(minValue, exponent);
+    const normalizedMax = Math.pow(maxValue, exponent);
+    const normalizedValue = Math.pow(value, exponent);
+
+    const size =
+      minSymbolSize +
+      ((normalizedValue - normalizedMin) / (normalizedMax - normalizedMin)) * (maxSymbolSize - minSymbolSize);
+
     return size;
   }
 
