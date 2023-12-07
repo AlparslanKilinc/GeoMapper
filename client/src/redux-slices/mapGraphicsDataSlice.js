@@ -676,13 +676,30 @@ const mapGraphicsDataSlice = createSlice({
         propList = state.points;
       }
 
-      let colorByProperty = state.colorByProperty;
+      if (mapGraphicsType === 'Dot Density Map') {
+        let idx = state.dotDensityByProperty.indexOf(oldColorValue);
+        if (idx > -1) state.dotDensityByProperty[idx] = newColorValue;
 
-      propList.forEach((prop) => {
-        if (prop[colorByProperty] === oldColorValue) {
-          prop[colorByProperty] = newColorValue;
-        }
-      });
+        propList.forEach((prop) => {
+          prop[newColorValue] = prop[oldColorValue];
+          delete prop[oldColorValue];
+        });
+        // remove from columnTypes
+        state.columnTypes[newColorValue] = state.columnTypes[oldColorValue];
+        delete state.columnTypes[oldColorValue];
+
+        // delete from added columns
+        state.addedColumns = state.addedColumns.filter((column) => column !== oldColorValue);
+        state.addedColumns.push(newColorValue);
+      } else {
+        let colorByProperty = state.colorByProperty;
+
+        propList.forEach((prop) => {
+          if (prop[colorByProperty] === oldColorValue) {
+            prop[colorByProperty] = newColorValue;
+          }
+        });
+      }
     }
   }
 });
