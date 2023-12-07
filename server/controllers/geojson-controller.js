@@ -5,7 +5,6 @@ const getGeojsonIdNamePairs = async (req, res) => {
   // send the geojson documents back to the client
   res.json(geojson);
 };
-
 const getGeojsonById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -38,7 +37,6 @@ const createGeojson = async (req, res) => {
       isPrivate: isPrivate === 'true', // Convert string to boolean
       name: name
     });
-
     await newGeoJSON.save();
     res.status(201).send({ message: 'GeoJSON created successfully', id: newGeoJSON._id });
   } catch (error) {

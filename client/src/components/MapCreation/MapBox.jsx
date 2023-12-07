@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import GeoJsonMap from './Map/GeoJsonMap';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
@@ -12,16 +12,30 @@ import Typography from '@mui/material/Typography';
 import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper'
 import PopUp from "../Explore/PopUp.jsx";
 import CircularProgress from "@mui/material/CircularProgress";
+import {addMetaData} from '../../redux-slices/mapMetadataSlice'
+import {addMap, updateMap,} from '../../redux-slices/mapSlice'
+import {addMapToDrafts} from '../../redux-slices/authSlice'
 
 export default function MapBox({ openExportDialog }) {
+  const dispatch = useDispatch();
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
   const colors = useSelector((state) => state.mapStyles.colors);
   const title = useSelector((state) => state.mapMetadata.title);
   const user = useSelector((state) => state.auth.user)
+  const description =  useSelector((state) => state.mapMetadata.description)
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [popUpTitle, setPopUpTitle] = useState("Please login or create an account to save");
+  const[mapId, setMapId] = useState(null);
+  const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
+  const regions = useSelector((state) => state.mapGraphics.regions);
+console.log(user)
 
+  /*console.log("color by property")
+  console.log(colorByProperty)
+  console.log("regions")
+  console.log(regions)
+  console.log(colors)*/
 
   const buttonStyle = {
     minWidth: 0,
@@ -47,11 +61,35 @@ export default function MapBox({ openExportDialog }) {
   const closePopup = () => {
     setPopupOpen(false);
   };
-  const handleSave = (event) =>{
-    if(!user){
+  const handleSave = async (event) => {
+    if (!user) {
       setPopupOpen(true)
+    } else {
+      const createdMapData = await dispatch(addMap()); //creates a map
+      const mapId = createdMapData.payload._id;
+      const createdMetaData = await dispatch(addMetaData({ //creates the metadata
+        mapId: mapId,
+        author: user,
+        description: description,
+        tags: [],
+        mapGraphicsType: mapGraphicsType,
+        title: title,
+      }));
+      const mapWithData = await  dispatch(updateMap({ //adds meta data to the map
+        mapId: mapId,
+        graphicsDataId: null,
+        stylesDataId: null,
+        metadataId: createdMetaData.payload._id,
+        geoData: null,
+      }))
+      //now we need to store the map id in the users drafts
+      console.log(user)
+      console.log(user.id)
+      const addedMaps = await dispatch(addMapToDrafts({
+        mapId:mapId,
+        userId: user.id
+      }))
     }
-
   }
 
   return (

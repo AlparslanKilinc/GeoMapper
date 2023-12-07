@@ -3,6 +3,8 @@ import apis from '../store-request-api/geojsonRequestApi';
 import geobuf from 'geobuf';
 import Pbf from 'pbf';
 import { setChoroplethData } from './mapGraphicsDataSlice';
+import api from "../store-request-api/geojsonRequestApi";
+
 
 const getRandomNbaPlayer = () => {
   const teams = ['Lebron', 'Kobe', 'Jordan'];
@@ -67,14 +69,13 @@ export const fetchGeojson = createAsyncThunk(
 );
 
 export const uploadGeoJSON = createAsyncThunk(
-  'geojson/uploadGeoJSON',
-  async (geoJSON, thunkApi) => {
+  'geojson/',
+  async (geoJSON, thunkApix) => {
     try {
       const pbfData = geobuf.encode(geoJSON, new Pbf());
       const decodedGeojson = geobuf.decode(new Pbf(pbfData));
       const { regions, propertyNames, columnTypes } = processGeojson(decodedGeojson);
       thunkApi.dispatch(setChoroplethData({ regions, propertyNames, columnTypes }));
-
       return { geoJSON: decodedGeojson };
     } catch (error) {
       return rejectWithValue(error.response.data);

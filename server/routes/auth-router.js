@@ -12,5 +12,6 @@ router.get('/loggedIn', AuthController.getLoggedIn);
 router.post('/forgotPassword', AuthController.forgotPassword)
 router.post('/updatePassword/:userId/:token', AuthController.updatePassword);
 router.post('/googleLogin', AuthController.googleLogin)
+router.post('/addMapToDrafts', AuthController.addMapToDrafts)
 
 module.exports = router;

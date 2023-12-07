@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 require('dotenv').config();
 var nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
+const {addMap} = require("./map-controller");
 const client = new OAuth2Client('463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com');
 
 const sendUserResponse = (res, user) => {
@@ -16,6 +17,7 @@ const sendUserResponse = (res, user) => {
     user: {
       firstName: user.firstName,
       lastName: user.lastName,
+      passwordHash: user.passwordHash,
       email: user.email,
       userName: user.userName,
       bio: user.bio,
@@ -339,6 +341,28 @@ updatePassword = async(req, res) => {
   }
 };
 
+addMapToDrafts = async(req,res) =>{
+  console.log("in controller")
+  console.log(req.body)
+  const { mapId, userId } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { draftedMaps: mapId } },
+        { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log('Updated user:', updatedUser);
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error updating user draftedMaps', details: error.message });
+  }
+};
+
+
 async function isDuplicateImage(newFile, existingFilePath) {
   const newFileHash = await generateFileHash(newFile.buffer);
   const existingFileHash = await generateFileHashFromURL(existingFilePath);
@@ -380,5 +404,6 @@ module.exports = {
   updateUserData,
   forgotPassword,
   updatePassword,
-  googleLogin
+  googleLogin,
+  addMapToDrafts
 };

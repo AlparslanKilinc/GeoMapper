@@ -123,6 +123,20 @@ export const googleLogin = createAsyncThunk('auth/googleLogin', async({idToken},
 
 });
 
+export const addMapToDrafts = createAsyncThunk('auth/addMapToDrafts', async({mapId, userId} , {rejectWithValue}) =>{
+    try{
+        const response = await api.addMapToDrafts({
+            mapId: mapId,
+            userId: userId
+        })
+        console.log("response from slice")
+        console.log(response)
+        return response.data
+    } catch(error){
+        console.log(error)
+        return rejectWithValue(error.response.data);
+    }
+});
 
 export const authSlice = createSlice({
   name: 'auth',
@@ -144,6 +158,9 @@ export const authSlice = createSlice({
         state.loggedIn = action.payload.loggedIn;
         state.isLoading = false;
       })
+        .addCase(addMapToDrafts.fulfilled, (state, action) => {
+
+        })
         .addCase(googleLogin.fulfilled, (state, action) => {
             state.user = action.payload.user;
              console.log(action.payload.user)

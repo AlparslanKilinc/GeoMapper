@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   startLoadingGeojson,
   stopLoadingGeojson,
@@ -24,15 +24,17 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
+
 const OutlineFileUploader = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user)
   const [warning, setWarning] = useState(null);
   const [error, setError] = useState(null);
 
   const processGeoJSON = (file) => {
     const reader = createFileReader((fileData) => {
       const geojsonData = JSON.parse(fileData);
-      dispatch(uploadGeoJSON(geojsonData));
+      dispatch(uploadGeoJSON(geojsonData, user));
     });
     reader.readAsText(file);
   };

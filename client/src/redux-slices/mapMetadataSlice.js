@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import api from '../store-request-api/mapMetaDataRequestApi'
 
 // Map Metadata Slice
 const mapMetadataInitialState = {
@@ -13,14 +14,35 @@ const mapMetadataInitialState = {
   comments: [],
   mapGraphicsType: 'Choropleth Map',
   publishDate: null,
-  title: 'Goat Debate'
+  title: 'Goat Debate',
+  loading: false,
+  error: null,
 };
 
+export const addMetaData = createAsyncThunk('/metadata/addmetadata', async({author, mapId,title, description, tags, mapGraphicsType, comments},  { rejectWithValue }) =>{
+  try {
+    console.log("in adding metadata slice")
+    const response = await api.addMetaData({
+      mapId: mapId,
+      author: author,
+      title: title,
+      description: description,
+      tags: tags,
+      mapGraphicsType: mapGraphicsType,
+      comments: comments
+    })
+    console.log("response frm meta data slcie")
+    console.log(response)
+    return response;
+  } catch (err) {
+    return rejectWithValue(err.response.data);
+  }
+
+})
 const metaDataSlice = createSlice({
   name: 'mapMetadata',
   initialState: mapMetadataInitialState,
   reducers: {
-    //TODO add reducers
     changeMapTitle: (state, action) => {
       state.title = action.payload;
     },
@@ -29,9 +51,72 @@ const metaDataSlice = createSlice({
     },
     setMapGraphicsType: (state, action) => {
       state.mapGraphicsType = action.payload;
+    },
+    changeMapId: (state, action) => {
+      state.mapId = action.payload;
+    },
+    changeLikes: (state, action) => {
+      state.likes = action.payload;
+    },
+    changeForks: (state, action) => {
+      state.forks = action.payload;
+    },
+    changeAuthorId: (state, action) => {
+      state.author.id = action.payload;
+    },
+    changeAuthorUsername: (state, action) => {
+      state.author.username = action.payload;
+    },
+    changeDateCreated: (state, action) => {
+      state.dateCreated = action.payload;
+    },
+    changeForkedStatus: (state, action) => {
+      state.forkedFrom.isForked = action.payload;
+    },
+    changeOriginalMapId: (state, action) => {
+      state.forkedFrom.originalMapId = action.payload;
+    },
+    changeTags: (state, action) => {
+      state.tags = action.payload;
+    },
+    changeComments: (state, action) => {
+      state.comments = action.payload;
+    },
+    changePublishDate: (state, action) => {
+      state.publishDate = action.payload;
     }
+  },
+  extraReducers: (builder) => {
+    builder
+        .addCase(addMetaData.fulfilled, (state, action) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addMatcher(
+            (action) => action.type.endsWith('/rejected'),
+            (state, action) => {
+              state.message = action.payload?.errorMessage || 'An error occurred';
+              state.isLoading = false;
+            })
   }
 });
 
-export const { changeMapTitle, changeMapDescription, setMapGraphicsType } = metaDataSlice.actions;
+export const {
+  changeMapTitle,
+  changeMapDescription,
+  setMapGraphicsType,
+  changeMapId,
+  changeLikes,
+  changeForks,
+  changeAuthorId,
+  changeAuthorUsername,
+  changeDateCreated,
+  changeForkedStatus,
+  changeOriginalMapId,
+  changeTags,
+  changeComments,
+  changeMapGraphicsType,
+  changePublishDate,
+  changeTitle
+} = metaDataSlice.actions;
 export default metaDataSlice.reducer;

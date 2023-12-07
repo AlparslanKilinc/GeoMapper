@@ -4,18 +4,19 @@ const mapSchema = require("./map-model").schema;
 const commentSchema = require("./comment-model").schema;
 
 const forkedFromSchema = new mongoose.Schema({
-  isForked: { type: Boolean, default: false },
-  originalMapId: { type: mongoose.Schema.Types.ObjectId, ref: "Map" },
-  default: null,
+    isForked: { type: Boolean, default: false },
+    originalMapId: { type: mongoose.Schema.Types.ObjectId, ref: "Map" },
 });
+
 
 const mapMetadataSchema = new mongoose.Schema(
   {
     mapId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: mapSchema,
+      ref: 'Map',
       required: true,
     },
+      title: {type: String, default: ""},
     likes: { type: Number, default: 0 },
     forks: { type: Number, default: 0 },
     author: userSchema,
@@ -23,11 +24,12 @@ const mapMetadataSchema = new mongoose.Schema(
     description: { type: String, default: "" },
     forkedFrom: forkedFromSchema,
     tags: { type: [String], default: [] },
-    comments: { type: [commentSchema], default: [] },
+    comments: { type: [commentSchema], default: []},
     mapGraphicsType: { type: String, default: "" },
     publishDate: { type: Date, default: null },
   },
   { timestamps: true }
 );
-
+forkedFromSchema.path('isForked').default(false);
+forkedFromSchema.path('originalMapId').default(null);
 module.exports = mongoose.model("MapMetadata", mapMetadataSchema);

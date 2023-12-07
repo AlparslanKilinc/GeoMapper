@@ -58,7 +58,13 @@ export const googleLogin = ({idToken}) => {
     idToken: idToken
   });
 }
-
+export const addMapToDrafts = ({mapId, userId}) =>{
+  console.log("in api ")
+  return api.post('/addMapToDrafts/', {
+    mapId: mapId,
+    userId: userId
+  })
+}
 
 const apis = {
   getLoggedIn,
@@ -68,6 +74,7 @@ const apis = {
   updateUserData,
   forgotPassword,
   updatePassword,
-  googleLogin
+  googleLogin,
+  addMapToDrafts
 };
 export default apis;
