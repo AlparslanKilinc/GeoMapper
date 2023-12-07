@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
@@ -10,12 +10,18 @@ import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Typography from '@mui/material/Typography';
 import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper'
+import PopUp from "../Explore/PopUp.jsx";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
   const colors = useSelector((state) => state.mapStyles.colors);
   const title = useSelector((state) => state.mapMetadata.title);
+  const user = useSelector((state) => state.auth.user)
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
+  const [isPopupOpen, setPopupOpen] = useState(false);
+  const [popUpTitle, setPopUpTitle] = useState("Please login or create an account to save");
+
 
   const buttonStyle = {
     minWidth: 0,
@@ -38,6 +44,15 @@ export default function MapBox({ openExportDialog }) {
       boxShadow: '1px 1px 6px rgba(0, 0, 0, 0.2)'
     }
   };
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
+  const handleSave = (event) =>{
+    if(!user){
+      setPopupOpen(true)
+    }
+
+  }
 
   return (
     <Box
@@ -63,7 +78,7 @@ export default function MapBox({ openExportDialog }) {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-              <Button variant="outlined" aria-label="save" sx={buttonStyle}>
+              <Button variant="outlined" aria-label="save" sx={buttonStyle} onClick = {handleSave}>
                 <SaveOutlinedIcon />
               </Button>
 
@@ -108,6 +123,7 @@ export default function MapBox({ openExportDialog }) {
           )}
         </div>
       )}
+      {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
     </Box>
   );
 }
