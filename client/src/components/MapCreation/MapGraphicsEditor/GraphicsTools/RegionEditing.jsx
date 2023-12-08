@@ -6,6 +6,8 @@ import {
   setSelectedRegionIdx
 } from '../../../../redux-slices/mapGraphicsDataSlice';
 import DebouncedTextField from '../../../DebouncedElement/DebouncedTextField';
+import LabelStylesEditor from '../StylesMenu/LabelStylesEditor';
+import SubMenuTitle from '../SubMenuTitle';
 
 export default function RegionEditing() {
   const dispatch = useDispatch();
@@ -18,6 +20,7 @@ export default function RegionEditing() {
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const columnTypes = useSelector((state) => state.mapGraphics.columnTypes);
+  const labelByProperty = useSelector((state) => state.mapGraphics.labelByProperty);
 
   // This will break if dotDesnityByProperty is empty
 
@@ -130,6 +133,9 @@ export default function RegionEditing() {
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
         {/* depending on the type of selected property */}
         {inputField}
+      </Box>
+      <Box sx={{ marginTop: 2 }}>
+        {labelByProperty && <LabelStylesEditor idx={selectedRegionIdx} />}
       </Box>
     </Box>
   );
