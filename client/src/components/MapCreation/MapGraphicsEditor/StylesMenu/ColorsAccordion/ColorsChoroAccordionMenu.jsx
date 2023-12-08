@@ -10,8 +10,16 @@ import SubMenuTitle from '../../SubMenuTitle';
 
 export default function ColorsChoroAccordionMenu() {
   const dispatch = useDispatch();
-  const { propertyNames, colorByProperty, regions } = useSelector((state) => state.mapGraphics);
+  const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
+  const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
+  const columnTypes = useSelector((state) => state.mapGraphics.columnTypes);
+  const columnValidationErrors = useSelector((state) => state.mapGraphics.columnValidationErrors);
   const { colors, opacity } = useSelector((state) => state.mapStyles);
+
+  // filter propertyNames by columnTypes that are text and does not have columnValidationErrors
+  const propertySelection = propertyNames.filter( (name) => { 
+    return columnTypes[name] === 'text' && !columnValidationErrors[name];
+  });
 
   const handleColorChangeText = (name) => {
     return (color) => {
@@ -78,7 +86,7 @@ export default function ColorsChoroAccordionMenu() {
         <Autocomplete
           value={colorByProperty}
           onChange={handleColorByPropertyChange}
-          options={propertyNames}
+          options={propertySelection}
           fullWidth
           renderInput={(params) => <TextField {...params} fullWidth />}
         />
