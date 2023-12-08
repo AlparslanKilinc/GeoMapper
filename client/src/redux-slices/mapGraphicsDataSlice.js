@@ -542,7 +542,7 @@ const mapGraphicsDataSlice = createSlice({
       switch (mapGraphicsType) {
         case 'Choropleth Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty]) {
+            if (region[state.nameByProperty] === undefined || region[state.nameByProperty] === null || region[state.nameByProperty] === '') {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -566,7 +566,7 @@ const mapGraphicsDataSlice = createSlice({
 
         case 'Heat Map':
           for (let region of state.regions) {
-            if (!region[state.nameByProperty]) {
+            if (region[state.nameByProperty] === undefined || region[state.nameByProperty] === null || region[state.nameByProperty] === '') {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -593,7 +593,8 @@ const mapGraphicsDataSlice = createSlice({
             const latErrorKey = `${index}-${state.latByProperty}`;
             const lonErrorKey = `${index}-${state.lonByProperty}`;
             // Required Field Error
-            if (!point[state.latByProperty] || !point[state.lonByProperty]) {
+            if (point[state.latByProperty] === undefined || point[state.latByProperty] === null || point[state.latByProperty] === '' ||
+            point[state.lonByProperty] === undefined || point[state.lonByProperty] === null || point[state.lonByProperty] === '') {
               message = '⚠️ Required Latitude and Longitude fields are empty.';
               hasErrors = true;
               return;
@@ -641,8 +642,7 @@ const mapGraphicsDataSlice = createSlice({
           break;
         case 'Dot Density Map':
           for (let region of state.regions) {
-            // TODO: Try to keep region[state.nameByProperty].trim() === ''
-            if (!region[state.nameByProperty]) {
+            if (region[state.nameByProperty] === undefined || region[state.nameByProperty] === null || region[state.nameByProperty] === '') {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
