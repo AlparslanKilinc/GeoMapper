@@ -60,7 +60,7 @@ const DotDensityCanvasLayer = () => {
             ctx.fillStyle = color;
             ctx.globalAlpha = fixedOpacity;
             ctx.beginPath();
-            ctx.arc(canvasPoint.x, canvasPoint.y, fixedSymbolSize / 2, 0, Math.PI * 2);
+            ctx.arc(canvasPoint.x, canvasPoint.y, fixedSymbolSize / 3, 0, Math.PI * 2);
             ctx.fill();
           });
         });
