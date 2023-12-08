@@ -30,13 +30,6 @@ export default function MapBox({ openExportDialog }) {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const regions = useSelector((state) => state.mapGraphics.regions);
 console.log(user)
-
-  /*console.log("color by property")
-  console.log(colorByProperty)
-  console.log("regions")
-  console.log(regions)
-  console.log(colors)*/
-
   const buttonStyle = {
     minWidth: 0,
     padding: 0,
@@ -69,12 +62,13 @@ console.log(user)
       const mapId = createdMapData.payload._id;
       const createdMetaData = await dispatch(addMetaData({ //creates the metadata
         mapId: mapId,
-        author: user,
+        author: user.id,
         description: description,
         tags: [],
         mapGraphicsType: mapGraphicsType,
         title: title,
       }));
+      console.log(createdMetaData)
       const mapWithData = await  dispatch(updateMap({ //adds meta data to the map
         mapId: mapId,
         graphicsDataId: null,
@@ -82,9 +76,6 @@ console.log(user)
         metadataId: createdMetaData.payload._id,
         geoData: null,
       }))
-      //now we need to store the map id in the users drafts
-      console.log(user)
-      console.log(user.id)
       const addedMaps = await dispatch(addMapToDrafts({
         mapId:mapId,
         userId: user.id

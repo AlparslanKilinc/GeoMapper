@@ -24,6 +24,8 @@ const sendUserResponse = (res, user) => {
       id: user._id,
       profilePicPath: user.profilePicPath,
       googleUserId: user.googleUserId,
+      draftedMaps: user.draftedMaps //the id of all the maps drafted
+
     },
     loggedIn: true
   });

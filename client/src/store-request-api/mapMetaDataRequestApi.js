@@ -28,6 +28,14 @@ export const addMetaData = async ({ mapId,author, title, description, tags, mapG
     }
 
 };
+export const getMetaDataByMapId = async(mapId) => {
+    try{
+        const response = await api.get(`/getMetaDataByMapId/${mapId}`);
+        return response.data
+    }catch(error){
+        console.log(error)
+    }
+}
 
-const apis = { addMetaData };
+const apis = { addMetaData, getMetaDataByMapId };
 export default apis;

@@ -1,11 +1,10 @@
 const MapMetadata = require('../models/map-metadata-model');
-
+const Map = require('../models/map-model')
+const mapMetadataSchema = MapMetadata.schema;
+console.log(mapMetadataSchema.obj);
 const addMetaData = async (req,res) => {
     try {
-        console.log("in meta data controler")
         const {author,mapId, description,tags,mapGraphicsType, title} = req.body;
-        console.log(req.body)
-        console.log(author)
         const newMetaData = new MapMetadata({
             mapId: mapId,
             author: author,
@@ -14,13 +13,7 @@ const addMetaData = async (req,res) => {
             mapGraphicsType: mapGraphicsType,
             title: title,
         })
-        console.log("mapId:", mapId);
-        console.log("author:", author);
-        console.log("newmeta data")
-        console.log(newMetaData)
         const savedMetaData = await newMetaData.save()
-        console.log("saved meta data")
-        console.log(savedMetaData)
         return res.status(200).send(savedMetaData)
     } catch (error) {
         console.log(error)
@@ -28,4 +21,21 @@ const addMetaData = async (req,res) => {
     }
 }
 
-module.exports = {addMetaData};
+const getMetaDataByMapId = async(req, res) => {
+    try {
+        const mapId = req.params.mapId;
+        const metaData = await MapMetadata.findOne({ mapId: mapId });
+
+        if (!metaData) {
+            return res.status(404).json({ message: 'Metadata not found' });
+        }
+
+        res.json(metaData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
+module.exports = {addMetaData, getMetaDataByMapId};

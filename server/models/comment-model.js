@@ -8,7 +8,11 @@ const commentSchema = new mongoose.Schema({
         ref: 'Map',
         required: true,
     },
-    author: userSchema,
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: true,
+    },
     text: { type: String, required: true },
     date_posted: { type: Date, required: true },
     is_reply: { type: Boolean, required: true, default: false},

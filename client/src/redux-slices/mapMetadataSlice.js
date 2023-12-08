@@ -17,6 +17,7 @@ const mapMetadataInitialState = {
   title: 'Goat Debate',
   loading: false,
   error: null,
+  metadataArray: [],
 };
 
 export const addMetaData = createAsyncThunk('/metadata/addmetadata', async({author, mapId,title, description, tags, mapGraphicsType, comments},  { rejectWithValue }) =>{
@@ -31,14 +32,23 @@ export const addMetaData = createAsyncThunk('/metadata/addmetadata', async({auth
       mapGraphicsType: mapGraphicsType,
       comments: comments
     })
-    console.log("response frm meta data slcie")
-    console.log(response)
     return response;
   } catch (err) {
+    console.log(error)
     return rejectWithValue(err.response.data);
   }
 
 })
+
+export const getMetaDataByMapId = createAsyncThunk('/metadata/getMetaDataByMapId', async(mapId, { rejectWithValue }) =>{
+  try{
+    const response = await api.getMetaDataByMapId(mapId)
+    console.log(response)
+  }catch(error){
+    return rejectWithValue(error.response.data);
+  }
+})
+
 const metaDataSlice = createSlice({
   name: 'mapMetadata',
   initialState: mapMetadataInitialState,
@@ -92,6 +102,12 @@ const metaDataSlice = createSlice({
           state.loading = true;
           state.error = null;
         })
+        .addCase(getMetaDataByMapId.fulfilled, (state, action) => {
+          const metadata = action.payload;
+          state.metadataArray.push(metadata);
+          state.loading = false;
+          state.error = null;
+        })
         .addMatcher(
             (action) => action.type.endsWith('/rejected'),
             (state, action) => {
@@ -117,6 +133,7 @@ export const {
   changeComments,
   changeMapGraphicsType,
   changePublishDate,
-  changeTitle
+  changeTitle,
+
 } = metaDataSlice.actions;
 export default metaDataSlice.reducer;
