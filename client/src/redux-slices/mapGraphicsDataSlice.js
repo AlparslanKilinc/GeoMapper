@@ -691,6 +691,10 @@ const mapGraphicsDataSlice = createSlice({
         // delete from added columns
         state.addedColumns = state.addedColumns.filter((column) => column !== oldColorValue);
         state.addedColumns.push(newColorValue);
+
+        // update propertyNames
+        idx = state.propertyNames.indexOf(oldColorValue);
+        if (idx > -1) state.propertyNames[idx] = newColorValue;
       } else {
         let colorByProperty = state.colorByProperty;
 
