@@ -34,16 +34,17 @@ export const addMetaData = createAsyncThunk('/metadata/addmetadata', async({auth
     })
     return response;
   } catch (err) {
-    console.log(error)
+    console.log(err)
     return rejectWithValue(err.response.data);
   }
 
 })
 
-export const getMetaDataByMapId = createAsyncThunk('/metadata/getMetaDataByMapId', async(mapId, { rejectWithValue }) =>{
+export const getDraftedMetaData = createAsyncThunk('/metadata/:id', async(id, { rejectWithValue }) =>{
   try{
-    const response = await api.getMetaDataByMapId(mapId)
-    console.log(response)
+    console.log("in slice")
+    const response = await api.getDraftedMetaData(id)
+    return response
   }catch(error){
     return rejectWithValue(error.response.data);
   }
@@ -102,9 +103,8 @@ const metaDataSlice = createSlice({
           state.loading = true;
           state.error = null;
         })
-        .addCase(getMetaDataByMapId.fulfilled, (state, action) => {
-          const metadata = action.payload;
-          state.metadataArray.push(metadata);
+        .addCase(getDraftedMetaData .fulfilled, (state, action) => {
+          state.metadataArray = action.payload;
           state.loading = false;
           state.error = null;
         })

@@ -4,6 +4,6 @@ const MapMetaDataController = require('../controllers/mapmetadata-controller');
 
 
 router.post('/addmetadata',MapMetaDataController.addMetaData);
-router.get('/getMetaDataByMapId/:mapId', MapMetaDataController.getMetaDataByMapId)
+router.get('/:id', MapMetaDataController.getDraftedMetaData)
 
 module.exports = router;

@@ -5,7 +5,8 @@ const initialState = {
   user: null,
   loggedIn: false,
   message: null,
-  isLoading: false
+  isLoading: false,
+    userFetched: null
 };
 
 export const registerUser = createAsyncThunk(
@@ -45,6 +46,7 @@ export const loginUser = createAsyncThunk(
 );
 
 export const getLoggedIn = createAsyncThunk('auth/getLoggedIn', async () => {
+    console.log("in get logged in ")
   const response = await api.getLoggedIn();
   return response.data;
 });
@@ -138,6 +140,18 @@ export const addMapToDrafts = createAsyncThunk('auth/addMapToDrafts', async({map
     }
 });
 
+export const getUserById = createAsyncThunk('auth/:id', async(id , {rejectWithValue}) =>{
+    try{
+        const response = await api.getUserById(id)
+        return response
+    } catch(error){
+        console.log(error)
+        return rejectWithValue(error.response.data);
+    }
+});
+
+
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -182,6 +196,9 @@ export const authSlice = createSlice({
         state.loggedIn = action.payload.loggedIn;
         state.isLoading = false;
       })
+        .addCase(getUserById.fulfilled, (state, action) =>{
+            state.fetchedUser = action.payload
+        })
       .addCase(updateUserData.pending, (state) => {
         state.isLoading = true;
       })
@@ -191,6 +208,7 @@ export const authSlice = createSlice({
       .addCase(registerUser.pending, (state, action) => {
         state.isLoading = true;
       })
+
 
       .addMatcher(
         (action) => action.type.endsWith('/rejected'),

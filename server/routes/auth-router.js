@@ -13,5 +13,6 @@ router.post('/forgotPassword', AuthController.forgotPassword)
 router.post('/updatePassword/:userId/:token', AuthController.updatePassword);
 router.post('/googleLogin', AuthController.googleLogin)
 router.post('/addMapToDrafts', AuthController.addMapToDrafts)
+router.get('/:id', AuthController.getUserById)
 
 module.exports = router;

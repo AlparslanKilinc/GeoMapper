@@ -17,6 +17,7 @@ export default function CopyRight() {
     marginRight: '10px'
   };
 
+
   return (
     <div style={footerStyle}>
       <img src={GeoMapperImage} alt="GeoMapper Logo" width="40" height="40" style={imageStyle} />

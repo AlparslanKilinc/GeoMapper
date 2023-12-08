@@ -66,6 +66,16 @@ export const addMapToDrafts = ({mapId, userId}) =>{
   })
 }
 
+export const getUserById = async (id) => {
+  try {
+    const response = await api.get(`/${id}`)
+    console.log(id)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const apis = {
   getLoggedIn,
   registerUser,
@@ -75,6 +85,7 @@ const apis = {
   forgotPassword,
   updatePassword,
   googleLogin,
-  addMapToDrafts
+  addMapToDrafts,
+  getUserById
 };
 export default apis;

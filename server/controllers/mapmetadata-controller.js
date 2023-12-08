@@ -1,5 +1,6 @@
 const MapMetadata = require('../models/map-metadata-model');
 const Map = require('../models/map-model')
+const User = require('../models/user-model')
 const mapMetadataSchema = MapMetadata.schema;
 console.log(mapMetadataSchema.obj);
 const addMetaData = async (req,res) => {
@@ -21,16 +22,20 @@ const addMetaData = async (req,res) => {
     }
 }
 
-const getMetaDataByMapId = async(req, res) => {
+const getDraftedMetaData= async(req, res) => {
     try {
-        const mapId = req.params.mapId;
-        const metaData = await MapMetadata.findOne({ mapId: mapId });
-
-        if (!metaData) {
-            return res.status(404).json({ message: 'Metadata not found' });
-        }
-
-        res.json(metaData);
+        const userId = req.params.id;
+        const user = await User.findById(userId)
+        const metadataPromises = user.draftedMaps.map(async(draftedMapId) => {
+            const map = await Map.findById(draftedMapId);
+            if (!map) {
+                return null;
+            }
+            const metadata = await MapMetadata.findById(map.metadataId);
+            return metadata
+        });
+        const metadataArray = await Promise.all(metadataPromises);
+        res.json(metadataArray);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -38,4 +43,4 @@ const getMetaDataByMapId = async(req, res) => {
 }
 
 
-module.exports = {addMetaData, getMetaDataByMapId};
+module.exports = {addMetaData, getDraftedMetaData};

@@ -57,6 +57,7 @@ export default function DataEditorTable() {
   const [columnErrors, setColumnValidationErrors] = useState({});
   const [cellErrors, setCellValidationErrors] = useState({});
   const [cellEdits, setCellEdits] = useState({});
+  console.log("in data editing")
 
   // This is the data to be displayed in the table
   let data =

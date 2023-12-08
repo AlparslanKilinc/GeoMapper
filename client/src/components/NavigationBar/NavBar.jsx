@@ -14,9 +14,8 @@ import Search from '../Explore/SearchBar.jsx';
 
 const AuthButton = ({ loggedIn }) => {
   if (loggedIn) {
-    return <UserIconMenu />;
+    return <UserIconMenu/>;
   }
-
   return (
     <Link className="link" to={'/login'}>
       <IconButton color="inherit" aria-label="login">

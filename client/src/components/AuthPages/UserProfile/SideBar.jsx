@@ -18,9 +18,13 @@ export default function Sidebar() {
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const[isGoogleUser, setGoogleUser] = useState(false)
-    useEffect(() => {
-    dispatch(getLoggedIn());
-  }, [dispatch]);
+
+  useEffect(() => {
+    // Only dispatch getLoggedIn if user is not available
+    if (!user) {
+      dispatch(getLoggedIn());
+    }
+  }, [dispatch, user]);
 
   const initialUserData = {
     firstName: user?.firstName || '',
@@ -52,7 +56,7 @@ export default function Sidebar() {
         URL.revokeObjectURL(selectedImage);
       }
     };
-  }, [user, errorMessage]);
+  }, [user, errorMessage, selectedImage]);
 
   useEffect(() => {
     if (selectedImage) {

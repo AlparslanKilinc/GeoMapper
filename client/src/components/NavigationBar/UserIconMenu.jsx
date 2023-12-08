@@ -20,12 +20,7 @@ export default function UserIconMenu() {
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const user = useSelector((state) => state.auth.user);
-  useEffect(() => {
-    dispatch(getLoggedIn());
-  }, [dispatch]);
-
   const userData = {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',

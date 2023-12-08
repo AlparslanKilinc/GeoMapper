@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -11,22 +11,41 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Chip from '@mui/material/Chip';
 import { Link as RouterLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import PopUp from '../Explore/PopUp.jsx';
 import SharePopUp from '../Explore/SharePopUp.jsx';
 import ForkForm from '../Explore/ForkForm.jsx';
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BookmarkIcon from "@mui/icons-material/Bookmark.js";
+import {getLoggedIn, getUserById} from "../../redux-slices/authSlice.js";
 
-export default function MapCard () {
+export default function MapCard ({showActions, metaData}) {
   const loggedIn = useSelector((state) => state.auth.loggedIn);
+
+  const dispatch = useDispatch()
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isShareOpen, setShareOpen] = useState(false);
   const [popUpTitle, setPopUpTitle] = useState("");
   const [forkForm, setForkForm] = useState(false);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    // Only dispatch getLoggedIn if user is not available
+    if (metaData) {
+      dispatch(getUserById(metaData.author));
+    }
+  }, [dispatch, metaData]);
+
+  const author = useSelector((state) => state.auth.fetchedUser)
+  console.log(author)
+
+  const cardData = {
+    description: metaData?.description || '',
+    title: metaData?.title || '',
+    tags: metaData?.tags || ''
+  };
   const openPopup = () => {
     setPopupOpen(true);
   };
@@ -105,13 +124,12 @@ export default function MapCard () {
             />
             <CardContent>
               <Link href = "ExplorePage#" underline = "hover" sx = {{color: 'var(--dark-color)', fontSize:'10px'}}>
-                @john123
+                {author.userName}
               </Link>
               <Typography gutterBottom variant="h5">
-                Election Results
-              </Typography>
+                {cardData.title}</Typography>
               <Typography variant = "h8" component = "div">
-                This is my description of the most recent election results
+                {cardData.description}
               </Typography>
             </CardContent>
             <div className = "tags">
@@ -122,7 +140,7 @@ export default function MapCard () {
             </div>
 
           </CardActionArea>
-          <CardActions>
+          {showActions && <CardActions>
             <IconButton >
               {liked ? (
                   <FavoriteIcon onClick = {handleLike} className="like" style={{ color: 'red' }} />
@@ -149,10 +167,7 @@ export default function MapCard () {
             </IconButton>
 
 
-
-
-
-          </CardActions>
+          </CardActions>}
         </Card>
         {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle}/>}
         {forkForm && <ForkForm open = {forkForm} onClose = {closeForkForm}/>}

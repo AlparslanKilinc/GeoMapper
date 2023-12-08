@@ -10,7 +10,6 @@ const api = axios.create({
 });
 export const addMetaData = async ({ mapId,author, title, description, tags, mapGraphicsType }) => {
     try {
-        console.log('in add meta data request')
         const response = await api.post('/addmetadata', {
             mapId: mapId,
             author: author,
@@ -19,8 +18,6 @@ export const addMetaData = async ({ mapId,author, title, description, tags, mapG
             tags: tags,
             mapGraphicsType: mapGraphicsType,
         });
-        console.log("response in request")
-        console.log(response)
         return response.data;
     } catch (error) {
         console.error('Error adding metadata:', error);
@@ -28,14 +25,14 @@ export const addMetaData = async ({ mapId,author, title, description, tags, mapG
     }
 
 };
-export const getMetaDataByMapId = async(mapId) => {
+export const getDraftedMetaData = async(id) => {
     try{
-        const response = await api.get(`/getMetaDataByMapId/${mapId}`);
+        const response = await api.get(`/${id}`);
         return response.data
     }catch(error){
         console.log(error)
     }
 }
 
-const apis = { addMetaData, getMetaDataByMapId };
+const apis = { addMetaData, getDraftedMetaData };
 export default apis;

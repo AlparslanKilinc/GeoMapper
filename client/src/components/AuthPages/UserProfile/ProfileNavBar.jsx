@@ -8,6 +8,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import MapIcon from '@mui/icons-material/Map';
 import { Divider } from '@mui/material';
 import Sidebar from './SideBar';
+const DraftsMemoized = React.memo(Drafts);
+const BookmarksMemoized = React.memo(Bookmarks);
+const PublishedMapsMemoized = React.memo(PublishedMaps);
 import {useSelector} from "react-redux";
 
 const NavState = {
@@ -24,19 +27,19 @@ export default function ProfileNavBar() {
     switch (input) {
       case NavState.BOOKMARKS:
         setSelect(NavState.BOOKMARKS);
-        setContent(<Bookmarks />);
+        setContent(<BookmarksMemoized />);
         break;
       case NavState.DRAFTS:
         setSelect(NavState.DRAFTS);
-        setContent(<Drafts />);
+        setContent(<DraftsMemoized />);
         break;
       case NavState.PUBLISHED_MAPS:
         setSelect(NavState.PUBLISHED_MAPS);
-        setContent(<PublishedMaps />);
+        setContent(<PublishedMapsMemoized />);
         break;
       default:
         setSelect(NavState.DRAFTS);
-        setContent(<Drafts />);
+        setContent(<DraftsMemoized />);
         break;
     }
   };
