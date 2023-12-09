@@ -72,8 +72,7 @@ googleLogin = async(req, res) => {
         firstName: payload['given_name'],
         lastName: payload['family_name'],
         email: payload['email'],
-        profilePicPath:payload['picture'],
-        passwordHash: await hashPassword(generateRandomPassword()),
+        profilePicPath:payload['picture']
       });
       const savedUser = await newUser.save();
       const token = auth.signToken(savedUser._id);

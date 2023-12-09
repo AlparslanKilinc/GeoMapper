@@ -6,7 +6,12 @@ const UserSchema = new Schema({
   firstName: { type: String, required: true, minlength: 3 },
   lastName: { type: String, required: true },
   userName: { type: String, required: true, unique: true },
-  passwordHash: { type: String, required: true },
+  passwordHash: {
+    type: String,
+    required: function() {
+      return !this.googleUserId;
+    },
+  },
   email: { type: String, required: true, unique: true },
   privateMaps: [{ type: ObjectId, ref: 'map' }],
   publishedMaps: [{ type: ObjectId, ref: 'map' }],
