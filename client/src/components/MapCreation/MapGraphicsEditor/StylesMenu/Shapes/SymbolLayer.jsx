@@ -91,8 +91,6 @@ const SymbolLayer = () => {
     const iconSize = calculateMarkerSize(point[sizeByProperty]) || fixedSymbolSize;
     const opacity = point[opacityByProperty] || fixedOpacity;
 
-    console.log(iconSize);
-
     let color = fixedColor;
 
     let colorObj = colors.find((color) => color.name === point[colorByProperty]);

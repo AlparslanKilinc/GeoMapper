@@ -43,9 +43,13 @@ const initialState = {
   continousColorScale: [],
   opacity: 1,
   labels: [],
-  defaultLabelColor: 'white',
+  defaultLabelColor: 'white' ,
   defaultLabelSize: 12,
-  defaultLabelFont: 'Outfit'
+  defaultLabelFont: 'Outfit',
+  alert: false,
+  alertMessage:"success",
+  alertSeverity: null
+
 };
 
 const mapStylesDataSlice = createSlice({
@@ -144,6 +148,16 @@ const mapStylesDataSlice = createSlice({
     setFillColor: (state, action) => {
       state.fillColor = action.payload;
     },
+    setAlert: (state, action) => {
+      state.alert = action.payload;
+    },
+    setAlertMessage: (state, action) => {
+      state.alertMessage = action.payload;
+    },
+    setAlertSeverity: (state, action) => {
+      console.log(state.alertSeverity)
+      state.alertSeverity = action.payload;
+    },
     resetLabels: (state) => {
       state.labels = [];
     }
@@ -174,7 +188,9 @@ export const {
   setFillColor,
   resetMapStylesData,
   resetLabels,
-  changeName
+  changeName,
+    setAlert,
+  setAlertMessage, setAlertSeverity
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;
