@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect } from 'react';
 import '../../styles/templateSelection.css';
 import heatMap from '../../assets/heat_map.png';
 import spikeMap from '../../assets/spike_map.png';
@@ -9,17 +9,25 @@ import { Divider, Button } from '@mui/material';
 import mapDataJson from '../../mapData.json';
 import CopyRight from '../Landing/CopyRight';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { setMapGraphicsType } from '../../redux-slices/mapMetadataSlice';
-import { resetMapStylesData } from '../../redux-slices/mapStylesSlice'
+import { resetMapStylesData } from '../../redux-slices/mapStylesSlice';
 
-export default function TemplateSelection({ onSelectionComplete }) {
+export default function TemplateSelection() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const mapData = mapDataJson.mapData;
-  dispatch(resetMapStylesData())
+
+  // Reset map styles data when the component mounts
+  // This is to ensure it's called only once when the component mounts.
+  // This is a best practice to avoid dispatching actions on every render.
+  useEffect(() => {
+    dispatch(resetMapStylesData());
+  }, [dispatch]);
 
   const handleSelection = (title) => {
     dispatch(setMapGraphicsType(title));
-    onSelectionComplete();
+    navigate('/mapCreation/OutlineSelection');
   };
 
   const getImageSrc = (title) => {
@@ -49,7 +57,13 @@ export default function TemplateSelection({ onSelectionComplete }) {
       <div className="container">
         <div className="selections">
           {mapData.map((map, index) => (
-            <div key={index} className="outer-box" onClick={() => {handleSelection(map.title);}}>
+            <div
+              key={index}
+              className="outer-box"
+              onClick={() => {
+                handleSelection(map.title);
+              }}
+            >
               <img className="image" src={getImageSrc(map.title)} alt={map.alt} />
               <Divider />
               <div className="info-box">

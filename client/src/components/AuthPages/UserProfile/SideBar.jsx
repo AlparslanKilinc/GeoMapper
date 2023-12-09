@@ -17,10 +17,7 @@ export default function Sidebar() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const[isGoogleUser, setGoogleUser] = useState(false)
-    useEffect(() => {
-    dispatch(getLoggedIn());
-  }, [dispatch]);
+  const[isGoogleUser, setGoogleUser] = useState(false);
 
   const initialUserData = {
     firstName: user?.firstName || '',
