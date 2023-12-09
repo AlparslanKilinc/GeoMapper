@@ -13,10 +13,11 @@ export default function ColorsHeatMapAccordionMenu() {
   const colorByProperty = useSelector(state => state.mapGraphics.colorByProperty);
   const propertyNames = useSelector(state => state.mapGraphics.propertyNames)
   const opacity = useSelector((state) => state.mapStyles.opacity);
-  const columnTypes = useSelector(state => state.mapGraphics.columnTypes)
+  const columnTypes = useSelector(state => state.mapGraphics.columnTypes);
+  const columnValidationErrors = useSelector((state) => state.mapGraphics.columnValidationErrors);
 
   let propertyNamesNumeric = propertyNames.filter((prop) => {
-    return columnTypes[prop] === 'number';
+    return columnTypes[prop] === 'number' && !columnValidationErrors[prop];
   });
 
   const handleColorByPropertyChange = (event, newValue) => {

@@ -27,6 +27,7 @@ import {
 } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import SubMenuTitle from '../../SubMenuTitle';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import { map } from 'leaflet';
 
 const SliderTextField = ({ value, onChange }) => {
   // Handling change from Slider
@@ -158,6 +159,30 @@ export default function ShapeAccordionMenu() {
     </Box>
   );
 
+  const addMode = (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{ gap: 2 }}
+    >
+      <SubMenuTitle
+        title={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
+      />
+      <FormControlLabel
+        key={String(addSymbolMode)}
+        control={
+          <Switch checked={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
+        }
+        label={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
+      />
+    </Box>
+  );
+
+  let sizeSlider = sizeByProperty ? maxSymbolSizeSlider : fixedSymbolSizeSlider;
+  if (mapGraphicsType === 'Dot Density Map') sizeSlider = fixedSymbolSizeSlider;
+
   return (
     <Accordion>
       <AccordionSummary
@@ -204,26 +229,9 @@ export default function ShapeAccordionMenu() {
             />
           </Box>
 
-          {sizeByProperty ? maxSymbolSizeSlider : fixedSymbolSizeSlider}
+          {sizeSlider}
 
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ gap: 2 }}
-          >
-            <SubMenuTitle
-              title={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
-            />
-            <FormControlLabel
-              key={String(addSymbolMode)}
-              control={
-                <Switch checked={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
-              }
-              label={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
-            />
-          </Box>
+          {mapGraphicsType !== 'Dot Density Map' && addMode}
         </Box>
       </AccordionDetails>
     </Accordion>

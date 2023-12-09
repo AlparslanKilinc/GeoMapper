@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
-import { useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../../styles/mapCreationWrapper.css';
 import { styled } from '@mui/material/styles';
-import TempleSelection from './TemplateSelection';
-import MapDataEditor from './MapDataEditing/MapDataEditor';
-import OutlineSelectionPage from './OutlineSelectionPage';
-import MapGraphicsEditor from './MapGraphicsEditor';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearGeojson } from '../../redux-slices/geoJSONSlice';
 import { resetMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice';
 
 export default function MapCreationWrapper() {
   const dispatch = useDispatch();
-  const [currentStage, setCurrentStage] = useState(0);
+  const navigate = useNavigate();
   const location = useLocation();
-  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const mapOutline = useSelector((state) => state.geojson.geojson.geoJSON);
-  const validationMessage  = useSelector((state) => state.mapGraphics.validationMessage);
+  const validationMessage = useSelector((state) => state.mapGraphics.validationMessage);
 
   const NavigationButton = styled(Button)(({ theme }) => ({
     borderColor: '#40e0d0',
@@ -30,50 +25,62 @@ export default function MapCreationWrapper() {
     }
   }));
 
-  const isNextButtonDisabled = () => {
-    return (
-      (currentStage === 1 && !mapOutline) ||
-      (currentStage === 2 && !validationMessage.startsWith('✓'))
-    );
+  const currentStage = () => {
+    const path = location.pathname.split('/').pop();
+    switch (path) {
+      case 'OutlineSelection':
+        return 1;
+      case 'DataEditor':
+        return 2;
+      case 'GraphicsEditor':
+        return 3;
+      default:
+        return 0; // Default to TemplateSelection
+    }
   };
 
-  useEffect(() => {
-    if (location.state && location.state.stage) {
-      setCurrentStage(location.state.stage);
-    }
-  }, [location]);
+  const isNextButtonDisabled = () => {
+    const stage = currentStage();
+    return (stage === 1 && !mapOutline) || (stage === 2 && !validationMessage.startsWith('✓'));
+  };
 
   const goBack = () => {
-    if (currentStage === 1) {
+    const stage = currentStage();
+    if (stage === 1) {
       dispatch(clearGeojson());
-    } else if (currentStage === 2) {
+    } else if (stage === 2) {
       dispatch(resetMapGraphicsData());
       dispatch(clearGeojson());
     }
-    setCurrentStage(currentStage - 1);
+    navigate(-1);
   };
 
   const goForward = () => {
-    setCurrentStage(currentStage + 1);
+    const stage = currentStage();
+    switch (stage) {
+      case 0:
+        navigate('OutlineSelection');
+        break;
+      case 1:
+        navigate('DataEditor');
+        break;
+      case 2:
+        navigate('GraphicsEditor');
+        break;
+      default:
+        break;
+    }
   };
-
-  const stages = [
-    <TempleSelection onSelectionComplete={goForward} />,
-    <OutlineSelectionPage />,
-    <MapDataEditor />,
-    <MapGraphicsEditor />
-  ];
 
   return (
     <div className="mapCreationWrapper">
       <div className="wrapper-button-group">
-        {currentStage !== 0 && (
+        {currentStage() !== 0 && (
           <NavigationButton variant="outlined" startIcon={<ArrowBackIcon />} onClick={goBack}>
             Back
           </NavigationButton>
         )}
-
-        {currentStage < stages.length - 1 && currentStage !== 0 && (
+        {(currentStage() > 0  && currentStage() < 3) && (
           <NavigationButton
             variant="outlined"
             endIcon={<ArrowForwardIcon />}
@@ -84,7 +91,7 @@ export default function MapCreationWrapper() {
           </NavigationButton>
         )}
       </div>
-      {stages[currentStage]}
+      <Outlet />
     </div>
   );
 }

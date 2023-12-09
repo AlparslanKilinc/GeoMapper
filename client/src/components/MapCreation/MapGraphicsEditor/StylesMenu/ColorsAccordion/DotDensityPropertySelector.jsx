@@ -3,20 +3,22 @@ import { TextField, Autocomplete } from '@mui/material';
 import Box from '@mui/material/Box';
 import SubMenuTitle from '../../SubMenuTitle';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeXByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { changeXByProperty,TableValidation } from '../../../../../redux-slices/mapGraphicsDataSlice';
 export default function DotDensityPropertySelector({ hideTitle }) {
   const dispatch = useDispatch();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const propertyNames = useSelector((state) => state.mapGraphics.propertyNames);
   const columnTypes = useSelector((state) => state.mapGraphics.columnTypes);
-
+  const columnValidationErrors = useSelector((state) => state.mapGraphics.columnValidationErrors);
   // filter numerical properties from the propertyNames
   const dotDensityByPropertyOptions = propertyNames.filter((property) => {
-    return columnTypes[property] === 'number';
+    return columnTypes[property] === 'number' && !columnValidationErrors[property];
   });
 
   const handleChangeDotDensityByProperty = (event, newValue) => {
     dispatch(changeXByProperty({ property: 'dotDensityByProperty', propertyBy: newValue }));
+    dispatch(TableValidation(mapGraphicsType));
   };
 
   return (

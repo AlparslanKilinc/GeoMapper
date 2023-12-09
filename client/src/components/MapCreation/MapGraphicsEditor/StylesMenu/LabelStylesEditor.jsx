@@ -5,27 +5,54 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   setDefaultLabelColor,
   setDefaultLabelFont,
-  setDefaultLabelSize
+  setDefaultLabelSize,
+  setLabelColor,
+  setLabelFont,
+  setLabelSize
 } from '../../../../redux-slices/mapStylesSlice';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { MuiColorInput } from 'mui-color-input';
 import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
 
-export default function LabelStylesEditor() {
+export default function LabelStylesEditor({ idx }) {
   const dispatch = useDispatch();
   const defaultLabelColor = useSelector((state) => state.mapStyles.defaultLabelColor);
   const defaultLabelFont = useSelector((state) => state.mapStyles.defaultLabelFont);
   const defaultLabelSize = useSelector((state) => state.mapStyles.defaultLabelSize);
-  const handleChangeDefaultLabelColor = (color) => {
+  const labels = useSelector((state) => state.mapStyles.labels);
+
+  let colorValue = defaultLabelColor;
+  let fontValue = defaultLabelFont;
+  let sizeValue = defaultLabelSize;
+
+  let handleChangeLabelColor = (color) => {
     dispatch(setDefaultLabelColor(color));
   };
-  const handleChangeDefaultLabelFont = (event, newValue) => {
+  let handleChangeLabelFont = (event, newValue) => {
     dispatch(setDefaultLabelFont(newValue));
   };
-  const handleChangeDefaultLabelSize = (event) => {
+  let handleChangeLabelSize = (event) => {
     dispatch(setDefaultLabelSize(event.target.value));
   };
+
+  idx = Number(idx);
+  if (idx !== undefined && idx > -1) {
+    let label = labels[idx];
+    colorValue = label.color;
+    fontValue = label.font;
+    sizeValue = label.size;
+
+    handleChangeLabelColor = (color) => {
+      dispatch(setLabelColor({ color, idx }));
+    };
+    handleChangeLabelFont = (event, font) => {
+      dispatch(setLabelFont({ font, idx }));
+    };
+    handleChangeLabelSize = (event) => {
+      dispatch(setLabelSize({ size: event.target.value, idx }));
+    };
+  }
 
   const fontFamilies = [
     'Arial',
@@ -47,19 +74,20 @@ export default function LabelStylesEditor() {
     >
       <SubMenuTitle title="label styles" />
       <DebouncedColorInput
-        value={defaultLabelColor}
-        onChange={handleChangeDefaultLabelColor}
+        value={colorValue}
+        onChange={handleChangeLabelColor}
         label="Label Color"
+        key={idx}
       />
       <TextField
-        value={defaultLabelSize}
-        onChange={handleChangeDefaultLabelSize}
+        value={sizeValue}
+        onChange={handleChangeLabelSize}
         label="Default Label Size"
         type="number"
       />
       <Autocomplete
-        value={defaultLabelFont}
-        onChange={handleChangeDefaultLabelFont}
+        value={fontValue}
+        onChange={handleChangeLabelFont}
         options={fontFamilies}
         fullWidth
         renderInput={(params) => <TextField {...params} label="Font-Family" />}
