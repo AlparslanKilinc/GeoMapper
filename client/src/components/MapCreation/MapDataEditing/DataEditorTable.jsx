@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import '../../../styles/mapDataEditingPage.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { LoadingButton } from '@mui/lab';
-import {Modal, Table, TableBody, TableCell, TableHead, TableRow, TextField} from '@mui/material';
+import {Modal, Snackbar, Table, TableBody, TableCell, TableHead, TableRow, TextField} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Menu, MenuItem } from '@mui/material';
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
@@ -33,6 +33,9 @@ import {
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
 
 export default function DataEditorTable() {
   const {
@@ -62,7 +65,10 @@ export default function DataEditorTable() {
   const [cellEdits, setCellEdits] = useState({});
   const [isModalOpen, setModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
-
+  const [showAlert, setShowAlert] = useState(false)
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -201,15 +207,15 @@ export default function DataEditorTable() {
 
   const handleAddColumn = () => {
     console.log('Column Name:', newColumnName);
+    handleCloseModal()
     if (displayedProperties.includes(newColumnName)) {
-      alert('This column name already exists. Please choose a different name.');
+      setShowAlert(true)
       return;
     }
     if (newColumnName && !addedColumns.includes(newColumnName)) {
       dispatch(addColumn(newColumnName));
       dispatch(addProperty({ columnName: newColumnName, mapGraphicsType: mapGraphicsType }));
     }
-    handleCloseModal()
   };
 
   const handleInputChange = (event) => {
@@ -388,6 +394,12 @@ export default function DataEditorTable() {
               mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map' ? '58px' : '0px'
           }}
         >
+          {showAlert && (
+              <Alert severity="error"  autoHideDuration={5000} onClose={handleCloseAlert}>
+                Column name already exists!
+              </Alert>
+
+          )}
           <Table size="small" stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
