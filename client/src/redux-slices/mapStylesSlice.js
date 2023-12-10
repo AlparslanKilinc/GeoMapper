@@ -1,21 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-const hexColorPalette = {
-  lightRed: '#ff6666',
-  darkRed: '#8b0000',
-  lightGreen: '#90ee90',
-  darkGreen: '#006400',
-  lightBlue: '#add8e6',
-  darkBlue: '#00008b',
-  lightYellow: '#ffffe0',
-  darkYellow: '#ffd700',
-  lightOrange: '#ffd580',
-  darkOrange: '#ff8c00',
-  lightPurple: '#e6e6fa',
-  darkPurple: '#800080',
-  lightPink: '#ffb6c1',
-  darkPink: '#ff1493'
-};
+import hexColorPalette from '../static/hexColorPalette.json';
 
 const initialState = {
   mapId: null, // Reference to the main Map
@@ -43,9 +27,13 @@ const initialState = {
   continousColorScale: [],
   opacity: 1,
   labels: [],
-  defaultLabelColor: 'white' ,
+  defaultLabelColor: 'white',
   defaultLabelSize: 12,
   defaultLabelFont: 'Outfit',
+  alert: false,
+  alertMessage: "success",
+  alertSeverity: null
+
 };
 
 const mapStylesDataSlice = createSlice({
@@ -184,7 +172,7 @@ export const {
   resetMapStylesData,
   resetLabels,
   changeName,
-    setAlert,
+  setAlert,
   setAlertMessage, setAlertSeverity
 } = mapStylesDataSlice.actions;
 
