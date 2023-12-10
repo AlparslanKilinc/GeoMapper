@@ -24,6 +24,7 @@ const mapSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
+    title: { type: String, default: '' },
     thumbnailUrl: { type: String, default: '' },
     likes: { type: Number, default: 0 },
     forks: { type: Number, default: 0 },

@@ -10,6 +10,10 @@ const createMap = async (req, res) => {
     const mapData = JSON.parse(req.body.map);
     mapData.authorId = userId;
 
+    // get the username of the user by id
+    const { userName } = await User.findById(userId).select('userName');
+    mapData.authorUserName = userName;
+
     // Upload the image to Google Cloud Storage
     const name = `${mapData.title}-${userId}`;
     const imageUrl = await uploadToGoogleCloud(req.file, name);
