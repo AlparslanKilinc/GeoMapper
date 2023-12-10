@@ -14,4 +14,7 @@ router.use('/styles', stylesRouter);
 
 router.post('/', auth.verify, upload.single('image'), MapController.createMap);
 
+router.get('/drafts', auth.verify, MapController.getAllDrafts);
+router.get('/published', auth.verify, MapController.getAllPublishedMaps);
+
 module.exports = router;

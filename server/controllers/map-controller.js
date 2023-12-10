@@ -28,10 +28,56 @@ const createMap = async (req, res) => {
   }
 };
 
-module.exports = {
-  createMap
+const getAllDrafts = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const user = await User.findById(userId)
+      .select('draftedMaps') // Select only the fields you need
+      .populate('draftedMaps'); // Populate the draftedMaps array
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    // Respond with the user's drafted and published maps
+    res.status(200).send({
+      draftedMaps: user.draftedMaps
+    });
+  } catch (error) {
+    // Handle any errors
+    console.error('Error fetching maps:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+};
+
+const getAllPublishedMaps = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const user = await User.findById(userId)
+      .select('publishedMaps') // Select only the fields you need
+      .populate('publishedMaps'); // Populate the draftedMaps array
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    // Respond with the user's drafted and published maps
+    res.status(200).send({
+      publishedMaps: user.publishedMaps
+    });
+  } catch (error) {
+    // Handle any errors
+    console.error('Error fetching maps:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
 };
 
 module.exports = {
-  createMap
+  createMap,
+  getAllDrafts,
+  getAllPublishedMaps
 };
