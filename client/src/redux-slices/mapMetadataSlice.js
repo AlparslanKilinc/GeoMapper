@@ -2,14 +2,17 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import apis from '../store-request-api/mapRequestApi';
 
-export const saveMap = createAsyncThunk('mapStyles/saveMapStylesData', async (map, thunkApi) => {
-  try {
-    const response = await apis.createMap(map);
-    return response.data._id;
-  } catch (error) {
-    return thunkApi.rejectWithValue(error.response.data);
+export const saveMap = createAsyncThunk(
+  'mapStyles/saveMapStylesData',
+  async ({ map, thumbnailFile }, thunkApi) => {
+    try {
+      const response = await apis.createMap(map, thumbnailFile);
+      return response.data._id;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
 // Map Metadata Slice
 const mapMetadataInitialState = {

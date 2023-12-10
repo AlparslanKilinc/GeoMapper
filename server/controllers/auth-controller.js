@@ -1,14 +1,16 @@
 const auth = require('../auth');
-const User = require('../models/user-model');
+const User = require('../models/user-model.js');
 const bcrypt = require('bcryptjs');
 const { bucket } = require('../googleCloudStorage');
 const crypto = require('crypto');
 const fetch = require('node-fetch');
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 var nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client('463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com');
+const client = new OAuth2Client(
+  '463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com'
+);
 
 const sendUserResponse = (res, user) => {
   return res.status(200).json({
@@ -21,12 +23,11 @@ const sendUserResponse = (res, user) => {
       bio: user.bio,
       id: user._id,
       profilePicPath: user.profilePicPath,
-      googleUserId: user.googleUserId,
+      googleUserId: user.googleUserId
     },
     loggedIn: true
   });
 };
-
 
 loginUser = async (req, res) => {
   try {
@@ -55,12 +56,12 @@ loginUser = async (req, res) => {
   }
 };
 
-googleLogin = async(req, res) => {
-  const idToken = req.body.idToken
+googleLogin = async (req, res) => {
+  const idToken = req.body.idToken;
   try {
     const ticket = await client.verifyIdToken({
       idToken: idToken,
-      audience: '463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com',
+      audience: '463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com'
     });
     const payload = ticket.getPayload();
     const userid = payload['sub'];
@@ -72,7 +73,7 @@ googleLogin = async(req, res) => {
         firstName: payload['given_name'],
         lastName: payload['family_name'],
         email: payload['email'],
-        profilePicPath:payload['picture']
+        profilePicPath: payload['picture']
       });
       const savedUser = await newUser.save();
       const token = auth.signToken(savedUser._id);
@@ -82,8 +83,7 @@ googleLogin = async(req, res) => {
         sameSite: 'none'
       });
       return sendUserResponse(res, savedUser);
-    }
-    else{
+    } else {
       const token = auth.signToken(existingUser._id);
       res.cookie('token', token, {
         httpOnly: true,
@@ -93,17 +93,14 @@ googleLogin = async(req, res) => {
 
       return sendUserResponse(res, existingUser);
     }
-
   } catch (error) {
     console.error(error);
-    return res.status(200).json({errorMessage: "User already exists"});
+    return res.status(200).json({ errorMessage: 'User already exists' });
     console.error(error);
   }
-
-}
+};
 
 registerUser = async (req, res) => {
-
   try {
     const { userName, firstName, lastName, email, password, passwordVerify } = req.body;
     if (!userName || !firstName || !lastName || !email || !password || !passwordVerify) {
@@ -193,13 +190,11 @@ const forgotPassword = async (req, res) => {
 
   try {
     const existingUserByEmail = await User.findOne({ email });
-    if (existingUserByEmail.googleUserId.length > 0 ) {
-      return res
-          .status(401)
-          .json({
-            errorMessage:
-                'Cannot reset password of a Google Account. Please use the "Login with Google" option',
-          });
+    if (existingUserByEmail.googleUserId.length > 0) {
+      return res.status(401).json({
+        errorMessage:
+          'Cannot reset password of a Google Account. Please use the "Login with Google" option'
+      });
     }
 
     if (!existingUserByEmail) {
@@ -209,7 +204,7 @@ const forgotPassword = async (req, res) => {
     const id = existingUserByEmail._id;
     const secret = process.env.JWT_SECRET + existingUserByEmail.passwordHash;
     const token = jwt.sign({ email: existingUserByEmail.email, id: id }, secret, {
-      expiresIn: '15m',
+      expiresIn: '15m'
     });
 
     const resetLink = `https://geomapper-c6jr.onrender.com/setNewPassword?id=${id}&token=${token}`;
@@ -218,8 +213,8 @@ const forgotPassword = async (req, res) => {
       service: 'gmail',
       auth: {
         user: 'geomapperapp2024@gmail.com',
-        pass: 'ewhtogjlfmyayulf',
-      },
+        pass: 'ewhtogjlfmyayulf'
+      }
     });
 
     const mailOptions = {
@@ -227,11 +222,11 @@ const forgotPassword = async (req, res) => {
       to: email,
       subject: 'Password Reset',
       text:
-          'Hello, \n We received a request to reset the password for your Geomapper account. To proceed with the password reset, please click on the link below:' +
-          '\n If you didn\'t request a password reset, you can ignore this email, and your password will remain unchanged.' +
-          '\nFor security reasons, this link will expire in 10 minutes.' +
-          '\nIf you haven\'t reset your password within this time frame, you can request another password reset by visiting the forgot password page on our app.\nThank you,\n GeoMappper Team\n' +
-          resetLink,
+        'Hello, \n We received a request to reset the password for your Geomapper account. To proceed with the password reset, please click on the link below:' +
+        "\n If you didn't request a password reset, you can ignore this email, and your password will remain unchanged." +
+        '\nFor security reasons, this link will expire in 10 minutes.' +
+        "\nIf you haven't reset your password within this time frame, you can request another password reset by visiting the forgot password page on our app.\nThank you,\n GeoMappper Team\n" +
+        resetLink
     };
 
     await transporter.sendMail(mailOptions); // Wait for the email to be sent
@@ -244,7 +239,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-updatePassword = async(req, res) => {
+updatePassword = async (req, res) => {
   try {
     const { userId, token } = req.params;
     const newPassword = req.body.newPassword;
@@ -262,9 +257,8 @@ updatePassword = async(req, res) => {
     console.error('An error occurred:', error);
     res.status(500).json({ errorMessage: 'Internal Server Error' });
   }
-
-}
- updateUserData = async (req, res) => {
+};
+updateUserData = async (req, res) => {
   try {
     const userId = req.userId;
     const updateFields = {};

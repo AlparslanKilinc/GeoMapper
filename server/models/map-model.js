@@ -31,12 +31,7 @@ const mapSchema = new mongoose.Schema(
     description: { type: String, default: '' },
     forkedFrom: forkedFromSchema,
     tags: { type: [String], default: [] },
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-      }
-    ],
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
     mapGraphicsType: { type: String, default: '' },
     publishDate: { type: Date, default: null }
   },

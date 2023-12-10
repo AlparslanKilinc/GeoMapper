@@ -6,11 +6,45 @@ import { createGeojson } from '../../redux-slices/geoJSONSlice';
 import { saveMap } from '../../redux-slices/mapMetadataSlice';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { Button } from '@mui/material';
+import domtoimage from 'dom-to-image';
 
 export default function SaveButton() {
   const geojson = useSelector((state) => state.geojson);
   const mapMetadata = useSelector((state) => state.mapMetadata);
   const dispatch = useDispatch();
+
+  const captureMapAsFile = async () => {
+    const mapElement = document.getElementById('mapContainer');
+    if (!mapElement) {
+      throw new Error('Map container not found');
+    }
+
+    try {
+      const exportOptions = {
+        height: mapElement.offsetHeight * 4,
+        width: mapElement.offsetWidth * 4,
+        style: {
+          transform: 'scale(4)',
+          transformOrigin: 'top left',
+          width: mapElement.offsetWidth + 'px',
+          height: mapElement.offsetHeight + 'px'
+        },
+        quality: 2
+      };
+
+      const dataUrl = await domtoimage.toPng(mapElement, exportOptions);
+
+      // Convert Data URL to Blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+
+      // Return the Blob as a File
+      return new File([blob], 'map-image.png', { type: 'image/png' });
+    } catch (error) {
+      console.error('Error capturing map:', error);
+      throw error;
+    }
+  };
 
   const saveMapGraphics = async () => {
     const action = await dispatch(saveMapGraphicsData());
@@ -43,13 +77,15 @@ export default function SaveButton() {
     const mapGraphicsId = await saveMapGraphics();
     const mapStylesId = await saveMapStyles();
     const geojsonId = await saveGeojson();
+    const thumbnailFile = await captureMapAsFile();
+
     const map = {
       mapGraphicsId,
       mapStylesId,
       geojsonId,
       ...mapMetadata
     };
-    dispatch(saveMap(map));
+    dispatch(saveMap({ map, thumbnailFile }));
   };
 
   return (

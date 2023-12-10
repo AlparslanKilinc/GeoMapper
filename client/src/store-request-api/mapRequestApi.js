@@ -9,7 +9,25 @@ const api = axios.create({
   baseURL: baseURL
 });
 
-export const createMap = (map) => api.post(`/`, map);
+export const createMap = (map, imageFile) => {
+  const formData = new FormData();
+
+  // Append map data as JSON. Assuming 'map' is an object
+  formData.append('map', JSON.stringify(map));
+
+  // Append image file if it exists
+  if (imageFile) {
+    formData.append('image', imageFile);
+  }
+
+  // Axios post request with FormData
+  return api.post('/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
+
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
 export const saveMapStylesData = (map) => api.post(`/styles`, map);
 export const updateMapGraphicsData = (map, mapGraphicsId) =>
