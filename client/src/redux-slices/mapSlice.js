@@ -1,12 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apis from '../store-request-api/mapRequestApi';
 
 // create async thunk action creators that fetches drafts
 
-export const fetchDrafts = createAsyncThunk('maps/fetchDrafts', async (id, thunkApi) => {
+export const fetchDrafts = createAsyncThunk('maps/fetchDrafts', async (_, thunkApi) => {
   try {
     const response = await apis.getDrafts();
-    return response.data;
+    const draftedMaps = response.data.draftedMaps;
+    return draftedMaps;
   } catch (error) {
     console.log(error);
     return rejectWithValue(error.response.data);
@@ -15,10 +16,10 @@ export const fetchDrafts = createAsyncThunk('maps/fetchDrafts', async (id, thunk
 
 export const fetchPublishedMaps = createAsyncThunk(
   'maps/fetchPublishedMaps',
-  async (id, thunkApi) => {
+  async (_, thunkApi) => {
     try {
       const response = await apis.getPublishedMaps();
-      return response.data;
+      return response.data.publishedMaps;
     } catch (error) {
       console.log(error);
       return rejectWithValue(error.response.data);
@@ -45,7 +46,7 @@ const mapSlice = createSlice({
       })
       .addCase(fetchDrafts.fulfilled, (state, action) => {
         state.isLoadingDrafts = false;
-        state.drafts = action.payload.draftedMaps;
+        state.drafts = action.payload;
       })
       .addCase(fetchDrafts.rejected, (state) => {
         state.isLoadingDrafts = false;
@@ -55,7 +56,7 @@ const mapSlice = createSlice({
       })
       .addCase(fetchPublishedMaps.fulfilled, (state, action) => {
         state.isLoadingPublishedMaps = false;
-        state.publishedMaps = action.payload.draftedMaps;
+        state.publishedMaps = action.payload;
       })
       .addCase(fetchPublishedMaps.rejected, (state) => {
         state.isLoadingPublishedMaps = false;
