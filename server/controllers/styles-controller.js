@@ -1,4 +1,4 @@
-const mapStyles = require('../models/map-styles');
+const mapStyles = require('../models/map-stylesdata-model.js');
 
 const saveMapStylesData = async (req, res) => {
   // Logic to save map styles data
@@ -9,4 +9,4 @@ const updateMapStyles = async (req, res) => {
   // Logic to update map styles
 };
 
-export { saveMapStylesData, updateMapStyles };
+module.exports = { saveMapStylesData, updateMapStyles };
