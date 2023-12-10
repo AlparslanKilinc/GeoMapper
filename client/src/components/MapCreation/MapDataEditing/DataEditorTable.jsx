@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import '../../../styles/mapDataEditingPage.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { LoadingButton } from '@mui/lab';
-import { Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
+import {Modal, Snackbar, Table, TableBody, TableCell, TableHead, TableRow, TextField} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Menu, MenuItem } from '@mui/material';
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
@@ -30,6 +30,12 @@ import {
   validateRow,
   validateAllCells
 } from '../../../redux-slices/mapGraphicsDataSlice';
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
 
 export default function DataEditorTable() {
   const {
@@ -57,6 +63,19 @@ export default function DataEditorTable() {
   const [columnErrors, setColumnValidationErrors] = useState({});
   const [cellErrors, setCellValidationErrors] = useState({});
   const [cellEdits, setCellEdits] = useState({});
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [newColumnName, setNewColumnName] = useState('');
+  const [showAlert, setShowAlert] = useState(false)
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   // This is the data to be displayed in the table
   let data =
@@ -186,11 +205,10 @@ export default function DataEditorTable() {
     return () => window.removeEventListener('resize', adjustHeaderWidth);
   }, [displayedProperties]);
 
-  /// Column Functions
   const handleAddColumn = () => {
-    const newColumnName = prompt('Enter new column name:');
+    handleCloseModal()
     if (displayedProperties.includes(newColumnName)) {
-      alert('This column name already exists. Please choose a different name.');
+      setShowAlert(true)
       return;
     }
     if (newColumnName && !addedColumns.includes(newColumnName)) {
@@ -199,6 +217,9 @@ export default function DataEditorTable() {
     }
   };
 
+  const handleInputChange = (event) => {
+    setNewColumnName(event.target.value);
+  };
   const handleRemoveColumn = (columnNameToDelete) => {
     if (window.confirm(`Are you sure you want to delete the "${columnNameToDelete}" column?`)) {
       dispatch(
@@ -354,7 +375,7 @@ export default function DataEditorTable() {
       <LoadingButton
         variant="outlined"
         style={{ color: 'black', borderColor: 'black' }}
-        onClick={handleAddColumn}
+        onClick={handleOpenModal}
       >
         Add Column
       </LoadingButton>
@@ -371,6 +392,12 @@ export default function DataEditorTable() {
               mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map' ? '58px' : '0px'
           }}
         >
+          {showAlert && (
+              <Alert severity="error"  autoHideDuration={5000} onClose={handleCloseAlert}>
+                Column name already exists!
+              </Alert>
+
+          )}
           <Table size="small" stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
@@ -485,6 +512,31 @@ export default function DataEditorTable() {
           <MenuItem onClick={() => handleRemoveColumn(selectedColumn)}>Delete Column</MenuItem>
         )}
       </Menu>
+      <Modal  open={isModalOpen}
+              onClose={handleCloseModal}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 200,
+          height:60,
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start'}}>
+          <Typography variant="h6" component="h2" sx = {{mt: '-50px', ml: "-50px"}}>
+            Please enter a column name
+          </Typography>
+          <TextField id="standard-basic" label="Column name" variant="standard"
+                     value={newColumnName}
+                     onChange={handleInputChange}  sx={{ ml: "-50px"}}
+          />
+          <Button variant="outlined"sx={{ ml: "-50px", mt:'10px'}} onClick={handleAddColumn}>Submit</Button>
+        </Box>
+      </Modal>
     </div>
   );
 }

@@ -6,9 +6,9 @@ import SymbolLayer from '../MapGraphicsEditor/StylesMenu/Shapes/SymbolLayer';
 import DotDensityLayer from '../MapGraphicsEditor/StylesMenu/Shapes/DotDensityLayer';
 import { useMapEvents } from 'react-leaflet';
 import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
+import{setAlert, setAlertMessage, setAlertSeverity} from '../../../redux-slices/mapStylesSlice'
 import { useDispatch } from 'react-redux';
 import * as turf from '@turf/turf';
-import axios from "axios";
 
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
@@ -51,31 +51,41 @@ const GeoJsonMap = ({ styled }) => {
 
     const map = useMapEvents({
       click: async (e) => {
-        console.log(e)
         if (addSymbolMode) {
           const [lat, lon] = [e.latlng.lat, e.latlng.lng];
-          console.log([lat, lon])
-          if (isPointInPolygon({lat, lon}, geojson)) {
-              const properties = getDefaultPointProperties();
-              const response = await fetch(
+          if (isPointInPolygon({ lat, lon }, geojson)) {
+            const properties = getDefaultPointProperties();
+            const response = await fetch(
                 `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
             );
             const data = await response.json();
-            const parts = data.display_name.split(','); // Split the display name by commas
-            const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`; // Combine city and country
-              dispatch(addPoint({name: locationName,lat, lon,...properties}));
-            }
-          else
-            alert('POINT OUTSIDE');
+            const parts = data.display_name.split(',');
+            const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`;
+            dispatch(addPoint({ name: locationName, lat, lon, ...properties }));
+            dispatch(setAlert(true));
+            dispatch(setAlertSeverity('success'));
+            dispatch(setAlertMessage('Point successfully added!'));
+            setTimeout(() => {
+              dispatch(setAlert(false));
+            }, 2000);
+          } else {
+            dispatch(setAlert(true));
+            dispatch(setAlertSeverity('error'));
+            dispatch(setAlertMessage('Point is out of bounds'));
+            setTimeout(() => {
+              dispatch(setAlert(false));
+            }, 2000);
           }
-
           // propogate the event to the map
         }
-      });
+      }
+    });
+
     return null;
   };
 
   return (
+      <>
     <MapContainer
       style={{
         flexGrow: 1,
@@ -93,6 +103,8 @@ const GeoJsonMap = ({ styled }) => {
 
       {(renderSymbolLayer || renderSpikeLayer) && <EventHandlerLayer />}
     </MapContainer>
+</>
+
   );
 };
 
