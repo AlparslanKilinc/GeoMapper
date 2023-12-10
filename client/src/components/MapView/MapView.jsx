@@ -17,15 +17,22 @@ import {Typography} from "@mui/material";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import BookmarkIcon from "@mui/icons-material/Bookmark.js";
+import {addComment, clearComments} from "../../redux-slices/commentsSlice.js";
+import SendIcon from '@mui/icons-material/Send';
+
 
 export default function MapView() {
+    const dispatch = useDispatch()
     const loggedIn = useSelector((state) => state.auth.loggedIn);
+    const user = useSelector((state) => state.auth.user)
+    const comments = useSelector((state) => state.comments.comments)
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState("");
     const [forkForm, setForkForm] = useState(false);
     const [liked, setLiked] = useState(false);
     const [bookmarked, setBookmarked] = useState(false);
+    const [newCommentText, setNewCommentText] = useState('');
     let likes = 1000
     const openPopup = () => {
         setPopupOpen(true);
@@ -52,6 +59,7 @@ export default function MapView() {
     }
 
     const handleLike = () =>{
+
         likes = likes + 1
         if(!loggedIn){
             setPopUpTitle("To like a map, please create an account");
@@ -94,6 +102,20 @@ export default function MapView() {
         }
     }
 
+    const handleAddComment = () => {
+        if (newCommentText.trim() !== '') {
+            const newComment = {
+                author: user.userName, // replace with actual author data
+                text: newCommentText,
+                date_posted: new Date().toISOString(), // replace with actual date logic
+                authorProfilePicture: user.profilePicPath
+            };
+
+            dispatch(addComment(newComment));
+            setNewCommentText(''); // Clear the input field after posting
+        }
+    };
+
     return (
         <div className = "mapview-container">
             <div className = "map-info">
@@ -105,8 +127,10 @@ export default function MapView() {
                 <img src = "https://miro.medium.com/v2/resize:fit:1050/1*5zOJ6rjq1p5AER-3wo702A.png"/>
                 <div className="map-view-content">
                   <div className = "comment">
-                      <div className = "comment-section">
-                          <Comment/>
+                      <div className="comment-section">
+                          {comments.map((comment, index) => (
+                              <Comment key={index} comment={comment} />
+                          ))}
                       </div>
                   </div>
                     <Divider/>
@@ -115,16 +139,28 @@ export default function MapView() {
                             <div className= "comment-form">
                                 <Paper
                                     component="form"
-                                    sx={{ p: '12px 4px', display: 'flex', alignItems: 'center', width: 350}}>
+                                    sx={{
+                                        p: '20px 4px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        width: 350,
+                                        borderRadius: 2, // Ensures no rounded corners
+                                        boxShadow: 'none', // Removes box-shadow
+                                    }}>
                                     <InputBase
                                         sx={{ ml: 1, flex: 1 }}
                                         placeholder="Post a comment"
                                         inputProps={{ 'aria-label': 'Post a comment' }}
+                                        value={newCommentText}
+                                        onChange={(e) => setNewCommentText(e.target.value)}
                                     />
-                                    <Button variant="contained"
-                                            sx = {{backgroundColor: "var(--main-color)",
-                                                    '&:hover': 'var(--dark-color)'}}
-                                    >Post</Button>
+                                    <IconButton
+                                        variant="contained"
+                                        sx={{ backgroundColor: 'var(--main-color)', '&:hover': 'var(--dark-color)' }}
+                                        onClick={handleAddComment}>
+                                        <SendIcon/>
+                                    </IconButton>
+
                                 </Paper>
                             </div>
                         ) : (
