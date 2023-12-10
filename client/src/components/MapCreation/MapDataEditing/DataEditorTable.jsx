@@ -206,7 +206,6 @@ export default function DataEditorTable() {
   }, [displayedProperties]);
 
   const handleAddColumn = () => {
-    console.log('Column Name:', newColumnName);
     handleCloseModal()
     if (displayedProperties.includes(newColumnName)) {
       setShowAlert(true)
@@ -219,7 +218,6 @@ export default function DataEditorTable() {
   };
 
   const handleInputChange = (event) => {
-    console.log(event.target.value)
     setNewColumnName(event.target.value);
   };
   const handleRemoveColumn = (columnNameToDelete) => {

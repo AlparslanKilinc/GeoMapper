@@ -155,7 +155,6 @@ const mapStylesDataSlice = createSlice({
       state.alertMessage = action.payload;
     },
     setAlertSeverity: (state, action) => {
-      console.log(state.alertSeverity)
       state.alertSeverity = action.payload;
     },
     resetLabels: (state) => {

@@ -19,8 +19,6 @@ export default function MapBox({ openExportDialog }) {
   const alert = useSelector((state) => state.mapStyles.alert);
   const alertMessage = useSelector((state) => state.mapStyles.alertMessage);
   const alertSeverity = useSelector((state) => state.mapStyles.alertSeverity)
-  console.log(alertSeverity)
-  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   const buttonStyle = {
     minWidth: 0,
