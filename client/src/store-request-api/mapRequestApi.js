@@ -34,11 +34,16 @@ export const updateMapGraphicsData = (map, mapGraphicsId) =>
   api.post(`/graphics/${mapGraphicsId}`, map);
 export const updateMapStyles = (map, mapStylesId) => api.post(`/styles/${mapStylesId}`, map);
 
+export const getDrafts = () => api.get(`/drafts`);
+export const getPublishedMaps = () => api.get(`/published`);
+
 const apis = {
   createMap,
   saveMapGraphicsData,
   saveMapStylesData,
   updateMapGraphicsData,
-  updateMapStyles
+  updateMapStyles,
+  getDrafts,
+  getPublishedMaps
 };
 export default apis;
