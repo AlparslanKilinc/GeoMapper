@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import apis from '../store-request-api/mapRequestApi';
 
 const hexColorPalette = {
   lightRed: '#ff6666',
@@ -17,8 +19,36 @@ const hexColorPalette = {
   darkPink: '#ff1493'
 };
 
+export const saveMapStylesData = createAsyncThunk(
+  'mapStyles/saveMapStylesData',
+  async (_, thunkApi) => {
+    try {
+      const { legend, mapStyles } = thunkApi.getState();
+      const response = await apis.saveMapStylesData({ ...mapStyles, legend });
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMapStyles = createAsyncThunk(
+  'mapStyles/saveMapStylesData',
+  async (_, thunkApi) => {
+    try {
+      const { legend, mapStyles } = thunkApi.getState();
+      const mapStyleId = mapStyles.mapStyleId;
+      const response = await apis.updateMapStylesDataById(mapStyleId, { ...mapStyles, legend });
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
-  mapId: null, // Reference to the main Map
+  mapStylesId: null,
+  isSaving: false,
   colors: [], // Colors configurations for the symbols
   colorPalette: [
     [hexColorPalette.lightBlue, hexColorPalette.darkBlue],
@@ -147,6 +177,22 @@ const mapStylesDataSlice = createSlice({
     resetLabels: (state) => {
       state.labels = [];
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(saveMapStylesData.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(saveMapStylesData.fulfilled, (state, action) => {
+        // Handle success...
+        state.mapStylesId = action.payload;
+        state.isSaving = true;
+      })
+      .addCase(saveMapStylesData.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      });
   }
 });
 
