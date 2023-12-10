@@ -9,12 +9,12 @@ const api = axios.create({
   baseURL: baseURL
 });
 
-export const createMap = (map) => api.post(`/create`, map);
-export const saveMapGraphicsData = (map) => api.post(`/graphics/save`, map);
-export const saveMapStylesData = (map) => api.post(`/styles/save`, map);
-export const updateMapGraphicsData = (map,mapGraphicsId) => api.post(`/graphics/${mapGraphicsId}`, map);
-export const updateMapStyles = (map,mapStylesId) => api.post(`/styles/${mapStylesId}`, map);
-
+export const createMap = (map) => api.post(`/`, map);
+export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
+export const saveMapStylesData = (map) => api.post(`/styles`, map);
+export const updateMapGraphicsData = (map, mapGraphicsId) =>
+  api.post(`/graphics/${mapGraphicsId}`, map);
+export const updateMapStyles = (map, mapStylesId) => api.post(`/styles/${mapStylesId}`, map);
 
 const apis = {
   createMap,

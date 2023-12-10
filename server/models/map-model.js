@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 
 const forkedFromSchema = new mongoose.Schema({
   isForked: { type: Boolean, default: false },
-  originalMapId: { type: mongoose.Schema.Types.ObjectId, ref: 'Map' },
-  default: null
+  originalMapId: { type: mongoose.Schema.Types.ObjectId, ref: 'Map' }
 });
 
 const mapSchema = new mongoose.Schema(
@@ -16,23 +15,28 @@ const mapSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'MapStyles'
     },
-    geoDataId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Geo' 
+    geoDataId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Geo'
     },
-    authorUserName:String,
+    authorUserName: String,
     authorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
-    thumbnailUrl:{type:String,default:""},
+    thumbnailUrl: { type: String, default: '' },
     likes: { type: Number, default: 0 },
     forks: { type: Number, default: 0 },
     dateCreated: { type: Date, default: Date.now },
     description: { type: String, default: '' },
     forkedFrom: forkedFromSchema,
     tags: { type: [String], default: [] },
-    comments: { type: [commentSchema], default: [] },
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+      }
+    ],
     mapGraphicsType: { type: String, default: '' },
     publishDate: { type: Date, default: null }
   },

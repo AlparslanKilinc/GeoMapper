@@ -112,7 +112,7 @@ const geoJsonSlice = createSlice({
     geojson: {},
     isLoadingItems: true,
     isLoadingGeojson: false,
-    isSavingGeojson:false,
+    isSavingGeojson: false
   },
   reducers: {
     startLoadingGeojson: (state) => {
@@ -145,7 +145,7 @@ const geoJsonSlice = createSlice({
         state.isLoadingGeojson = true;
       })
       .addCase(fetchGeojsonById.fulfilled, (state, action) => {
-        state.geojson = action.payload.geoJSON;
+        state.geojson = action.payload;
         state.selectedGeoId = action.payload.selectedGeoId;
         state.isLoadingGeojson = false;
       })

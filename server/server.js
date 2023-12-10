@@ -28,9 +28,6 @@ app.use('/auth', authRouter);
 const apiRouter = require('./routes/api-router');
 app.use('/api', apiRouter);
 
-const mapRouter = require('./routes/map-router');
-app.use('/map', mapRouter);
-
 // Database
 const db = require('./db');
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -38,6 +35,5 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 const server = app.listen(Port, () => {
   console.log('listen on port: ', Port);
 });
-
 
 module.exports = { app, server };

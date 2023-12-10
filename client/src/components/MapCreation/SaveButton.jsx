@@ -9,23 +9,33 @@ import { Button } from '@mui/material';
 
 export default function SaveButton() {
   const geojson = useSelector((state) => state.geojson);
-  const mapMetaData = useSelector((state) => state.mapMetaData);
+  const mapMetadata = useSelector((state) => state.mapMetadata);
   const dispatch = useDispatch();
 
   const saveMapGraphics = async () => {
-    const mapGraphicsId = dispatch(saveMapGraphicsData());
+    const action = await dispatch(saveMapGraphicsData());
+    let mapGraphicsId = null;
+    if (action.meta.requestStatus === 'fulfilled') {
+      mapGraphicsId = action.payload; // Assuming the payload contains the ID
+    }
     return mapGraphicsId;
   };
   const saveMapStyles = async () => {
-    const mapStylesId = dispatch(saveMapStylesData());
+    const action = await dispatch(saveMapStylesData());
+    let mapStylesId = null;
+    if (action.meta.requestStatus === 'fulfilled') {
+      mapStylesId = action.payload; // Assuming the payload contains the ID
+    }
     return mapStylesId;
   };
 
   const saveGeojson = async () => {
     let geojsonId = geojson.selectedGeoId;
-    if (!geojsonId) {
-      geojsonId = dispatch(createGeojson());
-    }
+    // if (!geojsonId) {
+    //   geojsonId = await dispatch(createGeojson());
+    // }
+    // if the geojsonId is already present and then they are uploading a new file we clear the id if the previous map was ours
+    // if previous map was theirs then update the compressedGeojson by id
     return geojsonId;
   };
 
@@ -37,13 +47,13 @@ export default function SaveButton() {
       mapGraphicsId,
       mapStylesId,
       geojsonId,
-      ...mapMetaData
+      ...mapMetadata
     };
     dispatch(saveMap(map));
   };
 
   return (
-    <Button variant="outlined" aria-label="save"  onClick={createMap}>
+    <Button variant="outlined" aria-label="save" onClick={createMap}>
       <SaveOutlinedIcon />
     </Button>
   );

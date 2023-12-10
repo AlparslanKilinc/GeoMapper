@@ -25,7 +25,7 @@ export const saveMapStylesData = createAsyncThunk(
     try {
       const { legend, mapStyles } = thunkApi.getState();
       const response = await apis.saveMapStylesData({ ...mapStyles, legend });
-      return response.data;
+      return response.data._id;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
     }

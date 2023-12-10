@@ -1,13 +1,13 @@
-import { createSlice,createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as turf from '@turf/turf';
 import apis from '../store-request-api/mapRequestApi';
 
 export const saveMapGraphicsData = createAsyncThunk(
   'mapGraphics/saveMapGraphicsData',
-  async (mapGraphicsData, thunkApi) => {
+  async (_, thunkApi) => {
     try {
-      const response = await apis.saveMapGraphicsData(mapGraphicsData);
-      return response.data;
+      const response = await apis.saveMapGraphicsData(thunkApi.getState().mapGraphics);
+      return response.data._id;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
     }
@@ -19,7 +19,7 @@ export const updateMapGraphicsData = createAsyncThunk(
   async (_, thunkApi) => {
     try {
       const mapGraphics = thunkApi.getState().mapGraphics;
-      const response = await apis.updateMapGraphicsById(mapGraphics,mapGraphics.mapGraphicsId);
+      const response = await apis.updateMapGraphicsById(mapGraphics, mapGraphics.mapGraphicsId);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
