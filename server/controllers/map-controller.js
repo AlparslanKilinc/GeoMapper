@@ -11,7 +11,8 @@ const createMap = async (req, res) => {
     mapData.authorId = userId;
 
     // Upload the image to Google Cloud Storage
-    const imageUrl = await uploadToGoogleCloud(req.file);
+    const name = `${mapData.title}-${userId}`;
+    const imageUrl = await uploadToGoogleCloud(req.file, name);
     mapData.thumbnailUrl = imageUrl; // Add the image URL to the map data
 
     // Create and save the new map

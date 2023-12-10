@@ -3,10 +3,10 @@ const { Storage } = require('@google-cloud/storage');
 const storage = new Storage();
 const bucket = storage.bucket(process.env.GCS_BUCKET);
 
-async function uploadToGoogleCloud(file) {
+async function uploadToGoogleCloud(file, name) {
   try {
     // Specify the destination file name in the bucket
-    const destinationFileName = `uploads/${Date.now()}-${file.originalname}`;
+    const destinationFileName = `uploads/${Date.now()}-${name}-${file.originalname}`;
 
     // Create a reference to the file in the bucket
     const blob = bucket.file(destinationFileName);
@@ -27,7 +27,7 @@ async function uploadToGoogleCloud(file) {
       blobStream.end(file.buffer);
     });
   } catch (error) {
-    console.error('Error uploading to Google Cloud Storage:', error);
+    console.log('Error uploading to Google Cloud Storage:', error);
     throw error;
   }
 }

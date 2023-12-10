@@ -12,6 +12,7 @@ export default function SaveButton() {
   const geojson = useSelector((state) => state.geojson);
   const mapMetadata = useSelector((state) => state.mapMetadata);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
   const captureMapAsFile = async () => {
     const mapElement = document.getElementById('mapContainer');
@@ -74,15 +75,15 @@ export default function SaveButton() {
   };
 
   const createMap = async () => {
-    const mapGraphicsId = await saveMapGraphics();
-    const mapStylesId = await saveMapStyles();
-    const geojsonId = await saveGeojson();
+    const graphicsDataId = await saveMapGraphics();
+    const stylesDataId = await saveMapStyles();
+    const geoDataId = await saveGeojson();
     const thumbnailFile = await captureMapAsFile();
 
     const map = {
-      mapGraphicsId,
-      mapStylesId,
-      geojsonId,
+      graphicsDataId,
+      stylesDataId,
+      geoDataId,
       ...mapMetadata
     };
     dispatch(saveMap({ map, thumbnailFile }));
