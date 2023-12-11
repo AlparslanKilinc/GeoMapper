@@ -46,10 +46,6 @@ const initialState = {
   defaultLabelColor: 'white' ,
   defaultLabelSize: 12,
   defaultLabelFont: 'Outfit',
-  alert: false,
-  alertMessage:"success",
-  alertSeverity: null
-
 };
 
 const mapStylesDataSlice = createSlice({

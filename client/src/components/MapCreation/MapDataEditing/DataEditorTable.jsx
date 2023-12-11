@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Menu, MenuItem } from '@mui/material';
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AlertComponent from '../../AlertComponent.jsx'
 import {
   setRegionProperty,
   addProperty,
@@ -33,9 +34,6 @@ import {
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
-import CloseIcon from "@mui/icons-material/Close";
-import IconButton from "@mui/material/IconButton";
 
 export default function DataEditorTable() {
   const {
@@ -66,6 +64,8 @@ export default function DataEditorTable() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
   const [showAlert, setShowAlert] = useState(false)
+  const[alertMessage, setAlertMessage] = useState('')
+  const[alertSeverity, setAlertSeverity] = useState('')
   const handleCloseAlert = () => {
     setShowAlert(false);
   };
@@ -207,13 +207,23 @@ export default function DataEditorTable() {
 
   const handleAddColumn = () => {
     handleCloseModal()
+    if(newColumnName.length == 0){
+      setAlertMessage("Column name cannot be empty!")
+      setAlertSeverity("error")
+      setShowAlert(true)
+    }
     if (displayedProperties.includes(newColumnName)) {
+      setAlertMessage("Column name already exists!")
+      setAlertSeverity("error")
       setShowAlert(true)
       return;
     }
     if (newColumnName && !addedColumns.includes(newColumnName)) {
       dispatch(addColumn(newColumnName));
       dispatch(addProperty({ columnName: newColumnName, mapGraphicsType: mapGraphicsType }));
+      setAlertMessage("Column Successfully added")
+      setAlertSeverity("success")
+      setShowAlert(true)
     }
   };
 
@@ -243,13 +253,17 @@ export default function DataEditorTable() {
 
     // Check if the name is non-empty
     if (!newColumnName) {
-      alert('Column name cannot be empty.');
+      setAlertMessage("Column name cannot be empty!")
+      setAlertSeverity("error")
+      setShowAlert(true)
       return;
     }
 
     // Check if the name is unique
     if (displayedProperties.includes(newColumnName)) {
-      alert('This column name already exists. Please choose a different name.');
+      setAlertMessage("Column name already exists!")
+      setAlertSeverity("error")
+      setShowAlert(true)
       return;
     }
 
@@ -263,7 +277,9 @@ export default function DataEditorTable() {
         })
       );
     }
-
+    setAlertMessage("Column successfully added")
+    setAlertSeverity("success")
+    setShowAlert(true)
     handleClose();
   };
 
@@ -385,6 +401,14 @@ export default function DataEditorTable() {
   return (
     <div id="data-editing-page-mid">
       <div id="table-container">
+        {showAlert && (
+            <AlertComponent
+                alertSeverity = {alertSeverity}
+                alertMessage = {alertMessage}
+                autoHideDuration={2000}
+                handleCloseAlert={handleCloseAlert}
+            />
+        )}
         <div
           id="table-header-container"
           style={{
@@ -392,12 +416,6 @@ export default function DataEditorTable() {
               mapGraphicsType === 'Symbol Map' || mapGraphicsType === 'Spike Map' ? '58px' : '0px'
           }}
         >
-          {showAlert && (
-              <Alert severity="error"  autoHideDuration={5000} onClose={handleCloseAlert}>
-                Column name already exists!
-              </Alert>
-
-          )}
           <Table size="small" stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
