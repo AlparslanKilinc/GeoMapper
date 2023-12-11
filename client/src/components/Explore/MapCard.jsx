@@ -27,7 +27,17 @@ export default function MapCard({ map }) {
   const [forkForm, setForkForm] = useState(false);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
-  const { title, description, tags, author, likes, forks, thumbnailUrl, authorUserName } = map;
+  const {
+    title,
+    description,
+    tags,
+    author,
+    likes,
+    forks,
+    thumbnailUrl,
+    authorUserName,
+    publishDate
+  } = map;
   const openPopup = () => {
     setPopupOpen(true);
   };
@@ -90,6 +100,38 @@ export default function MapCard({ map }) {
     }
   };
 
+  const interactionButtons = (
+    <CardActions>
+      <IconButton>
+        {liked ? (
+          <FavoriteIcon onClick={handleLike} className="like" style={{ color: 'red' }} />
+        ) : (
+          <FavoriteBorderIcon onClick={handleLike} className="like" />
+        )}
+      </IconButton>
+
+      <IconButton>
+        <ShareIcon className="export" onClick={handleFork} />
+      </IconButton>
+
+      <IconButton>
+        <IosShareIcon className="share" onClick={handleShare} />
+      </IconButton>
+
+      <IconButton>
+        {bookmarked ? (
+          <BookmarkIcon
+            onClick={handleBookmark}
+            className="bookmarks"
+            style={{ color: '#40e0d0' }}
+          />
+        ) : (
+          <BookmarkBorderIcon onClick={handleBookmark} className="bookmarks" />
+        )}
+      </IconButton>
+    </CardActions>
+  );
+
   return (
     <div className="mapCard">
       <Card sx={{ maxWidth: 300 }}>
@@ -122,35 +164,7 @@ export default function MapCard({ map }) {
             ))}
           </div>
         </CardActionArea>
-        <CardActions>
-          <IconButton>
-            {liked ? (
-              <FavoriteIcon onClick={handleLike} className="like" style={{ color: 'red' }} />
-            ) : (
-              <FavoriteBorderIcon onClick={handleLike} className="like" />
-            )}
-          </IconButton>
-
-          <IconButton>
-            <ShareIcon className="export" onClick={handleFork} />
-          </IconButton>
-
-          <IconButton>
-            <IosShareIcon className="share" onClick={handleShare} />
-          </IconButton>
-
-          <IconButton>
-            {bookmarked ? (
-              <BookmarkIcon
-                onClick={handleBookmark}
-                className="bookmarks"
-                style={{ color: '#40e0d0' }}
-              />
-            ) : (
-              <BookmarkBorderIcon onClick={handleBookmark} className="bookmarks" />
-            )}
-          </IconButton>
-        </CardActions>
+        {publishDate && interactionButtons}
       </Card>
       {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle} />}
       {forkForm && <ForkForm open={forkForm} onClose={closeForkForm} />}
