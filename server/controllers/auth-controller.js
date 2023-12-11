@@ -1,16 +1,12 @@
 const auth = require('../auth');
 const User = require('../models/user-model.js');
 const bcrypt = require('bcryptjs');
-const { bucket } = require('../googleCloudStorage');
-const crypto = require('crypto');
-const fetch = require('node-fetch');
+const { uploadImage, isDuplicateImage, deleteFileFromGCS } = require('../imageService');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 var nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(
-  '463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com'
-);
+const client = new OAuth2Client('463254320848-cpd89v6bolf2n4gs5bcdo3g119788j37.apps.googleusercontent.com');
 
 const sendUserResponse = (res, user) => {
   return res.status(200).json({
@@ -23,7 +19,10 @@ const sendUserResponse = (res, user) => {
       bio: user.bio,
       id: user._id,
       profilePicPath: user.profilePicPath,
-      googleUserId: user.googleUserId
+      googleUserId: user.googleUserId,
+      drafts:user.draftedMaps,
+      published:user.publishedMaps,
+      bookmarks:user.bookmarkedMaps,
     },
     loggedIn: true
   });
@@ -96,7 +95,6 @@ googleLogin = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(200).json({ errorMessage: 'User already exists' });
-    console.error(error);
   }
 };
 
@@ -258,6 +256,7 @@ updatePassword = async (req, res) => {
     res.status(500).json({ errorMessage: 'Internal Server Error' });
   }
 };
+
 updateUserData = async (req, res) => {
   try {
     const userId = req.userId;
@@ -282,7 +281,6 @@ updateUserData = async (req, res) => {
 
     if (req.file) {
       const file = req.file;
-      const blob = bucket.file(file.originalname);
       const existingUser = await User.findById(userId);
       let isDuplicate = false;
 
@@ -294,23 +292,7 @@ updateUserData = async (req, res) => {
       }
 
       if (!isDuplicate) {
-        // Upload the file to Google Cloud Storage
-        const blobStream = blob.createWriteStream({
-          resumable: false
-        });
-
-        blobStream.on('error', (err) => {
-          console.error('Error in blobStream:', err);
-          throw new Error('Error uploading file');
-        });
-
-        await new Promise((resolve, reject) => {
-          blobStream.on('finish', resolve);
-          blobStream.on('error', reject);
-          blobStream.end(file.buffer);
-        });
-
-        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        const publicUrl = await uploadImage(file, file.originalname);
         updateFields.profilePicPath = publicUrl;
 
         // Delete old profile picture from GCS if it exists
@@ -330,39 +312,6 @@ updateUserData = async (req, res) => {
     console.error(err);
     return res.status(500).send({ errorMessage: 'Error updating user data' });
   }
-};
-
-async function isDuplicateImage(newFile, existingFilePath) {
-  const newFileHash = await generateFileHash(newFile.buffer);
-  const existingFileHash = await generateFileHashFromURL(existingFilePath);
-  console.log(newFileHash === existingFileHash);
-  return newFileHash === existingFileHash;
-}
-
-async function generateFileHash(buffer) {
-  const hash = crypto.createHash('md5');
-  hash.update(buffer);
-  return hash.digest('hex');
-}
-
-async function generateFileHashFromURL(url) {
-  const response = await fetch(url);
-  const buffer = await response.buffer();
-  return generateFileHash(buffer);
-}
-
-async function deleteFileFromGCS(filePath) {
-  const fileName = filePath.split('/').pop();
-  await bucket.file(fileName).delete();
-}
-const generateRandomPassword = () => {
-  const randomPassword = Math.random().toString(36).slice(-10); // Generate a random string
-  return randomPassword;
-};
-const hashPassword = async (password) => {
-  const saltRounds = 10; // Salt rounds for bcrypt
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return hashedPassword;
 };
 
 module.exports = {

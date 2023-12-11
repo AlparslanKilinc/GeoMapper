@@ -9,15 +9,17 @@ export default function Drafts() {
   const user = useSelector((state) => state.auth.user);
   const isLoadingDrafts = useSelector((state) => state.map.isLoadingDrafts);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(fetchDrafts());
   }, [user]);
+
   return (
     <div style={{ display: 'flex', gap: '1rem' }}>
       {isLoadingDrafts ? (
         <CircularProgress />
       ) : (
-        drafts.map((map) => <MapCard key={map._id} map={map} />)
+        <>{drafts ? drafts.map((map) => <MapCard key={map._id} map={map} />) : ''}</>
       )}
     </div>
   );

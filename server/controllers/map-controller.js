@@ -1,6 +1,6 @@
 const Map = require('../models/map-model'); // assuming you have a Map model
 const User = require('../models/user-model'); // assuming you have a User model
-const { uploadToGoogleCloud } = require('../googleCloudStorage');
+const { uploadImage } = require('../imageService');
 
 const createMap = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ const createMap = async (req, res) => {
 
     // Upload the image to Google Cloud Storage
     const name = `${mapData.title}-${userId}`;
-    const imageUrl = await uploadToGoogleCloud(req.file, name);
+    const imageUrl = await uploadImage(req.file, name);
     mapData.thumbnailUrl = imageUrl; // Add the image URL to the map data
 
     // Create and save the new map
