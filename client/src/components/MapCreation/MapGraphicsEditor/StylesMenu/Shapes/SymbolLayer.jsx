@@ -40,7 +40,6 @@ const SymbolLayer = () => {
   };
 
   const { min, max } = extractSizeValues(points);
-  console.log({min,max});
   dispatch(setMinProperty(min))
   dispatch(setMaxProperty(max))
 

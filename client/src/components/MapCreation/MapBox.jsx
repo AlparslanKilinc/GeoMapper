@@ -11,14 +11,12 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Typography from '@mui/material/Typography';
 import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper'
 import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
   const colors = useSelector((state) => state.mapStyles.colors);
   const title = useSelector((state) => state.mapMetadata.title);
-  const alert = useSelector((state) => state.mapStyles.alert);
-  const alertMessage = useSelector((state) => state.mapStyles.alertMessage);
-  const alertSeverity = useSelector((state) => state.mapStyles.alertSeverity)
 
   const buttonStyle = {
     minWidth: 0,
@@ -65,11 +63,6 @@ export default function MapBox({ openExportDialog }) {
         >
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
-            {alert && (
-                <Alert severity={alertSeverity} sx={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)' }}>
-                  {alertMessage}
-                </Alert>
-            )}
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
               <Button variant="outlined" aria-label="save" sx={buttonStyle}>
                 <SaveOutlinedIcon />

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import GeojsonWrapper from './GeojsonWrapper';
@@ -6,8 +6,8 @@ import SymbolLayer from '../MapGraphicsEditor/StylesMenu/Shapes/SymbolLayer';
 import DotDensityLayer from '../MapGraphicsEditor/StylesMenu/Shapes/DotDensityLayer';
 import { useMapEvents } from 'react-leaflet';
 import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
-import{setAlert, setAlertMessage, setAlertSeverity} from '../../../redux-slices/mapStylesSlice'
 import { useDispatch } from 'react-redux';
+import AlertComponent from "../../AlertComponent.jsx";
 import * as turf from '@turf/turf';
 
 const isPointInPolygon = (point, geojson) => {
@@ -34,7 +34,13 @@ const GeoJsonMap = ({ styled }) => {
   const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
   const renderSpikeLayer = mapGraphicsType === 'Spike Map' && styled;
   const renderDotDensityLayer = mapGraphicsType === 'Dot Density Map' && styled;
+  const [showAlert, setShowAlert] = useState(false)
+  const[alertMessage, setAlertMessage] = useState('')
+  const[alertSeverity, setAlertSeverity] = useState('')
 
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   // give it default propertie values extracted from a single point
   const getDefaultPointProperties = () => {
     return {
@@ -62,18 +68,18 @@ const GeoJsonMap = ({ styled }) => {
             const parts = data.display_name.split(',');
             const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`;
             dispatch(addPoint({ name: locationName, lat, lon, ...properties }));
-            dispatch(setAlert(true));
-            dispatch(setAlertSeverity('success'));
-            dispatch(setAlertMessage('Point successfully added!'));
+            setShowAlert(true);
+            setAlertSeverity('success');
+            setAlertMessage('Point successfully added!');
             setTimeout(() => {
-              dispatch(setAlert(false));
+              dispatch(setShowAlert(false));
             }, 2000);
           } else {
-            dispatch(setAlert(true));
-            dispatch(setAlertSeverity('error'));
-            dispatch(setAlertMessage('Point is out of bounds'));
+            setShowAlert(true);
+            setAlertSeverity("error")
+            setAlertMessage('Point is out of bounds')
             setTimeout(() => {
-              dispatch(setAlert(false));
+               setShowAlert(false);
             }, 2000);
           }
           // propogate the event to the map
@@ -86,13 +92,18 @@ const GeoJsonMap = ({ styled }) => {
 
   return (
       <>
-    <MapContainer
+        <MapContainer
       style={{
         flexGrow: 1,
         backgroundColor: styled ? mapBackgroundColor : 'white'
       }}
       key={mapBackgroundColor}
     >
+          {showAlert && <AlertComponent
+              handleCloseAlert={handleCloseAlert}
+              autoHideDuration={2000}
+              alertSeverity={alertSeverity}
+              alertMessage={alertMessage}/>}
       {isTilelayerVisible && styled && <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
