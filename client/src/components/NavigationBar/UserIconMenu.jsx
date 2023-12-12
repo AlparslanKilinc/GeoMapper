@@ -15,7 +15,7 @@ import { logoutUser } from '../../redux-slices/authSlice';
 import { getLoggedIn } from '../../redux-slices/authSlice';
 import '../../styles/userIconMenu.css';
 
-export default function UserIconMenu() {
+export default function UserIconMenu({openConfirmationModal, setPath}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useDispatch();
@@ -41,7 +41,15 @@ export default function UserIconMenu() {
 
   const handleMenuClick = () => {
     setAnchorEl(null);
-    navigate('/profile');
+    if(location.pathname == '/mapCreation/OutlineSelection' ||
+        location.pathname == '/mapCreation/DataEditor' ||
+        location.pathname == '/mapCreation/GraphicsEditor'){
+      setPath('/profile')
+      openConfirmationModal()
+    }
+    else{
+      navigate('/profile')
+    }
   };
 
   const handleLogout = () => {

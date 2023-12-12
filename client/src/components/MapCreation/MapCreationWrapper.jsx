@@ -66,6 +66,8 @@ export default function MapCreationWrapper() {
       navigate(-1);
     } else if (stage === 2) {
       openConfirmationModal();
+    }else{
+      navigate(-1);
     }
   };
 
@@ -131,8 +133,7 @@ export default function MapCreationWrapper() {
           </IconButton>
           <Button variant="contained"
                   onClick={handleNavigationToOutlineSelection}
-                  style = {{marginRight: '10px'}}
-          >
+                  style = {{marginRight: '10px'}}>
             Yes
           </Button>
           <Button variant="outlined" onClick={closeConfirmationModal}>
