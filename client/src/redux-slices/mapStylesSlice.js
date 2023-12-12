@@ -81,7 +81,6 @@ const mapStylesDataSlice = createSlice({
     },
     changeName: (state, action) => {
       const { oldName, newName } = action.payload;
-      console.log(oldName, newName);
       const idx = state.colors.findIndex((clrObj) => clrObj.name === oldName);
       state.colors[idx].name = newName;
     },

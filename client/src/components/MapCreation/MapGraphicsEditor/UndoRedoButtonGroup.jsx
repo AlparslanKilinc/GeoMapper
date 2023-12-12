@@ -51,7 +51,7 @@ function UndoRedoButtonGroup() {
             color: past.length > 0 ? 'primary' : 'grey',
             backgroundColor: past.length > 0 ? 'primary' : 'grey.300',
             '&:hover': {
-              backgroundColor: past.length > 0 ? 'primary.dark' : 'grey.400',
+              backgroundColor: past.length > 0 ? 'primary.dark' : 'grey.300',
             }
           }}>
           <UndoIcon />
@@ -65,7 +65,7 @@ function UndoRedoButtonGroup() {
             color: future.length > 0 ? 'primary' : 'grey',
             backgroundColor: future.length > 0 ? 'primary' : 'grey.300',
             '&:hover': {
-              backgroundColor: future.length > 0 ? 'primary.dark' : 'grey.400',
+              backgroundColor: future.length > 0 ? 'primary.dark' : 'grey.300',
             }
           }}>
           <RedoIcon />

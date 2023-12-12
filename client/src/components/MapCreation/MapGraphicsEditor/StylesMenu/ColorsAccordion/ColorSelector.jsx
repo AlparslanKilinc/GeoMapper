@@ -5,6 +5,7 @@ import { changeColorByName, changeName } from '../../../../../redux-slices/mapSt
 import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
 import DebouncedTextField from '../../../../DebouncedElement/DebouncedTextField';
 import { changeNameColor } from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color, name }) => {
   const dispatch = useDispatch();
@@ -12,6 +13,10 @@ const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color,
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
 
   let handleChange = (newColor) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeColorByName, args: [{ color: color, name }] }],
+      redoActions: [{ actionCreator: changeColorByName, args: [{ color: newColor, name }] }]
+    }));
     dispatch(changeColorByName({ color: newColor, name }));
   };
 
@@ -45,8 +50,16 @@ const ColorSelector = ({ lower, upper, disableUpper, disableLower, title, color,
 
   let colorBy = colorByRange;
   const handleNameChange = (newColorValue) => {
-    // oldColorValue, newColorValue, mapGraphicsType
-    // we should also call change
+    dispatch(addActionToPast({
+      undoActions: [
+        { actionCreator: changeName, args: [{ oldName: newColorValue, newName: name }] },
+        { actionCreator: changeNameColor, args: [{ oldColorValue: newColorValue, newColorValue: name, mapGraphicsType }] }
+      ],
+      redoActions: [
+        { actionCreator: changeName, args: [{ oldName: name, newName: newColorValue }] },
+        { actionCreator: changeNameColor, args: [{ oldColorValue: name, newColorValue: newColorValue, mapGraphicsType }] }
+      ]
+    }));
     dispatch(changeName({ oldName: name, newName: newColorValue }));
     dispatch(changeNameColor({ oldColorValue: name, newColorValue, mapGraphicsType }));
   };

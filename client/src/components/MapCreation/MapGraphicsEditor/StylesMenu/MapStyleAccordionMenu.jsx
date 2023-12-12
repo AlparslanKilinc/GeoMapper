@@ -29,24 +29,24 @@ export default function MapStyleAccordionMenu() {
 
   const handleBackgroundColorChange = (color) => {
     dispatch(addActionToPast({
-      undoAction: { actionCreator: changeBackgroundColor, args: [mapBackgroundColor] },
-      redoAction: { actionCreator: changeBackgroundColor, args: [color] }
+      undoActions: [{ actionCreator: changeBackgroundColor, args: [mapBackgroundColor] }],
+      redoActions: [{ actionCreator: changeBackgroundColor, args: [color] }]
     }));
     dispatch(changeBackgroundColor(color));
   };
 
   const handleFillColorChange = (color) => {
     dispatch(addActionToPast({
-      undoAction: { actionCreator: setFillColor, args: [fillColor] },
-      redoAction: { actionCreator: setFillColor, args: [color] }
+      undoActions: [{ actionCreator: setFillColor, args: [fillColor] }],
+      redoActions: [{ actionCreator: setFillColor, args: [color] }]
     }));
     dispatch(setFillColor(color));
   };
 
   const handleTilelayerSwitchChange = () => {
     dispatch(addActionToPast({
-      undoAction: { actionCreator: toggleTilelayerVisibility, args: [] },
-      redoAction: { actionCreator: toggleTilelayerVisibility, args: [] }
+      undoActions: [{ actionCreator: toggleTilelayerVisibility, args: [] }],
+      redoActions: [{ actionCreator: toggleTilelayerVisibility, args: [] }]
     }));
     dispatch(toggleTilelayerVisibility());
   };
