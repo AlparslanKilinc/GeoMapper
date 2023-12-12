@@ -180,7 +180,7 @@ export default function GeojsonWrapper({ isStyled }) {
   };
 
   useEffect(() => {
-    if (geojsonLayer.current) {
+    if (geoJSON && geojsonLayer.current) {
       map.fitBounds(geojsonLayer.current.getBounds());
     }
   }, [geoJSON]);

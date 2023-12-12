@@ -5,13 +5,13 @@ import { useSelector } from 'react-redux';
 import GeoJsonMap from './Map/GeoJsonMap';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Typography from '@mui/material/Typography';
 import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper'
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
+import SaveButton from './SaveButton';
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
@@ -64,9 +64,7 @@ export default function MapBox({ openExportDialog }) {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-              <Button variant="outlined" aria-label="save" sx={buttonStyle}>
-                <SaveOutlinedIcon />
-              </Button>
+              <SaveButton/>
 
               <Button variant="outlined" aria-label="publish" sx={buttonStyle}>
                 <PublishOutlinedIcon />
@@ -86,10 +84,13 @@ export default function MapBox({ openExportDialog }) {
           {geojson && (
             <>
               <UndoRedoButtonGroup />
-              <div id="mapContainer" style={{ position: 'relative', height: '100%', width: '100%', display: 'flex' }}>
+              <div
+                id="mapContainer"
+                style={{ position: 'relative', height: '100%', width: '100%', display: 'flex' }}
+              >
                 <Typography
                   className="include-from-capture"
-                  visibility='hidden'
+                  visibility="hidden"
                   sx={{
                     position: 'absolute',
                     top: '2%',
@@ -98,8 +99,9 @@ export default function MapBox({ openExportDialog }) {
                     whiteSpace: 'nowrap',
                     fontWeight: 'bold',
                     fontSize: '1.25rem',
-                    zIndex: 999,
-                  }}>
+                    zIndex: 999
+                  }}
+                >
                   {title}
                 </Typography>
                 <GeoJsonMap styled={true} />

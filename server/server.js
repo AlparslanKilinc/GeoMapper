@@ -5,7 +5,6 @@ const dotenv = require('dotenv');
 dotenv.config();
 require('./setupCloud');
 const Port = process.env.PORT;
-const User = require('./models/user-model');
 const app = express();
 
 // Middleware
@@ -28,14 +27,13 @@ app.use('/auth', authRouter);
 
 const apiRouter = require('./routes/api-router');
 app.use('/api', apiRouter);
+
 // Database
 const db = require('./db');
-const jwt = require("jsonwebtoken");
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 const server = app.listen(Port, () => {
   console.log('listen on port: ', Port);
 });
-
 
 module.exports = { app, server };

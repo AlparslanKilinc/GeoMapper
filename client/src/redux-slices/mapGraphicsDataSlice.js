@@ -1,8 +1,49 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as turf from '@turf/turf';
+import apis from '../store-request-api/mapRequestApi';
+
+export const saveMapGraphicsData = createAsyncThunk(
+  'mapGraphics/saveMapGraphicsData',
+  async (_, thunkApi) => {
+    try {
+      const response = await apis.saveMapGraphicsData(thunkApi.getState().mapGraphics);
+      return response.data._id;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMapGraphicsDataById = createAsyncThunk(
+  'mapGraphics/saveMapGraphicsDataById',
+  async (_, thunkApi) => {
+    try {
+      const mapGraphicsId = thunkApi.getState().mapGraphicsId;
+      const response = await apis.updateMapGraphicsDataById(
+        mapGraphicsId,
+        thunkApi.getState().mapGraphics
+      );
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getMapGraphicsDataById = createAsyncThunk(
+  'mapGraphics/getMapGraphicsDataById',
+  async (mapGraphicsId, thunkApi) => {
+    try {
+      const response = await apis.getMapGraphicsDataById(mapGraphicsId);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const initialState = {
-  mapId: null, // Assuming you will be using ObjectId to link it
+  mapGraphicsId: null,
   points: [],
   regions: [],
   columnTypes: {},
@@ -34,7 +75,8 @@ const initialState = {
   maxSymbolSize: 100,
   minSymbolSize: 20,
   minProperty: 0,
-  maxProperty: 0
+  maxProperty: 0,
+  isSaving: false
 };
 
 const isPointInPolygon = (point, geojson) => {
@@ -542,7 +584,11 @@ const mapGraphicsDataSlice = createSlice({
       switch (mapGraphicsType) {
         case 'Choropleth Map':
           for (let region of state.regions) {
-            if (region[state.nameByProperty] === undefined || region[state.nameByProperty] === null || region[state.nameByProperty] === '') {
+            if (
+              region[state.nameByProperty] === undefined ||
+              region[state.nameByProperty] === null ||
+              region[state.nameByProperty] === ''
+            ) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -566,7 +612,11 @@ const mapGraphicsDataSlice = createSlice({
 
         case 'Heat Map':
           for (let region of state.regions) {
-            if (region[state.nameByProperty] === undefined || region[state.nameByProperty] === null || region[state.nameByProperty] === '') {
+            if (
+              region[state.nameByProperty] === undefined ||
+              region[state.nameByProperty] === null ||
+              region[state.nameByProperty] === ''
+            ) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -593,8 +643,14 @@ const mapGraphicsDataSlice = createSlice({
             const latErrorKey = `${index}-${state.latByProperty}`;
             const lonErrorKey = `${index}-${state.lonByProperty}`;
             // Required Field Error
-            if (point[state.latByProperty] === undefined || point[state.latByProperty] === null || point[state.latByProperty] === '' ||
-            point[state.lonByProperty] === undefined || point[state.lonByProperty] === null || point[state.lonByProperty] === '') {
+            if (
+              point[state.latByProperty] === undefined ||
+              point[state.latByProperty] === null ||
+              point[state.latByProperty] === '' ||
+              point[state.lonByProperty] === undefined ||
+              point[state.lonByProperty] === null ||
+              point[state.lonByProperty] === ''
+            ) {
               message = '⚠️ Required Latitude and Longitude fields are empty.';
               hasErrors = true;
               return;
@@ -642,7 +698,11 @@ const mapGraphicsDataSlice = createSlice({
           break;
         case 'Dot Density Map':
           for (let region of state.regions) {
-            if (region[state.nameByProperty] === undefined || region[state.nameByProperty] === null || region[state.nameByProperty] === '') {
+            if (
+              region[state.nameByProperty] === undefined ||
+              region[state.nameByProperty] === null ||
+              region[state.nameByProperty] === ''
+            ) {
               message = '⚠️ Required name field is empty.';
               hasErrors = true;
               break;
@@ -668,7 +728,6 @@ const mapGraphicsDataSlice = createSlice({
     setMinSymbolSize: (state, action) => {
       state.minSymbolSize = action.payload;
     },
-
     changeNameColor: (state, action) => {
       const { oldColorValue, newColorValue, mapGraphicsType } = action.payload;
       let propList = state.regions;
@@ -705,6 +764,52 @@ const mapGraphicsDataSlice = createSlice({
         });
       }
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(saveMapGraphicsData.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(saveMapGraphicsData.fulfilled, (state, action) => {
+        // Handle success...
+        state.mapGraphicsId = action.payload;
+        state.isSaving = true;
+      })
+      .addCase(saveMapGraphicsData.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      })
+      .addCase(updateMapGraphicsDataById.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(updateMapGraphicsDataById.fulfilled, (state, action) => {
+        const newData = action.payload;
+        return {
+          ...newData,
+          isSaving: true
+        };
+      })
+      .addCase(updateMapGraphicsDataById.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      })
+      .addCase(getMapGraphicsDataById.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(getMapGraphicsDataById.fulfilled, (state, action) => {
+        const newData = action.payload;
+        return {
+          ...newData,
+          isSaving: true
+        };
+      })
+      .addCase(getMapGraphicsDataById.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      });
   }
 });
 
