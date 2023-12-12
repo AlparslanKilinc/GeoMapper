@@ -42,20 +42,32 @@ function UndoRedoButtonGroup() {
           },
         }}
       >
-        <Button onClick={handleUndo} sx={{
-          borderTopRightRadius: '50%',
-          width: '3em',
-          height: '3em',
-          color: past.length > 0 ? 'primary' : 'grey'
-        }}>
+        <Button
+          onClick={handleUndo}
+          sx={{
+            borderTopRightRadius: '50%',
+            width: '3em',
+            height: '3em',
+            color: past.length > 0 ? 'primary' : 'grey',
+            backgroundColor: past.length > 0 ? 'primary' : 'grey.300',
+            '&:hover': {
+              backgroundColor: past.length > 0 ? 'primary.dark' : 'grey.400',
+            }
+          }}>
           <UndoIcon />
         </Button>
-        <Button onClick={handleRedo} sx={{
-          borderBottomRightRadius: '50%',
-          width: '3em',
-          height: '3em',
-          color: future.length > 0 ? 'primary' : 'grey'
-        }}>
+        <Button
+          onClick={handleRedo}
+          sx={{
+            borderBottomRightRadius: '50%',
+            width: '3em',
+            height: '3em',
+            color: future.length > 0 ? 'primary' : 'grey',
+            backgroundColor: future.length > 0 ? 'primary' : 'grey.300',
+            '&:hover': {
+              backgroundColor: future.length > 0 ? 'primary.dark' : 'grey.400',
+            }
+          }}>
           <RedoIcon />
         </Button>
       </ButtonGroup>

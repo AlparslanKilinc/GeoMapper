@@ -17,7 +17,7 @@ export default function ColorsChoroAccordionMenu() {
   const { colors, opacity } = useSelector((state) => state.mapStyles);
 
   // filter propertyNames by columnTypes that are text and does not have columnValidationErrors
-  const propertySelection = propertyNames.filter( (name) => { 
+  const propertySelection = propertyNames.filter((name) => {
     return columnTypes[name] === 'text' && !columnValidationErrors[name];
   });
 
@@ -45,7 +45,6 @@ export default function ColorsChoroAccordionMenu() {
       alignItems="center"
       justifyContent="center"
       sx={{ width: '100%' }}
-      key={JSON.stringify(colors)}
     >
       <Typography variant="subtitle2">select color</Typography>
       <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
