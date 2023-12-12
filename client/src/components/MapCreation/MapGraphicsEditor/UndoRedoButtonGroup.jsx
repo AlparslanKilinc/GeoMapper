@@ -1,17 +1,23 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import Box from '@mui/material/Box';
+import { undo, redo } from '../../../redux-slices/undoRedoSlice';
 
 function UndoRedoButtonGroup() {
-  // Add your button handlers here
+  const dispatch = useDispatch();
+  const past = useSelector((state) => state.undoRedo.past);
+  const future = useSelector((state) => state.undoRedo.future);
+
   const handleUndo = () => {
-    /* Undo logic */
+    dispatch(undo());
   };
+
   const handleRedo = () => {
-    /* Redo logic */
+    dispatch(redo());
   };
 
   return (
@@ -39,14 +45,16 @@ function UndoRedoButtonGroup() {
         <Button onClick={handleUndo} sx={{
           borderTopRightRadius: '50%',
           width: '3em',
-          height: '3em'
+          height: '3em',
+          color: past.length > 0 ? 'primary' : 'grey'
         }}>
           <UndoIcon />
         </Button>
         <Button onClick={handleRedo} sx={{
           borderBottomRightRadius: '50%',
           width: '3em',
-          height: '3em'
+          height: '3em',
+          color: future.length > 0 ? 'primary' : 'grey'
         }}>
           <RedoIcon />
         </Button>

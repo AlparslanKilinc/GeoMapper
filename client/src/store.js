@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
+import { thunk } from 'redux-thunk';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './redux-slices/authSlice';
 import mapMetadataReducer from './redux-slices/mapMetadataSlice';
@@ -11,6 +12,7 @@ import exploreSearchReducer from './redux-slices/exploreSearchSlice';
 import geojsonReducer from './redux-slices/geoJSONSlice';
 import legendReducer from './redux-slices/legendSlice';
 import commentsReducer from './redux-slices/commentsSlice'
+import undoRedoReducer from './redux-slices/undoRedoSlice'
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -22,6 +24,7 @@ const rootReducer = combineReducers({
   geojson: geojsonReducer,
   legend: legendReducer,
   comments: commentsReducer,
+  undoRedo: undoRedoReducer,
 });
 
 const persistConfig = {
@@ -33,6 +36,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
+  middleware: [thunk],
   devTools: true
 });
 
