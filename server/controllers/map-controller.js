@@ -1,6 +1,6 @@
 const Map = require('../models/map-model'); // assuming you have a Map model
 const User = require('../models/user-model'); // assuming you have a User model
-const { uploadImage } = require('../imageService');
+const { uploadImage, deleteFileFromGCS } = require('../imageService');
 
 const createMap = async (req, res) => {
   try {
@@ -29,6 +29,53 @@ const createMap = async (req, res) => {
     res.status(200).json({ _id: savedMap._id, thumbnailUrl: imageUrl });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const updateMap = async (req, res) => {
+  try {
+    // Assuming 'image' is the key for the uploaded file
+    // and other map data is sent as JSON in the request body
+    const userId = req.userId;
+    const mapData = JSON.parse(req.body.map);
+    const mapId = req.params.mapId;
+
+    // get the username of the user by id
+    const { userName } = await User.findById(userId).select('userName');
+    mapData.authorUserName = userName;
+
+    // Upload the image to Google Cloud Storage
+    const name = `${mapData.title}-${userId}`;
+
+    // use DeleteFileFromGCS to delete the old image
+    await deleteFileFromGCS(mapData.thumbnailUrl);
+
+    const imageUrl = await uploadImage(req.file, name);
+    mapData.thumbnailUrl = imageUrl; // Add the image URL to the map data
+
+    // Update the map
+    const updatedMap = await Map.findByIdAndUpdate(mapId, mapData, { new: true });
+
+    res.status(200).json({ _id: updatedMap._id, thumbnailUrl: imageUrl });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getMapDataById = async (req, res) => {
+  const mapId = req.params.mapId;
+
+  try {
+    const map = await Map.findById(mapId);
+
+    if (!map) {
+      return res.status(404).send({ message: 'Map not found' });
+    }
+
+    res.status(200).send(map);
+  } catch (error) {
+    console.error('Error fetching map:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
   }
 };
 
@@ -83,5 +130,7 @@ const getAllPublishedMaps = async (req, res) => {
 module.exports = {
   createMap,
   getAllDrafts,
-  getAllPublishedMaps
+  getAllPublishedMaps,
+  getMapDataById,
+  updateMap
 };

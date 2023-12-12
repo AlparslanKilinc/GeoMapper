@@ -3,11 +3,35 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import apis from '../store-request-api/mapRequestApi';
 
 export const saveMap = createAsyncThunk(
-  'mapStyles/saveMapStylesData',
+  'mapMetadata/saveMapMetaData',
   async ({ map, thumbnailFile }, thunkApi) => {
     try {
       const response = await apis.createMap(map, thumbnailFile);
       return response.data._id;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMapMetaDataById = createAsyncThunk(
+  'mapMetadata/updateMapMetaDataById',
+  async ({ map, mapId, thumbnailFile }, thunkApi) => {
+    try {
+      const response = await apis.updateMap(map, mapId, thumbnailFile);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getMapMetaDataById = createAsyncThunk(
+  'mapMetadata/getMapMetaDataById',
+  async (mapId, thunkApi) => {
+    try {
+      const response = await apis.getMapDataById(mapId);
+      return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
     }
@@ -36,7 +60,6 @@ const metaDataSlice = createSlice({
   name: 'mapMetadata',
   initialState: mapMetadataInitialState,
   reducers: {
-    //TODO add reducers
     changeMapTitle: (state, action) => {
       state.title = action.payload;
     },
@@ -53,23 +76,40 @@ const metaDataSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(saveMap.pending, (state) => {
-        // Handle the loading state
-        // For example, set a loading flag to true
         state.isSavingMap = true;
       })
       .addCase(saveMap.fulfilled, (state, action) => {
-        // Handle the successful async action
-        // For example, update your state with the returned data
-        // action.payload will contain the response.data from your async thunk
-        // payload should be id
         state.mapId = action.payload;
         state.isSavingMap = false;
       })
       .addCase(saveMap.rejected, (state, action) => {
-        // Handle the error state
-        // For example, set an error message
-        // action.payload will contain the error response.data if rejectWithValue was used
         state.isSavingMap = false;
+      })
+      .addCase(updateMapMetaDataById.pending, (state) => {
+        state.isSavingMap = true;
+      })
+      .addCase(updateMapMetaDataById.fulfilled, (state, action) => {
+        const { map, ...mapMetadata } = action.payload;
+        return {
+          ...mapMetadata,
+          isSavingMap: false
+        };
+      })
+      .addCase(updateMapMetaDataById.rejected, (state) => {
+        state.isSavingMap = false;
+      })
+      .addCase(getMapMetaDataById.pending, (state) => {
+        state.isLoadingMap = true;
+      })
+      .addCase(getMapMetaDataById.fulfilled, (state, action) => {
+        const { map, ...mapMetadata } = action.payload;
+        return {
+          ...mapMetadata,
+          isLoadingMap: false
+        };
+      })
+      .addCase(getMapMetaDataById.rejected, (state) => {
+        state.isLoadingMap = false;
       });
   }
 });

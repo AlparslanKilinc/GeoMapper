@@ -18,9 +18,18 @@ import ForkForm from '../Explore/ForkForm.jsx';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import BookmarkIcon from '@mui/icons-material/Bookmark.js';
+import { getMapGraphicsDataById } from '../../redux-slices/mapGraphicsDataSlice.js';
+import { getMapStylesDataById } from '../../redux-slices/mapStylesSlice.js';
+import { getMapMetaDataById } from '../../redux-slices/mapMetadataSlice.js';
+import { fetchGeojsonById} from '../../redux-slices/geoJSONSlice.js';
+import {useDispatch} from 'react-redux';
+import { useNavigate} from 'react-router-dom';
 
 export default function MapCard({ map }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const user = useSelector((state) => state.auth.user);
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isShareOpen, setShareOpen] = useState(false);
   const [popUpTitle, setPopUpTitle] = useState('');
@@ -36,26 +45,26 @@ export default function MapCard({ map }) {
     forks,
     thumbnailUrl,
     authorUserName,
-    publishDate
+    publishDate,
+    _id,
+    graphicsDataId,
+    stylesDataId,
+    geoDataId,
   } = map;
-  const openPopup = () => {
-    setPopupOpen(true);
-  };
-  const openShare = () => {
-    setShareOpen(true);
-  };
-  const closeShare = () => {
-    setShareOpen(false);
-  };
-  const closePopup = () => {
-    setPopupOpen(false);
-  };
 
-  const openForkForm = () => {
-    setForkForm(true);
-  };
-  const closeForkForm = () => {
-    setForkForm(false);
+  const handleMapClick = async () => {
+    const draft = user.drafts.find((draftId) => draftId === _id);
+    if (draft) {
+      const mapGraphicsData = dispatch(getMapGraphicsDataById(graphicsDataId));
+      const mapGeoData = dispatch(fetchGeojsonById(geoDataId));
+      const mapStylesData = dispatch(getMapStylesDataById(stylesDataId));
+      const mapMetaData = dispatch(getMapMetaDataById(_id));
+      const mapData = await Promise.all([mapGraphicsData, mapGeoData, mapStylesData, mapMetaData]);
+      navigate('/mapCreation/GraphicsEditor');
+    }else{
+      // Show map view page using map's data from props
+
+    }
   };
 
   const handleTagClick = () => {
@@ -100,6 +109,27 @@ export default function MapCard({ map }) {
     }
   };
 
+  // Popup functions
+  const openPopup = () => {
+    setPopupOpen(true);
+  };
+  const openShare = () => {
+    setShareOpen(true);
+  };
+  const closeShare = () => {
+    setShareOpen(false);
+  };
+  const closePopup = () => {
+    setPopupOpen(false);
+  };
+
+  const openForkForm = () => {
+    setForkForm(true);
+  };
+  const closeForkForm = () => {
+    setForkForm(false);
+  };
+
   const interactionButtons = (
     <CardActions>
       <IconButton>
@@ -135,7 +165,7 @@ export default function MapCard({ map }) {
   return (
     <div className="mapCard">
       <Card sx={{ maxWidth: 300 }}>
-        <CardActionArea component={RouterLink} to={'/MapView'}>
+        <CardActionArea onClick={handleMapClick}>
           <CardMedia component="img" height="200" image={thumbnailUrl} alt="green iguana" />
           <CardContent>
             <Link

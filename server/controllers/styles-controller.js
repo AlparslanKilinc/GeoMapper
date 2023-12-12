@@ -1,17 +1,23 @@
 const StylesModel = require('../models/map-stylesdata-model.js');
 
 const saveMapStylesData = async (req, res) => {
-  // Logic to save map styles data
-  // save map styles data to database and return the id of the saved data
   const mapStyles = req.body;
   newPlaylist = new StylesModel(mapStyles);
   const { _id } = await newPlaylist.save();
   res.json({ _id });
 };
 
-const updateMapStyles = async (req, res) => {
-  const { mapStylesId } = req.params;
-  // Logic to update map styles
+const updateMapStylesDataById = async (req, res) => {
+  const mapStyles = req.body;
+  const mapStylesId = req.params.mapStylesId;
+  const updatedStyles = await StylesModel.findByIdAndUpdate(mapStylesId, mapStyles, { new: true });
+  res.json(updatedStyles);
 };
 
-module.exports = { saveMapStylesData, updateMapStyles };
+const getMapStylesDataById = async (req, res) => {
+  const mapStylesId = req.params.mapStylesId;
+  const mapStyles = await StylesModel.findById(mapStylesId);
+  res.json(mapStyles);
+};
+
+module.exports = { saveMapStylesData, updateMapStylesDataById, getMapStylesDataById };

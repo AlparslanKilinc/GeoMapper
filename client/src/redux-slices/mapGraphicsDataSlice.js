@@ -14,12 +14,27 @@ export const saveMapGraphicsData = createAsyncThunk(
   }
 );
 
-export const updateMapGraphicsData = createAsyncThunk(
-  'mapGraphics/saveMapGraphicsData',
+export const updateMapGraphicsDataById = createAsyncThunk(
+  'mapGraphics/saveMapGraphicsDataById',
   async (_, thunkApi) => {
     try {
-      const mapGraphics = thunkApi.getState().mapGraphics;
-      const response = await apis.updateMapGraphicsById(mapGraphics, mapGraphics.mapGraphicsId);
+      const mapGraphicsId = thunkApi.getState().mapGraphicsId;
+      const response = await apis.updateMapGraphicsDataById(
+        mapGraphicsId,
+        thunkApi.getState().mapGraphics
+      );
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getMapGraphicsDataById = createAsyncThunk(
+  'mapGraphics/getMapGraphicsDataById',
+  async (mapGraphicsId, thunkApi) => {
+    try {
+      const response = await apis.getMapGraphicsDataById(mapGraphicsId);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -28,7 +43,7 @@ export const updateMapGraphicsData = createAsyncThunk(
 );
 
 const initialState = {
-  mapGraphicsId: null, // Assuming you will be using ObjectId to link it
+  mapGraphicsId: null,
   points: [],
   regions: [],
   columnTypes: {},
@@ -762,6 +777,36 @@ const mapGraphicsDataSlice = createSlice({
         state.isSaving = true;
       })
       .addCase(saveMapGraphicsData.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      })
+      .addCase(updateMapGraphicsDataById.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(updateMapGraphicsDataById.fulfilled, (state, action) => {
+        const newData = action.payload;
+        return {
+          ...newData,
+          isSaving: true
+        };
+      })
+      .addCase(updateMapGraphicsDataById.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      })
+      .addCase(getMapGraphicsDataById.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(getMapGraphicsDataById.fulfilled, (state, action) => {
+        const newData = action.payload;
+        return {
+          ...newData,
+          isSaving: true
+        };
+      })
+      .addCase(getMapGraphicsDataById.rejected, (state) => {
         // Handle failure...
         state.isSaving = false;
       });

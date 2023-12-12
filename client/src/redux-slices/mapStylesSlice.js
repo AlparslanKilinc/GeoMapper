@@ -2,6 +2,45 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import apis from '../store-request-api/mapRequestApi';
 
+export const saveMapStylesData = createAsyncThunk(
+  'mapStyles/saveMapStylesData',
+  async (_, thunkApi) => {
+    try {
+      const { legend, mapStyles } = thunkApi.getState();
+      const response = await apis.saveMapStylesData({ ...mapStyles, legend });
+      return response.data._id;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMapStylesDataById = createAsyncThunk(
+  'mapStyles/updateMapStylesDataById',
+  async (_, thunkApi) => {
+    try {
+      const { legend, mapStyles } = thunkApi.getState();
+      const mapStyleId = mapStyles.mapStyleId;
+      const response = await apis.updateMapStylesDataById(mapStyleId, { ...mapStyles, legend });
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getMapStylesDataById = createAsyncThunk(
+  'mapStyles/getMapStylesDataById',
+  async (mapStylesId, thunkApi) => {
+    try {
+      const response = await apis.getMapStylesDataById(mapStylesId);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const hexColorPalette = {
   lightRed: '#ff6666',
   darkRed: '#8b0000',
@@ -18,33 +57,6 @@ const hexColorPalette = {
   lightPink: '#ffb6c1',
   darkPink: '#ff1493'
 };
-
-export const saveMapStylesData = createAsyncThunk(
-  'mapStyles/saveMapStylesData',
-  async (_, thunkApi) => {
-    try {
-      const { legend, mapStyles } = thunkApi.getState();
-      const response = await apis.saveMapStylesData({ ...mapStyles, legend });
-      return response.data._id;
-    } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
-    }
-  }
-);
-
-export const updateMapStyles = createAsyncThunk(
-  'mapStyles/saveMapStylesData',
-  async (_, thunkApi) => {
-    try {
-      const { legend, mapStyles } = thunkApi.getState();
-      const mapStyleId = mapStyles.mapStyleId;
-      const response = await apis.updateMapStylesDataById(mapStyleId, { ...mapStyles, legend });
-      return response.data;
-    } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
-    }
-  }
-);
 
 const initialState = {
   mapStylesId: null,
@@ -192,6 +204,33 @@ const mapStylesDataSlice = createSlice({
       .addCase(saveMapStylesData.rejected, (state) => {
         // Handle failure...
         state.isSaving = false;
+      })
+      .addCase(updateMapStylesDataById.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(updateMapStylesDataById.fulfilled, (state, action) => {
+        // Handle success...
+        state.isSaving = false;
+      })
+      .addCase(updateMapStylesDataById.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      })
+      .addCase(getMapStylesDataById.pending, (state) => {
+        // Handle pending state...
+        state.isLoading = true;
+      })
+      .addCase(getMapStylesDataById.fulfilled, (state, action) => {
+        // Handle success...
+        const { legend, ...mapStyles } = action.payload;
+        return {
+          ...mapStyles,
+          isLoading: false
+        };
+      })
+      .addCase(getMapStylesDataById.rejected, (state) => {
+        state.isLoading = false;
       });
   }
 });
