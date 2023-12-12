@@ -42,43 +42,6 @@ export const getMapGraphicsDataById = createAsyncThunk(
   }
 );
 
-const initialState = {
-  mapGraphicsId: null,
-  points: [],
-  regions: [],
-  columnTypes: {},
-  addedColumns: [],
-  nameByProperty: 'name',
-  latByProperty: 'lat',
-  lonByProperty: 'lon',
-  colorByProperty: '',
-  sizeByProperty: 'size',
-  heightByProperty: 'height',
-  fixedSymbolSize: 10,
-  fixedOpacity: 1,
-  opacityByProperty: '',
-  fixedColor: '#800080',
-  labelByProperty: '',
-  isLabelVisible: false,
-  propertyNames: [],
-  pointProperties: [],
-  selectedRegionIdx: -1,
-  columnValidationErrors: {},
-  cellValidationErrors: {},
-  randomColumnCounter: 0,
-  validationMessage:
-    '⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
-  addSymbolMode: false,
-  selectedPointKey: -1,
-  valuePerDot: 7,
-  dotDensityByProperty: [],
-  maxSymbolSize: 100,
-  minSymbolSize: 20,
-  minProperty: 0,
-  maxProperty: 0,
-  isSaving: false
-};
-
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
   let isInside = false;
@@ -162,6 +125,43 @@ const validateSingleCell = (state, rowIndex, columnName, value, mapGraphicsType,
       }
     }
   }
+};
+
+const initialState = {
+  mapGraphicsId: null,
+  points: [],
+  regions: [],
+  columnTypes: {},
+  addedColumns: [],
+  nameByProperty: 'name',
+  latByProperty: 'lat',
+  lonByProperty: 'lon',
+  colorByProperty: '',
+  sizeByProperty: 'size',
+  heightByProperty: 'height',
+  fixedSymbolSize: 10,
+  fixedOpacity: 1,
+  opacityByProperty: '',
+  fixedColor: '#800080',
+  labelByProperty: '',
+  isLabelVisible: false,
+  propertyNames: [],
+  pointProperties: [],
+  selectedRegionIdx: -1,
+  columnValidationErrors: {},
+  cellValidationErrors: {},
+  randomColumnCounter: 0,
+  validationMessage:
+    '⚠️You can set number or text columns using the menu in the column header. A red cell indicates missing data or a problem that needs to be fixed.',
+  addSymbolMode: false,
+  selectedPointKey: -1,
+  valuePerDot: 7,
+  dotDensityByProperty: [],
+  maxSymbolSize: 100,
+  minSymbolSize: 20,
+  minProperty: 0,
+  maxProperty: 0,
+  isSaving: false
 };
 
 const mapGraphicsDataSlice = createSlice({

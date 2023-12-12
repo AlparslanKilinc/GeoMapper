@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice';
 import { saveMapStylesData } from '../../redux-slices/mapStylesSlice';
 import { createGeojson } from '../../redux-slices/geoJSONSlice';
-import { saveMap } from '../../redux-slices/mapMetadataSlice';
+import { saveMap} from '../../redux-slices/mapMetadataSlice';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { Button } from '@mui/material';
 import domtoimage from 'dom-to-image';
@@ -75,6 +75,7 @@ export default function SaveButton() {
   };
 
   const createMap = async () => {
+
     const graphicsDataId = await saveMapGraphics();
     const stylesDataId = await saveMapStyles();
     const geoDataId = await saveGeojson();

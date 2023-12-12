@@ -63,7 +63,7 @@ export default function MapCard({ map }) {
       navigate('/mapCreation/GraphicsEditor');
     }else{
       // Show map view page using map's data from props
-
+      console.log('map not in drafts');
     }
   };
 

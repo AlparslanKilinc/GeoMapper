@@ -104,27 +104,26 @@ export const createGeojson = createAsyncThunk(
   }
 );
 
+const initialState = {
+  items: [],
+  selectedGeoId: '',
+  geojson: {},
+  isLoadingItems: true,
+  isLoadingGeojson: false,
+  isSavingGeojson: false
+};
+
 const geoJsonSlice = createSlice({
   name: 'geojson',
-  initialState: {
-    items: [],
-    selectedGeoId: '',
-    geojson: {},
-    isLoadingItems: true,
-    isLoadingGeojson: false,
-    isSavingGeojson: false
-  },
+  initialState,
   reducers: {
+    resetGeoJsonData: () => initialState,
     startLoadingGeojson: (state) => {
       state.isLoadingGeojson = true;
     },
     stopLoadingGeojson: (state) => {
       state.isLoadingGeojson = false;
     },
-    clearGeojson: (state) => {
-      state.geojson = {};
-    },
-
     setSelectedGeoId: (state, action) => {
       state.selectedGeoId = action.payload;
     }
@@ -182,6 +181,6 @@ const geoJsonSlice = createSlice({
   }
 });
 
-export const { startLoadingGeojson, stopLoadingGeojson, clearGeojson, setSelectedGeoId } =
+export const { startLoadingGeojson, stopLoadingGeojson, resetGeoJsonData, setSelectedGeoId } =
   geoJsonSlice.actions;
 export default geoJsonSlice.reducer;
