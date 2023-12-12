@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import GeojsonWrapper from './GeojsonWrapper';
@@ -7,6 +7,7 @@ import DotDensityLayer from '../MapGraphicsEditor/StylesMenu/Shapes/DotDensityLa
 import { useMapEvents } from 'react-leaflet';
 import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
+import AlertComponent from "../../AlertComponent.jsx";
 import * as turf from '@turf/turf';
 import axios from 'axios';
 
@@ -33,7 +34,13 @@ const GeoJsonMap = ({ styled }) => {
   const renderSymbolLayer = mapGraphicsType === 'Symbol Map' && styled;
   const renderSpikeLayer = mapGraphicsType === 'Spike Map' && styled;
   const renderDotDensityLayer = mapGraphicsType === 'Dot Density Map' && styled;
+  const [showAlert, setShowAlert] = useState(false)
+  const[alertMessage, setAlertMessage] = useState('')
+  const[alertSeverity, setAlertSeverity] = useState('')
 
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   // give it default propertie values extracted from a single point
   const getDefaultPointProperties = () => {
     return {
@@ -50,30 +57,42 @@ const GeoJsonMap = ({ styled }) => {
 
     const map = useMapEvents({
       click: async (e) => {
-        console.log(e);
-        if (addSymbolMode) {
+          if (addSymbolMode) {
           const [lat, lon] = [e.latlng.lat, e.latlng.lng];
-          console.log([lat, lon]);
           if (isPointInPolygon({ lat, lon }, geojson)) {
             const properties = getDefaultPointProperties();
             const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
             );
             const data = await response.json();
-            const parts = data.display_name.split(','); // Split the display name by commas
-            const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`; // Combine city and country
+            const parts = data.display_name.split(',');
+            const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`;
             dispatch(addPoint({ name: locationName, lat, lon, ...properties }));
-          } else alert('POINT OUTSIDE');
+            setShowAlert(true);
+            setAlertSeverity('success');
+            setAlertMessage('Point successfully added!');
+            setTimeout(() => {
+              dispatch(setShowAlert(false));
+            }, 2000);
+          } else {
+            setShowAlert(true);
+            setAlertSeverity("error")
+            setAlertMessage('Point is out of bounds')
+            setTimeout(() => {
+               setShowAlert(false);
+            }, 2000);
+          }
+          // propogate the event to the map
         }
-
-        // propogate the event to the map
       }
     });
+        
     return null;
   };
 
   return (
-    <MapContainer
+      <>
+        <MapContainer
       style={{
         flexGrow: 1,
         backgroundColor: styled ? mapBackgroundColor : 'white'
@@ -82,18 +101,30 @@ const GeoJsonMap = ({ styled }) => {
       zoom={5}
       center={[44.3148, -85.6024]}
     >
-      {isTilelayerVisible && styled && (
+           {showAlert && <AlertComponent
+              handleCloseAlert={handleCloseAlert}
+              autoHideDuration={2000}
+              alertSeverity={alertSeverity}
+              alertMessage={alertMessage}/>}
+      {isTilelayerVisible && styled && <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />}
+         {isTilelayerVisible && styled && (
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
       )}
+
       <GeojsonWrapper isStyled={styled} />
       {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
       {renderDotDensityLayer && <DotDensityLayer />}
 
       {(renderSymbolLayer || renderSpikeLayer) && <EventHandlerLayer />}
     </MapContainer>
+</>
+
   );
 };
 

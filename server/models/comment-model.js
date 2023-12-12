@@ -1,4 +1,7 @@
-const mongoose = require('mongoose');
+
+const mongoose = require("mongoose");;
+const {schema: mapSchema} = require("./map-model");
+
 
 const commentSchema = new mongoose.Schema({
   mapId: {
@@ -20,11 +23,13 @@ const commentSchema = new mongoose.Schema({
       replierName: { type: String, required: true },
       replierId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-      }
+        ref: mapSchema,
+        required: true,
+    },
+      
     }
   ],
   is_reply: { type: Boolean, required: true, default: false }
+
 });
 module.exports = mongoose.model('Comment', commentSchema);

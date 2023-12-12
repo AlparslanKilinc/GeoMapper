@@ -13,6 +13,11 @@
     display:flex;
     margin-bottom: 20px;
 }
+.comment-text{
+    wordBreak: break-all;
+    whiteSpace: pre-line;
+    overflowWrap: break-word;
+}
 
 .username{
     font-weight: bold;

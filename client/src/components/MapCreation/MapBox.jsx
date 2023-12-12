@@ -8,7 +8,9 @@ import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Typography from '@mui/material/Typography';
-import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper';
+import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper'
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 import SaveButton from './SaveButton';
 
 export default function MapBox({ openExportDialog }) {

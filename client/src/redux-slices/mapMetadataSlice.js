@@ -60,6 +60,7 @@ const metaDataSlice = createSlice({
   name: 'mapMetadata',
   initialState: mapMetadataInitialState,
   reducers: {
+    resetMapMetaData: () => initialState,
     changeMapTitle: (state, action) => {
       state.title = action.payload;
     },
@@ -114,5 +115,5 @@ const metaDataSlice = createSlice({
   }
 });
 
-export const { changeMapTitle, changeMapDescription, setMapGraphicsType } = metaDataSlice.actions;
+export const { changeMapTitle, changeMapDescription, setMapGraphicsType, resetMapMetaData } = metaDataSlice.actions;
 export default metaDataSlice.reducer;
