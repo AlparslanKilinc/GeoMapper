@@ -14,6 +14,7 @@ import {
   toggleTilelayerVisibility,
   setFillColor
 } from '../../../../redux-slices/mapStylesSlice';
+import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 import SubMenuTitle from '../SubMenuTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
@@ -27,13 +28,26 @@ export default function MapStyleAccordionMenu() {
   );
 
   const handleBackgroundColorChange = (color) => {
+    dispatch(addActionToPast({
+      undoAction: { actionCreator: changeBackgroundColor, args: [mapBackgroundColor] },
+      redoAction: { actionCreator: changeBackgroundColor, args: [color] }
+    }));
     dispatch(changeBackgroundColor(color));
   };
+
   const handleFillColorChange = (color) => {
+    dispatch(addActionToPast({
+      undoAction: { actionCreator: setFillColor, args: [fillColor] },
+      redoAction: { actionCreator: setFillColor, args: [color] }
+    }));
     dispatch(setFillColor(color));
   };
 
   const handleTilelayerSwitchChange = () => {
+    dispatch(addActionToPast({
+      undoAction: { actionCreator: toggleTilelayerVisibility, args: [] },
+      redoAction: { actionCreator: toggleTilelayerVisibility, args: [] }
+    }));
     dispatch(toggleTilelayerVisibility());
   };
 
