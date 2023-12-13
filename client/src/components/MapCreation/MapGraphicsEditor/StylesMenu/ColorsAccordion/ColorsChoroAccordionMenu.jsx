@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { changeColorByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import { changeColorByName, setOpacity } from '../../../../../redux-slices/mapStylesSlice';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 import Box from '@mui/material/Box';
 import ColorSelector from './ColorSelector';
 import SubMenuTitle from '../../SubMenuTitle';
@@ -28,10 +29,18 @@ export default function ColorsChoroAccordionMenu() {
   };
 
   const handleColorByPropertyChange = (event, newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeColorByProperty, args: [colorByProperty] }],
+      redoActions: [{ actionCreator: changeColorByProperty, args: [newValue] }]
+    }));
     dispatch(changeColorByProperty(newValue));
   };
 
   const handleChangeOpacity = (newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setOpacity, args: [opacity] }],
+      redoActions: [{ actionCreator: setOpacity, args: [newValue] }]
+    }));
     dispatch(setOpacity(newValue));
   };
 
