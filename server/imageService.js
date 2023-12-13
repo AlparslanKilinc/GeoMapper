@@ -7,7 +7,8 @@ const bucket = storage.bucket(process.env.GCS_BUCKET);
 
 async function uploadImage(file, name) {
   try {
-    const destinationFileName = `uploads/${name}`;
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const destinationFileName = `uploads/${name}-${uniqueSuffix}`;
 
     // Create a reference to the file in the bucket
     const blob = bucket.file(destinationFileName);

@@ -38,9 +38,8 @@ const createGeojson = async (req, res) => {
       isPrivate: isPrivate === 'true', // Convert string to boolean
       name: name
     });
-    const id = newGeoJSON._id.toString();
     await newGeoJSON.save();
-    res.status(201).json({ message: 'GeoJSON created successfully', id });
+    res.status(201).json({ message: 'GeoJSON created successfully', id: newGeoJSON._id });
   } catch (error) {
     res.status(500).send({ message: 'Error creating GeoJSON', error: error.message });
   }
@@ -70,12 +69,12 @@ const deleteGeojsonById = async (req, res) => {
 
     if (geojson.isPrivate) {
       await Geo.findByIdAndDelete(id);
-      return res.status(200).send({ message: 'GeoJSON deleted successfully' });
+      return res.status(200).json({ message: 'GeoJSON deleted successfully' });
     }
 
-    return res.status(403).send({ message: 'GeoJSON is not private' });
+    return res.status(200).json({ message: 'GeoJSON is not private' });
   } catch (error) {
-    res.status(500).send({ message: 'Error deleting GeoJSON' });
+    res.status(500).json({ message: 'Error deleting GeoJSON' });
   }
 };
 

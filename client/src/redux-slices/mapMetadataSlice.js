@@ -72,7 +72,10 @@ const metaDataSlice = createSlice({
       return {
         ...mapMetadataInitialState, 
         mapId: state.mapId, 
-        mapGraphicsType: state.mapGraphicsType 
+        mapGraphicsType: state.mapGraphicsType,
+        graphicsDataId: state.graphicsDataId,
+        stylesDataId: state.stylesDataId,
+        geoDataId: state.geoDataId,
       };
     },
     changeMapTitle: (state, action) => {

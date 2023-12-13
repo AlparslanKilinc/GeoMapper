@@ -94,7 +94,7 @@ export default function NavBar() {
 
   const handleNavigate = () => {
     closeConfirmationModal();
-    dispatch(deleteGeojsonById());
+    // dispatch(deleteGeojsonById());
     dispatch(resetMapGraphicsData());
     dispatch(resetMapStylesData());
     dispatch(resetMapMetaData());

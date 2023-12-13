@@ -48,8 +48,7 @@ export const fetchGeojsonById = createAsyncThunk(
       thunkApi.dispatch(setChoroplethData({ regions, propertyNames, columnTypes }));
       return { geoJSON: geojson, selectedGeoId: id };
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -68,13 +67,17 @@ export const fetchGeojson = createAsyncThunk(
 
 export const deleteGeojsonById = createAsyncThunk(
   'geojson/deleteGeojsonById',
-  async (thunkApi, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
-      const id = thunkApi.getState().geojson.selectedGeoId;
+      const id = getState().geojson.selectedGeoId;
       const response = await apis.deleteGeojsonById(id);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      } else {
+        return rejectWithValue({ message: 'An error occurred. Please try again.' });
+      }
     }
   }
 );
@@ -194,11 +197,13 @@ const geoJsonSlice = createSlice({
         state.isLoadingItems = true;
       })
       .addCase(deleteGeojsonById.fulfilled, (state) => {
-        return {
-          initialState
-        };
+        state.selectedGeoId = null;
+        state.geojson = {};
+        state.isLoadingItems = false;
       })
       .addCase(deleteGeojsonById.rejected, (state) => {
+        state.selectedGeoId = null;
+        state.geojson = {};
         state.isLoadingItems = false;
       });
   }

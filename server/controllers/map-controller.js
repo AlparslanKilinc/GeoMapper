@@ -8,7 +8,7 @@ const createMap = async (req, res) => {
     // and other map data is sent as JSON in the request body
     const userId = req.userId;
     const mapData = JSON.parse(req.body.map);
-    const mapGraphicsId = mapData.mapGraphicsId;
+    const mapGraphicsId = mapData.graphicsDataId;
     mapData.authorId = userId;
 
     // get the username of the user by id
@@ -39,7 +39,6 @@ const updateMap = async (req, res) => {
     const userId = req.userId;
     const mapData = JSON.parse(req.body.map);
     const mapId = req.params.mapId;
-    const mapGraphicsId = mapData.mapGraphicsId;
 
     // Fetch the existing map
     const existingMap = await Map.findById(mapId);
@@ -59,12 +58,11 @@ const updateMap = async (req, res) => {
       }
 
       // Upload the new image
-      const name = `$${mapData.title}-${mapGraphicsId}-${userId}`;
+      const name = `${mapData.title}-${mapId}-${userId}`;
       imageUrl = await uploadImage(req.file, name);
       mapData.thumbnailUrl = imageUrl; // Add the new image URL to the map data
     }
 
-    // Update the map (excluding _id and the image if not updated)
     const update = { ...mapData };
     delete update._id;
 

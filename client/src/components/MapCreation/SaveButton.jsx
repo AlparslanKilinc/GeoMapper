@@ -72,7 +72,6 @@ export default function SaveButton() {
     if (!geojsonId) {
       let action = await dispatch(createGeojson());
       if (action.meta.requestStatus === 'fulfilled') {
-        console.log(action.payload);
         geojsonId = action.payload.id; // Assuming the payload contains the ID
       }
     }
@@ -84,17 +83,13 @@ export default function SaveButton() {
     const stylesDataId = await saveMapStyles();
     const geoDataId = await saveGeojson();
     const thumbnailFile = await captureMapAsFile();
-    console.log(geoDataId);
     dispatch(updateDataIds({ graphicsDataId, stylesDataId, geoDataId }));
     dispatch(saveMap({ thumbnailFile }));
   };
 
-  const updateGeoJson = async () => {
-    //
-  };
-
   const updateMapData = async () => {
     const thumbnailFile = await captureMapAsFile();
+    const updateGeojson = dispatch(updateDataIds({ geoDataId: geojson.selectedGeoId }));
     const mapStylesData = dispatch(updateMapStylesDataById(mapMetadata.stylesDataId));
     const mapGraphicsData = dispatch(updateMapGraphicsDataById(mapMetadata.graphicsDataId));
     const mapMetaData = dispatch(updateMapMetaDataById(thumbnailFile));
