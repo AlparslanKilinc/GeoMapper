@@ -17,6 +17,7 @@ import { Menu, MenuItem } from '@mui/material';
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AlertComponent from '../../AlertComponent.jsx';
+
 import {
   setRegionProperty,
   addProperty,
@@ -43,6 +44,7 @@ import {
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+
 export default function DataEditorTable() {
   const {
     addedColumns,
@@ -253,6 +255,7 @@ export default function DataEditorTable() {
       setAlertMessage('Column Successfully added');
       setAlertSeverity('success');
       setShowAlert(true);
+
     }
   };
 
@@ -286,6 +289,7 @@ export default function DataEditorTable() {
       setAlertMessage('Column name cannot be empty!');
       setAlertSeverity('error');
       setShowAlert(true);
+
       return;
     }
 
@@ -294,6 +298,7 @@ export default function DataEditorTable() {
       setAlertMessage('Column name already exists!');
       setAlertSeverity('error');
       setShowAlert(true);
+
       return;
     }
 

@@ -12,6 +12,7 @@ import geojsonReducer from './redux-slices/geoJSONSlice';
 import legendReducer from './redux-slices/legendSlice';
 import commentsReducer from './redux-slices/commentsSlice';
 
+
 const rootReducer = combineReducers({
   auth: authReducer,
   mapMetadata: mapMetadataReducer,

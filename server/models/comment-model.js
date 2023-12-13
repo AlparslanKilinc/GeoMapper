@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");;
 const {schema: mapSchema} = require("./map-model");
 

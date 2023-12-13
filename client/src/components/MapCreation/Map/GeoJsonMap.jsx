@@ -86,7 +86,6 @@ const GeoJsonMap = ({ styled }) => {
         }
       }
     });
-        
     return null;
   };
 
