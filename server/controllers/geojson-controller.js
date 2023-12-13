@@ -1,8 +1,8 @@
 const Geo = require('../models/geojson-model.js');
 
 const getGeojsonIdNamePairs = async (req, res) => {
-  const geojson = await Geo.find({}, '_id name').sort('name');
-  // send the geojson documents back to the client
+  const geojson = await Geo.find({ isPrivate: false }, '_id name').sort('name');
+
   res.json(geojson);
 };
 
@@ -38,9 +38,9 @@ const createGeojson = async (req, res) => {
       isPrivate: isPrivate === 'true', // Convert string to boolean
       name: name
     });
-
+    const id = newGeoJSON._id.toString();
     await newGeoJSON.save();
-    res.status(201).send({ message: 'GeoJSON created successfully', id: newGeoJSON._id });
+    res.status(201).json({ message: 'GeoJSON created successfully', id });
   } catch (error) {
     res.status(500).send({ message: 'Error creating GeoJSON', error: error.message });
   }
@@ -59,4 +59,30 @@ const searchGeojson = async (req, res) => {
   }
 };
 
-module.exports = { getGeojsonById, getGeojsonIdNamePairs, createGeojson, searchGeojson };
+const deleteGeojsonById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const geojson = await Geo.findById(id);
+
+    if (!geojson) {
+      return res.status(404).send({ message: 'GeoJSON not found' });
+    }
+
+    if (geojson.isPrivate) {
+      await Geo.findByIdAndDelete(id);
+      return res.status(200).send({ message: 'GeoJSON deleted successfully' });
+    }
+
+    return res.status(403).send({ message: 'GeoJSON is not private' });
+  } catch (error) {
+    res.status(500).send({ message: 'Error deleting GeoJSON' });
+  }
+};
+
+module.exports = {
+  getGeojsonById,
+  getGeojsonIdNamePairs,
+  createGeojson,
+  searchGeojson,
+  deleteGeojsonById
+};

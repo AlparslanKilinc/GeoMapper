@@ -15,12 +15,18 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ChangePassword from './components/AuthPages/ChangePassword';
 import ForgotPassword from './components/AuthPages/ForgotPassword';
 import SetNewPassword from './components/AuthPages/SetNewPassword';
-import React from 'react';
-import { PersistGate } from 'redux-persist/integration/react';
-import { Provider } from 'react-redux';
-import { store, persistor } from './store';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { getLoggedIn } from './redux-slices/authSlice';
+import { store } from './store';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getLoggedIn());
+  }, [dispatch]);
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -83,32 +89,28 @@ function App() {
   });
 
   return (
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <PersistGate loading={null} persistor={persistor}>
-          <Router>
-            <NavBar />
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/explore" element={<ExplorePage />} />
-              <Route path="/mapCreation" element={<MapCreationWrapper />}>
-                <Route index element={<TemplateSelection />} />
-                <Route path="OutlineSelection" element={<OutlineSelectionPage />} />
-                <Route path="DataEditor" element={<MapDataEditor />} />
-                <Route path="GraphicsEditor" element={<MapGraphicsEditor />} />
-              </Route>
-              <Route path="/mapView" element={<MapView />} />
-              <Route path="/changePassword" element={<ChangePassword />} />
-              <Route path="/forgotPassword" element={<ForgotPassword />} />
-              <Route path="/setNewPassword" element={<SetNewPassword />} />
-            </Routes>
-          </Router>
-        </PersistGate>
-      </ThemeProvider>
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/mapCreation" element={<MapCreationWrapper />}>
+            <Route index element={<TemplateSelection />} />
+            <Route path="OutlineSelection" element={<OutlineSelectionPage />} />
+            <Route path="DataEditor" element={<MapDataEditor />} />
+            <Route path="GraphicsEditor" element={<MapGraphicsEditor />} />
+          </Route>
+          <Route path="/mapView" element={<MapView />} />
+          <Route path="/changePassword" element={<ChangePassword />} />
+          <Route path="/forgotPassword" element={<ForgotPassword />} />
+          <Route path="/setNewPassword" element={<SetNewPassword />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 export default App;

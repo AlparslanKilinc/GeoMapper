@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../auth');
 const StylesController = require('../controllers/styles-controller.js');
 
-router.post('/',StylesController.saveMapStylesData);
-router.put('/:mapStylesId',StylesController.updateMapStylesDataById);
-router.get('/:mapStylesId',StylesController.getMapStylesDataById);
+router.post('/', auth.verify, StylesController.saveMapStylesData);
+router.put('/:mapStylesId',auth.verify, StylesController.updateMapStylesDataById);
+router.get('/:mapStylesId',auth.verify, StylesController.getMapStylesDataById);
 
 module.exports = router;

@@ -32,7 +32,6 @@ export const createGeojson = (compressedGeoJSON, ownerId, isPrivate, name) => {
     headers: {
       'Content-Type': 'application/octet-stream'
     },
-    responseType: 'arraybuffer'
   };
 
   return api.post(baseURL, compressedGeoJSON, config);

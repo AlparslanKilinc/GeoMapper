@@ -1,9 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice';
-import { saveMapStylesData } from '../../redux-slices/mapStylesSlice';
+import {
+  saveMapGraphicsData,
+  updateMapGraphicsDataById
+} from '../../redux-slices/mapGraphicsDataSlice';
+import { saveMapStylesData, updateMapStylesDataById } from '../../redux-slices/mapStylesSlice';
+import { saveMap, updateMapMetaDataById, updateDataIds } from '../../redux-slices/mapMetadataSlice';
 import { createGeojson } from '../../redux-slices/geoJSONSlice';
-import { saveMap} from '../../redux-slices/mapMetadataSlice';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { Button } from '@mui/material';
 import domtoimage from 'dom-to-image';
@@ -12,7 +15,6 @@ export default function SaveButton() {
   const geojson = useSelector((state) => state.geojson);
   const mapMetadata = useSelector((state) => state.mapMetadata);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
 
   const captureMapAsFile = async () => {
     const mapElement = document.getElementById('mapContainer');
@@ -66,32 +68,49 @@ export default function SaveButton() {
 
   const saveGeojson = async () => {
     let geojsonId = geojson.selectedGeoId;
-    // if (!geojsonId) {
-    //   geojsonId = await dispatch(createGeojson());
-    // }
-    // if the geojsonId is already present and then they are uploading a new file we clear the id if the previous map was ours
-    // if previous map was theirs then update the compressedGeojson by id
+    console.log(geojsonId);
+    if (!geojsonId) {
+      let action = await dispatch(createGeojson());
+      if (action.meta.requestStatus === 'fulfilled') {
+        console.log(action.payload);
+        geojsonId = action.payload.id; // Assuming the payload contains the ID
+      }
+    }
     return geojsonId;
   };
 
-  const createMap = async () => {
-
+  const createMapData = async () => {
     const graphicsDataId = await saveMapGraphics();
     const stylesDataId = await saveMapStyles();
     const geoDataId = await saveGeojson();
     const thumbnailFile = await captureMapAsFile();
+    console.log(geoDataId);
+    dispatch(updateDataIds({ graphicsDataId, stylesDataId, geoDataId }));
+    dispatch(saveMap({ thumbnailFile }));
+  };
 
-    const map = {
-      graphicsDataId,
-      stylesDataId,
-      geoDataId,
-      ...mapMetadata
-    };
-    dispatch(saveMap({ map, thumbnailFile }));
+  const updateGeoJson = async () => {
+    //
+  };
+
+  const updateMapData = async () => {
+    const thumbnailFile = await captureMapAsFile();
+    const mapStylesData = dispatch(updateMapStylesDataById(mapMetadata.stylesDataId));
+    const mapGraphicsData = dispatch(updateMapGraphicsDataById(mapMetadata.graphicsDataId));
+    const mapMetaData = dispatch(updateMapMetaDataById(thumbnailFile));
+    const mapData = await Promise.all([mapGraphicsData, mapStylesData, mapMetaData]);
+  };
+
+  const saveMapData = async () => {
+    if (mapMetadata.mapId) {
+      await updateMapData();
+    } else {
+      await createMapData();
+    }
   };
 
   return (
-    <Button variant="outlined" aria-label="save" onClick={createMap}>
+    <Button variant="outlined" aria-label="save" onClick={saveMapData}>
       <SaveOutlinedIcon />
     </Button>
   );

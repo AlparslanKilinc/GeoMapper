@@ -4,8 +4,9 @@ import apis from '../store-request-api/mapRequestApi';
 
 export const saveMap = createAsyncThunk(
   'mapMetadata/saveMapMetaData',
-  async ({ map, thumbnailFile }, thunkApi) => {
+  async ({ thumbnailFile }, thunkApi) => {
     try {
+      const map = thunkApi.getState().mapMetadata;
       const response = await apis.createMap(map, thumbnailFile);
       return response.data._id;
     } catch (error) {
@@ -16,9 +17,10 @@ export const saveMap = createAsyncThunk(
 
 export const updateMapMetaDataById = createAsyncThunk(
   'mapMetadata/updateMapMetaDataById',
-  async ({ map, mapId, thumbnailFile }, thunkApi) => {
+  async (thumbnailFile, thunkApi) => {
     try {
-      const response = await apis.updateMap(map, mapId, thumbnailFile);
+      const mapMetaData = thunkApi.getState().mapMetadata;
+      const response = await apis.updateMap(mapMetaData, thumbnailFile);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -31,6 +33,7 @@ export const getMapMetaDataById = createAsyncThunk(
   async (mapId, thunkApi) => {
     try {
       const response = await apis.getMapDataById(mapId);
+      console.log('response.data', response.data);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -41,10 +44,15 @@ export const getMapMetaDataById = createAsyncThunk(
 // Map Metadata Slice
 const mapMetadataInitialState = {
   mapId: null,
+  graphicsDataId: null,
+  stylesDataId: null,
+  geoDataId: null,
+  authorUserName: '',
+  authorId: null,
+  title: '',
   thumbnailUrl: '',
   likes: 0,
   forks: 0,
-  author: { id: null, username: '' },
   dateCreated: null,
   description: '',
   forkedFrom: { isForked: false, originalMapId: null },
@@ -52,7 +60,6 @@ const mapMetadataInitialState = {
   comments: [],
   mapGraphicsType: '',
   publishDate: null,
-  title: '',
   isSavingMap: false
 };
 
@@ -61,6 +68,13 @@ const metaDataSlice = createSlice({
   initialState: mapMetadataInitialState,
   reducers: {
     resetMapMetaData: () => mapMetadataInitialState,
+    resetMapMetaDataFromDraft: (state, action) => {
+      return {
+        ...mapMetadataInitialState, 
+        mapId: state.mapId, 
+        mapGraphicsType: state.mapGraphicsType 
+      };
+    },
     changeMapTitle: (state, action) => {
       state.title = action.payload;
     },
@@ -72,6 +86,11 @@ const metaDataSlice = createSlice({
     },
     setThumbnailUrl: (state, action) => {
       state.thumbnailUrl = action.payload;
+    },
+    updateDataIds: (state, action) => {
+      state.graphicsDataId = action.payload.graphicsDataId;
+      state.stylesDataId = action.payload.stylesDataId;
+      state.geoDataId = action.payload.geoDataId;
     }
   },
   extraReducers: (builder) => {
@@ -90,9 +109,10 @@ const metaDataSlice = createSlice({
         state.isSavingMap = true;
       })
       .addCase(updateMapMetaDataById.fulfilled, (state, action) => {
-        const { map, ...mapMetadata } = action.payload;
+        const { ...mapMetadata } = action.payload;
         return {
           ...mapMetadata,
+          mapId: mapMetadata._id,
           isSavingMap: false
         };
       })
@@ -103,10 +123,12 @@ const metaDataSlice = createSlice({
         state.isLoadingMap = true;
       })
       .addCase(getMapMetaDataById.fulfilled, (state, action) => {
-        const { map, ...mapMetadata } = action.payload;
+        const { ...mapMetadata } = action.payload;
+
         return {
           ...mapMetadata,
-          isLoadingMap: false
+          isLoadingMap: false,
+          mapId: mapMetadata._id
         };
       })
       .addCase(getMapMetaDataById.rejected, (state) => {
@@ -115,6 +137,12 @@ const metaDataSlice = createSlice({
   }
 });
 
-export const { changeMapTitle, changeMapDescription, setMapGraphicsType, resetMapMetaData } =
-  metaDataSlice.actions;
+export const {
+  changeMapTitle,
+  changeMapDescription,
+  setMapGraphicsType,
+  resetMapMetaData,
+  updateDataIds,
+  resetMapMetaDataFromDraft
+} = metaDataSlice.actions;
 export default metaDataSlice.reducer;

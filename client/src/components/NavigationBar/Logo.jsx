@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function Logo({ setPath, openConfirmationModal }) {
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
   const navigate = useNavigate();
   const handleLogoClick = () => {
     if (
@@ -13,17 +12,9 @@ export default function Logo({ setPath, openConfirmationModal }) {
       location.pathname == '/mapCreation/GraphicsEditor'
     ) {
       openConfirmationModal();
-      if (loggedIn) {
-        setPath('/profile');
-      } else {
-        setPath('/');
-      }
+      setPath('/');
     } else {
-      if (loggedIn) {
-        navigate('/profile');
-      } else {
-        navigate('/');
-      }
+      navigate('/');
     }
   };
 

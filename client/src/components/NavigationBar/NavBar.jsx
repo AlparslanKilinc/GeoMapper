@@ -16,7 +16,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close.js';
 import Button from '@mui/material/Button';
-import { resetGeoJsonData } from '../../redux-slices/geoJSONSlice.js';
+import { deleteGeojsonById } from '../../redux-slices/geoJSONSlice.js';
 import { resetMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice.js';
 import { resetMapStylesData } from '../../redux-slices/mapStylesSlice.js';
 import { resetMapMetaData } from '../../redux-slices/mapMetadataSlice.js';
@@ -57,6 +57,7 @@ export default function NavBar() {
   const isExplorePage = location.pathname == '/explore';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [path, setPath] = useState('');
+  const mapId = useSelector((state) => state.mapMetadata.mapId);
 
   const openConfirmationModal = () => {
     setIsModalOpen(true);
@@ -93,7 +94,7 @@ export default function NavBar() {
 
   const handleNavigate = () => {
     closeConfirmationModal();
-    dispatch(resetGeoJsonData());
+    dispatch(deleteGeojsonById());
     dispatch(resetMapGraphicsData());
     dispatch(resetMapStylesData());
     dispatch(resetMapMetaData());

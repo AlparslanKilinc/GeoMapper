@@ -21,15 +21,14 @@ import BookmarkIcon from '@mui/icons-material/Bookmark.js';
 import { getMapGraphicsDataById } from '../../redux-slices/mapGraphicsDataSlice.js';
 import { getMapStylesDataById } from '../../redux-slices/mapStylesSlice.js';
 import { getMapMetaDataById } from '../../redux-slices/mapMetadataSlice.js';
-import { fetchGeojsonById} from '../../redux-slices/geoJSONSlice.js';
-import {useDispatch} from 'react-redux';
-import { useNavigate} from 'react-router-dom';
+import { fetchGeojsonById } from '../../redux-slices/geoJSONSlice.js';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function MapCard({ map }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
-  const user = useSelector((state) => state.auth.user);
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [isShareOpen, setShareOpen] = useState(false);
   const [popUpTitle, setPopUpTitle] = useState('');
@@ -49,19 +48,26 @@ export default function MapCard({ map }) {
     _id,
     graphicsDataId,
     stylesDataId,
-    geoDataId,
+    geoDataId
   } = map;
 
   const handleMapClick = async () => {
-    const draft = user.drafts.find((draftId) => draftId === _id);
+    const draft = publishDate === null;
     if (draft) {
-      const mapGraphicsData = dispatch(getMapGraphicsDataById(graphicsDataId));
-      const mapGeoData = dispatch(fetchGeojsonById(geoDataId));
-      const mapStylesData = dispatch(getMapStylesDataById(stylesDataId));
-      const mapMetaData = dispatch(getMapMetaDataById(_id));
-      const mapData = await Promise.all([mapGraphicsData, mapGeoData, mapStylesData, mapMetaData]);
-      navigate('/mapCreation/GraphicsEditor');
-    }else{
+      try {
+        console.log(geoDataId);
+        const mapGeoData = await dispatch(fetchGeojsonById(geoDataId));
+        const mapGraphicsData = await dispatch(getMapGraphicsDataById(graphicsDataId));
+        const mapStylesData = await dispatch(getMapStylesDataById(stylesDataId));
+        const mapMetaData = await dispatch(getMapMetaDataById(_id));
+
+        // After all promises have resolved, navigate to the desired route
+        navigate('/mapCreation/GraphicsEditor');
+      } catch (error) {
+        // Handle any errors that might occur during the dispatch
+        console.error('Error loading map data:', error);
+      }
+    } else {
       // Show map view page using map's data from props
       console.log('map not in drafts');
     }
@@ -108,7 +114,6 @@ export default function MapCard({ map }) {
       setBookmarked(false);
     }
   };
-
   // Popup functions
   const openPopup = () => {
     setPopupOpen(true);

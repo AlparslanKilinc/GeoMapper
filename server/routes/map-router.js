@@ -15,8 +15,8 @@ router.use('/styles', stylesRouter);
 router.post('/', auth.verify, upload.single('image'), MapController.createMap);
 
 router.get('/drafts', auth.verify, MapController.getAllDrafts);
-router.get('/published', auth.verify, MapController.getAllPublishedMaps);
-router.get('/:mapId', MapController.getMapDataById);
+router.get('/userPublished', auth.verify, MapController.getUserPublishedMaps);
+router.get('/:mapId', auth.verify, MapController.getMapDataById);
 router.put('/:mapId', auth.verify, upload.single('image'), MapController.updateMap);
 
 module.exports = router;

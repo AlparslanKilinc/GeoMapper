@@ -14,8 +14,8 @@ export const fetchDrafts = createAsyncThunk('maps/fetchDrafts', async (_, thunkA
   }
 });
 
-export const fetchPublishedMaps = createAsyncThunk(
-  'maps/fetchPublishedMaps',
+export const fetchUserPublishedMaps = createAsyncThunk(
+  'maps/fetchUserPublishedMaps',
   async (_, thunkApi) => {
     try {
       const response = await apis.getPublishedMaps();
@@ -51,14 +51,14 @@ const mapSlice = createSlice({
       .addCase(fetchDrafts.rejected, (state) => {
         state.isLoadingDrafts = false;
       })
-      .addCase(fetchPublishedMaps.pending, (state) => {
+      .addCase(fetchUserPublishedMaps.pending, (state) => {
         state.isLoadingPublishedMaps = true;
       })
-      .addCase(fetchPublishedMaps.fulfilled, (state, action) => {
+      .addCase(fetchUserPublishedMaps.fulfilled, (state, action) => {
         state.isLoadingPublishedMaps = false;
         state.publishedMaps = action.payload;
       })
-      .addCase(fetchPublishedMaps.rejected, (state) => {
+      .addCase(fetchUserPublishedMaps.rejected, (state) => {
         state.isLoadingPublishedMaps = false;
       });
   }

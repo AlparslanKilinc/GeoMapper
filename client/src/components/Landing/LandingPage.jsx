@@ -43,7 +43,7 @@ export default function LandingPage() {
 
   const handleCreateClick = (mapTitle) => {
     dispatch(setMapGraphicsType(mapTitle));
-    navigate('/mapCreation', { state: { stage: 1 } });
+    navigate('/mapCreation/OutlineSelection');
   };
 
   return (

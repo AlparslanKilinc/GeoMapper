@@ -40,7 +40,7 @@ export const updateMap = (map, imageFile) => {
   }
 
   // Axios post request with FormData
-  return api.post(`/${map._id}`, formData, {
+  return api.put(`/${map.mapId}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -48,15 +48,15 @@ export const updateMap = (map, imageFile) => {
 };
 
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
-export const updateMapGraphicsDataById = (map, mapGraphicsId) => api.post(`/graphics/${mapGraphicsId}`, map);
+export const updateMapGraphicsDataById = (mapGraphicsId, mapGraphicsData) => api.put(`/graphics/${mapGraphicsId}`, mapGraphicsData);
 export const getMapGraphicsDataById = (mapGraphicsId) => api.get(`/graphics/${mapGraphicsId}`);
 export const saveMapStylesData = (map) => api.post(`/styles`, map);
-export const updateMapStylesDataById = (map, mapStylesId) => api.post(`/styles/${mapStylesId}`, map);
+export const updateMapStylesDataById = (mapStylesId, mapStylesData) => api.put(`/styles/${mapStylesId}`, mapStylesData);
 export const getMapStylesDataById = (mapStylesId) => api.get(`/styles/${mapStylesId}`);
-
+export const deleteGeojsonById = (geojsonId) => api.delete(`/geojson/${geojsonId}`);
 
 export const getDrafts = () => api.get(`/drafts`);
-export const getPublishedMaps = () => api.get(`/published`);
+export const getUserPublishedMaps = () => api.get(`/userPublished`);
 
 const apis = {
   saveMapGraphicsData,
@@ -66,9 +66,10 @@ const apis = {
   updateMapStylesDataById,
   getMapStylesDataById,
   getDrafts,
-  getPublishedMaps,
+  getUserPublishedMaps,
   createMap,
   updateMap,
   getMapDataById,
+  deleteGeojsonById
 };
 export default apis;

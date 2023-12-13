@@ -7,7 +7,7 @@ const bucket = storage.bucket(process.env.GCS_BUCKET);
 
 async function uploadImage(file, name) {
   try {
-    const destinationFileName = `uploads/${Date.now()}-${name}-${file.originalname}`;
+    const destinationFileName = `uploads/${name}`;
 
     // Create a reference to the file in the bucket
     const blob = bucket.file(destinationFileName);
@@ -53,8 +53,13 @@ async function generateFileHashFromURL(url) {
 }
 
 async function deleteFileFromGCS(filePath) {
-  const fileName = filePath.split('/').pop();
-  await bucket.file(fileName).delete();
+  try {
+    const fileName = filePath.split('/').pop();
+    const fullPath = `uploads/${fileName}`;
+    await bucket.file(fullPath).delete();
+  } catch (error) {
+    throw error;
+  }
 }
 
 module.exports = {

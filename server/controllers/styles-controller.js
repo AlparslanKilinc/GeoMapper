@@ -10,7 +10,8 @@ const saveMapStylesData = async (req, res) => {
 const updateMapStylesDataById = async (req, res) => {
   const mapStyles = req.body;
   const mapStylesId = req.params.mapStylesId;
-  const updatedStyles = await StylesModel.findByIdAndUpdate(mapStylesId, mapStyles, { new: true });
+  delete mapStyles._id;
+  const updatedStyles = await StylesModel.findOneAndUpdate({_id:mapStylesId}, mapStyles, { new: true });
   res.json(updatedStyles);
 };
 

@@ -6,8 +6,8 @@ export const saveMapStylesData = createAsyncThunk(
   'mapStyles/saveMapStylesData',
   async (_, thunkApi) => {
     try {
-      const { legend, mapStyles } = thunkApi.getState();
-      const response = await apis.saveMapStylesData({ ...mapStyles, legend });
+      const { mapStyles } = thunkApi.getState();
+      const response = await apis.saveMapStylesData(mapStyles);
       return response.data._id;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -17,11 +17,11 @@ export const saveMapStylesData = createAsyncThunk(
 
 export const updateMapStylesDataById = createAsyncThunk(
   'mapStyles/updateMapStylesDataById',
-  async (_, thunkApi) => {
+  async (mapStyleId, thunkApi) => {
     try {
-      const { legend, mapStyles } = thunkApi.getState();
-      const mapStyleId = mapStyles.mapStyleId;
-      const response = await apis.updateMapStylesDataById(mapStyleId, { ...mapStyles, legend });
+      const { mapStyles } = thunkApi.getState();
+      console.log(mapStyles);
+      const response = await apis.updateMapStylesDataById(mapStyleId, mapStyles);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -220,7 +220,12 @@ const mapStylesDataSlice = createSlice({
       })
       .addCase(updateMapStylesDataById.fulfilled, (state, action) => {
         // Handle success...
-        state.isSaving = false;
+        const { ...mapStyles } = action.payload;
+        return {
+          ...mapStyles,
+          mapStylesId: mapStyles._id,
+          isSaving: false
+        };
       })
       .addCase(updateMapStylesDataById.rejected, (state) => {
         // Handle failure...
@@ -228,18 +233,19 @@ const mapStylesDataSlice = createSlice({
       })
       .addCase(getMapStylesDataById.pending, (state) => {
         // Handle pending state...
-        state.isLoading = true;
+        state.isSaving = true;
       })
       .addCase(getMapStylesDataById.fulfilled, (state, action) => {
         // Handle success...
-        const { legend, ...mapStyles } = action.payload;
+        const { ...mapStyles } = action.payload;
         return {
           ...mapStyles,
-          isLoading: false
+          mapStylesId: mapStyles._id,
+          isSaving: false
         };
       })
       .addCase(getMapStylesDataById.rejected, (state) => {
-        state.isLoading = false;
+        state.isSaving = false;
       });
   }
 });

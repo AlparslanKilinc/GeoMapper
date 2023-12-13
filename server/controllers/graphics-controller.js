@@ -10,7 +10,8 @@ const saveMapGraphicsData = async (req, res) => {
 const updateMapGraphicsDataById = async (req, res) => {
   const mapGraphics = req.body;
   const mapGraphicsId = req.params.mapGraphicsId;
-  const updatedGraphics = await GraphicsModel.findByIdAndUpdate(mapGraphicsId, mapGraphics, { new: true });
+  delete mapGraphics._id;
+  const updatedGraphics = await GraphicsModel.findOneAndUpdate({_id:mapGraphicsId}, mapGraphics, { new: true });
   res.json(updatedGraphics);
 };
 

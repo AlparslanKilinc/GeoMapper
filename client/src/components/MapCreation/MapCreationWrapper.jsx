@@ -6,10 +6,10 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../../styles/mapCreationWrapper.css';
 import { styled } from '@mui/material/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { resetGeoJsonData } from '../../redux-slices/geoJSONSlice';
+import { resetGeoJsonData, deleteGeojsonById } from '../../redux-slices/geoJSONSlice';
 import { resetMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice';
 import {resetMapStylesData} from "../../redux-slices/mapStylesSlice.js";
-import {resetMapMetaData} from "../../redux-slices/mapMetadataSlice.js";
+import {resetMapMetaDataFromDraft} from "../../redux-slices/mapMetadataSlice.js";
 import {Modal} from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -59,12 +59,9 @@ export default function MapCreationWrapper() {
     return (stage === 1 && !mapOutline) || (stage === 2 && !validationMessage.startsWith('✓'));
   };
 
-  const goBack = () => {
+  const goBack = async () => {
     const stage = currentStage();
-    if (stage === 1) {
-      dispatch(resetGeoJsonData());
-      navigate(-1);
-    } else if (stage === 2) {
+    if (stage === 2) {
       openConfirmationModal();
     }else{
       navigate(-1);
@@ -73,10 +70,10 @@ export default function MapCreationWrapper() {
 
   const handleNavigationToOutlineSelection = async () => {
     closeConfirmationModal();
-    dispatch(resetGeoJsonData());
+    dispatch(deleteGeojsonById());
     dispatch(resetMapGraphicsData());
     dispatch(resetMapStylesData());
-    dispatch(resetMapMetaData());
+    dispatch(resetMapMetaDataFromDraft());
     navigate(-1);
   }
 

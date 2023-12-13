@@ -8,6 +8,7 @@ const createMap = async (req, res) => {
     // and other map data is sent as JSON in the request body
     const userId = req.userId;
     const mapData = JSON.parse(req.body.map);
+    const mapGraphicsId = mapData.mapGraphicsId;
     mapData.authorId = userId;
 
     // get the username of the user by id
@@ -15,16 +16,17 @@ const createMap = async (req, res) => {
     mapData.authorUserName = userName;
 
     // Upload the image to Google Cloud Storage
-    const name = `${mapData.title}-${userId}`;
+    const name = `${mapData.title}-${mapGraphicsId}-${userId}`;
     const imageUrl = await uploadImage(req.file, name);
     mapData.thumbnailUrl = imageUrl; // Add the image URL to the map data
 
     // Create and save the new map
     const newMap = new Map(mapData);
     const savedMap = await newMap.save();
-
+    console.log('savedMap', savedMap);
     // Update the user's draftedMaps array
     await User.findByIdAndUpdate(userId, { $push: { draftedMaps: savedMap._id } });
+
 
     res.status(200).json({ _id: savedMap._id, thumbnailUrl: imageUrl });
   } catch (error) {
@@ -34,29 +36,41 @@ const createMap = async (req, res) => {
 
 const updateMap = async (req, res) => {
   try {
-    // Assuming 'image' is the key for the uploaded file
-    // and other map data is sent as JSON in the request body
     const userId = req.userId;
     const mapData = JSON.parse(req.body.map);
     const mapId = req.params.mapId;
+    const mapGraphicsId = mapData.mapGraphicsId;
 
-    // get the username of the user by id
+    // Fetch the existing map
+    const existingMap = await Map.findById(mapId);
+    if (!existingMap) {
+      return res.status(404).json({ message: 'Map not found' });
+    }
+
+    // Get the username of the user by id
     const { userName } = await User.findById(userId).select('userName');
     mapData.authorUserName = userName;
 
-    // Upload the image to Google Cloud Storage
-    const name = `${mapData.title}-${userId}`;
+    let imageUrl;
+    if (req.file) {
+      // If a new image is provided, delete the old image
+      if (existingMap.thumbnailUrl) {
+        await deleteFileFromGCS(existingMap.thumbnailUrl);
+      }
 
-    // use DeleteFileFromGCS to delete the old image
-    await deleteFileFromGCS(mapData.thumbnailUrl);
+      // Upload the new image
+      const name = `$${mapData.title}-${mapGraphicsId}-${userId}`;
+      imageUrl = await uploadImage(req.file, name);
+      mapData.thumbnailUrl = imageUrl; // Add the new image URL to the map data
+    }
 
-    const imageUrl = await uploadImage(req.file, name);
-    mapData.thumbnailUrl = imageUrl; // Add the image URL to the map data
+    // Update the map (excluding _id and the image if not updated)
+    const update = { ...mapData };
+    delete update._id;
 
-    // Update the map
-    const updatedMap = await Map.findByIdAndUpdate(mapId, mapData, { new: true });
+    const updatedMap = await Map.findOneAndUpdate({ _id: mapId }, update, { new: true });
 
-    res.status(200).json({ _id: updatedMap._id, thumbnailUrl: imageUrl });
+    res.status(200).json(updatedMap);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -103,7 +117,7 @@ const getAllDrafts = async (req, res) => {
   }
 };
 
-const getAllPublishedMaps = async (req, res) => {
+const getUserPublishedMaps = async (req, res) => {
   const userId = req.userId;
 
   try {
@@ -130,7 +144,7 @@ const getAllPublishedMaps = async (req, res) => {
 module.exports = {
   createMap,
   getAllDrafts,
-  getAllPublishedMaps,
+  getUserPublishedMaps,
   getMapDataById,
   updateMap
 };

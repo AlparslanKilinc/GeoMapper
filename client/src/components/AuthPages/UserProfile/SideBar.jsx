@@ -2,7 +2,7 @@ import '../../../styles/sidebar.css';
 import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserData, resetErrorMessage } from '../../../redux-slices/authSlice';
+import { updateUserData, resetErrorMessage, getLoggedIn } from '../../../redux-slices/authSlice';
 import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -18,6 +18,10 @@ export default function Sidebar() {
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [isGoogleUser, setGoogleUser] = useState(false);
+
+  useEffect(() => {
+    dispatch(getLoggedIn());
+  }, [dispatch]);
 
   const initialUserData = {
     firstName: user?.firstName || '',

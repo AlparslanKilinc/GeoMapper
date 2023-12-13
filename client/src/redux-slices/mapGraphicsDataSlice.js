@@ -15,14 +15,11 @@ export const saveMapGraphicsData = createAsyncThunk(
 );
 
 export const updateMapGraphicsDataById = createAsyncThunk(
-  'mapGraphics/saveMapGraphicsDataById',
-  async (_, thunkApi) => {
+  'mapGraphics/updateMapGraphicsDataById',
+  async (mapGraphicsId, thunkApi) => {
     try {
-      const mapGraphicsId = thunkApi.getState().mapGraphicsId;
-      const response = await apis.updateMapGraphicsDataById(
-        mapGraphicsId,
-        thunkApi.getState().mapGraphics
-      );
+      const mapGraphics = thunkApi.getState().mapGraphics;
+      const response = await apis.updateMapGraphicsDataById(mapGraphicsId, mapGraphics);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -788,6 +785,7 @@ const mapGraphicsDataSlice = createSlice({
         const newData = action.payload;
         return {
           ...newData,
+          mapGraphicsId: newData._id,
           isSaving: true
         };
       })
@@ -803,6 +801,7 @@ const mapGraphicsDataSlice = createSlice({
         const newData = action.payload;
         return {
           ...newData,
+          mapGraphicsId: newData._id,
           isSaving: true
         };
       })
