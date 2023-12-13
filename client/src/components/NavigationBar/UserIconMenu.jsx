@@ -8,16 +8,14 @@ import Divider from '@mui/material/Divider';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux-slices/authSlice';
-import { useSaveMap } from '../MapCreation/useSaveMap';
 import { useClearStates } from '../MapCreation/useClearStates';
 import '../../styles/userIconMenu.css';
 
-export default function UserIconMenu() {
+export default function UserIconMenu({openConfirmationModal, setPath}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const saveMapData = useSaveMap();
   const { clearStatesComplete } = useClearStates();
   const user = useSelector((state) => state.auth.user);
 
@@ -36,26 +34,21 @@ export default function UserIconMenu() {
 
   const handleProfileClick = () => {
     setAnchorEl(null);
-    if (
-      location.pathname == '/mapCreation/OutlineSelection' ||
-      location.pathname == '/mapCreation/DataEditor' ||
-      location.pathname == '/mapCreation/GraphicsEditor'
-    ) {
-      /// Save map data then clear states. save up to the stage you in or another solution
-      // if saved before map graphics stage you will get container error
-      // clearStatesComplete is a promise
+    if (location.pathname == '/mapCreation/OutlineSelection' || location.pathname == '/mapCreation/DataEditor' ) {
+        openConfirmationModal();
+        setPath('/profile');
+    }else if( location.pathname == '/mapCreation/GraphicsEditor' ){
       clearStatesComplete();
       navigate('/profile');
-    } else {
+    }else{
       navigate('/profile');
     }
   };
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    // Could also Save Map Here too if someone logs out on accident
-    clearStatesComplete();
     handleMenuClose();
+    clearStatesComplete();
     navigate('/');
   };
 

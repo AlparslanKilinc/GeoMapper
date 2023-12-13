@@ -59,7 +59,6 @@ export default function MapCard({ map }) {
         const mapGraphicsData = await dispatch(getMapGraphicsDataById(graphicsDataId));
         const mapStylesData = await dispatch(getMapStylesDataById(stylesDataId));
         const mapMetaData = await dispatch(getMapMetaDataById(_id));
-
         // After all promises have resolved, navigate to the desired route
         navigate('/mapCreation/GraphicsEditor');
       } catch (error) {

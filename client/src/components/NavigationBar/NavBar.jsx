@@ -17,23 +17,19 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close.js';
 import Button from '@mui/material/Button';
 
-const AuthButton = ({ loggedIn }) => {
+const AuthButton = ({ loggedIn, openConfirmationModal, setPath }) => {
   const location = useLocation();
-  const navigate = useNavigate();
   if (loggedIn) {
-    return <UserIconMenu />;
+    return <UserIconMenu openConfirmationModal={openConfirmationModal} setPath={setPath} />;
   }
 
   const navigateToLogin = () => {
     if (
       location.pathname == '/mapCreation/OutlineSelection' ||
-      location.pathname == '/mapCreation/DataEditor' ||
-      location.pathname == '/mapCreation/GraphicsEditor'
+      location.pathname == '/mapCreation/DataEditor'
     ) {
       setPath('/login');
       openConfirmationModal();
-    } else {
-      navigate('/login');
     }
   };
 
@@ -45,14 +41,12 @@ const AuthButton = ({ loggedIn }) => {
   );
 };
 import { Modal } from '@mui/material';
-import { useSaveMap } from '../MapCreation/useSaveMap';
 import { useClearStates } from '../MapCreation/useClearStates';
 
 export default function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const saveMapData = useSaveMap();
-  const {clearStatesComplete, deleteClearStatesComplete}  = useClearStates();
+  const { clearStatesComplete } = useClearStates();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isExplorePage = location.pathname == '/explore';
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,51 +60,34 @@ export default function NavBar() {
   };
 
   const navigateToExplorePage = () => {
-    if (
-      location.pathname == '/mapCreation/OutlineSelection' ||
-      location.pathname == '/mapCreation/DataEditor' ||
-      location.pathname == '/mapCreation/GraphicsEditor'
-    ) {
-      if (loggedIn) {
-        /// Save map data then clear states. save up to the stage you in or another solution
-        // if saved before map graphics stage you will get container error
-        // clearStatesComplete is a promise
-        clearStatesComplete();
-        navigate('/explore');
-      } else {
-        setPath('/explore');
-        openConfirmationModal();
-      }
-    }else{
+    if (location.pathname == '/mapCreation/OutlineSelection' || location.pathname == '/mapCreation/DataEditor') {
+      openConfirmationModal();
+      setPath('/explore');
+    } else if( location.pathname == '/mapCreation/GraphicsEditor' ){
+      clearStatesComplete();
+      navigate('/explore');
+    }
+    else {
       navigate('/explore');
     }
   };
 
   const navigateToMapCreation = () => {
-    if (
-      location.pathname == '/mapCreation/OutlineSelection' ||
-      location.pathname == '/mapCreation/DataEditor' ||
-      location.pathname == '/mapCreation/GraphicsEditor'
-    ) {
-      if (loggedIn) {
-        /// Save map data then clear states. save up to the stage you in or another solution
-        // if saved before map graphics stage you will get container error
-        // clearStatesComplete is a promise
-        clearStatesComplete();
-        navigate('/mapCreation');
-
-      } else {
-        setPath('/mapCreation');
-        openConfirmationModal();
-      }
-    }else{
+    if (location.pathname == '/mapCreation/OutlineSelection' || location.pathname == '/mapCreation/DataEditor') {
+      openConfirmationModal();
+      setPath('/mapCreation');
+    } else if( location.pathname == '/mapCreation/GraphicsEditor' ){
+      clearStatesComplete();
+      navigate('/mapCreation');
+    }
+    else {
       navigate('/mapCreation');
     }
   };
 
   const handleNavigate = () => {
     closeConfirmationModal();
-    deleteClearStatesComplete();
+    clearStatesComplete();
     navigate(path);
   };
 
@@ -140,6 +117,7 @@ export default function NavBar() {
             loggedIn={loggedIn}
             openConfirmationModal={openConfirmationModal}
             setPath={setPath}
+            clearStatesComplete={clearStatesComplete}
           />
         </div>
       </Toolbar>
@@ -158,7 +136,7 @@ export default function NavBar() {
           }}
         >
           <Typography variant="h6" component="div" style={{ marginBottom: '15px' }}>
-            Are you sure you want to go back? Your progress wont be saved.
+            Leaving This Page Will Lose Your Progress. Are You Sure?
           </Typography>
           <IconButton
             edge="end"
@@ -169,7 +147,11 @@ export default function NavBar() {
           >
             <CloseIcon />
           </IconButton>
-          <Button variant="contained" onClick={handleNavigate} style={{ marginRight: '10px' }}>
+          <Button
+            variant="contained"
+            onClick={() => {handleNavigate()}}
+            style={{ marginRight: '10px' }}
+          >
             Yes
           </Button>
           <Button variant="outlined" onClick={closeConfirmationModal}>
