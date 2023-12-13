@@ -3,21 +3,24 @@ const { app, server } = require('../server');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const User = require('../models/user-model')
+const expressApp = require('../server').app;
 
 const TIMEOUT = 10000;
 let mongoServer;
+let serverInstance;
 
 beforeAll(async () => {
   await mongoose.disconnect();
   mongoServer = await MongoMemoryServer.create();
   const mongoUri = mongoServer.getUri();
   await mongoose.connect(mongoUri);
+  serverInstance = expressApp.listen();
 });
 
 afterAll(async () => {
   await mongoose.disconnect();
   await mongoServer.stop();
-  await new Promise((resolve) => server.close(resolve));
+  await new Promise((resolve) => serverInstance.close(resolve));
 });
 
 describe('Registration', () => {

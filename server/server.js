@@ -32,8 +32,12 @@ app.use('/api', apiRouter);
 const db = require('./db');
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-const server = app.listen(Port, () => {
-  console.log('listen on port: ', Port);
-});
+let server;
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(Port, () => {
+    console.log('Listening on port: ', Port);
+  });
+}
+
 
 module.exports = { app, server };
