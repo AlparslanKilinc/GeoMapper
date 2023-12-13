@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import MapIcon from '@mui/icons-material/Map';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux-slices/authSlice';
-import { getLoggedIn } from '../../redux-slices/authSlice';
+import { useSaveMap } from '../MapCreation/useSaveMap';
+import { useClearStates } from '../MapCreation/useClearStates';
 import '../../styles/userIconMenu.css';
 
-export default function UserIconMenu({openConfirmationModal, setPath}) {
+export default function UserIconMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const saveMapData = useSaveMap();
+  const { clearStatesComplete } = useClearStates();
   const user = useSelector((state) => state.auth.user);
-  useEffect(() => {
-    dispatch(getLoggedIn());
-  }, [dispatch]);
 
   const userData = {
     firstName: user?.firstName || '',
@@ -39,21 +34,27 @@ export default function UserIconMenu({openConfirmationModal, setPath}) {
     setAnchorEl(null);
   };
 
-  const handleMenuClick = () => {
+  const handleProfileClick = () => {
     setAnchorEl(null);
-    if(location.pathname == '/mapCreation/OutlineSelection' ||
-        location.pathname == '/mapCreation/DataEditor' ||
-        location.pathname == '/mapCreation/GraphicsEditor'){
-      setPath('/profile')
-      openConfirmationModal()
-    }
-    else{
-      navigate('/profile')
+    if (
+      location.pathname == '/mapCreation/OutlineSelection' ||
+      location.pathname == '/mapCreation/DataEditor' ||
+      location.pathname == '/mapCreation/GraphicsEditor'
+    ) {
+      /// Save map data then clear states. save up to the stage you in or another solution
+      // if saved before map graphics stage you will get container error
+      // clearStatesComplete is a promise
+      clearStatesComplete();
+      navigate('/profile');
+    } else {
+      navigate('/profile');
     }
   };
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    // Could also Save Map Here too if someone logs out on accident
+    clearStatesComplete();
     handleMenuClose();
     navigate('/');
   };
@@ -87,7 +88,7 @@ export default function UserIconMenu({openConfirmationModal, setPath}) {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        <MenuItem sx={{ margin: '-10px' }}>
+        <MenuItem onClick={handleProfileClick} sx={{ margin: '-10px' }}>
           {userData.profilePicPath ? (
             <Avatar
               src={userData.profilePicPath}
@@ -103,11 +104,6 @@ export default function UserIconMenu({openConfirmationModal, setPath}) {
             </h3>
             <h6>{userData.userName}</h6>
           </div>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleMenuClick} sx={{ padding: '5px' }}>
-          <AccountCircleIcon sx={{ color: '#BBBBBB' }} />
-          Your Profile
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>Logout</MenuItem>

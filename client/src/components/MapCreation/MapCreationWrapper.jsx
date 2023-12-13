@@ -1,25 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import Button from '@mui/material/Button';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../../styles/mapCreationWrapper.css';
 import { styled } from '@mui/material/styles';
-import { useSelector, useDispatch } from 'react-redux';
-import { deleteGeojsonById } from '../../redux-slices/geoJSONSlice';
-import { resetMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice';
-import { resetMapStylesData } from '../../redux-slices/mapStylesSlice.js';
-import { resetMapMetaDataFromDraft } from '../../redux-slices/mapMetadataSlice.js';
+import { useSelector } from 'react-redux';
 import { Modal } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { useClearStates } from './useClearStates.jsx';
 
 export default function MapCreationWrapper() {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { DraftClearDeletingGeojson } = useClearStates();
   const mapOutline = useSelector((state) => state.geojson.geojson.geoJSON);
   const validationMessage = useSelector((state) => state.mapGraphics.validationMessage);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,11 +65,7 @@ export default function MapCreationWrapper() {
 
   const handleNavigationToOutlineSelection = () => {
     closeConfirmationModal();
-    dispatch(deleteGeojsonById());
-    dispatch(resetMapGraphicsData());
-    dispatch(resetMapStylesData());
-    dispatch(resetMapMetaDataFromDraft());
-
+    DraftClearDeletingGeojson();
     // Navigate to the OutlineSelection stage
     navigate('/mapCreation/OutlineSelection');
   };

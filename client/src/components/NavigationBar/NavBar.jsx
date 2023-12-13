@@ -1,7 +1,7 @@
-import { React, useEffect, useState } from 'react';
+import { React, useState } from 'react';
 import '../../styles/navbar.css';
-import { Link, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -16,15 +16,12 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close.js';
 import Button from '@mui/material/Button';
-import { deleteGeojsonById } from '../../redux-slices/geoJSONSlice.js';
-import { resetMapGraphicsData } from '../../redux-slices/mapGraphicsDataSlice.js';
-import { resetMapStylesData } from '../../redux-slices/mapStylesSlice.js';
-import { resetMapMetaData } from '../../redux-slices/mapMetadataSlice.js';
 
-const AuthButton = ({ loggedIn, openConfirmationModal, setPath }) => {
+const AuthButton = ({ loggedIn }) => {
+  const location = useLocation();
   const navigate = useNavigate();
   if (loggedIn) {
-    return <UserIconMenu openConfirmationModal={openConfirmationModal} setPath={setPath} />;
+    return <UserIconMenu />;
   }
 
   const navigateToLogin = () => {
@@ -48,16 +45,18 @@ const AuthButton = ({ loggedIn, openConfirmationModal, setPath }) => {
   );
 };
 import { Modal } from '@mui/material';
+import { useSaveMap } from '../MapCreation/useSaveMap';
+import { useClearStates } from '../MapCreation/useClearStates';
 
 export default function NavBar() {
-  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const saveMapData = useSaveMap();
+  const {clearStatesComplete, deleteClearStatesComplete}  = useClearStates();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const isExplorePage = location.pathname == '/explore';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [path, setPath] = useState('');
-  const mapId = useSelector((state) => state.mapMetadata.mapId);
 
   const openConfirmationModal = () => {
     setIsModalOpen(true);
@@ -72,9 +71,17 @@ export default function NavBar() {
       location.pathname == '/mapCreation/DataEditor' ||
       location.pathname == '/mapCreation/GraphicsEditor'
     ) {
-      setPath('/explore');
-      openConfirmationModal();
-    } else {
+      if (loggedIn) {
+        /// Save map data then clear states. save up to the stage you in or another solution
+        // if saved before map graphics stage you will get container error
+        // clearStatesComplete is a promise
+        clearStatesComplete();
+        navigate('/explore');
+      } else {
+        setPath('/explore');
+        openConfirmationModal();
+      }
+    }else{
       navigate('/explore');
     }
   };
@@ -85,21 +92,28 @@ export default function NavBar() {
       location.pathname == '/mapCreation/DataEditor' ||
       location.pathname == '/mapCreation/GraphicsEditor'
     ) {
-      setPath('/mapCreation');
-      openConfirmationModal();
-    } else {
+      if (loggedIn) {
+        /// Save map data then clear states. save up to the stage you in or another solution
+        // if saved before map graphics stage you will get container error
+        // clearStatesComplete is a promise
+        clearStatesComplete();
+        navigate('/mapCreation');
+
+      } else {
+        setPath('/mapCreation');
+        openConfirmationModal();
+      }
+    }else{
       navigate('/mapCreation');
     }
   };
 
   const handleNavigate = () => {
     closeConfirmationModal();
-    // dispatch(deleteGeojsonById());
-    dispatch(resetMapGraphicsData());
-    dispatch(resetMapStylesData());
-    dispatch(resetMapMetaData());
+    deleteClearStatesComplete();
     navigate(path);
   };
+
   return (
     <AppBar position="static">
       <Toolbar className={'navigationBar'}>

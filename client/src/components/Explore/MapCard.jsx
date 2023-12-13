@@ -55,7 +55,6 @@ export default function MapCard({ map }) {
     const draft = publishDate === null;
     if (draft) {
       try {
-        console.log(geoDataId);
         const mapGeoData = await dispatch(fetchGeojsonById(geoDataId));
         const mapGraphicsData = await dispatch(getMapGraphicsDataById(graphicsDataId));
         const mapStylesData = await dispatch(getMapStylesDataById(stylesDataId));
