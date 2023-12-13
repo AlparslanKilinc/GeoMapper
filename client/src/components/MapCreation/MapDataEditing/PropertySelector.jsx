@@ -6,6 +6,7 @@ import {
   TableValidation,
   validateColumnData
 } from '../../../redux-slices/mapGraphicsDataSlice';
+import { addActionToPast } from '../../../redux-slices/undoRedoSlice';
 
 export default function PropertySelector({ value, propertyName }) {
   let { propertyNames, pointProperties, columnTypes } = useSelector((state) => state.mapGraphics);
@@ -86,13 +87,28 @@ export default function PropertySelector({ value, propertyName }) {
   }, [columnTypes, colName, mapGraphicsType, dispatch]);
 
   const onChange = (event, newValue) => {
-    const payload = {
+    // TODO: I'm not adding setColName to undo/redo stack, is that ok?
+    setColName(newValue);
+    dispatch(addActionToPast({
+      undoActions: [{
+        actionCreator: changeXByProperty, args: [{
+          property: propertyName + 'ByProperty',
+          propertyBy: value
+        }]
+      }],
+      redoActions: [{
+        actionCreator: changeXByProperty, args: [{
+          property: propertyName + 'ByProperty',
+          propertyBy: newValue
+        }]
+      }]
+    }));
+    dispatch(changeXByProperty({
       property: propertyName + 'ByProperty',
       propertyBy: newValue
-    };
-    setColName(newValue);
-    dispatch(changeXByProperty(payload));
+    }));
   };
+
   return (
     <Box
       display="flex"
