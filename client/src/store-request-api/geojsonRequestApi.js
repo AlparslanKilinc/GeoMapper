@@ -17,6 +17,10 @@ export const getGeojsonById = (id) => {
   return api.get(`/${id}`, { responseType: 'arraybuffer' });
 };
 
+export const deleteGeojsonById = (id) => {
+  return api.delete(`/${id}`);
+};
+
 export const searchGeojson = (query) => {
   return api.get(`/search/${query}`);
 };
@@ -32,11 +36,10 @@ export const createGeojson = (compressedGeoJSON, ownerId, isPrivate, name) => {
     headers: {
       'Content-Type': 'application/octet-stream'
     },
-    responseType: 'arraybuffer'
   };
 
   return api.post(baseURL, compressedGeoJSON, config);
 };
 
-const apis = { getGeojson, getGeojsonById, createGeojson, searchGeojson };
+const apis = { getGeojson, getGeojsonById, createGeojson, searchGeojson, deleteGeojsonById };
 export default apis;

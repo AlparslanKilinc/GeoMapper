@@ -2,9 +2,9 @@
     height:500px;
     width: 1100px;
     border-radius: 10px;
-    margin-top:80px;
+    margin-top:100px;
     display:flex;
-    filter: drop-shadow(-1px 6px 12px #d1d1d1);
+    filter: drop-shadow(-1px 2px 2px #d1d1d1);
 }
 .map-info{
     margin-bottom:-75px;
@@ -31,16 +31,20 @@
     object-fit: cover;
  }
 .map-view-content{
-    width:100%;
     background-color: white;
-    filter: drop-shadow(0px -4px 12px #d1d1d1);
-    border-radius:7px
+    border-radius:7px;
+    width:100%;
+}
+.comment-section{
+    overflowX: hidden;
+    max-width:100%;
 }
 
 .comment{
     display:flex;
-    height:440px;
+    height:420px;
     overflow-y: scroll;
+
 }
 
 .login-link{
@@ -53,13 +57,13 @@
 
 .post-comment{
     display:flex;
-    color: darkgrey;
 }
 
 .comment-form{
     display:flex;
+    max-width: 100%;
+    filter: none;
 }
-
 .actions{
     display:flex;
     padding:15px;

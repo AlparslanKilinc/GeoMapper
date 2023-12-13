@@ -40,7 +40,6 @@ const SymbolLayer = () => {
   };
 
   const { min, max } = extractSizeValues(points);
-  console.log({min,max});
   dispatch(setMinProperty(min))
   dispatch(setMaxProperty(max))
 
@@ -90,8 +89,6 @@ const SymbolLayer = () => {
   const markers = points.map((point, pointIdx) => {
     const iconSize = calculateMarkerSize(point[sizeByProperty]) || fixedSymbolSize;
     const opacity = point[opacityByProperty] || fixedOpacity;
-
-    console.log(iconSize);
 
     let color = fixedColor;
 

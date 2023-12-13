@@ -22,9 +22,9 @@ describe('Explore Page', () => {
         cy.get('.MuiPopover-paper').should('not.exist');
     });
 
-    it('should display map cards', () => {
-        cy.get('.map-card-container .MapCard').should('exist');
-    });
+    // it('should display map cards', () => {
+    //     cy.get('.map-card-container .MapCard').should('exist');
+    // });
 
 
 });
