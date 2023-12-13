@@ -30,6 +30,8 @@ const AuthButton = ({ loggedIn, openConfirmationModal, setPath }) => {
     ) {
       setPath('/login');
       openConfirmationModal();
+    }else{
+      navigate('/login');
     }
   };
 
