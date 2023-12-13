@@ -8,19 +8,18 @@ const UserSchema = new Schema({
   userName: { type: String, required: true, unique: true },
   passwordHash: {
     type: String,
-    required: function() {
+    required: function () {
       return !this.googleUserId;
-    },
+    }
   },
   email: { type: String, required: true, unique: true },
-  privateMaps: [{ type: ObjectId, ref: 'map' }],
-  publishedMaps: [{ type: ObjectId, ref: 'map' }],
-  draftedMaps: [{ type: ObjectId, ref: 'map' }],
-  bookmarkedMaps: [{ type: ObjectId, ref: 'map' }],
+  publishedMaps: [{ type: ObjectId, ref: 'Map' }],
+  draftedMaps: [{ type: ObjectId, ref: 'Map' }],
+  bookmarkedMaps: [{ type: ObjectId, ref: 'Map' }],
   profileCreated: { type: Date, default: Date.now },
   bio: { type: String, default: '' },
   profilePicPath: { type: String, default: '' },
-  googleUserId: { type: String, unique: true, default: '' },
+  googleUserId: { type: String, unique: true, default: '' }
 });
 
-module.exports = mongoose.model('user', UserSchema);
+module.exports = mongoose.model('User', UserSchema);

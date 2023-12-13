@@ -2,7 +2,7 @@ import '../../../styles/sidebar.css';
 import React, { useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUserData, getLoggedIn, resetErrorMessage } from '../../../redux-slices/authSlice';
+import { updateUserData, resetErrorMessage } from '../../../redux-slices/authSlice';
 import { Link } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -17,7 +17,7 @@ export default function Sidebar() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const [editMode, setEditMode] = useState(false);
-  const[isGoogleUser, setGoogleUser] = useState(false);
+  const [isGoogleUser, setGoogleUser] = useState(false);
 
   const initialUserData = {
     firstName: user?.firstName || '',
@@ -25,11 +25,10 @@ export default function Sidebar() {
     userName: user?.userName || '',
     bio: user?.bio || '',
     picPath: user?.profilePicPath || '',
-      googleUserId: user?.googleUserId || ''
+    googleUserId: user?.googleUserId || ''
   };
 
   const [userData, setUserData] = useState(initialUserData);
-
 
   useEffect(() => {
     setUserData({
@@ -37,9 +36,9 @@ export default function Sidebar() {
       picPath: user?.profilePicPath || ''
     });
 
-  if(userData.googleUserId != ''){
-      setGoogleUser(true)
-  }
+    if (userData.googleUserId != '') {
+      setGoogleUser(true);
+    }
     if (errorMessage) {
       setEditMode(true);
     }
@@ -49,7 +48,7 @@ export default function Sidebar() {
         URL.revokeObjectURL(selectedImage);
       }
     };
-  }, [user, errorMessage]);
+  }, [user.googleUserId, selectedImage, errorMessage]);
 
   useEffect(() => {
     if (selectedImage) {
@@ -113,7 +112,11 @@ export default function Sidebar() {
           </div>
           <div className="personal-info">
             {!editMode ? (
-              <ProfileView userData={userData} setEditMode={setEditMode} isGoogleUser = {isGoogleUser}/>
+              <ProfileView
+                userData={userData}
+                setEditMode={setEditMode}
+                isGoogleUser={isGoogleUser}
+              />
             ) : (
               <ProfileEdit
                 userData={userData}
@@ -122,7 +125,7 @@ export default function Sidebar() {
                 handleSave={handleSave}
                 handleCancel={handleCancel}
                 errorMessage={errorMessage}
-                isGoogleUser = {isGoogleUser}
+                isGoogleUser={isGoogleUser}
               />
             )}
           </div>
@@ -144,8 +147,7 @@ export default function Sidebar() {
 }
 
 function ProfileView({ userData, setEditMode, isGoogleUser }) {
-
-    return (
+  return (
     <>
       <div className="userName">
         <h1>
@@ -157,11 +159,11 @@ function ProfileView({ userData, setEditMode, isGoogleUser }) {
       <button className="editProfileButton" onClick={() => setEditMode(true)}>
         Edit Profile
       </button>
-        {!isGoogleUser && <Link className="link" to={'/ChangePassword'}>
-            Change Password
-        </Link>}
-
-
+      {!isGoogleUser && (
+        <Link className="link" to={'/ChangePassword'}>
+          Change Password
+        </Link>
+      )}
     </>
   );
 }
@@ -172,7 +174,7 @@ function ProfileEdit({
   handleProfilePicChange,
   handleSave,
   handleCancel,
-  errorMessage,
+  errorMessage
 }) {
   return (
     <>
@@ -184,9 +186,11 @@ function ProfileEdit({
         id="profile-pic-upload"
       />
       <label htmlFor="profile-pic-upload">
-          <Button variant="contained" component="span">Upload Profile Picture</Button>
+        <Button variant="contained" component="span">
+          Upload Profile Picture
+        </Button>
       </label>
-         <TextField
+      <TextField
         name="firstName"
         value={userData.firstName}
         onChange={handleInputChange}
@@ -195,7 +199,7 @@ function ProfileEdit({
         fullWidth
         margin="normal"
       />
-       <TextField
+      <TextField
         name="lastName"
         value={userData.lastName}
         onChange={handleInputChange}

@@ -11,19 +11,11 @@ import CopyRight from '../Landing/CopyRight';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setMapGraphicsType } from '../../redux-slices/mapMetadataSlice';
-import { resetMapStylesData } from '../../redux-slices/mapStylesSlice';
 
 export default function TemplateSelection() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const mapData = mapDataJson.mapData;
-
-  // Reset map styles data when the component mounts
-  // This is to ensure it's called only once when the component mounts.
-  // This is a best practice to avoid dispatching actions on every render.
-  useEffect(() => {
-    dispatch(resetMapStylesData());
-  }, [dispatch]);
 
   const handleSelection = (title) => {
     dispatch(setMapGraphicsType(title));

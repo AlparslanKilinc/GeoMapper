@@ -10,7 +10,8 @@ import mapReducer from './redux-slices/mapSlice';
 import exploreSearchReducer from './redux-slices/exploreSearchSlice';
 import geojsonReducer from './redux-slices/geoJSONSlice';
 import legendReducer from './redux-slices/legendSlice';
-import commentsReducer from './redux-slices/commentsSlice'
+import commentsReducer from './redux-slices/commentsSlice';
+
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -35,5 +36,4 @@ export const store = configureStore({
   reducer: persistedReducer,
   devTools: true
 });
-
 export const persistor = persistStore(store);

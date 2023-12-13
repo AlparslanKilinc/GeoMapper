@@ -69,7 +69,7 @@ export default function ExplorePage() {
           </Button>
         </div>
       </div>
-      <div className="map-card-container">
+      {/* <div className="map-card-container">
         <div className="MapCard">
           <MapCard></MapCard>
         </div>
@@ -85,7 +85,7 @@ export default function ExplorePage() {
         <div className="MapCard">
           <MapCard></MapCard>
         </div>
-      </div>
+      </div> */}
       <Menu anchorEl={anchorEl} open={isSortOpen} onClose={handleSortMenuClose}>
         <MenuItem onClick={handleSortMenuClose}>Newest</MenuItem>
         <MenuItem onClick={handleSortMenuClose}>Oldest</MenuItem>

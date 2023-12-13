@@ -1,4 +1,45 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import apis from '../store-request-api/mapRequestApi';
+
+export const saveMapStylesData = createAsyncThunk(
+  'mapStyles/saveMapStylesData',
+  async (_, thunkApi) => {
+    try {
+      const { mapStyles } = thunkApi.getState();
+      const response = await apis.saveMapStylesData(mapStyles);
+      return response.data._id;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateMapStylesDataById = createAsyncThunk(
+  'mapStyles/updateMapStylesDataById',
+  async (mapStyleId, thunkApi) => {
+    try {
+      const { mapStyles } = thunkApi.getState();
+      console.log(mapStyles);
+      const response = await apis.updateMapStylesDataById(mapStyleId, mapStyles);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getMapStylesDataById = createAsyncThunk(
+  'mapStyles/getMapStylesDataById',
+  async (mapStylesId, thunkApi) => {
+    try {
+      const response = await apis.getMapStylesDataById(mapStylesId);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const hexColorPalette = {
   lightRed: '#ff6666',
@@ -18,7 +59,8 @@ const hexColorPalette = {
 };
 
 const initialState = {
-  mapId: null, // Reference to the main Map
+  mapStylesId: null,
+  isSaving: false,
   colors: [], // Colors configurations for the symbols
   colorPalette: [
     [hexColorPalette.lightBlue, hexColorPalette.darkBlue],
@@ -156,6 +198,55 @@ const mapStylesDataSlice = createSlice({
     resetLabels: (state) => {
       state.labels = [];
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(saveMapStylesData.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(saveMapStylesData.fulfilled, (state, action) => {
+        // Handle success...
+        state.mapStylesId = action.payload;
+        state.isSaving = true;
+      })
+      .addCase(saveMapStylesData.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      })
+      .addCase(updateMapStylesDataById.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(updateMapStylesDataById.fulfilled, (state, action) => {
+        // Handle success...
+        const { ...mapStyles } = action.payload;
+        return {
+          ...mapStyles,
+          mapStylesId: mapStyles._id,
+          isSaving: false
+        };
+      })
+      .addCase(updateMapStylesDataById.rejected, (state) => {
+        // Handle failure...
+        state.isSaving = false;
+      })
+      .addCase(getMapStylesDataById.pending, (state) => {
+        // Handle pending state...
+        state.isSaving = true;
+      })
+      .addCase(getMapStylesDataById.fulfilled, (state, action) => {
+        // Handle success...
+        const { ...mapStyles } = action.payload;
+        return {
+          ...mapStyles,
+          mapStylesId: mapStyles._id,
+          isSaving: false
+        };
+      })
+      .addCase(getMapStylesDataById.rejected, (state) => {
+        state.isSaving = false;
+      });
   }
 });
 
