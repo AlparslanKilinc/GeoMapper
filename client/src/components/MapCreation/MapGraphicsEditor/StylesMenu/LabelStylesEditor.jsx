@@ -50,7 +50,7 @@ export default function LabelStylesEditor({ idx }) {
   };
 
   idx = Number(idx);
-  if (idx !== undefined && idx > -1) {
+  if (idx !== undefined && idx > -1 && idx < labels.length) {
     let label = labels[idx];
     colorValue = label.color || defaultLabelColor;
     fontValue = label.font || defaultLabelFont;
