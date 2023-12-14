@@ -153,7 +153,7 @@ export default function ColorsSymbolAccordionMenu() {
       {points.length > 0 ? colorControl : noPointsMessage}
 
       <PropertySelector
-        property={opacityByProperty}
+        value={opacityByProperty}
         propertyName="opacity"
         label="opacity by property"
       />
