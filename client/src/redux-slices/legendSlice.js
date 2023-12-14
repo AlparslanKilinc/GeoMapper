@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  mapId: null,
-  orientation: 'verticle',
-  bgColor: '#ffffff',
-  fontColor: 'black'
+    mapId: null,
+    orientation: 'vertical',
+    bgColor: '#ffffff',
+    fontColor: 'black',
 };
 
 const legendSlice = createSlice({

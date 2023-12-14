@@ -3,6 +3,7 @@ import MapCard from '../../Explore/MapCard';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchDrafts } from '../../../redux-slices/mapSlice';
 import { CircularProgress } from '@mui/material';
+import Typography from '@mui/material/Typography';
 
 export default function Drafts() {
   const drafts = useSelector((state) => state.map.drafts);
@@ -14,13 +15,17 @@ export default function Drafts() {
     dispatch(fetchDrafts());
   }, [user]);
 
+  
+  const renderDrafts = () => {
+    if (drafts && drafts.length > 0) {
+      return drafts.map((map) => <MapCard key={map._id} map={map} />);
+    }
+    return <Typography>Empty...</Typography>;
+  };
+
   return (
     <div style={{ display: 'flex', gap: '1rem' }}>
-      {isLoadingDrafts ? (
-        <CircularProgress />
-      ) : (
-        <>{drafts ? drafts.map((map) => <MapCard key={map._id} map={map} />) : ''}</>
-      )}
-    </div>
+    {isLoadingDrafts ? <CircularProgress /> : renderDrafts()}
+  </div>
   );
 }

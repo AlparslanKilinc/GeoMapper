@@ -46,6 +46,7 @@ export const updateMap = (map, imageFile) => {
     }
   });
 };
+export const publishMap = (map) => api.put(`/${map.mapId}/publish`, map);
 
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
 export const updateMapGraphicsDataById = (mapGraphicsId, mapGraphicsData) => api.put(`/graphics/${mapGraphicsId}`, mapGraphicsData);
@@ -70,6 +71,7 @@ const apis = {
   createMap,
   updateMap,
   getMapDataById,
-  deleteGeojsonById
+  deleteGeojsonById,
+  publishMap
 };
 export default apis;

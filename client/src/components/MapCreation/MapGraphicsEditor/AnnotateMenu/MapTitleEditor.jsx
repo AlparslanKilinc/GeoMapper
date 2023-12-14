@@ -3,6 +3,8 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeMapTitle } from '../../../../redux-slices/mapMetadataSlice';
+import DebouncedTextField from '../../../DebouncedElement/DebouncedTextField';
+import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 
 const MapTitleEditor = () => {
   const dispatch = useDispatch();
@@ -10,8 +12,12 @@ const MapTitleEditor = () => {
   const [width, setWidth] = useState(0);
   const textWidthRef = useRef();
 
-  const handleTitleChange = (event) => {
-    dispatch(changeMapTitle(event.target.value));
+  const handleTitleChange = (newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeMapTitle, args: [title] }],
+      redoActions: [{ actionCreator: changeMapTitle, args: [newValue] }]
+    }));
+    dispatch(changeMapTitle(newValue));
   };
 
   useEffect(() => {
@@ -33,7 +39,7 @@ const MapTitleEditor = () => {
         }}>
           {title || 'Enter document title'}
         </span>
-        <TextField
+        <DebouncedTextField
           value={title}
           onChange={handleTitleChange}
           variant="outlined"
