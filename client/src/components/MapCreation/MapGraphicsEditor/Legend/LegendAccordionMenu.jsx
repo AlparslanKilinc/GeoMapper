@@ -13,30 +13,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { changeOrientation, changeBackgroundColor, changeFontColor } from "../../../../redux-slices/legendSlice.js";
 import { useEffect } from "react";
 import { MuiColorInput } from 'mui-color-input';
+import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
+import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 
 export default function LegendAccordionMenu() {
-    const [value, setValue] = React.useState('vertical');
-    const [color, setColor] = React.useState('#ffffff')
-    const [fontColor, setFontColor] = React.useState('black')
+    const orientation = useSelector((state) => state.legend.orientation);
+    const bgColor = useSelector((state) => state.legend.bgColor);
+    const fontColor = useSelector((state) => state.legend.fontColor);
+
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(changeOrientation(value));
-        dispatch(changeBackgroundColor(color))
-        dispatch(changeFontColor(fontColor));
-    }, [value, color, dispatch, fontColor]);
-
-
-    const handleChange = (event) => {
-        setValue(event.target.value);
+    const handleOrientationChange = (event) => {
+        dispatch(addActionToPast({
+            undoActions: [{ actionCreator: changeOrientation, args: [orientation] }],
+            redoActions: [{ actionCreator: changeOrientation, args: [event.target.value] }]
+        }));
+        dispatch(changeOrientation(event.target.value));
     };
 
     const handleBackgroundColorChange = (color) => {
-        setColor(color)
+        dispatch(addActionToPast({
+            undoActions: [{ actionCreator: changeBackgroundColor, args: [bgColor] }],
+            redoActions: [{ actionCreator: changeBackgroundColor, args: [color] }]
+        }));
+        dispatch(changeBackgroundColor(color));
     }
 
-    const handleFontColorChange = (fontColor) => {
-        setFontColor(fontColor)
+    const handleFontColorChange = (newFontColor) => {
+        dispatch(addActionToPast({
+            undoActions: [{ actionCreator: changeFontColor, args: [fontColor] }],
+            redoActions: [{ actionCreator: changeFontColor, args: [newFontColor] }]
+        }));
+        dispatch(changeFontColor(newFontColor));
     }
 
     return (
@@ -60,19 +68,18 @@ export default function LegendAccordionMenu() {
                     <RadioGroup
                         aria-labelledby="legend-orientation-radio-buttons"
                         name="controlled-radio-buttons-group"
-                        value={value}
-                        onChange={handleChange}>
+                        value={orientation}
+                        onChange={handleOrientationChange}>
                         <FormControlLabel value="vertical" control={<Radio />} label="vertical" />
                         <FormControlLabel value="horizontal" control={<Radio />} label="horizontal" />
                     </RadioGroup>
                 </FormControl>
                 <Typography variant="subtitle2" sx={{ ml: '20px', mt: '20px' }}>background color</Typography>
                 <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-                <MuiColorInput format="hex" value={color} onChange={handleBackgroundColorChange} />
+                <DebouncedColorInput format="hex" value={bgColor} onChange={handleBackgroundColorChange} />
                 <Typography variant="subtitle2" sx={{ ml: '40px', mt: '20px' }}>font color</Typography>
                 <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-                <MuiColorInput format="hex" value={fontColor} onChange={handleFontColorChange} />
-
+                <DebouncedColorInput format="hex" value={fontColor} onChange={handleFontColorChange} />
             </AccordionDetails>
         </Accordion>
     );

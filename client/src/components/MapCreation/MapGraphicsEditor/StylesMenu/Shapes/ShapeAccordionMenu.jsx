@@ -28,6 +28,7 @@ import {
 import SubMenuTitle from '../../SubMenuTitle';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 import { map } from 'leaflet';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 const SliderTextField = ({ value, onChange }) => {
   // Handling change from Slider
@@ -61,7 +62,7 @@ const SliderTextField = ({ value, onChange }) => {
         type="number"
         // size="small"
         variant="outlined"
-        // sx={{ width: 60, mr: 1 }}
+      // sx={{ width: 60, mr: 1 }}
       />
     </Box>
   );
@@ -70,7 +71,7 @@ const SliderTextField = ({ value, onChange }) => {
 export default function ShapeAccordionMenu() {
   const dispatch = useDispatch();
   const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
-  const fixedSymbolSize = useSelector((state) => state.mapStyles.fixedSymbolSize);
+  const fixedSymbolSize = useSelector((state) => state.mapGraphics.fixedSymbolSize);
   const pointProperties = useSelector((state) => state.mapGraphics.pointProperties);
   const addSymbolMode = useSelector((state) => state.mapGraphics.addSymbolMode);
   const maxSymbolSize = useSelector((state) => state.mapGraphics.maxSymbolSize);
@@ -115,19 +116,43 @@ export default function ShapeAccordionMenu() {
   };
 
   const handleMaxSymbolSizeChange = (newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setMaxSymbolSize, args: [maxSymbolSize] }],
+      redoActions: [{ actionCreator: setMaxSymbolSize, args: [Number(newValue)] }]
+    }));
     dispatch(setMaxSymbolSize(Number(newValue)));
   };
 
   const handleSizeByPropertyChange = (event, newValue) => {
     if (mapGraphicsType === 'Spike Map') {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: changeHeightByProperty, args: [sizeByProperty] }],
+        redoActions: [{ actionCreator: changeHeightByProperty, args: [newValue] }]
+      }));
       dispatch(changeHeightByProperty(newValue));
     } else {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: changeSizeByProperty, args: [sizeByProperty] }],
+        redoActions: [{ actionCreator: changeSizeByProperty, args: [newValue] }]
+      }));
       dispatch(changeSizeByProperty(newValue));
     }
   };
 
   const handleSymbolSizeChange = (newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setFixedSymbolSize, args: [fixedSymbolSize] }],
+      redoActions: [{ actionCreator: setFixedSymbolSize, args: [newValue] }]
+    }));
     dispatch(setFixedSymbolSize(newValue));
+  };
+
+  const handleAddSymbolMode = () => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: toggleAddSymbolMode, args: [] }],
+      redoActions: [{ actionCreator: toggleAddSymbolMode, args: [] }]
+    }));
+    dispatch(toggleAddSymbolMode());
   };
 
   const fixedSymbolSizeSlider = (
@@ -173,7 +198,7 @@ export default function ShapeAccordionMenu() {
       <FormControlLabel
         key={String(addSymbolMode)}
         control={
-          <Switch checked={addSymbolMode} onChange={(e) => dispatch(toggleAddSymbolMode())} />
+          <Switch checked={addSymbolMode} onChange={handleAddSymbolMode} />
         }
         label={mapGraphicsType === 'Spike Map' ? 'add spike mode' : 'add symbol mode'}
       />

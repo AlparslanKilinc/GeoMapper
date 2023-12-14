@@ -13,6 +13,7 @@ import { MuiColorInput } from 'mui-color-input';
 import { changeXByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 export default function ColorsSymbolAccordionMenu() {
   const dispatch = useDispatch();
@@ -35,14 +36,26 @@ export default function ColorsSymbolAccordionMenu() {
   };
 
   const handleFixedColorChange = (color) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeXByProperty, args: [{ property: 'fixedColor', propertyBy: fixedColor }] }],
+      redoActions: [{ actionCreator: changeXByProperty, args: [{ property: 'fixedColor', propertyBy: color }] }]
+    }));
     dispatch(changeXByProperty({ property: 'fixedColor', propertyBy: color }));
   };
 
   const handleColorByPropertyChange = (event, newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeColorByProperty, args: [colorByProperty] }],
+      redoActions: [{ actionCreator: changeColorByProperty, args: [newValue] }]
+    }));
     dispatch(changeColorByProperty(newValue));
   };
 
   const handleChangeOpacity = (newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setFixedOpacity, args: [fixedOpacity] }],
+      redoActions: [{ actionCreator: setFixedOpacity, args: [newValue] }]
+    }));
     dispatch(setFixedOpacity(newValue));
   };
 
@@ -140,7 +153,7 @@ export default function ColorsSymbolAccordionMenu() {
       {points.length > 0 ? colorControl : noPointsMessage}
 
       <PropertySelector
-        property={opacityByProperty}
+        value={opacityByProperty}
         propertyName="opacity"
         label="opacity by property"
       />

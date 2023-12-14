@@ -13,6 +13,7 @@ import { changeBorderColor, changeBorderWidth } from '../../../../redux-slices/m
 import SubMenuTitle from '../SubMenuTitle';
 import DebouncedSlider from '../../../DebouncedElement/DebouncedSlider';
 import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
+import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 import { Slider } from '@mui/material';
 
 export default function BorderAccordionMenu() {
@@ -20,10 +21,18 @@ export default function BorderAccordionMenu() {
   const { borderColor, borderWidth } = useSelector((state) => state.mapStyles);
 
   const handleBorderColorChange = (color) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeBorderColor, args: [borderColor] }],
+      redoActions: [{ actionCreator: changeBorderColor, args: [color] }]
+    }));
     dispatch(changeBorderColor(color));
   };
 
   const handleChangeBorderWidth = (newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeBorderWidth, args: [borderWidth] }],
+      redoActions: [{ actionCreator: changeBorderWidth, args: [newValue] }]
+    }));
     dispatch(changeBorderWidth(newValue));
   };
   return (

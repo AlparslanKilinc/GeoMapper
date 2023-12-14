@@ -19,6 +19,7 @@ import { setPropertyNames } from '../../redux-slices/mapGraphicsDataSlice';
 import MapBox from './MapBox';
 import SymbolEditing from './MapGraphicsEditor/GraphicsTools/SymbolEditing';
 import { setPointProperties } from '../../redux-slices/mapGraphicsDataSlice';
+import { resetStackData } from '../../redux-slices/undoRedoSlice';
 
 export default function MapGraphicsEditor() {
   const dispatch = useDispatch();
@@ -31,6 +32,10 @@ export default function MapGraphicsEditor() {
   const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
+
+  useEffect(() => {
+    dispatch(resetStackData());
+  }, [dispatch]);
 
   const drawerWidth = 240;
   const stylesToolboxConfig = [
@@ -70,7 +75,7 @@ export default function MapGraphicsEditor() {
     // get rid of undefined values
     uniqueValues = uniqueValues.filter((value) => value !== undefined);
 
-    uniqueValues = uniqueValues.map((value) => value.trim());
+    uniqueValues = uniqueValues.map((value) => String(value).trim());
 
     const c = uniqueValues.map((name) => {
       let color = generateRandomColor();
@@ -148,8 +153,6 @@ export default function MapGraphicsEditor() {
   const handleTabularOpen = (newState) => {
     setIsTabularOpened(newState);
   };
-
-  // TODO: Move the MapBox out as a separate component, now the switch of the dialog will trigger the re-rendering of the MapBox.
 
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%' }}>

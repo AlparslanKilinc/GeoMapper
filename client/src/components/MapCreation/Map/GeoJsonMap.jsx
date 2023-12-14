@@ -1,15 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import GeojsonWrapper from './GeojsonWrapper';
 import SymbolLayer from '../MapGraphicsEditor/StylesMenu/Shapes/SymbolLayer';
 import DotDensityLayer from '../MapGraphicsEditor/StylesMenu/Shapes/DotDensityLayer';
 import { useMapEvents } from 'react-leaflet';
-import { addPoint } from '../../../redux-slices/mapGraphicsDataSlice';
+import { addPoint, popPoint } from '../../../redux-slices/mapGraphicsDataSlice';
 import { useDispatch } from 'react-redux';
 import AlertComponent from "../../AlertComponent.jsx";
 import * as turf from '@turf/turf';
+import { addActionToPast } from '../../../redux-slices/undoRedoSlice';
 import axios from 'axios';
+
 
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
@@ -35,8 +37,8 @@ const GeoJsonMap = ({ styled }) => {
   const renderSpikeLayer = mapGraphicsType === 'Spike Map' && styled;
   const renderDotDensityLayer = mapGraphicsType === 'Dot Density Map' && styled;
   const [showAlert, setShowAlert] = useState(false)
-  const[alertMessage, setAlertMessage] = useState('')
-  const[alertSeverity, setAlertSeverity] = useState('')
+  const [alertMessage, setAlertMessage] = useState('')
+  const [alertSeverity, setAlertSeverity] = useState('')
 
   const handleCloseAlert = () => {
     setShowAlert(false);
@@ -62,11 +64,15 @@ const GeoJsonMap = ({ styled }) => {
           if (isPointInPolygon({ lat, lon }, geojson)) {
             const properties = getDefaultPointProperties();
             const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
             );
             const data = await response.json();
             const parts = data.display_name.split(',');
             const locationName = `${parts[parts.length - 3]}, ${parts[parts.length - 2]}`;
+            dispatch(addActionToPast({
+              undoActions: [{ actionCreator: popPoint, args: [] }],
+              redoActions: [{ actionCreator: addPoint, args: [{ name: locationName, lat, lon, ...properties }] }]
+            }));
             dispatch(addPoint({ name: locationName, lat, lon, ...properties }));
             setShowAlert(true);
             setAlertSeverity('success');
@@ -79,7 +85,7 @@ const GeoJsonMap = ({ styled }) => {
             setAlertSeverity("error")
             setAlertMessage('Point is out of bounds')
             setTimeout(() => {
-               setShowAlert(false);
+              setShowAlert(false);
             }, 2000);
           }
           // propogate the event to the map
@@ -120,9 +126,9 @@ const GeoJsonMap = ({ styled }) => {
       {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
       {renderDotDensityLayer && <DotDensityLayer />}
 
-      {(renderSymbolLayer || renderSpikeLayer) && <EventHandlerLayer />}
-    </MapContainer>
-</>
+        {(renderSymbolLayer || renderSpikeLayer) && <EventHandlerLayer />}
+      </MapContainer>
+    </>
 
   );
 };

@@ -14,6 +14,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { MuiColorInput } from 'mui-color-input';
 import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
+import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 
 export default function LabelStylesEditor({ idx }) {
   const dispatch = useDispatch();
@@ -27,29 +28,53 @@ export default function LabelStylesEditor({ idx }) {
   let sizeValue = defaultLabelSize;
 
   let handleChangeLabelColor = (color) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setDefaultLabelColor, args: [colorValue] }],
+      redoActions: [{ actionCreator: setDefaultLabelColor, args: [color] }]
+    }));
     dispatch(setDefaultLabelColor(color));
   };
   let handleChangeLabelFont = (event, newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setDefaultLabelFont, args: [fontValue] }],
+      redoActions: [{ actionCreator: setDefaultLabelFont, args: [newValue] }]
+    }));
     dispatch(setDefaultLabelFont(newValue));
   };
   let handleChangeLabelSize = (event) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setDefaultLabelSize, args: [sizeValue] }],
+      redoActions: [{ actionCreator: setDefaultLabelSize, args: [event.target.value] }]
+    }));
     dispatch(setDefaultLabelSize(event.target.value));
   };
 
   idx = Number(idx);
-  if (idx !== undefined && idx > -1) {
+  if (idx !== undefined && idx > -1 && idx < labels.length) {
     let label = labels[idx];
-    colorValue = label.color;
-    fontValue = label.font;
-    sizeValue = label.size;
+    colorValue = label.color || defaultLabelColor;
+    fontValue = label.font || defaultLabelFont;
+    sizeValue = label.size || defaultLabelSize;
 
     handleChangeLabelColor = (color) => {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: setLabelColor, args: [{ color: colorValue, idx }] }],
+        redoActions: [{ actionCreator: setLabelColor, args: [{ color, idx }] }]
+      }));
       dispatch(setLabelColor({ color, idx }));
     };
     handleChangeLabelFont = (event, font) => {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: setLabelFont, args: [{ font: fontValue, idx }] }],
+        redoActions: [{ actionCreator: setLabelFont, args: [{ font, idx }] }]
+      }));
       dispatch(setLabelFont({ font, idx }));
     };
     handleChangeLabelSize = (event) => {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: setLabelSize, args: [{ size: sizeValue, idx }] }],
+        redoActions: [{ actionCreator: setLabelSize, args: [{ size: event.target.value, idx }] }]
+      }));
       dispatch(setLabelSize({ size: event.target.value, idx }));
     };
   }

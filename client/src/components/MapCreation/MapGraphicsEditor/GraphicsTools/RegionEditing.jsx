@@ -8,6 +8,7 @@ import {
 import DebouncedTextField from '../../../DebouncedElement/DebouncedTextField';
 import LabelStylesEditor from '../StylesMenu/LabelStylesEditor';
 import SubMenuTitle from '../SubMenuTitle';
+import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 
 export default function RegionEditing() {
   const dispatch = useDispatch();
@@ -58,14 +59,27 @@ export default function RegionEditing() {
     if (type === 'number') {
       value = Number(value);
     }
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setRegionProperty, args: [{ propertyName: prop, value: regionDetails[prop] }] }],
+      redoActions: [{ actionCreator: setRegionProperty, args: [{ propertyName: prop, value }] }]
+    }));
     dispatch(setRegionProperty({ propertyName: prop, value }));
   };
 
   const handlePropValueChangeText = (event, value) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setRegionProperty, args: [{ propertyName: prop, value: regionDetails[prop] }] }],
+      redoActions: [{ actionCreator: setRegionProperty, args: [{ propertyName: prop, value }] }]
+    }));
     dispatch(setRegionProperty({ propertyName: prop, value: value }));
   };
 
+  // TODO: Should I add this action to stack? it didn't make change to the map
   const handleOptionSelect = (event, newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setSelectedRegionIdx, args: [selectedRegionIdx] }],
+      redoActions: [{ actionCreator: setSelectedRegionIdx, args: [newValue.id] }]
+    }));
     dispatch(setSelectedRegionIdx(newValue.id));
   };
 

@@ -13,10 +13,16 @@ import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
 import { useSelector } from 'react-redux';
 import { changeSelectedShape } from '../../../../../redux-slices/mapStylesSlice';
 import { useDispatch } from 'react-redux';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
+
 function ShapeButtonGroup() {
   const shape = useSelector((state) => state.mapStyles.shape);
   const dispatch = useDispatch();
   const handleClick = (button) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeSelectedShape, args: [shape] }],
+      redoActions: [{ actionCreator: changeSelectedShape, args: [button] }]
+    }));
     dispatch(changeSelectedShape(button));
   };
 
