@@ -12,6 +12,7 @@ import DotDensityPropertySelector from './DotDensityPropertySelector';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
 import Typography from "@mui/material/Typography";
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 export default function ColorsDotDensityAccordionMenu() {
   const dispatch = useDispatch();
@@ -22,25 +23,30 @@ export default function ColorsDotDensityAccordionMenu() {
   const colors = useSelector((state) => state.mapStyles.colors);
 
   const handleFixedColorChange = (color) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeXByProperty, args: [{ property: 'fixedColor', propertyBy: fixedColor }] }],
+      redoActions: [{ actionCreator: changeXByProperty, args: [{ property: 'fixedColor', propertyBy: color }] }]
+    }));
     dispatch(changeXByProperty({ property: 'fixedColor', propertyBy: color }));
   };
 
   const handleChangeValuePerDot = (event) => {
     const newValue = parseFloat(event.target.value);
     if (!isNaN(newValue)) {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: setValuePerDot, args: [valuePerDot] }],
+        redoActions: [{ actionCreator: setValuePerDot, args: [newValue] }]
+      }));
       dispatch(setValuePerDot(newValue));
     }
   };
 
   const handleChangeOpacity = (newValue) => {
-    console.log(newValue)
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setFixedOpacity, args: [fixedOpacity] }],
+      redoActions: [{ actionCreator: setFixedOpacity, args: [newValue] }]
+    }));
     dispatch(setFixedOpacity(newValue));
-  };
-
-  const handleColorChangeText = (name) => {
-    return (color) => {
-      dispatch(changeColorByName({ name, color }));
-    };
   };
 
   let colorSelectors = (
