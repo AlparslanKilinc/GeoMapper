@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import ColorPalette from './ColorPalette';
 import SubMenuTitle from '../../SubMenuTitle';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 export default function ColorsHeatMapAccordionMenu() {
   const dispatch = useDispatch();
@@ -21,10 +22,18 @@ export default function ColorsHeatMapAccordionMenu() {
   });
 
   const handleColorByPropertyChange = (event, newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: changeColorByProperty, args: [colorByProperty] }],
+      redoActions: [{ actionCreator: changeColorByProperty, args: [newValue] }]
+    }));
     dispatch(changeColorByProperty(newValue));
   };
 
   const handleChangeOpacity = (newValue) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setOpacity, args: [opacity] }],
+      redoActions: [{ actionCreator: setOpacity, args: [newValue] }]
+    }));
     dispatch(setOpacity(newValue));
   };
 

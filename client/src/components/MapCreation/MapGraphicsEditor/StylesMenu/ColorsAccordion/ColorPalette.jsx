@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setColorPaletteIdx, setContinousColorScale } from '../../../../../redux-slices/mapStylesSlice';
 import { Select, MenuItem, Box } from '@mui/material';
 import * as d3 from 'd3';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 export default function ColorPaletteSelector(props) {
   const dispatch = useDispatch();
@@ -10,12 +11,19 @@ export default function ColorPaletteSelector(props) {
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
 
   const handleChange = (event) => {
-    const colorPaletteIdx = event.target.value;
+    const newColorPaletteIdx = event.target.value;
     const data = regions.map((region) => region[colorByProperty]);
-    const colorScale = d3.scaleLinear().domain([d3.min(data), d3.max(data)]).range(colorPalette[colorPaletteIdx]);
+    const colorScale = d3.scaleLinear().domain([d3.min(data), d3.max(data)]).range(colorPalette[newColorPaletteIdx]);
+    const oldColorScale = d3.scaleLinear().domain([d3.min(data), d3.max(data)]).range(colorPalette[colorPaletteIdx]);
 
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setContinousColorScale, args: [data.map((d) => oldColorScale(d))] },
+      { actionCreator: setColorPaletteIdx, args: [colorPaletteIdx] }],
+      redoActions: [{ actionCreator: setContinousColorScale, args: [data.map((d) => colorScale(d))] },
+      { actionCreator: setColorPaletteIdx, args: [newColorPaletteIdx] }]
+    }));
     dispatch(setContinousColorScale(data.map((d) => colorScale(d))));
-    dispatch(setColorPaletteIdx(colorPaletteIdx));
+    dispatch(setColorPaletteIdx(newColorPaletteIdx));
   };
 
   // TODO: Make highlight color darker

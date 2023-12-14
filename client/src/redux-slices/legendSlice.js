@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     mapId: null,
-    orientation: 'verticle',
-    bgColor:'#ffffff',
+    orientation: 'vertical',
+    bgColor: '#ffffff',
     fontColor: 'black',
 };
 
@@ -24,7 +24,7 @@ const legendSlice = createSlice({
 });
 
 export const {
-   changeOrientation,
+    changeOrientation,
     changeBackgroundColor,
     changeFontColor,
 
