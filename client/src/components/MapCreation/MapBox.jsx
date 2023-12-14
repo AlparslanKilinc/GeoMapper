@@ -8,14 +8,15 @@ import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Typography from '@mui/material/Typography';
-import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper'
-import Alert from "@mui/material/Alert";
-import CircularProgress from "@mui/material/CircularProgress";
+import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import SaveButton from './SaveButton';
-
+import PublishButton from './PublishButton';
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
+  const mapMetadataId = useSelector((state) => state.mapMetadata.mapId);
   const colors = useSelector((state) => state.mapStyles.colors);
   const title = useSelector((state) => state.mapMetadata.title);
 
@@ -65,12 +66,8 @@ export default function MapBox({ openExportDialog }) {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-              <SaveButton/>
-
-              <Button variant="outlined" aria-label="publish" sx={buttonStyle}>
-                <PublishOutlinedIcon />
-              </Button>
-
+              <SaveButton sx={buttonStyle} />
+              {mapMetadataId && <PublishButton sx={buttonStyle} />}
               <Button
                 variant="outlined"
                 aria-label="publish"

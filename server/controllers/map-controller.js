@@ -74,6 +74,37 @@ const updateMap = async (req, res) => {
   }
 };
 
+const publishMap = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const mapData = req.body;
+    const publishDate = mapData.publishDate;
+    const mapId = req.params.mapId;
+
+    // Fetch the existing map
+    const existingMap = await Map.findById(mapId);
+    if (!existingMap) {
+      return res.status(404).json({ message: 'Map not found' });
+    }
+
+    // Update the user's publishMaps array if the map is published otherwise this field is null
+    if (publishDate) {
+      await User.findByIdAndUpdate(userId, { $push: { publishedMaps: mapData._id } });
+      /// remove from draftedMaps
+      await User.findByIdAndUpdate(userId, { $pull: { draftedMaps: mapData._id } });
+    }
+
+    const update = { ...mapData };
+    delete update._id;
+
+    await Map.findOneAndUpdate({ _id: mapId }, update, { new: true });
+
+    res.status(200).json({ message: 'Map published successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getMapDataById = async (req, res) => {
   const mapId = req.params.mapId;
 
@@ -121,7 +152,7 @@ const getUserPublishedMaps = async (req, res) => {
   try {
     const user = await User.findById(userId)
       .select('publishedMaps') // Select only the fields you need
-      .populate('publishedMaps'); // Populate the draftedMaps array
+      .populate('publishedMaps'); // Populate the publishedMaps array
 
     // Check if user exists
     if (!user) {
@@ -144,5 +175,6 @@ module.exports = {
   getAllDrafts,
   getUserPublishedMaps,
   getMapDataById,
-  updateMap
+  updateMap,
+  publishMap
 };

@@ -1,12 +1,10 @@
 import React from 'react';
-import MapCard from '../../Explore/MapCard';
+import { Typography } from '@mui/material';
 
 export default function Bookmarks() {
   return (
     <div style={{ display: 'flex', gap: '1rem' }}>
-      <MapCard showActions={true} />
-      <MapCard showActions={true} />
-      <MapCard showActions={true} />
+      <Typography>Empty...</Typography>
     </div>
   );
 }
