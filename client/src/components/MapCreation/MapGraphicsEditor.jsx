@@ -70,7 +70,7 @@ export default function MapGraphicsEditor() {
     // get rid of undefined values
     uniqueValues = uniqueValues.filter((value) => value !== undefined);
 
-    uniqueValues = uniqueValues.map((value) => value.trim());
+    uniqueValues = uniqueValues.map((value) => String(value).trim());
 
     const c = uniqueValues.map((name) => {
       let color = generateRandomColor();

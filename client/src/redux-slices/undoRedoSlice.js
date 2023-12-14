@@ -33,7 +33,11 @@ export const undo = () => (dispatch, getState) => {
 
     dispatch(setState({ past: newPast, future: newFuture }));
     lastActionGroup.undoActions.forEach(action => {
-      dispatch(action.actionCreator(...action.args));
+      if (action.func) {
+        action.func();
+      } else if (action.actionCreator) {
+        dispatch(action.actionCreator(...action.args));
+      }
     });
   }
 };
@@ -47,7 +51,11 @@ export const redo = () => (dispatch, getState) => {
 
     dispatch(setState({ past: newPast, future: newFuture }));
     nextActionGroup.redoActions.forEach(action => {
-      dispatch(action.actionCreator(...action.args));
+      if (action.func) {
+        action.func();
+      } else if (action.actionCreator) {
+        dispatch(action.actionCreator(...action.args));
+      }
     });
   }
 };
