@@ -381,11 +381,14 @@ const mapGraphicsDataSlice = createSlice({
       state.selectedRegionIdx = action.payload;
     },
     addPoint: (state, action) => {
-      action.payload.size = state.fixedSymbolSize;
-      action.payload.height = state.fixedSymbolSize;
-      if (state.colorByProperty) action.payload[state.colorByProperty] = 'default';
-      else action.payload.color = 'default';
-      state.points.push(action.payload);
+      const newPoint = {
+        ...action.payload,
+        size: state.fixedSymbolSize,
+        height: state.fixedSymbolSize,
+        color: state.colorByProperty ? 'default' : action.payload.color
+      };
+    
+      state.points.push(newPoint);
     },
     removePoint: (state, action) => {
       const index = action.payload.rowIndex;
@@ -393,6 +396,9 @@ const mapGraphicsDataSlice = createSlice({
         state.points = [...state.points.slice(0, index), ...state.points.slice(index + 1)];
         state.selectedPointKey = -1;
       }
+    },
+    popPoint: (state, action) => {
+      state.points.pop();
     },
     validateRow: (state, action) => {
       const { rowIndex, geoJSON } = action.payload;
@@ -735,6 +741,7 @@ export const {
   validateCell,
   TableValidation,
   addPoint,
+  popPoint,
   toggleAddSymbolMode,
   setSelectedPointKey,
   setPointProperty,
