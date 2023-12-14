@@ -24,6 +24,7 @@ import { getMapMetaDataById } from '../../redux-slices/mapMetadataSlice.js';
 import { fetchGeojsonById } from '../../redux-slices/geoJSONSlice.js';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import View from '../MapView/View.jsx';
 
 export default function MapCard({ map }) {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ export default function MapCard({ map }) {
   const [forkForm, setForkForm] = useState(false);
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [openView, setOpenView] = useState(false);
   const {
     title,
     description,
@@ -51,6 +53,10 @@ export default function MapCard({ map }) {
     geoDataId
   } = map;
 
+  const handleCloseView = () => {
+    setOpenView(false);
+  };
+
   const handleMapClick = async () => {
     const draft = publishDate === null;
     if (draft) {
@@ -66,8 +72,7 @@ export default function MapCard({ map }) {
         console.error('Error loading map data:', error);
       }
     } else {
-      // Show map view page using map's data from props
-      console.log('map not in drafts');
+      setOpenView(true);
     }
   };
 
@@ -133,37 +138,33 @@ export default function MapCard({ map }) {
     setForkForm(false);
   };
 
-  const interactionButtons = (
-    <CardActions>
-      <IconButton>
-        {liked ? (
-          <FavoriteIcon onClick={handleLike} className="like" style={{ color: 'red' }} />
-        ) : (
-          <FavoriteBorderIcon onClick={handleLike} className="like" />
-        )}
-      </IconButton>
+ const interactionButtons = (
+   <CardActions>
+     <IconButton onClick={handleLike}>
+       {liked ? (
+         <FavoriteIcon className="like" style={{ color: 'red' }} />
+       ) : (
+         <FavoriteBorderIcon className="like" />
+       )}
+     </IconButton>
 
-      <IconButton>
-        <ShareIcon className="export" onClick={handleFork} />
-      </IconButton>
+     <IconButton onClick={handleFork}>
+       <ShareIcon className="export" />
+     </IconButton>
 
-      <IconButton>
-        <IosShareIcon className="share" onClick={handleShare} />
-      </IconButton>
+     <IconButton onClick={handleShare}>
+       <IosShareIcon className="share" />
+     </IconButton>
 
-      <IconButton>
-        {bookmarked ? (
-          <BookmarkIcon
-            onClick={handleBookmark}
-            className="bookmarks"
-            style={{ color: '#40e0d0' }}
-          />
-        ) : (
-          <BookmarkBorderIcon onClick={handleBookmark} className="bookmarks" />
-        )}
-      </IconButton>
-    </CardActions>
-  );
+     <IconButton onClick={handleBookmark}>
+       {bookmarked ? (
+         <BookmarkIcon className="bookmarks" style={{ color: '#40e0d0' }} />
+       ) : (
+         <BookmarkBorderIcon className="bookmarks" />
+       )}
+     </IconButton>
+   </CardActions>
+ );
 
   return (
     <div className="mapCard">
@@ -202,6 +203,7 @@ export default function MapCard({ map }) {
       {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle} />}
       {forkForm && <ForkForm open={forkForm} onClose={closeForkForm} />}
       {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
+      <View map={map} open={openView} onClose={handleCloseView} />
     </div>
   );
 }

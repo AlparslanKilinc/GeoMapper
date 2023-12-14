@@ -19,7 +19,8 @@ export default function Drafts() {
       {isLoadingDrafts ? (
         <CircularProgress />
       ) : (
-        <>{drafts ? drafts.map((map) => <MapCard key={map._id} map={map} />) : ''}</>
+        <>{drafts.length >0 ? drafts.map((map) => <MapCard key={map._id} map={map} />) : <Typography>
+          Empty...</Typography>}</>
       )}
     </div>
   );

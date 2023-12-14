@@ -15,6 +15,16 @@ export const saveMap = createAsyncThunk(
   }
 );
 
+export const publishMap = createAsyncThunk('mapMetadata/publishMap', async (_, thunkApi) => {
+  try {
+    const map = thunkApi.getState().mapMetadata;
+    const response = await apis.publishMap(map);
+    return response.data;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error.response.data);
+  }
+});
+
 export const updateMapMetaDataById = createAsyncThunk(
   'mapMetadata/updateMapMetaDataById',
   async (thumbnailFile, thunkApi) => {
@@ -33,7 +43,6 @@ export const getMapMetaDataById = createAsyncThunk(
   async (mapId, thunkApi) => {
     try {
       const response = await apis.getMapDataById(mapId);
-      console.log('response.data', response.data);
       return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
@@ -89,6 +98,9 @@ const metaDataSlice = createSlice({
     },
     setThumbnailUrl: (state, action) => {
       state.thumbnailUrl = action.payload;
+    },
+    setPublishedDate: (state, action) => {
+      state.publishDate = action.payload;
     },
     updateDataIds: (state, action) => {
       state.graphicsDataId = action.payload.graphicsDataId;
@@ -146,6 +158,7 @@ export const {
   setMapGraphicsType,
   resetMapMetaData,
   updateDataIds,
-  resetMapMetaDataFromDraft
+  resetMapMetaDataFromDraft,
+  setPublishedDate
 } = metaDataSlice.actions;
 export default metaDataSlice.reducer;

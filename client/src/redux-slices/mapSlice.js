@@ -18,7 +18,7 @@ export const fetchUserPublishedMaps = createAsyncThunk(
   'maps/fetchUserPublishedMaps',
   async (_, thunkApi) => {
     try {
-      const response = await apis.getPublishedMaps();
+      const response = await apis.getUserPublishedMaps();
       return response.data.publishedMaps;
     } catch (error) {
       console.log(error);

@@ -19,6 +19,7 @@ import Button from '@mui/material/Button';
 
 const AuthButton = ({ loggedIn, openConfirmationModal, setPath }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   if (loggedIn) {
     return <UserIconMenu openConfirmationModal={openConfirmationModal} setPath={setPath} />;
   }
@@ -30,6 +31,8 @@ const AuthButton = ({ loggedIn, openConfirmationModal, setPath }) => {
     ) {
       setPath('/login');
       openConfirmationModal();
+    }else{
+      navigate('/login');
     }
   };
 
