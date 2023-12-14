@@ -10,6 +10,7 @@ const undoRedoSlice = createSlice({
   name: 'undoRedo',
   initialState,
   reducers: {
+    resetStackData: () => initialState,
     addActionToPast: (state, action) => {
       state.past.push(action.payload);
       state.future = [];
@@ -61,5 +62,5 @@ export const redo = () => (dispatch, getState) => {
 };
 
 
-export const { addActionToPast, clearHistory, setState } = undoRedoSlice.actions;
+export const { resetStackData, addActionToPast, clearHistory, setState } = undoRedoSlice.actions;
 export default undoRedoSlice.reducer;
