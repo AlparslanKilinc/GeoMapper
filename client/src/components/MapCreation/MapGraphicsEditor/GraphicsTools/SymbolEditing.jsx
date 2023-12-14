@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { setPointProperty } from '../../../../redux-slices/mapGraphicsDataSlice';
 import DebouncedTextField from '../../../DebouncedElement/DebouncedTextField';
+import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 
 export default function SymbolEditing() {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ export default function SymbolEditing() {
   let pointDetails = {};
   let name = 'New York';
   let type = columnTypes[prop] || 'text';
-  if (selectedPointKey > -1) {
+  if (selectedPointKey > -1 && selectedPointKey < points.length) {
     pointDetails = points[selectedPointKey];
     name = pointDetails[nameByProperty];
     // lets check the type of the property and render the appropriate input
@@ -50,6 +51,10 @@ export default function SymbolEditing() {
     if (type === 'number') {
       value = Number(value);
     }
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setPointProperty, args: [{ propertyName: prop, value: pointDetails[prop], pointIdx: selectedPointKey }] }],
+      redoActions: [{ actionCreator: setPointProperty, args: [{ propertyName: prop, value: value, pointIdx: selectedPointKey }] }]
+    }));
     dispatch(
       setPointProperty({
         propertyName: prop,
@@ -60,6 +65,10 @@ export default function SymbolEditing() {
   };
 
   const handlePropValueChangeText = (event, value) => {
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setPointProperty, args: [{ propertyName: prop, value: pointDetails[prop], pointIdx: selectedPointKey }] }],
+      redoActions: [{ actionCreator: setPointProperty, args: [{ propertyName: prop, value: value, pointIdx: selectedPointKey }] }]
+    }));
     dispatch(setPointProperty({ propertyName: prop, value: value, pointIdx: selectedPointKey }));
   };
 
@@ -146,7 +155,7 @@ export default function SymbolEditing() {
           <TextField label="Search..." variant="outlined" {...params} fullWidth />
         )}
       />
-      {selectedPointKey > -1 ? (
+      {selectedPointKey > -1 && selectedPointKey < points.length ? (
         symbolPropertyEditor
       ) : (
         <Typography variant="subtitle2">Click on a symbol to edit</Typography>
