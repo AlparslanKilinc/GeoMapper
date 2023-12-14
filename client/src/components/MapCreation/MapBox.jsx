@@ -16,7 +16,8 @@ import PublishButton from './PublishButton';
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
-  const mapMetadataId = useSelector((state) => state.mapMetadata.mapId);
+  const mapMetadataUrl = useSelector((state) => state.mapMetadata.thumbnailUrl);
+
   const colors = useSelector((state) => state.mapStyles.colors);
   const title = useSelector((state) => state.mapMetadata.title);
 
@@ -67,7 +68,7 @@ export default function MapBox({ openExportDialog }) {
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
               <SaveButton sx={buttonStyle} />
-              {mapMetadataId && <PublishButton sx={buttonStyle} />}
+              {mapMetadataUrl && <PublishButton sx={buttonStyle} />}
               <Button
                 variant="outlined"
                 aria-label="publish"

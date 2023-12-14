@@ -16,6 +16,8 @@ const handlePublishMap = async () => {
     const date = new Date();
     const dateString = date.toLocaleDateString('en-US');
     dispatch(setPublishedDate(dateString));
+    /// When you save we only save the id of the data
+    /// so when user saves then directly tries to publish we dont have the data to save
     await dispatch(publishMap());
     await clearStatesComplete();
     navigate('/profile');

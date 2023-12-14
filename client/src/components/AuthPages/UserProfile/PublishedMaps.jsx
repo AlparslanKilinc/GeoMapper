@@ -14,16 +14,16 @@ export default function PublishedMaps() {
     dispatch(fetchUserPublishedMaps());
   }, [user]);
 
-  console.log('publishedMaps:', publishedMaps);
+  const renderPublishedMaps = () => {
+    if (publishedMaps && publishedMaps.length > 0) {
+      return publishedMaps.map((map) => <MapCard key={map._id} map={map} />);
+    }
+    return <Typography>Empty...</Typography>;
+  };
 
   return (
     <div style={{ display: 'flex', gap: '1rem' }}>
-      {isLoadingPublishedMaps ? (
-        <CircularProgress />
-      ) : (
-        <>{publishedMaps.length >0 ? publishedMaps.map((map) => <MapCard key={map._id} map={map} />) : <Typography>
-          Empty...</Typography>}</>
-      )}
-    </div>
+    {isLoadingPublishedMaps ? <CircularProgress /> : renderPublishedMaps()}
+  </div>
   );
 }
