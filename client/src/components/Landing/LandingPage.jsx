@@ -43,62 +43,62 @@ export default function LandingPage() {
 
   const handleCreateClick = (mapTitle) => {
     dispatch(setMapGraphicsType(mapTitle));
-    navigate('/mapCreation', { state: { stage: 1 } });
+    navigate('/mapCreation/OutlineSelection');
   };
 
   return (
-    <div className="landing-page">
-      <div className="intro-box">
-        <div className="intro-info-box">
-          <h1> Welcome to GeoMapper </h1>
-          <p>
-            GeoMapper offers map visualization combined with a community focus. Dive into GeoMapper
-            and discover a balanced approach to engaging with geographic data, harmonizing
-            technology, and community.
-          </p>
-          <div className="button-group">
-            <Link className="link" to={'/explore'}>
-              <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="explore">
-                Explore
-              </Button>
-            </Link>
-            <Link className="link" to={'/register'}>
-              <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
-                Register
-              </Button>
-            </Link>
-          </div>
-        </div>
-        <img className="image" src={GeoMapperImage} alt="logo" />
-      </div>
-
-      <Divider className="divider">Choose from diverse templates and start mapping!</Divider>
-      <div className="maps-container">
-        <Button onClick={() => scroll(-400)}>&lt;</Button>
-        <div className="maps" ref={scrollContainer}>
-          {mapData.map((map, index) => (
-            <div key={index} className="outer-box">
-              <img className="image" src={getImageSrc(map.title)} alt={map.alt} />
-              <Divider />
-              <div className="info-box">
-                <h2>{map.title}</h2>
-                <p>{map.description}</p>
-                <Button
-                  onClick={() => handleCreateClick(map.title)}
-                  style={{ backgroundColor: '#40E0D0' }}
-                  variant="contained"
-                  id="register"
-                >
-                  Create
+      <div className="landing-page">
+        <div className="intro-box">
+          <div className="intro-info-box">
+            <h1> Welcome to GeoMapper </h1>
+            <p>
+              GeoMapper offers map visualization combined with a community focus. Dive into GeoMapper
+              and discover a balanced approach to engaging with geographic data, harmonizing
+              technology, and community.
+            </p>
+            <div className="button-group">
+              <Link className="link" to={'/explore'}>
+                <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="explore">
+                  Explore
                 </Button>
-              </div>
+              </Link>
+              <Link className="link" to={'/register'}>
+                <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
+                  Register
+                </Button>
+              </Link>
             </div>
-          ))}
+          </div>
+          <img className="image" src={GeoMapperImage} alt="logo" />
         </div>
-        <Button onClick={() => scroll(400)}>&gt;</Button>
-      </div>
 
-      <CopyRight />
-    </div>
+        <Divider className="divider">Choose from diverse templates and start mapping!</Divider>
+        <div className="maps-container">
+          <Button onClick={() => scroll(-400)}>&lt;</Button>
+          <div className="maps" ref={scrollContainer}>
+            {mapData.map((map, index) => (
+                <div key={index} className="outer-box">
+                  <img className="image" src={getImageSrc(map.title)} alt={map.alt} />
+                  <Divider />
+                  <div className="info-box">
+                    <h2>{map.title}</h2>
+                    <p>{map.description}</p>
+                    <Button
+                        onClick={() => handleCreateClick(map.title)}
+                        style={{ backgroundColor: '#40E0D0' }}
+                        variant="contained"
+                        id="register"
+                    >
+                      Create
+                    </Button>
+                  </div>
+                </div>
+            ))}
+          </div>
+          <Button onClick={() => scroll(400)}>&gt;</Button>
+        </div>
+
+        <CopyRight />
+      </div>
   );
 }

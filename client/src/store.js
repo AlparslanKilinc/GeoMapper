@@ -11,8 +11,8 @@ import mapReducer from './redux-slices/mapSlice';
 import exploreSearchReducer from './redux-slices/exploreSearchSlice';
 import geojsonReducer from './redux-slices/geoJSONSlice';
 import legendReducer from './redux-slices/legendSlice';
-import commentsReducer from './redux-slices/commentsSlice'
-import undoRedoReducer from './redux-slices/undoRedoSlice'
+import commentsReducer from './redux-slices/commentsSlice';
+import undoRedoReducer from './redux-slices/undoRedoSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -39,5 +39,4 @@ export const store = configureStore({
   middleware: [thunk],
   devTools: true
 });
-
 export const persistor = persistStore(store);

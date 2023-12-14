@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../auth');
 const GeojsonController = require('../controllers/geojson-controller.js');
 
 // Middleware for parsing raw binary data
@@ -10,8 +11,9 @@ const rawBodyParser = express.raw({
 router.get('/', GeojsonController.getGeojsonIdNamePairs);
 router.get('/:id', GeojsonController.getGeojsonById);
 router.get('/search/:query', GeojsonController.searchGeojson);
+router.delete('/:id', auth.verify, GeojsonController.deleteGeojsonById);
 
 // Use the rawBodyParser middleware only for the POST route
-router.post('/', rawBodyParser, GeojsonController.createGeojson);
+router.post('/', auth.verify, rawBodyParser, GeojsonController.createGeojson);
 
 module.exports = router;

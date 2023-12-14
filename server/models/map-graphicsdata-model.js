@@ -1,34 +1,41 @@
 const mongoose = require('mongoose');
 
-// Define RegionDataSchema
-const regionDataSchema = new mongoose.Schema({
-  mapId: { type: mongoose.Schema.Types.ObjectId, ref: 'Map' },
-  properties: { type: mongoose.Schema.Types.Mixed, default: {} },
-  name: { type: String, required: true }
+const mapGraphicsSchema = new mongoose.Schema({
+  mapId: { type: String, required: false, default: null },
+  points: [{ type: mongoose.Schema.Types.Mixed }],
+  regions: [{ type: mongoose.Schema.Types.Mixed }],
+  columnTypes: Map,
+  addedColumns: [String],
+  nameByProperty: String,
+  latByProperty: String,
+  lonByProperty: String,
+  colorByProperty: String,
+  sizeByProperty: String,
+  heightByProperty: String,
+  fixedSymbolSize: Number,
+  fixedOpacity: Number,
+  opacityByProperty: String,
+  fixedColor: String,
+  labelByProperty: String,
+  isLabelVisible: Boolean,
+  propertyNames: [String],
+  pointProperties: [String],
+  selectedRegionIdx: Number,
+  columnValidationErrors: Map,
+  cellValidationErrors: Map,
+  randomColumnCounter: Number,
+  validationMessage: String,
+  addSymbolMode: Boolean,
+  selectedPointKey: Number,
+  valuePerDot: Number,
+  dotDensityByProperty: [String],
+  maxSymbolSize: Number,
+  minSymbolSize: Number,
+  minProperty: Number,
+  maxProperty: Number
 });
 
-// Define PointDataSchema
-const pointDataSchema = new mongoose.Schema({
-  mapId: { type: mongoose.Schema.Types.ObjectId, ref: 'Map' },
-  lat: { type: Number, required: true },
-  long: { type: Number, required: true },
-  properties: { type: mongoose.Schema.Types.Mixed, default: {} },
-  name: { type: String, required: true }
-});
+const MapGraphics = mongoose.model('MapGraphics', mapGraphicsSchema);
 
-// Define mapGraphicsDataSchema
-const mapGraphicsDataSchema = new mongoose.Schema({
-  mapId: { type: mongoose.Schema.Types.ObjectId, ref: 'Map' },
-  points: { type: [pointDataSchema], default: [] },
-  regions: { type: [regionDataSchema], default: [] },
-  sizeByProperty: { type: String, default: '' },
-  colorByProperty: { type: String, default: '' },
-  propertyNames: { type: [{ prop: String, type: String }], default: [] }
-});
+module.exports = MapGraphics;
 
-// Export the schemas
-module.exports = {
-  RegionData: mongoose.model('RegionData', regionDataSchema),
-  PointData: mongoose.model('PointData', pointDataSchema),
-  MapGraphicsData: mongoose.model('MapGraphicsData', mapGraphicsDataSchema)
-};

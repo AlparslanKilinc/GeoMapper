@@ -10,6 +10,8 @@ import { useDispatch } from 'react-redux';
 import AlertComponent from "../../AlertComponent.jsx";
 import * as turf from '@turf/turf';
 import { addActionToPast } from '../../../redux-slices/undoRedoSlice';
+import axios from 'axios';
+
 
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
@@ -17,7 +19,6 @@ const isPointInPolygon = (point, geojson) => {
   if (geojson && geojson.geoJSON && geojson.geoJSON.features) {
     geojson.geoJSON.features.forEach((feature) => {
       if (turf.booleanPointInPolygon(turfPoint, feature)) {
-
         isInside = true;
       }
     });
@@ -58,7 +59,7 @@ const GeoJsonMap = ({ styled }) => {
 
     const map = useMapEvents({
       click: async (e) => {
-        if (addSymbolMode) {
+          if (addSymbolMode) {
           const [lat, lon] = [e.latlng.lat, e.latlng.lng];
           if (isPointInPolygon({ lat, lon }, geojson)) {
             const properties = getDefaultPointProperties();
@@ -91,31 +92,39 @@ const GeoJsonMap = ({ styled }) => {
         }
       }
     });
-
     return null;
   };
 
   return (
-    <>
-      <MapContainer
-        style={{
-          flexGrow: 1,
-          backgroundColor: styled ? mapBackgroundColor : 'white'
-        }}
-        key={mapBackgroundColor}
-      >
-        {showAlert && <AlertComponent
-          handleCloseAlert={handleCloseAlert}
-          autoHideDuration={2000}
-          alertSeverity={alertSeverity}
-          alertMessage={alertMessage} />}
-        {isTilelayerVisible && styled && <TileLayer
+      <>
+        <MapContainer
+      style={{
+        flexGrow: 1,
+        backgroundColor: styled ? mapBackgroundColor : 'white'
+      }}
+      key={mapBackgroundColor}
+      zoom={5}
+      center={[44.3148, -85.6024]}
+    >
+           {showAlert && <AlertComponent
+              handleCloseAlert={handleCloseAlert}
+              autoHideDuration={2000}
+              alertSeverity={alertSeverity}
+              alertMessage={alertMessage}/>}
+      {isTilelayerVisible && styled && <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />}
+         {isTilelayerVisible && styled && (
+        <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />}
-        <GeojsonWrapper isStyled={styled} />
-        {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
-        {renderDotDensityLayer && <DotDensityLayer />}
+        />
+      )}
+
+      <GeojsonWrapper isStyled={styled} />
+      {(renderSymbolLayer || renderSpikeLayer) && <SymbolLayer />}
+      {renderDotDensityLayer && <DotDensityLayer />}
 
         {(renderSymbolLayer || renderSpikeLayer) && <EventHandlerLayer />}
       </MapContainer>

@@ -1,30 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import MapIcon from '@mui/icons-material/Map';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../redux-slices/authSlice';
-import { getLoggedIn } from '../../redux-slices/authSlice';
+import { useClearStates } from '../MapCreation/useClearStates';
 import '../../styles/userIconMenu.css';
 
-export default function UserIconMenu() {
+export default function UserIconMenu({openConfirmationModal, setPath}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const { clearStatesComplete } = useClearStates();
   const user = useSelector((state) => state.auth.user);
-  useEffect(() => {
-    dispatch(getLoggedIn());
-  }, [dispatch]);
 
   const userData = {
     firstName: user?.firstName || '',
@@ -39,14 +32,23 @@ export default function UserIconMenu() {
     setAnchorEl(null);
   };
 
-  const handleMenuClick = () => {
+  const handleProfileClick = () => {
     setAnchorEl(null);
-    navigate('/profile');
+    if (location.pathname == '/mapCreation/OutlineSelection' || location.pathname == '/mapCreation/DataEditor' ) {
+        openConfirmationModal();
+        setPath('/profile');
+    }else if( location.pathname == '/mapCreation/GraphicsEditor' ){
+      clearStatesComplete();
+      navigate('/profile');
+    }else{
+      navigate('/profile');
+    }
   };
 
   const handleLogout = () => {
     dispatch(logoutUser());
     handleMenuClose();
+    clearStatesComplete();
     navigate('/');
   };
 
@@ -79,7 +81,7 @@ export default function UserIconMenu() {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        <MenuItem sx={{ margin: '-10px' }}>
+        <MenuItem onClick={handleProfileClick} sx={{ margin: '-10px' }}>
           {userData.profilePicPath ? (
             <Avatar
               src={userData.profilePicPath}
@@ -95,11 +97,6 @@ export default function UserIconMenu() {
             </h3>
             <h6>{userData.userName}</h6>
           </div>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleMenuClick} sx={{ padding: '5px' }}>
-          <AccountCircleIcon sx={{ color: '#BBBBBB' }} />
-          Your Profile
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>Logout</MenuItem>

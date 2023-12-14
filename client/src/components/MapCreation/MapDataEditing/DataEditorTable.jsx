@@ -2,12 +2,22 @@ import React, { useState, useEffect, useMemo } from 'react';
 import '../../../styles/mapDataEditingPage.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { LoadingButton } from '@mui/lab';
-import {Modal, Snackbar, Table, TableBody, TableCell, TableHead, TableRow, TextField} from '@mui/material';
+import {
+  Modal,
+  Snackbar,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Menu, MenuItem } from '@mui/material';
 import { FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import AlertComponent from '../../AlertComponent.jsx'
+import AlertComponent from '../../AlertComponent.jsx';
+
 import {
   setRegionProperty,
   addProperty,
@@ -31,9 +41,10 @@ import {
   validateRow,
   validateAllCells
 } from '../../../redux-slices/mapGraphicsDataSlice';
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+
 export default function DataEditorTable() {
   const {
     addedColumns,
@@ -62,29 +73,29 @@ export default function DataEditorTable() {
   const [cellEdits, setCellEdits] = useState({});
   const [isModalOpen, setModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
-  const [showAlert, setShowAlert] = useState(false)
-  const[alertMessage, setAlertMessage] = useState('')
-  const[alertSeverity, setAlertSeverity] = useState('')
-  const[deleteModal, setDeleteModal] = useState(false);
-  const[columnToDelete, setColumnToDelete] = useState('')
-  const[deletePointModal, setDeletePointModal] = useState(false);
-  const[rowIndex, setRowIndex] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('');
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [columnToDelete, setColumnToDelete] = useState('');
+  const [deletePointModal, setDeletePointModal] = useState(false);
+  const [rowIndex, setRowIndex] = useState(null);
 
   const openDeletePointModal = (selectedPoint) => {
-    setDeletePointModal(true)
-    setRowIndex(selectedPoint)
+    setDeletePointModal(true);
+    setRowIndex(selectedPoint);
   };
-  const closePointDeleteModal = () =>{
-    setDeletePointModal(false)
+  const closePointDeleteModal = () => {
+    setDeletePointModal(false);
   };
-  const openDeleteModal = (selectedColumn)  => {
-      setDeleteModal(true)
-      setColumnToDelete(selectedColumn)
-  }
+  const openDeleteModal = (selectedColumn) => {
+    setDeleteModal(true);
+    setColumnToDelete(selectedColumn);
+  };
   const closeDeleteModal = () => {
-    setDeleteModal(false)
-    handleClose()
-  }
+    setDeleteModal(false);
+    handleClose();
+  };
 
   const handleCloseAlert = () => {
     setShowAlert(false);
@@ -226,24 +237,25 @@ export default function DataEditorTable() {
   }, [displayedProperties]);
 
   const handleAddColumn = () => {
-    handleCloseModal()
-    if(newColumnName.length == 0){
-      setAlertMessage("Column name cannot be empty!")
-      setAlertSeverity("error")
-      setShowAlert(true)
+    handleCloseModal();
+    if (newColumnName.length == 0) {
+      setAlertMessage('Column name cannot be empty!');
+      setAlertSeverity('error');
+      setShowAlert(true);
     }
     if (displayedProperties.includes(newColumnName)) {
-      setAlertMessage("Column name already exists!")
-      setAlertSeverity("error")
-      setShowAlert(true)
+      setAlertMessage('Column name already exists!');
+      setAlertSeverity('error');
+      setShowAlert(true);
       return;
     }
     if (newColumnName && !addedColumns.includes(newColumnName)) {
       dispatch(addColumn(newColumnName));
       dispatch(addProperty({ columnName: newColumnName, mapGraphicsType: mapGraphicsType }));
-      setAlertMessage("Column Successfully added")
-      setAlertSeverity("success")
-      setShowAlert(true)
+      setAlertMessage('Column Successfully added');
+      setAlertSeverity('success');
+      setShowAlert(true);
+
     }
   };
 
@@ -251,19 +263,20 @@ export default function DataEditorTable() {
     setNewColumnName(event.target.value);
   };
   const handleRemoveColumn = () => {
-      dispatch(
-          deleteProperty({propertyToDelete: columnToDelete, mapGraphicsType: mapGraphicsType})
-      );
-      dispatch(removeColumn(columnToDelete));
-      dispatch(TableValidation(mapGraphicsType));
-      handleClose()
-      setDeleteModal(false)
-
-  }
+    dispatch(
+      deleteProperty({ propertyToDelete: columnToDelete, mapGraphicsType: mapGraphicsType })
+    );
+    dispatch(removeColumn(columnToDelete));
+    dispatch(TableValidation(mapGraphicsType));
+    handleClose();
+    setDeleteModal(false);
+  };
 
   const handleColumnTypeChange = (newType) => {
     dispatch(setColumnType({ columnName: selectedColumn, columnType: newType }));
-    dispatch(validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType }));
+    dispatch(
+      validateColumnData({ columnName: selectedColumn, columnType: newType, mapGraphicsType })
+    );
     dispatch(TableValidation(mapGraphicsType));
     handleClose();
   };
@@ -273,17 +286,19 @@ export default function DataEditorTable() {
 
     // Check if the name is non-empty
     if (!newColumnName) {
-      setAlertMessage("Column name cannot be empty!")
-      setAlertSeverity("error")
-      setShowAlert(true)
+      setAlertMessage('Column name cannot be empty!');
+      setAlertSeverity('error');
+      setShowAlert(true);
+
       return;
     }
 
     // Check if the name is unique
     if (displayedProperties.includes(newColumnName)) {
-      setAlertMessage("Column name already exists!")
-      setAlertSeverity("error")
-      setShowAlert(true)
+      setAlertMessage('Column name already exists!');
+      setAlertSeverity('error');
+      setShowAlert(true);
+
       return;
     }
 
@@ -297,9 +312,9 @@ export default function DataEditorTable() {
         })
       );
     }
-    setAlertMessage("Column successfully added")
-    setAlertSeverity("success")
-    setShowAlert(true)
+    setAlertMessage('Column successfully added');
+    setAlertSeverity('success');
+    setShowAlert(true);
     handleClose();
   };
 
@@ -322,26 +337,25 @@ export default function DataEditorTable() {
   };
 
   const handleRemovePoint = () => {
-      dispatch(removePoint( {rowIndex}));
-      dispatch(validateRow({rowIndex}, mapGraphicsType, geoJSON));
-      // validate all columns in the points also get the column names from the object to validate everything
-      for (let property in points[rowIndex]) {
-        dispatch(
-          validateColumnData({
-            columnName: property,
-            columnType: columnTypes[property],
-            mapGraphicsType
-          })
-        );
-      }
-      dispatch(validateAllCells({ mapGraphicsType, geoJSON}));
-      dispatch(TableValidation(mapGraphicsType));
-      closePointDeleteModal();
-
+    dispatch(removePoint({ rowIndex }));
+    dispatch(validateRow({ rowIndex }, mapGraphicsType, geoJSON));
+    // validate all columns in the points also get the column names from the object to validate everything
+    for (let property in points[rowIndex]) {
+      dispatch(
+        validateColumnData({
+          columnName: property,
+          columnType: columnTypes[property],
+          mapGraphicsType
+        })
+      );
+    }
+    dispatch(validateAllCells({ mapGraphicsType, geoJSON }));
+    dispatch(TableValidation(mapGraphicsType));
+    closePointDeleteModal();
   };
 
   useEffect(() => {
-    dispatch(validateAllCells({ mapGraphicsType, geoJSON}));
+    dispatch(validateAllCells({ mapGraphicsType, geoJSON }));
     dispatch(TableValidation(mapGraphicsType));
   }, [points, latByProperty, lonByProperty, sizeByProperty, heightByProperty]);
 
@@ -422,12 +436,12 @@ export default function DataEditorTable() {
     <div id="data-editing-page-mid">
       <div id="table-container">
         {showAlert && (
-            <AlertComponent
-                alertSeverity = {alertSeverity}
-                alertMessage = {alertMessage}
-                autoHideDuration={2000}
-                handleCloseAlert={handleCloseAlert}
-            />
+          <AlertComponent
+            alertSeverity={alertSeverity}
+            alertMessage={alertMessage}
+            autoHideDuration={2000}
+            handleCloseAlert={handleCloseAlert}
+          />
         )}
         <div
           id="table-header-container"
@@ -547,23 +561,25 @@ export default function DataEditorTable() {
           <MenuItem onClick={() => handleEditColumn(selectedColumn)}>Edit Column Name</MenuItem>
         )}
         {isDeletable(selectedColumn) && (
-          <MenuItem  onClick = {() => openDeleteModal(selectedColumn)}>Delete Column</MenuItem>
+          <MenuItem onClick={() => openDeleteModal(selectedColumn)}>Delete Column</MenuItem>
         )}
       </Menu>
 
-      <Modal open = {deleteModal}
-             onClose={handleCloseModal}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 170,
-          height:60,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 8,}}>
-          <Typography variant="h6" component="h2" sx = {{mt: '-50px', ml: "-50px", mb: '30px'}}>
+      <Modal open={deleteModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 170,
+            height: 60,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 8
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mt: '-50px', ml: '-50px', mb: '30px' }}>
             Are you sure you want to delete the {columnToDelete} column?
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
@@ -577,19 +593,21 @@ export default function DataEditorTable() {
         </Box>
       </Modal>
 
-      <Modal open = {deletePointModal}
-             onClose={closePointDeleteModal}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 170,
-          height:60,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 8,}}>
-          <Typography variant="h6" component="h2" sx = {{mt: '-50px', ml: "-50px", mb: '30px'}}>
+      <Modal open={deletePointModal} onClose={closePointDeleteModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 170,
+            height: 60,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 8
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mt: '-50px', ml: '-50px', mb: '30px' }}>
             Are you sure you want to delete this point?
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
@@ -601,32 +619,39 @@ export default function DataEditorTable() {
             </Button>
           </Box>
         </Box>
-
       </Modal>
 
-      <Modal  open={isModalOpen}
-              onClose={handleCloseModal}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 200,
-          height:60,
-          bgcolor: 'background.paper',
-          boxShadow: 24,
-          p: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start'}}>
-          <Typography variant="h6" component="h2" sx = {{mt: '-50px', ml: "-50px"}}>
+      <Modal open={isModalOpen} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 200,
+            height: 60,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start'
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mt: '-50px', ml: '-50px' }}>
             Please enter a column name
           </Typography>
-          <TextField id="standard-basic" label="Column name" variant="standard"
-                     value={newColumnName}
-                     onChange={handleInputChange}  sx={{ ml: "-50px"}}
+          <TextField
+            id="standard-basic"
+            label="Column name"
+            variant="standard"
+            value={newColumnName}
+            onChange={handleInputChange}
+            sx={{ ml: '-50px' }}
           />
-          <Button variant="outlined"sx={{ ml: "-50px", mt:'10px'}} onClick={handleAddColumn}>Submit</Button>
+          <Button variant="outlined" sx={{ ml: '-50px', mt: '10px' }} onClick={handleAddColumn}>
+            Submit
+          </Button>
         </Box>
       </Modal>
     </div>
