@@ -83,6 +83,15 @@ const mapStylesDataSlice = createSlice({
   initialState,
   reducers: {
     resetMapStylesData: () => initialState,
+    populateMapStyles: (state, action) => {
+      const mapStyles = action.payload;
+
+      Object.keys(mapStyles).forEach(key => {
+        if (state.hasOwnProperty(key)) {
+          state[key] = mapStyles[key];
+        }
+      });
+    },
     changeSelectedShape: (state, action) => {
       state.shape = action.payload;
     },
@@ -238,6 +247,7 @@ const mapStylesDataSlice = createSlice({
 });
 
 export const {
+  populateMapStyles,
   changeSelectedShape,
   changeBorderColor,
   changeBorderWidth,

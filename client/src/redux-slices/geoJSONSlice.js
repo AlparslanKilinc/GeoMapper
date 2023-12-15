@@ -131,6 +131,15 @@ const geoJsonSlice = createSlice({
   name: 'geojson',
   initialState,
   reducers: {
+    populateGeojson: (state, action) => {
+      const geojson = action.payload;
+
+      Object.keys(geojson).forEach(key => {
+        if (state.hasOwnProperty(key)) {
+          state[key] = geojson[key];
+        }
+      });
+    },
     resetGeoJsonData: () => initialState,
     startLoadingGeojson: (state) => {
       state.isLoadingGeojson = true;
@@ -209,6 +218,6 @@ const geoJsonSlice = createSlice({
   }
 });
 
-export const { startLoadingGeojson, stopLoadingGeojson, resetGeoJsonData, setSelectedGeoId } =
+export const { populateGeojson, startLoadingGeojson, stopLoadingGeojson, resetGeoJsonData, setSelectedGeoId } =
   geoJsonSlice.actions;
 export default geoJsonSlice.reducer;

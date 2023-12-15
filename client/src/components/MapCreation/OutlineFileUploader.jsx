@@ -2,12 +2,16 @@ import React, { useState, useCallback } from 'react';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
+  populateGeojson,
   startLoadingGeojson,
   stopLoadingGeojson,
   uploadGeoJSON
 } from '../../redux-slices/geoJSONSlice';
+import { populateMapGraphics } from '../../redux-slices/mapGraphicsDataSlice';
+import { populateMapMetadata } from '../../redux-slices/mapMetadataSlice';
+import { populateMapStyles } from '../../redux-slices/mapStylesSlice';
 import { openShp, read } from 'shapefile';
 import jszip from 'jszip';
 import toGeoJSON from 'togeojson';
@@ -26,13 +30,39 @@ const VisuallyHiddenInput = styled('input')({
 
 const OutlineFileUploader = () => {
   const dispatch = useDispatch();
+  const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType);
   const [warning, setWarning] = useState(null);
   const [error, setError] = useState(null);
+  let errorTimeoutId = null;
+
+  const setErrorTemporary = (message, duration = 5000) => {
+    setError(message);
+    if (errorTimeoutId) {
+      clearTimeout(errorTimeoutId);
+    }
+
+    errorTimeoutId = setTimeout(() => {
+      setError(null);
+      errorTimeoutId = null;
+    }, duration);
+  };
 
   const processGeoJSON = (file) => {
     const reader = createFileReader((fileData) => {
       const geojsonData = JSON.parse(fileData);
-      dispatch(uploadGeoJSON(geojsonData));
+      if (geojsonData.GeoMapper === 'yessir') {
+        if (geojsonData.mapMetadata.mapGraphicsType !== mapGraphicsType) {
+          setErrorTemporary('Do not match the expected map type.');
+          dispatch(stopLoadingGeojson());
+          return;
+        }
+        dispatch(populateGeojson(geojsonData.geojson));
+        dispatch(populateMapGraphics(geojsonData.mapGraphics));
+        dispatch(populateMapMetadata(geojsonData.mapMetadata));
+        dispatch(populateMapStyles(geojsonData.mapStyles));
+      } else {
+        dispatch(uploadGeoJSON(geojsonData));
+      }
     });
     reader.readAsText(file);
   };
@@ -73,7 +103,7 @@ const OutlineFileUploader = () => {
       }
     } catch (e) {
       dispatch(stopLoadingGeojson());
-      setError('An error occurred while processing the zip file.');
+      setErrorTemporary('An error occurred while processing the zip file.');
     }
   };
 
@@ -147,8 +177,8 @@ const OutlineFileUploader = () => {
           accept=".json, .geojson, .kml, .zip"
         />
       </Button>
-      {warning && <p className="warning">{warning}</p>}
-      {error && <p className="error">{error}</p>}
+      {warning && <p className="warning" style={{ color: 'yellow' }}>{warning}</p>}
+      {error && <p className="error" style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
