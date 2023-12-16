@@ -32,6 +32,7 @@ export default function MapGraphicsEditor() {
   const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
+  const heatmapColorType = useSelector((state) => state.mapStyles.heatmapColorType);
 
   useEffect(() => {
     dispatch(resetStackData());
@@ -88,20 +89,25 @@ export default function MapGraphicsEditor() {
     dispatch(setSelectedPropUniqueValues(uniqueValues));
   };
 
+  // TODO:
   const initColorsNumerical = () => {
-    const data = propList.map((propObj) => propObj[colorByProperty]);
-    const minData = d3.min(data);
-    const maxData = d3.max(data);
+    if (heatmapColorType === "continuous") {
+      const data = propList.map((propObj) => propObj[colorByProperty]);
+      const minData = d3.min(data);
+      const maxData = d3.max(data);
 
-    // Create a continuous color scale
-    const colorScale = d3
-      .scaleLinear()
-      .domain([minData, maxData])
-      .range(colorPalette[colorPaletteIdx]); // You can choose any two colors
+      // Create a continuous color scale
+      const colorScale = d3
+        .scaleLinear()
+        .domain([minData, maxData])
+        .range(colorPalette[colorPaletteIdx]); // You can choose any two colors
 
-    // Normalize and map data to color
-    const c = data.map((d) => colorScale(d));
-    dispatch(setContinousColorScale(c));
+      // Normalize and map data to color
+      const c = data.map((d) => colorScale(d));
+      dispatch(setContinousColorScale(c));
+    } else if (heatmapColorType === "steps") {
+
+    }
   };
 
   const initColorsDotDensity = () => {

@@ -74,8 +74,9 @@ const initialState = {
   defaultLabelFont: 'Outfit',
   alert: false,
   alertMessage: "success",
-  alertSeverity: null
-
+  alertSeverity: null,
+  heatmapColorType: "continuous",
+  colorSteps: [],
 };
 
 const mapStylesDataSlice = createSlice({
@@ -91,6 +92,12 @@ const mapStylesDataSlice = createSlice({
           state[key] = mapStyles[key];
         }
       });
+    },
+    changeColorType: (state, action) => {
+      state.heatmapColorType = action.payload;
+    },
+    setColorSteps: (state, action) => {
+      state.colorSteps = action.payload;
     },
     changeSelectedShape: (state, action) => {
       state.shape = action.payload;
@@ -248,6 +255,8 @@ const mapStylesDataSlice = createSlice({
 
 export const {
   populateMapStyles,
+  changeColorType,
+  setColorSteps,
   changeSelectedShape,
   changeBorderColor,
   changeBorderWidth,

@@ -1,10 +1,16 @@
 import React from 'react';
-import { Autocomplete, Divider, Typography, TextField, Slider } from '@mui/material';
+import { Autocomplete, Divider, Typography, TextField } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import { changeColorByProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
-import { changeColorByName, setOpacity } from '../../../../../redux-slices/mapStylesSlice';
+import { setOpacity, changeColorType } from '../../../../../redux-slices/mapStylesSlice';
 import Box from '@mui/material/Box';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import ColorPalette from './ColorPalette';
+import ColorSteps from './ColorSteps';
 import SubMenuTitle from '../../SubMenuTitle';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
@@ -14,6 +20,7 @@ export default function ColorsHeatMapAccordionMenu() {
   const colorByProperty = useSelector(state => state.mapGraphics.colorByProperty);
   const propertyNames = useSelector(state => state.mapGraphics.propertyNames)
   const opacity = useSelector((state) => state.mapStyles.opacity);
+  const heatmapColorType = useSelector((state) => state.mapStyles.heatmapColorType);
   const columnTypes = useSelector(state => state.mapGraphics.columnTypes);
   const columnValidationErrors = useSelector((state) => state.mapGraphics.columnValidationErrors);
 
@@ -35,6 +42,11 @@ export default function ColorsHeatMapAccordionMenu() {
       redoActions: [{ actionCreator: setOpacity, args: [newValue] }]
     }));
     dispatch(setOpacity(newValue));
+  };
+
+  // TODO: redo undo
+  const handleColorTypeChange = (event) => {
+    dispatch(changeColorType(event.target.value));
   };
 
   return (
@@ -63,6 +75,18 @@ export default function ColorsHeatMapAccordionMenu() {
         />
       </Box>
 
+      <FormControl>
+        <FormLabel id="step-continuous-switch" />
+        <RadioGroup
+          aria-labelledby="step-continuous-radio-buttons"
+          name="step-continuous-radio-group"
+          value={heatmapColorType}
+          onChange={handleColorTypeChange}>
+          <FormControlLabel value="continuous" control={<Radio />} label="continuous" />
+          <FormControlLabel value="steps" control={<Radio />} label="steps" />
+        </RadioGroup>
+      </FormControl>
+
       <Box
         display="flex"
         flexDirection="column"
@@ -70,9 +94,8 @@ export default function ColorsHeatMapAccordionMenu() {
         justifyContent="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="subtitle2">select color</Typography>
         <Divider style={{ margin: '10px 0', width: '100%', height: 1 }} />
-        <ColorPalette />
+        {heatmapColorType === 'continuous' ? <ColorPalette /> : <ColorSteps />}
       </Box>
 
       <Box
