@@ -16,8 +16,8 @@ const commentSchema = new mongoose.Schema({
     required: true
   },
   text: { type: String, required: true },
-  date_posted: { type: Date, required: true },
-  replies: [
+  date_posted: { type: Date, required: true }
+  /*replies: [
     {
       replyString: { type: String, required: true },
       replierName: { type: String, required: true },
@@ -29,7 +29,7 @@ const commentSchema = new mongoose.Schema({
       
     }
   ],
-  is_reply: { type: Boolean, required: true, default: false }
+  is_reply: { type: Boolean, required: true, default: false }*/
 
 });
 module.exports = mongoose.model('Comment', commentSchema);

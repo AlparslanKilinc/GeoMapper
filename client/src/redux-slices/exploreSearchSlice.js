@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import apis from "../store-request-api/mapRequestApi.js";
 
 const initialState = {
   metaDataList: [],
@@ -27,13 +28,47 @@ const initialState = {
     fields: ['likes', 'title', 'description', 'date_created']
   },
   isLoading: false,
-  error: null
+  error: null,
+  currentPage: 1,
+  pageSize: 10,
+  hasMorePublishedMaps: true,
+  isLoadingPublishedMaps: false,
+    publishedMaps: []
 };
+export const fetchAllPublishedMaps = createAsyncThunk(
+    'maps/fetchAllMaps',
+    async ({ page, pageSize }, { rejectWithValue }) => {
+      try {
+        const response = await apis.getAllPublishedMaps({ page, pageSize });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        return rejectWithValue(error.response?.data);
+      }
+    }
+);
 
 const exploreSlice = createSlice({
   name: 'exploreSearch',
   initialState,
-  reducers: {}
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+        .addCase(fetchAllPublishedMaps.fulfilled, (state, action) =>{
+          const { publishedMaps, pagination } = action.payload;
+          state.isLoadingPublishedMaps = false;
+          state.publishedMaps = [...publishedMaps];
+          state.hasMorePublishedMaps = pagination.currentPage < pagination.totalPages;
+          state.currentPage = pagination.currentPage + 1;
+          state.pageSize = pagination.pageSize;
+        })
+        .addCase(fetchAllPublishedMaps.pending, (state, action) =>{
+          state.isLoadingPublishedMaps = true;
+        })
+        .addCase(fetchAllPublishedMaps.rejected, (state, action) =>{
+          state.isLoadingPublishedMaps = false;
+        })
+  }
 });
 
 export default exploreSlice.reducer;

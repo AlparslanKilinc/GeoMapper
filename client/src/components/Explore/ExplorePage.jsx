@@ -8,9 +8,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Popover from '@mui/material/Popover';
-import CopyRight from '../Landing/CopyRight';
 import {useDispatch, useSelector} from "react-redux";
-import {fetchAllPublishedMaps} from '../../redux-slices/mapSlice'
+import {fetchAllPublishedMaps} from '../../redux-slices/exploreSearchSlice'
 import Typography from "@mui/material/Typography";
 import {CircularProgress} from "@mui/material";
 
@@ -24,10 +23,8 @@ export default function ExplorePage() {
     const pageSize = 10; // Set your desired page size
     const [hasMore, setHasMore] = useState(true);
     const observer = useRef(null);
-    const maps = useSelector((state) => state.map.publishedMaps)
-    console.log(maps)
-
-    const isLoadingMaps = useSelector((state) => state.map.isLoadingPublishedMaps);
+    const maps = useSelector((state) => state.exploreSearch.publishedMaps)
+    const isLoadingMaps = useSelector((state) => state.exploreSearch.isLoadingPublishedMaps);
   const tags = [
     { name: 'u.s.a', id: 1 },
     { name: 'choropleth', id: 2 },
@@ -87,9 +84,6 @@ export default function ExplorePage() {
   const handleFilterMenuClose = () => {
     setFilterAnchor(null);
   };
-
-
-
 
     const renderMaps = () => {
         if (maps && maps.length > 0) {

@@ -27,27 +27,12 @@ export const fetchUserPublishedMaps = createAsyncThunk(
   }
 );
 
-export const fetchAllPublishedMaps = createAsyncThunk(
-    'maps/fetchAllMaps',
-    async ({ page, pageSize }, { rejectWithValue }) => {
-        try {
-            const response = await apis.getAllPublishedMaps({ page, pageSize });
-            return response.data;
-        } catch (error) {
-            console.error(error);
-            return rejectWithValue(error.response?.data);
-        }
-    }
-);
 const initialState = {
     mapId: null,
     drafts: [],
     publishedMaps: [],
     isLoadingDrafts: false,
     isLoadingPublishedMaps: false,
-    currentPage: 1,
-    pageSize: 10,
-    hasMorePublishedMaps: true,
 };
 
 const mapSlice = createSlice({
@@ -63,31 +48,16 @@ const mapSlice = createSlice({
         state.isLoadingDrafts = false;
         state.drafts = action.payload;
       })
-      .addCase(fetchAllPublishedMaps.fulfilled, (state, action) =>{
-          const { publishedMaps, pagination } = action.payload;
-          state.isLoadingPublishedMaps = false;
-          state.publishedMaps = [...publishedMaps];
-          state.hasMorePublishedMaps = pagination.currentPage < pagination.totalPages;
-          state.currentPage = pagination.currentPage + 1;
-          state.pageSize = pagination.pageSize;
-        })
       .addCase(fetchDrafts.rejected, (state) => {
         state.isLoadingDrafts = false;
       })
       .addCase(fetchUserPublishedMaps.pending, (state) => {
         state.isLoadingPublishedMaps = true;
       })
-        .addCase(fetchAllPublishedMaps.pending, (state, action) =>{
-            console.log("rejecteddddd")
-          state.isLoadingPublishedMaps = true;
-        })
       .addCase(fetchUserPublishedMaps.fulfilled, (state, action) => {
         state.isLoadingPublishedMaps = false;
         state.publishedMaps = action.payload;
       })
-        .addCase(fetchAllPublishedMaps.rejected, (state, action) =>{
-          state.isLoadingPublishedMaps = false;
-        })
       .addCase(fetchUserPublishedMaps.rejected, (state) => {
         state.isLoadingPublishedMaps = false;
       });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import View from '../MapView/View.jsx';
 import MapCardActions from '../MapCardActions.jsx'
+import {getMapComments} from "../../redux-slices/commentsSlice";
 export default function MapCard({ map }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ export default function MapCard({ map }) {
       }
     } else {
       setOpenView(true);
+      dispatch(getMapComments(map._id))
     }
   };
 

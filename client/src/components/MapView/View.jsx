@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
 import '../../styles/view.css';
 import Modal from '@mui/material/Modal';
-
 import {useDispatch, useSelector} from "react-redux";
-import {addComment} from "../../redux-slices/commentsSlice.js";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
@@ -11,24 +9,27 @@ import SendIcon from "@mui/icons-material/Send.js";
 import Comment from "./Comment.jsx";
 import {Divider} from "@mui/material";
 import MapCardActions from '../MapCardActions'
+import {addComment} from '../../redux-slices/commentsSlice'
+import Typography from "@mui/material/Typography";
 
 const View = ({ map, open, onClose }) => {
+  const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const [newCommentText, setNewCommentText] = useState('');
   const user = useSelector((state) => state.auth.user)
-    const comments = useSelector((state) => state.comments.comments)
-  const dispatch = useDispatch()
+  const comments = useSelector((state) => state.comments.comments)
   const handleAddComment = () => {
     if (newCommentText.trim() !== '') {
       const newComment = {
-        author: user.userName, // replace with actual author data
+        mapId: map._id,
+        authorUserName: user.userName, // replace with actual author data
+        authorProfilePicture: user.profilePicPath,
+        authorId: user.id,
         text: newCommentText,
         date_posted: new Date().toISOString(), // replace with actual date logic
-        authorProfilePicture: user.profilePicPath
       };
-
+      setNewCommentText('')
       dispatch(addComment(newComment));
-      setNewCommentText(''); // Clear the input field after posting
     }
   };
 
@@ -41,13 +42,16 @@ const View = ({ map, open, onClose }) => {
         </div>
         <div className="view-right-pane">
           <div className="view-comment-section">
-                  {comments.map((comment, index) => (
-                      <Comment key={index} comment={comment} />
-                  ))}
+            {comments.length === 0 ? (
+                <Typography variant = "body1" sx = {{color:'lightgrey', ml: '25px'}}>Be the first to add a comment!</Typography>
+            ) : (
+                comments.map((comment, index) => (
+                    <Comment key={index} comment={comment} />
+                ))
+            )}
           </div>
-         <MapCardActions className = "card-actions"/>
+          <MapCardActions className = "card-actions"/>
           <Divider/>
-
           <div className = "post-comment">
               {loggedIn ? (
                         <Paper
