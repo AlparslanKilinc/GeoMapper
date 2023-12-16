@@ -11,7 +11,6 @@ const api = axios.create({
 
 export const createMap = (map, imageFile) => {
   const formData = new FormData();
-
   // Append map data as JSON. Assuming 'map' is an object
   formData.append('map', JSON.stringify(map));
 
@@ -47,7 +46,6 @@ export const updateMap = (map, imageFile) => {
   });
 };
 export const publishMap = (map) => api.put(`/${map.mapId}/publish`, map);
-
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
 export const updateMapGraphicsDataById = (mapGraphicsId, mapGraphicsData) => api.put(`/graphics/${mapGraphicsId}`, mapGraphicsData);
 export const getMapGraphicsDataById = (mapGraphicsId) => api.get(`/graphics/${mapGraphicsId}`);
@@ -58,6 +56,8 @@ export const deleteGeojsonById = (geojsonId) => api.delete(`/geojson/${geojsonId
 
 export const getDrafts = () => api.get(`/drafts`);
 export const getUserPublishedMaps = () => api.get(`/userPublished`);
+
+export const getAllPublishedMaps = (page, pageSize) => api.get(`/allPublished/${page}/${pageSize}`);
 
 const apis = {
   saveMapGraphicsData,
@@ -72,6 +72,7 @@ const apis = {
   updateMap,
   getMapDataById,
   deleteGeojsonById,
-  publishMap
+  publishMap,
+  getAllPublishedMaps
 };
 export default apis;

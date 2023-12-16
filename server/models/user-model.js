@@ -19,7 +19,7 @@ const UserSchema = new Schema({
   profileCreated: { type: Date, default: Date.now },
   bio: { type: String, default: '' },
   profilePicPath: { type: String, default: '' },
-  googleUserId: { type: String, unique: true, default: '' }
+  googleUserId: { type: String, unique: false, default: '' }
 });
 
 module.exports = mongoose.model('User', UserSchema);

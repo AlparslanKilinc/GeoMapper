@@ -16,13 +16,12 @@
   border-radius: 5px;
   display: flex;
   max-width: 80%;
-  max-height: 80%;
+  height:65%;
   overflow: hidden;
 }
 
 .view-left-pane {
-  width: 50%;
-  height: 100%;
+  width: 100%;
 }
 
 .view-left-pane img {
@@ -32,6 +31,7 @@
 
 .view-right-pane {
   width: 50%;
+  height: auto;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -43,6 +43,10 @@
 }
 
 .view-comment-section {
-  height: 70%;
+  height: 100%;
   overflow-y: auto;
+}
+.post-comment{
+  display:flex;
+  margin-bottom:-10px;
 }
