@@ -9,7 +9,6 @@ import mapStyleReducer from './redux-slices/mapStylesSlice';
 import mapReducer from './redux-slices/mapSlice';
 import exploreSearchReducer from './redux-slices/exploreSearchSlice';
 import geojsonReducer from './redux-slices/geoJSONSlice';
-import legendReducer from './redux-slices/legendSlice';
 import commentsReducer from './redux-slices/commentsSlice';
 import undoRedoReducer from './redux-slices/undoRedoSlice';
 import {thunk} from "redux-thunk";
@@ -22,7 +21,6 @@ const rootReducer = combineReducers({
   map: mapReducer,
   exploreSearch: exploreSearchReducer,
   geojson: geojsonReducer,
-  legend: legendReducer,
   comments: commentsReducer,
   undoRedo: undoRedoReducer,
 });

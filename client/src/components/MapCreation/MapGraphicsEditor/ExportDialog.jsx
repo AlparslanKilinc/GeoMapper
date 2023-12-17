@@ -5,6 +5,11 @@ import { useSelector } from 'react-redux';
 
 const ExportDialog = forwardRef((props, ref) => {
   const { title } = useSelector((state) => state.mapMetadata);
+  const geojson = useSelector((state) => state.geojson);
+  const mapGraphics = useSelector((state) => state.mapGraphics);
+  const mapMetadata = useSelector((state) => state.mapMetadata);
+  const mapStyles = useSelector((state) => state.mapStyles);
+
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   useImperativeHandle(ref, () => ({
@@ -63,7 +68,7 @@ const ExportDialog = forwardRef((props, ref) => {
             processElementsAfterCapture();
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = title + fileExtension;
+            link.download = (!title ? "GeoMapper" : title) + fileExtension;
             link.click();
             handleCloseExportDialog();
           })
@@ -76,12 +81,37 @@ const ExportDialog = forwardRef((props, ref) => {
     }
   }
 
+  function handleExportGeoJson() {
+    const exportObject = {
+      GeoMapper: "yessir",
+      geojson: geojson,
+      mapGraphics: mapGraphics,
+      mapMetadata: mapMetadata,
+      mapStyles: mapStyles,
+    };
+
+    const jsonString = JSON.stringify(exportObject, null, 2);
+
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = title + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    handleCloseExportDialog();
+  }
+
   return (
     <Dialog open={exportDialogOpen} onClose={handleCloseExportDialog} aria-labelledby="export-dialog-title">
       <DialogTitle id="export-dialog-title">Please Select Export Format</DialogTitle>
       <DialogActions>
         <Button onClick={() => handleExportChoice('png')} color="primary">PNG</Button>
         <Button onClick={() => handleExportChoice('jpg')} color="primary">JPG</Button>
+        <Button onClick={() => handleExportGeoJson()} color="primary">JSON</Button>
       </DialogActions>
     </Dialog>
   );

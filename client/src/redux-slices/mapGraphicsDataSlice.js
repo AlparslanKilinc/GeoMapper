@@ -178,6 +178,15 @@ const mapGraphicsDataSlice = createSlice({
   initialState,
   reducers: {
     resetMapGraphicsData: () => initialState,
+    populateMapGraphics: (state, action) => {
+      const mapGraphics = action.payload;
+
+      Object.keys(mapGraphics).forEach(key => {
+        if (state.hasOwnProperty(key)) {
+          state[key] = mapGraphics[key];
+        }
+      });
+    },
     addProperty: (state, action) => {
       const newProperty = action.payload.columnName;
       const mapGraphicsType = action.payload.mapGraphicsType;
@@ -268,9 +277,8 @@ const mapGraphicsDataSlice = createSlice({
             }
           } else {
             // Handle case where the data row exceeds the existing region rows
-            state.validationMessage = `Row ${
-              rowIndex + 1
-            } exceeds the existing region data length and was not added.`;
+            state.validationMessage = `Row ${rowIndex + 1
+              } exceeds the existing region data length and was not added.`;
           }
         }
       });
@@ -438,7 +446,7 @@ const mapGraphicsDataSlice = createSlice({
         height: state.fixedSymbolSize,
         color: state.colorByProperty ? 'default' : action.payload.color
       };
-    
+
       state.points.push(newPoint);
     },
     removePoint: (state, action) => {
@@ -675,9 +683,8 @@ const mapGraphicsDataSlice = createSlice({
               state.cellValidationErrors[latErrorKey] ||
               state.cellValidationErrors[lonErrorKey]
             ) {
-              message = `⚠️ Error in latitude or longitude at row ${index}: ${
-                state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
-              }`;
+              message = `⚠️ Error in latitude or longitude at row ${index}: ${state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
+                }`;
               hasErrors = true;
               return;
             }
@@ -831,6 +838,7 @@ const mapGraphicsDataSlice = createSlice({
 });
 
 export const {
+  populateMapGraphics,
   addProperty,
   deleteProperty,
   changeNameByProperty,

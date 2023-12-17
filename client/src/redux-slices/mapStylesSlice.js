@@ -87,8 +87,12 @@ const initialState = {
   defaultLabelFont: 'Outfit',
   alert: false,
   alertMessage: "success",
-  alertSeverity: null
-
+  alertSeverity: null,
+  heatmapColorType: "continuous",
+  colorSteps: [],
+  orientation: 'vertical',
+  bgColor: '#ffffff',
+  fontColor: 'black',
 };
 
 const mapStylesDataSlice = createSlice({
@@ -96,6 +100,21 @@ const mapStylesDataSlice = createSlice({
   initialState,
   reducers: {
     resetMapStylesData: () => initialState,
+    populateMapStyles: (state, action) => {
+      const mapStyles = action.payload;
+
+      Object.keys(mapStyles).forEach(key => {
+        if (state.hasOwnProperty(key)) {
+          state[key] = mapStyles[key];
+        }
+      });
+    },
+    changeColorType: (state, action) => {
+      state.heatmapColorType = action.payload;
+    },
+    setColorSteps: (state, action) => {
+      state.colorSteps = action.payload;
+    },
     changeSelectedShape: (state, action) => {
       state.shape = action.payload;
     },
@@ -197,7 +216,22 @@ const mapStylesDataSlice = createSlice({
     },
     resetLabels: (state) => {
       state.labels = [];
-    }
+    },
+    changeLegendOrientation: (state, action) => {
+      state.orientation = action.payload;
+    },
+    changeLegendBackgroundColor: (state, action) => {
+      state.bgColor = action.payload;
+    },
+    changeLegendFontColor: (state, action) => {
+      state.fontColor = action.payload;
+    },
+    setLegendSlice: (state, action) => {
+      const { ...legend } = action.payload;
+      return {
+        ...legend
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -251,6 +285,9 @@ const mapStylesDataSlice = createSlice({
 });
 
 export const {
+  populateMapStyles,
+  changeColorType,
+  setColorSteps,
   changeSelectedShape,
   changeBorderColor,
   changeBorderWidth,
@@ -276,7 +313,12 @@ export const {
   resetLabels,
   changeName,
   setAlert,
-  setAlertMessage, setAlertSeverity
+  setAlertMessage,
+  setAlertSeverity,
+  changeLegendOrientation,
+  changeLegendBackgroundColor,
+  changeLegendFontColor,
+  setLegendSlice,
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;

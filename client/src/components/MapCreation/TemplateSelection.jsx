@@ -56,7 +56,7 @@ export default function TemplateSelection() {
                 handleSelection(map.title);
               }}
             >
-              <img className="image" src={getImageSrc(map.title)} alt={map.alt} />
+              <img style={{ width: '100%', height: '220px', objectFit: 'cover' }} src={getImageSrc(map.title)} alt={map.alt} />
               <Divider />
               <div className="info-box">
                 <h2>{map.title}</h2>

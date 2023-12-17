@@ -8,7 +8,7 @@ import shapeFactory from './svgShapes.js';
 
 export default function SymbolMapLegend({ properties }) {
     const legendRef = useRef(null);
-    const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
+    const { orientation, bgColor, fontColor } = useSelector((state) => state.mapStyles);
     let shape = useSelector((state) => state.mapStyles.shape);
     const maxSymbolSize = useSelector((state) => state.mapGraphics.maxProperty);
     const minSymbolSize = useSelector((state) => state.mapGraphics.minProperty);
@@ -98,7 +98,7 @@ export default function SymbolMapLegend({ properties }) {
                 {((minSymbolSize === maxSymbolSize)) && (
                     <SizeLegend icon={iconSizes.medium} label={`${mediumSize}`} />
                 )}
-                {((properties.length > 0) &&  (minSymbolSize != maxSymbolSize)) &&(
+                {((properties.length > 0) && (minSymbolSize != maxSymbolSize)) && (
                     <div>
                         <SizeLegend icon={iconSizes.small} label={`${minSymbolSize} - ${mediumSize}`} />
                         <SizeLegend icon={iconSizes.medium} label={`${mediumSize} - ${maxSymbolSize}`} />
