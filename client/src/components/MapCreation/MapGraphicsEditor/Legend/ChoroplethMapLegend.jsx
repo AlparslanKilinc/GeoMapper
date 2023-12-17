@@ -10,7 +10,7 @@ export default function ChoroplethMapLegend({ properties }) {
     const legendRef = useRef(null);
     const { regions, colorByProperty } = useSelector((state) => state.mapGraphics);
     const { colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
-    const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
+    const { orientation, bgColor, fontColor } = useSelector((state) => state.mapStyles);
     const colorSteps = useSelector((state) => state.mapStyles.colorSteps);
     const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType)
     const heatmapColorType = useSelector((state) => state.mapStyles.heatmapColorType);

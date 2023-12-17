@@ -8,7 +8,7 @@ import shapeFactory from "./svgShapes.js";
 
 export default function DotDensityLegend({ properties }) {
     const legendRef = useRef(null);
-    const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
+    const { orientation, bgColor, fontColor } = useSelector((state) => state.mapStyles);
     const valuePerDot = useSelector((state) => state.mapGraphics.valuePerDot);
     const shape = useSelector((state) => state.mapStyles.shape);
 

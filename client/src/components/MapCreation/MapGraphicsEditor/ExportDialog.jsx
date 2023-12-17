@@ -68,7 +68,7 @@ const ExportDialog = forwardRef((props, ref) => {
             processElementsAfterCapture();
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = title + fileExtension;
+            link.download = (!title ? "GeoMapper" : title) + fileExtension;
             link.click();
             handleCloseExportDialog();
           })

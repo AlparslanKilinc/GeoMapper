@@ -77,6 +77,9 @@ const initialState = {
   alertSeverity: null,
   heatmapColorType: "continuous",
   colorSteps: [],
+  orientation: 'vertical',
+  bgColor: '#ffffff',
+  fontColor: 'black',
 };
 
 const mapStylesDataSlice = createSlice({
@@ -200,7 +203,22 @@ const mapStylesDataSlice = createSlice({
     },
     resetLabels: (state) => {
       state.labels = [];
-    }
+    },
+    changeLegendOrientation: (state, action) => {
+      state.orientation = action.payload;
+    },
+    changeLegendBackgroundColor: (state, action) => {
+      state.bgColor = action.payload;
+    },
+    changeLegendFontColor: (state, action) => {
+      state.fontColor = action.payload;
+    },
+    setLegendSlice: (state, action) => {
+      const { ...legend } = action.payload;
+      return {
+        ...legend
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -282,7 +300,12 @@ export const {
   resetLabels,
   changeName,
   setAlert,
-  setAlertMessage, setAlertSeverity
+  setAlertMessage,
+  setAlertSeverity,
+  changeLegendOrientation,
+  changeLegendBackgroundColor,
+  changeLegendFontColor,
+  setLegendSlice,
 } = mapStylesDataSlice.actions;
 
 export default mapStylesDataSlice.reducer;

@@ -14,6 +14,9 @@ const MapStyleSchema = new mongoose.Schema({
     color: { type: String, required: true }
   }],
   colorPaletteIdx: { type: Number, default: 0 },
+  orientation: { type: String, default: 'vertical' },
+  bgColor: { type: String, default: '#ffffff' },
+  fontColor: { type: String, default: 'black' },
   shape: { type: String, default: 'circle' },
   size: { type: Number, default: 0 },
   height: { type: Number, default: 0 },
