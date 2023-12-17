@@ -10,41 +10,39 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Divider from "@mui/material/Divider";
 import { useDispatch, useSelector } from "react-redux";
-import { changeOrientation, changeBackgroundColor, changeFontColor } from "../../../../redux-slices/legendSlice.js";
-import { useEffect } from "react";
-import { MuiColorInput } from 'mui-color-input';
+import { changeLegendOrientation, changeLegendBackgroundColor, changeLegendFontColor } from "../../../../redux-slices/mapStylesSlice.js";
 import DebouncedColorInput from '../../../DebouncedElement/DebouncedColorInput';
 import { addActionToPast } from '../../../../redux-slices/undoRedoSlice';
 
 export default function LegendAccordionMenu() {
-    const orientation = useSelector((state) => state.legend.orientation);
-    const bgColor = useSelector((state) => state.legend.bgColor);
-    const fontColor = useSelector((state) => state.legend.fontColor);
+    const orientation = useSelector((state) => state.mapStyles.orientation);
+    const bgColor = useSelector((state) => state.mapStyles.bgColor);
+    const fontColor = useSelector((state) => state.mapStyles.fontColor);
 
     const dispatch = useDispatch();
 
     const handleOrientationChange = (event) => {
         dispatch(addActionToPast({
-            undoActions: [{ actionCreator: changeOrientation, args: [orientation] }],
-            redoActions: [{ actionCreator: changeOrientation, args: [event.target.value] }]
+            undoActions: [{ actionCreator: changeLegendOrientation, args: [orientation] }],
+            redoActions: [{ actionCreator: changeLegendOrientation, args: [event.target.value] }]
         }));
-        dispatch(changeOrientation(event.target.value));
+        dispatch(changeLegendOrientation(event.target.value));
     };
 
     const handleBackgroundColorChange = (color) => {
         dispatch(addActionToPast({
-            undoActions: [{ actionCreator: changeBackgroundColor, args: [bgColor] }],
-            redoActions: [{ actionCreator: changeBackgroundColor, args: [color] }]
+            undoActions: [{ actionCreator: changeLegendBackgroundColor, args: [bgColor] }],
+            redoActions: [{ actionCreator: changeLegendBackgroundColor, args: [color] }]
         }));
-        dispatch(changeBackgroundColor(color));
+        dispatch(changeLegendBackgroundColor(color));
     }
 
     const handleFontColorChange = (newFontColor) => {
         dispatch(addActionToPast({
-            undoActions: [{ actionCreator: changeFontColor, args: [fontColor] }],
-            redoActions: [{ actionCreator: changeFontColor, args: [newFontColor] }]
+            undoActions: [{ actionCreator: changeLegendFontColor, args: [fontColor] }],
+            redoActions: [{ actionCreator: changeLegendFontColor, args: [newFontColor] }]
         }));
-        dispatch(changeFontColor(newFontColor));
+        dispatch(changeLegendFontColor(newFontColor));
     }
 
     return (
