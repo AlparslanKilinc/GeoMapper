@@ -11,11 +11,13 @@ import ForkForm from "./Explore/ForkForm.jsx";
 import PopUp from "./Explore/PopUp.jsx";
 import SharePopUp from "./Explore/SharePopUp.jsx";
 import {CardActions} from "@mui/material";
-import {clearComments} from "../redux-slices/commentsSlice.js";
+import {updateLikes} from "../redux-slices/mapMetadataSlice.js";
 
-const MapCardActions = () => {
+const MapCardActions = ({map}) => {
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.auth.loggedIn);
+    let likes = useSelector((state) => state.mapMetadata.likes);
+    const user = useSelector((state) => state.auth.user)
     const [isPopupOpen, setPopupOpen] = useState(false);
     const [isShareOpen, setShareOpen] = useState(false);
     const [popUpTitle, setPopUpTitle] = useState('');
@@ -24,7 +26,6 @@ const MapCardActions = () => {
     const [bookmarked, setBookmarked] = useState(false);
 
     const handleLike = () => {
-        dispatch(clearComments())
         if (!loggedIn) {
             setPopUpTitle('To like a map, please create an account');
             openPopup();
@@ -32,8 +33,16 @@ const MapCardActions = () => {
         }
         if (!liked) {
             setLiked(true);
+            likes = likes + 1
+            const mapId = map._id
+            const userId = user.id
+            dispatch(updateLikes({likes, mapId, userId}));
         } else {
             setLiked(false);
+            likes = likes - 1
+            const mapId = map._id
+            const userId = user.id
+            dispatch(updateLikes({likes, mapId, userId}));
         }
     };
     const handleShare = () => {

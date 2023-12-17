@@ -59,6 +59,8 @@ export const getUserPublishedMaps = () => api.get(`/userPublished`);
 
 export const getAllPublishedMaps = (page, pageSize) => api.get(`/allPublished/${page}/${pageSize}`);
 
+export const updateLikes = (likes, mapId, userId) => api.post(`/updateLikes`, {likes, mapId, userId})
+
 const apis = {
   saveMapGraphicsData,
   updateMapGraphicsDataById,
@@ -73,6 +75,7 @@ const apis = {
   getMapDataById,
   deleteGeojsonById,
   publishMap,
-  getAllPublishedMaps
+  getAllPublishedMaps,
+  updateLikes
 };
 export default apis;

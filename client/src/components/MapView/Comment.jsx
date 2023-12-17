@@ -7,7 +7,7 @@ export default function Comment({key, comment}){
         <div className = 'comment-container'>
             <img  src = {comment.authorProfilePicture}/>
             <div>
-                <span className = "username">{comment.author}</span>
+                <span className = "username">{comment.authorUsername}</span>
                 <span className="comment-text" style={{ whiteSpace: 'pre-line' }}>
                 {comment.text}
                 </span>

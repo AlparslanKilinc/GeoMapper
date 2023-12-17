@@ -22,5 +22,6 @@ router.get('/userPublished', auth.verify, MapController.getUserPublishedMaps);
 router.get('/:mapId', auth.verify, MapController.getMapDataById);
 router.put('/:mapId', auth.verify, upload.single('image'), MapController.updateMap);
 router.put('/:mapId/publish', auth.verify, MapController.publishMap);
+router.post('/updateLikes', MapController.updateLikes)
 
 module.exports = router;

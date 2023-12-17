@@ -10,7 +10,6 @@ export const addComment = createAsyncThunk(
     async (commentData, { rejectWithValue }) => {
         try {
             const response = await apis.addComment(commentData);
-            console.log(response.data)
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response.data);

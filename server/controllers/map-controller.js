@@ -202,6 +202,27 @@ const getAllPublishedMaps = async (req, res) => {
   }
 };
 
+const updateLikes = async(req, res) =>{
+ try{
+   const { likes, mapId, userId } = req.body;
+   const updatedMap = await Map.findByIdAndUpdate(
+       mapId,
+       { $set: { likes } }, // Set the new value for the likes field
+       { new: true } // Return the updated document
+   );
+   const updatedUser = await User.findByIdAndUpdate(
+       userId,
+       { $push: { likedMaps: updatedMap._id } },
+       { new: true }
+   )
+   res.status(200).send(updatedMap)
+  }catch(error){
+   console.error('Updating likes:', error);
+   res.status(500).send({ message: 'Internal Server Error' });
+ }
+
+};
+
 module.exports = {
   createMap,
   getAllDrafts,
@@ -209,5 +230,6 @@ module.exports = {
   getMapDataById,
   updateMap,
   publishMap,
-  getAllPublishedMaps
+  getAllPublishedMaps,
+  updateLikes
 };

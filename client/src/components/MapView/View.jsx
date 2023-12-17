@@ -11,13 +11,15 @@ import {Divider} from "@mui/material";
 import MapCardActions from '../MapCardActions'
 import {addComment} from '../../redux-slices/commentsSlice'
 import Typography from "@mui/material/Typography";
+import {Link} from "react-router-dom";
 
 const View = ({ map, open, onClose }) => {
   const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
   const [newCommentText, setNewCommentText] = useState('');
   const user = useSelector((state) => state.auth.user)
-  const comments = useSelector((state) => state.comments.comments)
+  const likes = useSelector((state) => state.mapMetadata.likes);
+  const comments = useSelector((state) => state.comments.comments);
   const handleAddComment = () => {
     if (newCommentText.trim() !== '') {
       const newComment = {
@@ -32,8 +34,6 @@ const View = ({ map, open, onClose }) => {
       dispatch(addComment(newComment));
     }
   };
-
-
   return (
     <Modal open={open} onClose={onClose} className="view-background">
       <div className="view-content" onClick={(e) => e.stopPropagation()}>
@@ -41,6 +41,11 @@ const View = ({ map, open, onClose }) => {
           <img src={map.thumbnailUrl} alt="map" />
         </div>
         <div className="view-right-pane">
+          <Typography variant = "h6" sx = {{mt: '-20px'}}>{map.title}</Typography>
+          <Link href="ExplorePage#" underline="hover" sx={{ color: '#00666', fontSize: '10px' }}>
+            {map.authorUserName}
+          </Link>
+          <Divider/>
           <div className="view-comment-section">
             {comments.length === 0 ? (
                 <Typography variant = "body1" sx = {{color:'lightgrey', ml: '25px'}}>Be the first to add a comment!</Typography>
@@ -50,7 +55,11 @@ const View = ({ map, open, onClose }) => {
                 ))
             )}
           </div>
-          <MapCardActions className = "card-actions"/>
+          <div className = "card-actions">
+            <MapCardActions map = {map}/>
+          </div>
+          <Typography variant="subtitle2" >{likes} likes</Typography>
+          <Typography variant="caption">{map.description}</Typography>
           <Divider/>
           <div className = "post-comment">
               {loggedIn ? (
@@ -58,6 +67,7 @@ const View = ({ map, open, onClose }) => {
                             component="form"
                             sx={{
                                 p: '20px 4px',
+                                mb:'-20px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 width: 350,
@@ -65,7 +75,7 @@ const View = ({ map, open, onClose }) => {
                                 boxShadow: 'none', // Removes box-shadow
                             }}>
                             <InputBase
-                                sx={{ ml: 1, flex: 1 }}
+                                sx={{ ml: 1, flex: 1, height: '20px' }}
                                 placeholder="Post a comment"
                                 inputProps={{ 'aria-label': 'Post a comment' }}
                                 value={newCommentText}

@@ -41,6 +41,12 @@
   height: 30%;
   overflow-y: auto;
 }
+.card-actions{
+  margin-left: -20px;
+  padding: 0;
+  margin-bottom: 20px;
+  height: 30px;
+}
 
 .view-comment-section {
   height: 100%;

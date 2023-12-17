@@ -78,9 +78,6 @@ export default function MapCard({ map }) {
             <Typography gutterBottom variant="h5">
               {title}
             </Typography>
-            <Typography variant="h8" component="div">
-              {description}
-            </Typography>
           </CardContent>
           <div className="tags">
             {tags.map((tag) => (
@@ -93,7 +90,7 @@ export default function MapCard({ map }) {
             ))}
           </div>
         </CardActionArea>
-        <MapCardActions/>
+        <MapCardActions map = {map}/>
       </Card>
       <View map={map} open={openView} onClose={handleCloseView} />
     </div>
