@@ -11,8 +11,11 @@ export default function ChoroplethMapLegend({ properties }) {
     const { regions, colorByProperty } = useSelector((state) => state.mapGraphics);
     const { colorPalette, colorPaletteIdx } = useSelector((state) => state.mapStyles);
     const { orientation, bgColor, fontColor } = useSelector((state) => state.legend);
+    const colorSteps = useSelector((state) => state.mapStyles.colorSteps);
     const mapGraphicsType = useSelector((state) => state.mapMetadata.mapGraphicsType)
+    const heatmapColorType = useSelector((state) => state.mapStyles.heatmapColorType);
     const isNumeric = (mapGraphicsType === "Heat Map") ? true : false;
+    const isColorStepsType = (isNumeric && heatmapColorType === "steps") ? true : false;
 
     const horizontalPaper = {
         display: 'flex',
@@ -34,6 +37,13 @@ export default function ChoroplethMapLegend({ properties }) {
         display: 'flex',
         alignItems: 'center',
         marginRight: orientation === 'horizontal' ? '10px' : '0',
+        marginBottom: orientation === 'vertical' ? '10px' : '0',
+    };
+
+    const stepsStyle = {
+        display: 'flex',
+        flexDirection: orientation === 'horizontal' ? 'column' : 'row',
+        marginRight: orientation === 'horizontal' ? '20px' : '0',
         marginBottom: orientation === 'vertical' ? '10px' : '0',
     };
 
@@ -61,6 +71,31 @@ export default function ChoroplethMapLegend({ properties }) {
                 <Paper>
 
                 </Paper>
+            </Paper>
+        );
+    }
+
+    function stepsLegend() {
+        return (
+            <Paper
+                ref={legendRef}
+                elevation={3}
+                style={paperStyle}
+                sx={{
+                    position: 'absolute',
+                    top: (orientation === 'horizontal') ? '85%' : '70%',
+                    left: (orientation === 'horizontal') ? '65%' : '85%',
+                    zIndex: 998,
+                    cursor: 'move'
+                }}>
+                {colorSteps.map((step, index) => (
+                    <div key={index} style={stepsStyle}>
+                        <Box sx={{ bgcolor: step.color, height: '20px', width: '20px', marginRight: '5px' }} />
+                        <Typography>
+                            {step.range.from + " - " + step.range.to}
+                        </Typography>
+                    </div>
+                ))}
             </Paper>
         );
     }
@@ -128,9 +163,21 @@ export default function ChoroplethMapLegend({ properties }) {
         );
     }
 
+    function renderLegend() {
+        if (isNumeric) {
+            if (isColorStepsType) {
+                return stepsLegend();
+            } else {
+                return numericalLegend();
+            }
+        } else {
+            return textualLegend();
+        }
+    }
+
     return (
         <Draggable nodeRef={legendRef} bounds="parent">
-            {isNumeric ? numericalLegend() : textualLegend()}
+            {renderLegend()}
         </Draggable>
     );
 }
