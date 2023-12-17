@@ -82,8 +82,16 @@ export default function ColorsHeatMapAccordionMenu() {
   // TODO: redo undo
   const handleColorTypeChange = (event) => {
     if (event.target.value === "continuous") {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: changeColorType, args: [heatmapColorType] }, { func: mapColorStepsToData, args: [] }],
+        redoActions: [{ actionCreator: changeColorType, args: [event.target.value] }, { func: applyColorPalette, args: [] }]
+      }));
       applyColorPalette();
     } else if (event.target.value === "steps") {
+      dispatch(addActionToPast({
+        undoActions: [{ actionCreator: changeColorType, args: [heatmapColorType] }, { func: applyColorPalette, args: [] }],
+        redoActions: [{ actionCreator: changeColorType, args: [event.target.value] }, { func: mapColorStepsToData, args: [] }]
+      }));
       mapColorStepsToData();
     }
 

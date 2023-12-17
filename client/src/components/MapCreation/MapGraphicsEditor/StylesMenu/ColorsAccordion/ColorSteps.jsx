@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import ColorStep from './ColorStep';
 import { setColorSteps, setContinousColorScale } from '../../../../../redux-slices/mapStylesSlice';
 import * as d3 from 'd3';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 export default function ColorSteps() {
   const dispatch = useDispatch();
@@ -162,7 +163,19 @@ export default function ColorSteps() {
       }));
     }
 
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setColorSteps, args: [colorSteps] }],
+      redoActions: [{ actionCreator: setColorSteps, args: [newColorRanges] }]
+    }));
     dispatch(setColorSteps(newColorRanges));
+  }
+
+  function handleRemoveBtnOnclick() {
+    adjustColorRanges(colorSteps, "remove");
+  }
+
+  function handleAddBtnOnclick() {
+    adjustColorRanges(colorSteps, "add");
   }
 
   return (
@@ -193,7 +206,7 @@ export default function ColorSteps() {
             <InputAdornment position="start">
               <IconButton
                 size="small"
-                onClick={() => adjustColorRanges(colorSteps, "remove")}
+                onClick={handleRemoveBtnOnclick}
                 edge="start"
                 disabled={colorSteps.length === MIN}
               >
@@ -205,7 +218,7 @@ export default function ColorSteps() {
             <InputAdornment position="end">
               <IconButton
                 size="small"
-                onClick={() => adjustColorRanges(colorSteps, "add")}
+                onClick={handleAddBtnOnclick}
                 edge="end"
                 disabled={colorSteps.length === MAX}
               >

@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { MuiColorInput } from 'mui-color-input';
 import { setColorSteps } from '../../../../../redux-slices/mapStylesSlice';
 import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
+import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
 
 const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower }) => {
   const [fromValue, setFromValue] = useState(from);
@@ -21,6 +22,10 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower }) => {
       idx === rangeIdx ? { ...range, color: newColor } : range
     );
 
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setColorSteps, args: [colorSteps] }],
+      redoActions: [{ actionCreator: setColorSteps, args: [updatedColorRanges] }]
+    }));
     dispatch(setColorSteps(updatedColorRanges));
   };
 
@@ -59,6 +64,10 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower }) => {
       return range;
     });
 
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setColorSteps, args: [colorSteps] }],
+      redoActions: [{ actionCreator: setColorSteps, args: [updatedColorRanges] }]
+    }));
     dispatch(setColorSteps(updatedColorRanges));
   };
 
@@ -89,6 +98,10 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower }) => {
       return range;
     });
 
+    dispatch(addActionToPast({
+      undoActions: [{ actionCreator: setColorSteps, args: [colorSteps] }],
+      redoActions: [{ actionCreator: setColorSteps, args: [updatedColorRanges] }]
+    }));
     dispatch(setColorSteps(updatedColorRanges));
   };
 
