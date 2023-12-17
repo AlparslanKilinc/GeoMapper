@@ -272,10 +272,16 @@ const mapGraphicsDataSlice = createSlice({
 
           if (matchKey !== '' && nameByProperty !== '') {
             idx = state.regions.findIndex((region) => region[nameByProperty] === row[matchKey]);
+            if (row[matchKey] === 'United Kingdom') {
+              console.log('idx', idx);
+            }
           }
 
           const existingRegion = state.regions[idx];
-          if (!existingRegion) return;
+          if (!existingRegion) {
+            console.log(row);
+            return;
+          }
           for (const key in row) {
             existingRegion[key] = row[key];
           }
