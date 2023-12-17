@@ -123,7 +123,7 @@ export default function MapCard({ map, isDraft }) {
               <DeleteOutlineIcon style={{ color: 'red' }} />
             </IconButton>
         )}
-        {(!location.pathname == "/profile") &&  <MapCardActions map = {map} isDraft = {true}/>}
+        {!(location.pathname == "/profile") &&  <MapCardActions map = {map} isDraft = {true}/>}
       </Card>
       <View map={map} open={openView} onClose={handleCloseView} />
       <Modal open={deleteModal} onClose={handleCloseDeleteModal}>
