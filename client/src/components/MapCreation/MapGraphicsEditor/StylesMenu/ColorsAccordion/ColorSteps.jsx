@@ -50,6 +50,25 @@ export default function ColorSteps() {
   }, [d3.min(data)]);
 
   useEffect(() => {
+    console.log(colorByProperty);
+    const minData = Math.round(d3.min(data));
+    const maxData = Math.round(d3.max(data));
+    const range = maxData - minData;
+
+    const totalSteps = colorSteps.length;
+    const newColorSteps = colorSteps.map((step, index) => {
+      const from = Math.round(minData + (range / totalSteps) * index);
+      const to = index === totalSteps - 1 ? maxData : Math.round(minData + (range / totalSteps) * (index + 1) - 1);
+
+      return {
+        ...step,
+        range: { from, to }
+      };
+    });
+    dispatch(setColorSteps(newColorSteps));
+  }, [colorByProperty]);
+
+  useEffect(() => {
     const minData = Math.round(d3.min(data));
     const maxData = Math.round(d3.max(data));
     const range = maxData - minData;
