@@ -6,6 +6,7 @@ const GraphicsController = require('../controllers/graphics-controller.js');
 router.post('/', auth.verify, GraphicsController.saveMapGraphicsData);
 router.put('/:mapGraphicsId', auth.verify, GraphicsController.updateMapGraphicsDataById);
 router.get('/:mapGraphicsId',auth.verify, GraphicsController.getMapGraphicsDataById);
+router.post('/deleteGraphics', GraphicsController.deleteMapGraphicsById);
 
 
 module.exports = router;

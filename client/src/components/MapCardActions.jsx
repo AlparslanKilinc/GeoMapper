@@ -13,7 +13,7 @@ import SharePopUp from "./Explore/SharePopUp.jsx";
 import {CardActions} from "@mui/material";
 import {updateLikes} from "../redux-slices/mapMetadataSlice.js";
 
-const MapCardActions = ({map}) => {
+const MapCardActions = ({map, isDraft}) => {
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.auth.loggedIn);
     let likes = useSelector((state) => state.mapMetadata.likes);

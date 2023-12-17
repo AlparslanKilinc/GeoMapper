@@ -43,8 +43,7 @@ export const getMapMetaDataById = createAsyncThunk(
   async (mapId, thunkApi) => {
     try {
       const response = await apis.getMapDataById(mapId);
-      console.log(response.data)
-      //return response.data;
+      return response.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);
     }
@@ -155,6 +154,7 @@ const metaDataSlice = createSlice({
         state.isLoadingMap = true;
       })
       .addCase(getMapMetaDataById.fulfilled, (state, action) => {
+        console.log(action.payload)
         const { ...mapMetadata } = action.payload;
         return {
           ...mapMetadata,

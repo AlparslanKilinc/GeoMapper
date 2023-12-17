@@ -42,6 +42,19 @@ export const getMapStylesDataById = createAsyncThunk(
   }
 );
 
+export const deleteStylesDataById = createAsyncThunk(
+    'mapStyles/deleteMapStyles',
+    async(mapStylesId, thunkApi) =>{
+      try {
+        const response = await apis.deleteStylesById(mapStylesId);
+        return response.data;
+      } catch (error) {
+        return thunkApi.rejectWithValue(error.response.data);
+      }
+    }
+)
+
+
 const initialState = {
   mapStylesId: null,
   isSaving: false,

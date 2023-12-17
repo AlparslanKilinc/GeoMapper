@@ -223,6 +223,46 @@ const updateLikes = async(req, res) =>{
 
 };
 
+const removeMapFromUser = async(req, res) =>{
+  try{
+    const { userId, mapId } = req.body;
+    const user = await User.findById(userId);
+      const isMapInDrafted = user.draftedMaps.includes(mapId);
+      const isMapInPublished = user.publishedMaps.includes(mapId);
+      if (isMapInDrafted) {
+        await User.updateOne({ _id: userId }, { $pull: { draftedMaps: mapId } });
+      } else if (isMapInPublished) {
+        await User.updateOne({ _id: userId }, { $pull: { publishedMaps: mapId } });
+      }
+      console.log(user)
+      res.status(200).send({message: "Map Deleted"})
+
+  }catch(error){
+    console.error( error);
+    res.status(500).send({ message: 'Internal Server Error' });
+
+  }
+}
+
+const deleteMap = async(req, res) =>{
+  try{
+    const mapId = req.body
+    const mapToDelete = Object.keys(mapId)[0];
+    console.log("map to deleted")
+    console.log(mapId)
+    console.log(mapToDelete)
+    const deletedMap = await Map.findByIdAndDelete(mapToDelete);
+    if(!deletedMap){
+      return res.status(400).send({message:"Map not found"})
+    }
+    res.status(200).send({message: "Map deleted"})
+  }
+  catch(error){
+    console.error( error);
+    res.status(500).send({ message: 'Internal Server Error' });
+
+  }
+}
 module.exports = {
   createMap,
   getAllDrafts,
@@ -231,5 +271,6 @@ module.exports = {
   updateMap,
   publishMap,
   getAllPublishedMaps,
-  updateLikes
+  updateLikes,
+  removeMapFromUser, deleteMap
 };

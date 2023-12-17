@@ -27,6 +27,33 @@ export const fetchUserPublishedMaps = createAsyncThunk(
   }
 );
 
+export const removeMapFromUser = createAsyncThunk(
+    '/maps/removeMapFromUser',
+    async({userId, mapId}, {rejectWithValue}) =>{
+        try{
+            console.log(userId)
+            console.log(mapId)
+            const response = await apis.removeMapFromUser(userId, mapId);
+            return response.data
+        }catch (error) {
+            console.log(error);
+            return rejectWithValue(error.response.data);
+        }
+    }
+)
+
+export const deleteMap = createAsyncThunk(
+    '/maps/deleteMap',
+    async(mapId, thunkApi) =>{
+        try {
+            console.log("in slice, " + mapId)
+            const response = await apis.deleteMap(mapId);
+            return response.data;
+        } catch (error) {
+            return thunkApi.rejectWithValue(error.response.data);
+        }
+    }
+)
 const initialState = {
     mapId: null,
     drafts: [],

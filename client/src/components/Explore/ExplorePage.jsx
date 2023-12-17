@@ -87,7 +87,7 @@ export default function ExplorePage() {
 
     const renderMaps = () => {
         if (maps && maps.length > 0) {
-            return maps.map((map) => <MapCard key={map._id} map={map} />);
+            return maps.map((map) => <MapCard key={map._id} map={map} isDraft = {false}/>);
         }
         return <Typography>Empty...</Typography>;
     };
