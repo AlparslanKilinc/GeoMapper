@@ -30,8 +30,10 @@ export default function MapGraphicsEditor() {
   const points = useSelector((state) => state.mapGraphics.points);
   const colors = useSelector((state) => state.mapStyles.colors);
   const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
+  const colorSteps = useSelector((state) => state.mapStyles.colorSteps);
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
+  const heatmapColorType = useSelector((state) => state.mapStyles.heatmapColorType);
 
   useEffect(() => {
     dispatch(resetStackData());
@@ -88,20 +90,39 @@ export default function MapGraphicsEditor() {
     dispatch(setSelectedPropUniqueValues(uniqueValues));
   };
 
+  function mapColorStepsToData() {
+    function getColorFromValue(value) {
+      const colorStep = colorSteps.find(rangeItem =>
+        value >= rangeItem.range.from && value <= rangeItem.range.to
+      );
+
+      return colorStep ? colorStep.color : '#FFFFFF';
+    }
+
+    const data = regions.map((region) => region[colorByProperty]);
+    const mappedColors = data.map(getColorFromValue);
+
+    dispatch(setContinousColorScale(mappedColors));
+  }
+
   const initColorsNumerical = () => {
-    const data = propList.map((propObj) => propObj[colorByProperty]);
-    const minData = d3.min(data);
-    const maxData = d3.max(data);
+    if (heatmapColorType === "continuous") {
+      const data = propList.map((propObj) => propObj[colorByProperty]);
+      const minData = d3.min(data);
+      const maxData = d3.max(data);
 
-    // Create a continuous color scale
-    const colorScale = d3
-      .scaleLinear()
-      .domain([minData, maxData])
-      .range(colorPalette[colorPaletteIdx]); // You can choose any two colors
+      // Create a continuous color scale
+      const colorScale = d3
+        .scaleLinear()
+        .domain([minData, maxData])
+        .range(colorPalette[colorPaletteIdx]); // You can choose any two colors
 
-    // Normalize and map data to color
-    const c = data.map((d) => colorScale(d));
-    dispatch(setContinousColorScale(c));
+      // Normalize and map data to color
+      const c = data.map((d) => colorScale(d));
+      dispatch(setContinousColorScale(c));
+    } else if (heatmapColorType === "steps") {
+      mapColorStepsToData();
+    }
   };
 
   const initColorsDotDensity = () => {
