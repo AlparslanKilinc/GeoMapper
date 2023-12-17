@@ -45,6 +45,7 @@ export const updateMap = (map, imageFile) => {
     }
   });
 };
+export const getAllPublishedMaps = () => api.get('/getAllPublishedMaps')
 export const publishMap = (map) => api.put(`/${map.mapId}/publish`, map);
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
 export const deleteGraphicsById = (mapGraphicsId) => api.post('/graphics/deleteGraphics', mapGraphicsId )
@@ -59,8 +60,6 @@ export const deleteGeojsonById = (geojsonId) => api.delete(`/geojson/${geojsonId
 
 export const getDrafts = () => api.get(`/drafts`);
 export const getUserPublishedMaps = () => api.get(`/userPublished`);
-
-export const getAllPublishedMaps = (page, pageSize) => api.get(`/allPublished/${page}/${pageSize}`);
 
 export const updateLikes = (likes, mapId, userId) => api.post(`/updateLikes`, {likes, mapId, userId})
 
@@ -82,11 +81,11 @@ const apis = {
   getMapDataById,
   deleteGeojsonById,
   publishMap,
-  getAllPublishedMaps,
   updateLikes,
   deleteGraphicsById,
   removeMapFromUser,
   deleteStylesById,
-  deleteMap
+  deleteMap,
+  getAllPublishedMaps
 };
 export default apis;

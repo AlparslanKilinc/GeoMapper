@@ -1,5 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import apis from "../store-request-api/mapRequestApi.js";
+import apis from '../store-request-api/mapRequestApi';
+import { getMapGraphicsDataById, saveMapGraphicsData, updateMapGraphicsDataById } from './mapGraphicsDataSlice.js';
+
 
 const initialState = {
   metaDataList: [],
@@ -29,46 +31,38 @@ const initialState = {
   },
   isLoading: false,
   error: null,
-  currentPage: 1,
-  pageSize: 10,
-  hasMorePublishedMaps: true,
   isLoadingPublishedMaps: false,
     publishedMaps: []
 };
-export const fetchAllPublishedMaps = createAsyncThunk(
-    'maps/fetchAllMaps',
-    async ({ page, pageSize }, { rejectWithValue }) => {
-      try {
-        const response = await apis.getAllPublishedMaps({ page, pageSize });
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        return rejectWithValue(error.response?.data);
-      }
+
+export const getAllPublishedMaps = createAsyncThunk(
+  "map/getAllPublishedMaps",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apis.getAllPublishedMaps()
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
     }
-);
+  }
+)
+
 
 const exploreSlice = createSlice({
   name: 'exploreSearch',
   initialState,
-  reducers: {},
+  reducers: {
+    resetExploreData: () => initialState,
+  },
   extraReducers: (builder) => {
     builder
-        .addCase(fetchAllPublishedMaps.fulfilled, (state, action) =>{
-          const { publishedMaps, pagination } = action.payload;
-          state.isLoadingPublishedMaps = false;
-          state.publishedMaps = [...publishedMaps];
-          state.hasMorePublishedMaps = pagination.currentPage < pagination.totalPages;
-          state.currentPage = pagination.currentPage + 1;
-          state.pageSize = pagination.pageSize;
-        })
-        .addCase(fetchAllPublishedMaps.pending, (state, action) =>{
-          state.isLoadingPublishedMaps = true;
-        })
-        .addCase(fetchAllPublishedMaps.rejected, (state, action) =>{
-          state.isLoadingPublishedMaps = false;
-        })
+      .addCase(getAllPublishedMaps.fulfilled, (state,actions) => {
+        state.publishedMaps = actions.payload
+      });
   }
 });
+export const{
+  resetExploreData
+} = exploreSlice.actions
 
 export default exploreSlice.reducer;

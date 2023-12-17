@@ -169,38 +169,6 @@ const getUserPublishedMaps = async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
-const getAllPublishedMaps = async (req, res) => {
-  try {
-    const page = parseInt(req.params.page) || 1;
-    const pageSize = parseInt(req.params.pageSize) || 10;
-
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = page * pageSize;
-
-    const totalMaps = await Map.countDocuments({ publishDate: { $ne: null } });
-
-    const maps = await Map.find({ publishDate: { $ne: null } })
-        .skip(startIndex)
-        .limit(pageSize);
-    if (!maps) {
-      return res.status(404).send({ message: 'Maps not found' });
-    }
-
-    const paginationInfo = {
-      currentPage: page,
-      pageSize: pageSize,
-      totalPages: Math.ceil(totalMaps / pageSize),
-      totalMaps: totalMaps,
-    };
-    res.status(200).send({
-      publishedMaps: maps,
-      pagination: paginationInfo,
-    });
-  } catch (error) {
-    console.error('Error fetching maps:', error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-};
 
 const updateLikes = async(req, res) =>{
  try{
@@ -263,6 +231,16 @@ const deleteMap = async(req, res) =>{
 
   }
 }
+
+const getAllPublishedMaps = async (req, res) => {
+  try {
+    const maps = await Map.find({ publishDate: { $ne: null } }).exec();
+    res.status(200).json(maps);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+};
 module.exports = {
   createMap,
   getAllDrafts,
@@ -270,7 +248,8 @@ module.exports = {
   getMapDataById,
   updateMap,
   publishMap,
-  getAllPublishedMaps,
   updateLikes,
-  removeMapFromUser, deleteMap
+  removeMapFromUser,
+  deleteMap,
+  getAllPublishedMaps
 };

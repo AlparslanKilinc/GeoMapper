@@ -20,7 +20,6 @@ import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import {fetchAllPublishedMaps} from "../../redux-slices/exploreSearchSlice.js";
 export default function MapCard({ map, isDraft }) {
   const dispatch = useDispatch();
   const user = useSelector((state) =>state.auth.user)
@@ -84,7 +83,6 @@ export default function MapCard({ map, isDraft }) {
        await dispatch(deleteMap(_id))
        await dispatch(fetchDrafts())
        await dispatch(fetchUserPublishedMaps())
-       await dispatch(fetchAllPublishedMaps())
        handleCloseDeleteModal();
   }
 

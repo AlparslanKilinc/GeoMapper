@@ -13,6 +13,8 @@ export const addComment = (commentData) => api.post('/addComment', commentData);
 export const getMapComments = (mapId) => api.get(`/${mapId}`)
 
 
+
+
 const apis= {
    addComment,
     getMapComments
