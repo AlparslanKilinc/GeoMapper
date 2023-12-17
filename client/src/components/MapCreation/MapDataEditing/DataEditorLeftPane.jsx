@@ -11,7 +11,8 @@ import {
   generateRandomColumn,
   addPoint,
   addDataFromCSVorExcel,
-  validateRow
+  validateRow,
+  changeMatchKey
 } from '../../../redux-slices/mapGraphicsDataSlice';
 import '../../../styles/mapDataEditingPage.css';
 
@@ -26,6 +27,9 @@ export default function DataEditorLeftPane() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [options, setOptions] = useState([]);
   const [error, setError] = useState('');
+  const [matchKey, setMatchKey] = useState('');
+  const [uploadedColumns, setUploadedColumns] = useState([]);
+  const [uploadedData, setUploadedData] = useState([]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -36,6 +40,10 @@ export default function DataEditorLeftPane() {
       clearTimeout(handler);
     };
   }, [searchTerm, debounceDelay]);
+
+  useEffect(() => {
+    dispatch(addDataFromCSVorExcel({ data: uploadedData, mapGraphicsType }));
+  }, [matchKey]);
 
   // This Basically loads the google maps api and allows the user to search for a place
   // It is like adding script tag to html but dynamically and only when needed
@@ -101,7 +109,7 @@ export default function DataEditorLeftPane() {
                 height: 10
               })
             );
-            const newIndex = points.length; 
+            const newIndex = points.length;
             dispatch(validateRow({ rowIndex: newIndex, mapGraphicsType, geoJSON }));
           } else {
             setError('Error fetching place details');
@@ -134,7 +142,8 @@ export default function DataEditorLeftPane() {
   const parseCSV = (file) => {
     Papa.parse(file, {
       complete: (result) => {
-        dispatch(addDataFromCSVorExcel({ data: result.data, mapGraphicsType }));
+        setUploadedColumns(result.meta.fields);
+        setUploadedData(result.data);
       },
       header: true
     });
@@ -148,7 +157,8 @@ export default function DataEditorLeftPane() {
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
       const json = XLSX.utils.sheet_to_json(worksheet);
-      dispatch(addDataFromCSVorExcel({ data: json, mapGraphicsType }));
+      setUploadedColumns(Object.keys(json[0]));
+      setUploadedData(json);
     };
     reader.readAsArrayBuffer(file);
   };
@@ -176,6 +186,15 @@ export default function DataEditorLeftPane() {
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           />
         </LoadingButton>
+        <Autocomplete
+          value={matchKey}
+          options={uploadedColumns}
+          onChange={(_, value) => {
+            setMatchKey(value);
+            dispatch(changeMatchKey(value));
+          }}
+          renderInput={(params) => <TextField {...params} label="Match Key" variant="outlined" />}
+        />
         {error && <Typography color="error">{error}</Typography>}
         {(mapGraphicsType === 'Heat Map' || mapGraphicsType === 'Dot Density Map') && (
           <LoadingButton
