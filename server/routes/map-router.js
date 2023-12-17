@@ -6,6 +6,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+router.get('/getAllPublishedMaps', MapController.getAllPublishedMaps)
 const graphicsRouter = require('./graphics-router');
 router.use('/graphics', graphicsRouter);
 
@@ -19,5 +20,8 @@ router.get('/userPublished', auth.verify, MapController.getUserPublishedMaps);
 router.get('/:mapId', auth.verify, MapController.getMapDataById);
 router.put('/:mapId', auth.verify, upload.single('image'), MapController.updateMap);
 router.put('/:mapId/publish', auth.verify, MapController.publishMap);
+router.post('/updateLikes', MapController.updateLikes)
+router.post('/removeMap', MapController.removeMapFromUser)
+router.post('/deleteMap', MapController.deleteMap)
 
 module.exports = router;

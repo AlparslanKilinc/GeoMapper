@@ -39,6 +39,18 @@ export const getMapGraphicsDataById = createAsyncThunk(
   }
 );
 
+export const deleteGraphicsDataById = createAsyncThunk(
+    'mapGraphics/deleteMapGraphics',
+    async(mapGraphicsId, thunkApi) =>{
+      try {
+        const response = await apis.deleteGraphicsById(mapGraphicsId);
+        return response.data;
+      } catch (error) {
+        return thunkApi.rejectWithValue(error.response.data);
+      }
+    }
+)
+
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
   let isInside = false;

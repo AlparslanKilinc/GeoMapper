@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/AlparslanKilinc/GeoMapper/issues"
   },
-  "homepage": "https://github.com/AlparslanKilinc/GeoMapper#readme"
+  "homepage": "https://github.com/AlparslanKilinc/GeoMapper#readme",
+  "dependencies": {
+    "redux-thunk": "^3.1.0"
+  }
 }

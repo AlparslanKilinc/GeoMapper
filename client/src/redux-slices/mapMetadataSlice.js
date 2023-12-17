@@ -50,6 +50,19 @@ export const getMapMetaDataById = createAsyncThunk(
   }
 );
 
+export const updateLikes = createAsyncThunk(
+    'mapMetadata/updateLikes',
+    async({likes,mapId, userId},  { rejectWithValue }) =>{
+      try{
+        console.log('in slice');
+        const response = await apis.updateLikes(likes, mapId, userId);
+        return response.data
+      }catch(error){
+        return rejectWithValue(error.response.data);
+      }
+    }
+)
+
 // Map Metadata Slice
 const mapMetadataInitialState = {
   mapId: null,
@@ -126,6 +139,9 @@ const metaDataSlice = createSlice({
         state.mapId = action.payload;
         state.isSavingMap = false;
       })
+        .addCase(updateLikes.fulfilled, (state, action) =>{
+          state.likes = action.payload.likes;
+        })
       .addCase(saveMap.rejected, (state, action) => {
         state.isSavingMap = false;
       })
@@ -147,8 +163,8 @@ const metaDataSlice = createSlice({
         state.isLoadingMap = true;
       })
       .addCase(getMapMetaDataById.fulfilled, (state, action) => {
+        console.log(action.payload)
         const { ...mapMetadata } = action.payload;
-
         return {
           ...mapMetadata,
           isLoadingMap: false,
@@ -169,6 +185,6 @@ export const {
   resetMapMetaData,
   updateDataIds,
   resetMapMetaDataFromDraft,
-  setPublishedDate
+  setPublishedDate,
 } = metaDataSlice.actions;
 export default metaDataSlice.reducer;
