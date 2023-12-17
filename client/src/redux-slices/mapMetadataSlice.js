@@ -76,11 +76,20 @@ const metaDataSlice = createSlice({
   name: 'mapMetadata',
   initialState: mapMetadataInitialState,
   reducers: {
+    populateMapMetadata: (state, action) => {
+      const metadata = action.payload;
+
+      Object.keys(metadata).forEach(key => {
+        if (state.hasOwnProperty(key)) {
+          state[key] = metadata[key];
+        }
+      });
+    },
     resetMapMetaData: () => mapMetadataInitialState,
     resetMapMetaDataFromDraft: (state, action) => {
       return {
-        ...mapMetadataInitialState, 
-        mapId: state.mapId, 
+        ...mapMetadataInitialState,
+        mapId: state.mapId,
         mapGraphicsType: state.mapGraphicsType,
         graphicsDataId: state.graphicsDataId,
         stylesDataId: state.stylesDataId,
@@ -153,6 +162,7 @@ const metaDataSlice = createSlice({
 });
 
 export const {
+  populateMapMetadata,
   changeMapTitle,
   changeMapDescription,
   setMapGraphicsType,

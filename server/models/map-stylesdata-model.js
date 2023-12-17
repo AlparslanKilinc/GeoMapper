@@ -4,7 +4,15 @@ const Schema = mongoose.Schema;
 const MapStyleSchema = new mongoose.Schema({
   mapId: { type: String, default: null },
   colors: [{ type: Schema.Types.Mixed }],
+  heatmapColorType: { type: String, default: 'continuous' },
   colorPalette: [[String]],
+  colorSteps: [{
+    range: {
+      from: { type: Number, required: true },
+      to: { type: Number, required: true }
+    },
+    color: { type: String, required: true }
+  }],
   colorPaletteIdx: { type: Number, default: 0 },
   shape: { type: String, default: 'circle' },
   size: { type: Number, default: 0 },
