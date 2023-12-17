@@ -30,6 +30,7 @@ export default function MapGraphicsEditor() {
   const points = useSelector((state) => state.mapGraphics.points);
   const colors = useSelector((state) => state.mapStyles.colors);
   const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
+  const colorSteps = useSelector((state) => state.mapStyles.colorSteps);
   const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
   const dotDensityByProperty = useSelector((state) => state.mapGraphics.dotDensityByProperty);
   const heatmapColorType = useSelector((state) => state.mapStyles.heatmapColorType);
@@ -89,7 +90,21 @@ export default function MapGraphicsEditor() {
     dispatch(setSelectedPropUniqueValues(uniqueValues));
   };
 
-  // TODO:
+  function mapColorStepsToData() {
+    function getColorFromValue(value) {
+      const colorStep = colorSteps.find(rangeItem =>
+        value >= rangeItem.range.from && value <= rangeItem.range.to
+      );
+
+      return colorStep ? colorStep.color : '#FFFFFF';
+    }
+
+    const data = regions.map((region) => region[colorByProperty]);
+    const mappedColors = data.map(getColorFromValue);
+
+    dispatch(setContinousColorScale(mappedColors));
+  }
+
   const initColorsNumerical = () => {
     if (heatmapColorType === "continuous") {
       const data = propList.map((propObj) => propObj[colorByProperty]);
@@ -106,7 +121,7 @@ export default function MapGraphicsEditor() {
       const c = data.map((d) => colorScale(d));
       dispatch(setContinousColorScale(c));
     } else if (heatmapColorType === "steps") {
-
+      mapColorStepsToData();
     }
   };
 

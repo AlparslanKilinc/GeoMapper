@@ -14,15 +14,22 @@ import ColorSteps from './ColorSteps';
 import SubMenuTitle from '../../SubMenuTitle';
 import DebouncedSlider from '../../../../DebouncedElement/DebouncedSlider';
 import { addActionToPast } from '../../../../../redux-slices/undoRedoSlice';
+import { setContinousColorScale } from '../../../../../redux-slices/mapStylesSlice';
+import * as d3 from 'd3';
 
 export default function ColorsHeatMapAccordionMenu() {
   const dispatch = useDispatch();
+  const regions = useSelector((state) => state.mapGraphics.regions);
   const colorByProperty = useSelector(state => state.mapGraphics.colorByProperty);
   const propertyNames = useSelector(state => state.mapGraphics.propertyNames)
   const opacity = useSelector((state) => state.mapStyles.opacity);
   const heatmapColorType = useSelector((state) => state.mapStyles.heatmapColorType);
   const columnTypes = useSelector(state => state.mapGraphics.columnTypes);
   const columnValidationErrors = useSelector((state) => state.mapGraphics.columnValidationErrors);
+  const colorPalette = useSelector((state) => state.mapStyles.colorPalette);
+  const colorSteps = useSelector((state) => state.mapStyles.colorSteps);
+  const colorPaletteIdx = useSelector((state) => state.mapStyles.colorPaletteIdx);
+  const data = regions.map((region) => region[colorByProperty]);
 
   let propertyNamesNumeric = propertyNames.filter((prop) => {
     return columnTypes[prop] === 'number' && !columnValidationErrors[prop];
@@ -44,8 +51,42 @@ export default function ColorsHeatMapAccordionMenu() {
     dispatch(setOpacity(newValue));
   };
 
+  function mapColorStepsToData() {
+    function getColorFromValue(value) {
+      const colorStep = colorSteps.find(rangeItem =>
+        value >= rangeItem.range.from && value <= rangeItem.range.to
+      );
+
+      return colorStep ? colorStep.color : '#FFFFFF';
+    }
+
+    const data = regions.map((region) => region[colorByProperty]);
+    const mappedColors = data.map(getColorFromValue);
+    dispatch(setContinousColorScale(mappedColors));
+  }
+
+  function applyColorPalette() {
+    const data = regions.map((region) => region[colorByProperty]);
+    const minData = d3.min(data);
+    const maxData = d3.max(data);
+
+    const colorScale = d3
+      .scaleLinear()
+      .domain([minData, maxData])
+      .range(colorPalette[colorPaletteIdx]);
+
+    const c = data.map((d) => colorScale(d));
+    dispatch(setContinousColorScale(c));
+  }
+
   // TODO: redo undo
   const handleColorTypeChange = (event) => {
+    if (event.target.value === "continuous") {
+      applyColorPalette();
+    } else if (event.target.value === "steps") {
+      mapColorStepsToData();
+    }
+
     dispatch(changeColorType(event.target.value));
   };
 

@@ -5,7 +5,7 @@ import { OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import Box from '@mui/material/Box';
 import ColorStep from './ColorStep';
-import { setColorSteps } from '../../../../../redux-slices/mapStylesSlice';
+import { setColorSteps, setContinousColorScale } from '../../../../../redux-slices/mapStylesSlice';
 import * as d3 from 'd3';
 
 export default function ColorSteps() {
@@ -13,19 +13,18 @@ export default function ColorSteps() {
   const colorSteps = useSelector((state) => state.mapStyles.colorSteps);
   const MIN = 3;
   const MAX = 7;
-  const [count, setCount] = useState(MIN);
   const regions = useSelector((state) => state.mapGraphics.regions);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const data = regions.map((region) => region[colorByProperty]);
-
   useEffect(() => {
+    const minData = Math.round(d3.min(data));
+    const maxData = Math.round(d3.max(data));
+    const range = maxData - minData;
+
     if (colorSteps.length === 0) {
-      const minData = d3.min(data);
-      const maxData = d3.max(data);
-      const range = maxData - minData;
-      const step = range / 3;
-      dispatch(setColorSteps(
-        [{
+      const step = Math.round(range / 3);
+      dispatch(setColorSteps([
+        {
           range: { from: minData, to: minData + step },
           color: '#ADD8E6'
         },
@@ -36,10 +35,71 @@ export default function ColorSteps() {
         {
           range: { from: minData + 2 * step + 1, to: maxData },
           color: '#00008B'
-        }]
-      ));
+        }
+      ]));
+    } else {
+      const totalSteps = colorSteps.length;
+      const newColorSteps = colorSteps.map((step, index) => {
+        const from = Math.round(minData + (range / totalSteps) * index);
+        const to = index === totalSteps - 1 ? maxData : Math.round(minData + (range / totalSteps) * (index + 1) - 1);
+
+        return {
+          ...step,
+          range: { from, to }
+        };
+      });
+      dispatch(setColorSteps(newColorSteps));
     }
   }, []);
+
+
+  function mapColorStepsToData() {
+    function getColorFromValue(value) {
+      const colorStep = colorSteps.find(rangeItem =>
+        value >= rangeItem.range.from && value <= rangeItem.range.to
+      );
+
+      return colorStep ? colorStep.color : '#FFFFFF';
+    }
+
+    const mappedColors = data.map(getColorFromValue);
+    dispatch(setContinousColorScale(mappedColors));
+  }
+
+  useEffect(() => {
+    mapColorStepsToData();
+  }, [colorSteps]);
+
+  useEffect(() => {
+    if (colorSteps.length === 0) return;
+
+    const newColorSteps = [...colorSteps];
+    const lastStepIndex = newColorSteps.length - 1;
+    newColorSteps[lastStepIndex] = {
+      ...newColorSteps[lastStepIndex],
+      range: {
+        ...newColorSteps[lastStepIndex].range,
+        to: d3.max(data)
+      }
+    };
+
+    dispatch(setColorSteps(newColorSteps));
+  }, [d3.max(data)]);
+
+  useEffect(() => {
+    if (colorSteps.length === 0) return;
+
+    const newColorSteps = [...colorSteps];
+    newColorSteps[0] = {
+      ...newColorSteps[0],
+      range: {
+        ...newColorSteps[0].range,
+        from: d3.min(data)
+      }
+    };
+
+    dispatch(setColorSteps(newColorSteps));
+  }, [d3.min(data)]);
 
   function deepenColor(hexColor) {
     let color = parseInt(hexColor.slice(1), 16);
@@ -56,15 +116,14 @@ export default function ColorSteps() {
 
   function adjustColorRanges(colorSteps, action) {
     let newColorRanges = [...colorSteps];
-    const minData = d3.min(data);
-    const maxData = d3.max(data);
+    const minData = parseInt(d3.min(data));
+    const maxData = parseInt(d3.max(data));
     const maxRangeValue = maxData - minData;
 
     if (action === 'add') {
-      if (count >= MAX) {
+      if (colorSteps.length >= MAX) {
         return;
       }
-      setCount(prevCount => Math.min(MAX, prevCount + 1));
       const newColor = newColorRanges.length > 0
         ? deepenColor(newColorRanges[newColorRanges.length - 1].color)
         : '#000000';
@@ -85,10 +144,9 @@ export default function ColorSteps() {
         color: newColor
       });
     } else if (action === 'remove' && newColorRanges.length > 0) {
-      if (count <= MIN) {
+      if (colorSteps.length <= MIN) {
         return;
       }
-      setCount(prevCount => Math.max(MIN, prevCount - 1));
 
       newColorRanges.pop();
 
@@ -107,7 +165,6 @@ export default function ColorSteps() {
     dispatch(setColorSteps(newColorRanges));
   }
 
-
   return (
     <Box
       display="flex"
@@ -115,6 +172,7 @@ export default function ColorSteps() {
       alignItems="center"
       justifyContent="center"
       sx={{ gap: 2 }}
+      key={JSON.stringify({ colorSteps })}
     >
       <Box
         display="flex"
@@ -130,15 +188,14 @@ export default function ColorSteps() {
             },
           }}
           type="number"
-          value={count}
-          onChange={(e) => setCount(Number(e.target.value))}
+          value={colorSteps.length}
           startAdornment={
             <InputAdornment position="start">
               <IconButton
                 size="small"
                 onClick={() => adjustColorRanges(colorSteps, "remove")}
                 edge="start"
-                disabled={count === MIN}
+                disabled={colorSteps.length === MIN}
               >
                 <RemoveIcon />
               </IconButton>
@@ -150,7 +207,7 @@ export default function ColorSteps() {
                 size="small"
                 onClick={() => adjustColorRanges(colorSteps, "add")}
                 edge="end"
-                disabled={count === MAX}
+                disabled={colorSteps.length === MAX}
               >
                 <AddIcon />
               </IconButton>
@@ -174,11 +231,10 @@ export default function ColorSteps() {
           <ColorStep
             key={index}
             rangeIdx={index}
-            from={rangeItem.range.from.toString()}
-            to={rangeItem.range.to.toString()}
+            from={rangeItem.range.from ? rangeItem.range.from.toString() : '0'}
+            to={rangeItem.range.to ? rangeItem.range.to.toString() : '0'}
             disableUpper={index === colorSteps.length - 1}
             disableLower={index === 0}
-            initialColor={rangeItem.color}
           />
         ))}
       </Box>

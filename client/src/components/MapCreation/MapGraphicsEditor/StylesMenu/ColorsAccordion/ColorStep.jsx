@@ -3,9 +3,9 @@ import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import { MuiColorInput } from 'mui-color-input';
 import { setColorSteps } from '../../../../../redux-slices/mapStylesSlice';
+import DebouncedColorInput from '../../../../DebouncedElement/DebouncedColorInput';
 
-const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower, initialColor }) => {
-  const [color, setColor] = useState(initialColor);
+const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower }) => {
   const [fromValue, setFromValue] = useState(from);
   const [toValue, setToValue] = useState(to);
   const colorSteps = useSelector((state) => state.mapStyles.colorSteps);
@@ -16,21 +16,12 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower, initialColo
     setToValue(colorSteps[rangeIdx].range.to);
   }, [colorSteps]);
 
-  function rgbToHex(rgb) {
-    const rgbArray = rgb.match(/\d+/g);
-
-    const hex = rgbArray
-      .map((val) => {
-        const hexVal = parseInt(val).toString(16);
-        return hexVal.length === 1 ? `0${hexVal}` : hexVal;
-      })
-      .join('');
-
-    return `#${hex}`;
-  }
-  // TODO: Robust
   const handleColorChange = (newColor) => {
-    setColor(rgbToHex(newColor));
+    const updatedColorRanges = colorSteps.map((range, idx) =>
+      idx === rangeIdx ? { ...range, color: newColor } : range
+    );
+
+    dispatch(setColorSteps(updatedColorRanges));
   };
 
   const handleFromChange = (event) => {
@@ -41,15 +32,12 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower, initialColo
     setToValue(event.target.value);
   };
 
-  const handleColorBlur = (event) => {
-    const updatedColorRanges = colorSteps.map((range, idx) =>
-      idx === rangeIdx ? { ...range, color: color } : range
-    );
-
-    dispatch(setColorSteps(updatedColorRanges));
-  };
-
   const handleFromBlur = () => {
+    if (fromValue <= colorSteps[rangeIdx - 1].range.from + 1 || fromValue >= toValue) {
+      setFromValue(colorSteps[rangeIdx].range.from);
+      return;
+    }
+
     const updatedColorRanges = colorSteps.map((range, idx) => {
       if (idx === rangeIdx) {
         return {
@@ -75,6 +63,11 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower, initialColo
   };
 
   const handleToBlur = () => {
+    if (toValue >= colorSteps[rangeIdx + 1].range.to - 1 || toValue <= fromValue) {
+      setToValue(colorSteps[rangeIdx].range.to);
+      return;
+    }
+
     const updatedColorRanges = colorSteps.map((range, idx) => {
       if (idx === rangeIdx) {
         return {
@@ -108,11 +101,10 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower, initialColo
       format="hex"
       sx={{ gap: 2 }}
     >
-      <MuiColorInput
-        value={color}
+      <DebouncedColorInput
+        value={colorSteps[rangeIdx].color}
         onChange={handleColorChange}
         inputProps={{ style: { width: '0', border: 'none' } }}
-        onBlur={handleColorBlur}
         sx={{
           '& .MuiOutlinedInput-root': {
             '& fieldset': {
@@ -148,7 +140,7 @@ const ColorStep = ({ rangeIdx, from, to, disableUpper, disableLower, initialColo
         onChange={handleToChange}
         onBlur={handleToBlur}
         style={{
-          width: '30px', // Set the width
+          width: '30px',
           height: '30px',
           padding: '2',
           borderRadius: '0'
