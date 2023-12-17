@@ -17,6 +17,38 @@ export default function ColorSteps() {
   const regions = useSelector((state) => state.mapGraphics.regions);
   const colorByProperty = useSelector((state) => state.mapGraphics.colorByProperty);
   const data = regions.map((region) => region[colorByProperty]);
+
+  useEffect(() => {
+    if (colorSteps.length === 0) return;
+
+    const newColorSteps = [...colorSteps];
+    const lastStepIndex = newColorSteps.length - 1;
+    newColorSteps[lastStepIndex] = {
+      ...newColorSteps[lastStepIndex],
+      range: {
+        ...newColorSteps[lastStepIndex].range,
+        to: d3.max(data)
+      }
+    };
+
+    dispatch(setColorSteps(newColorSteps));
+  }, [d3.max(data)]);
+
+  useEffect(() => {
+    if (colorSteps.length === 0) return;
+
+    const newColorSteps = [...colorSteps];
+    newColorSteps[0] = {
+      ...newColorSteps[0],
+      range: {
+        ...newColorSteps[0].range,
+        from: d3.min(data)
+      }
+    };
+
+    dispatch(setColorSteps(newColorSteps));
+  }, [d3.min(data)]);
+
   useEffect(() => {
     const minData = Math.round(d3.min(data));
     const maxData = Math.round(d3.max(data));
@@ -71,36 +103,7 @@ export default function ColorSteps() {
     mapColorStepsToData();
   }, [colorSteps]);
 
-  useEffect(() => {
-    if (colorSteps.length === 0) return;
 
-    const newColorSteps = [...colorSteps];
-    const lastStepIndex = newColorSteps.length - 1;
-    newColorSteps[lastStepIndex] = {
-      ...newColorSteps[lastStepIndex],
-      range: {
-        ...newColorSteps[lastStepIndex].range,
-        to: d3.max(data)
-      }
-    };
-
-    dispatch(setColorSteps(newColorSteps));
-  }, [d3.max(data)]);
-
-  useEffect(() => {
-    if (colorSteps.length === 0) return;
-
-    const newColorSteps = [...colorSteps];
-    newColorSteps[0] = {
-      ...newColorSteps[0],
-      range: {
-        ...newColorSteps[0].range,
-        from: d3.min(data)
-      }
-    };
-
-    dispatch(setColorSteps(newColorSteps));
-  }, [d3.min(data)]);
 
   function deepenColor(hexColor) {
     let color = parseInt(hexColor.slice(1), 16);
@@ -185,7 +188,6 @@ export default function ColorSteps() {
       alignItems="center"
       justifyContent="center"
       sx={{ gap: 2 }}
-      key={JSON.stringify({ colorSteps })}
     >
       <Box
         display="flex"
