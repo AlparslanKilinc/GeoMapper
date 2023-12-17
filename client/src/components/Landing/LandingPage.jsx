@@ -7,12 +7,13 @@ import symbolMap from '../../assets/symbol_map.png';
 import choroplethMap from '../../assets/choropleth_map.png';
 import dotDensityMap from '../../assets/dot_density_map.png';
 import mapDataJson from '../../mapData.json';
-import { Divider, Button } from '@mui/material';
+import { Divider, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import CopyRight from '../Landing/CopyRight';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setMapGraphicsType } from '../../redux-slices/mapMetadataSlice';
+import { MediaCard } from '../MapCreation/TemplateSelection';
 
 export default function LandingPage() {
   const scrollContainer = useRef(null);
@@ -73,31 +74,17 @@ export default function LandingPage() {
       </div>
 
       <Divider className="divider">Choose from diverse templates and start mapping!</Divider>
-      <div className="maps-container">
-        <Button onClick={() => scroll(-400)}>&lt;</Button>
-        <div className="maps" ref={scrollContainer}>
-          {mapData.map((map, index) => (
-            <div key={index} className="outer-box">
-              <img style={{ width: '100%', height: '220px', objectFit: 'cover' }}
-                src={getImageSrc(map.title)} alt={map.alt} />
-              <Divider />
-              <div className="info-box">
-                <h2>{map.title}</h2>
-                <p>{map.description}</p>
-                <Button
-                  onClick={() => handleCreateClick(map.title)}
-                  style={{ backgroundColor: '#40E0D0' }}
-                  variant="contained"
-                  id="register"
-                >
-                  Create
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-        <Button onClick={() => scroll(400)}>&gt;</Button>
-      </div>
+      <Box display="flex" flexWrap="wrap" alignContent="center" justifyContent="center" gap={2}>
+        {' '}
+        {mapData.map((map, index) => (
+          <MediaCard
+            key={index}
+            map={map}
+            onClick={() => handleCreateClick(map.title)}
+            className="outer-box"
+          />
+        ))}
+      </Box>
 
       <CopyRight />
     </div>
