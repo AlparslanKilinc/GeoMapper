@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import '../../styles/explorePage.css';
 import MapCard from './MapCard';
 import Button from '@mui/material/Button';
@@ -8,19 +8,66 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import Popover from '@mui/material/Popover';
-import CopyRight from '../Landing/CopyRight';
+import {useDispatch, useSelector} from "react-redux";
+import {fetchAllPublishedMaps} from '../../redux-slices/exploreSearchSlice'
+import Typography from "@mui/material/Typography";
+import {CircularProgress} from "@mui/material";
 
 export default function ExplorePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [filterAnchor, setFilterAnchor] = useState(null);
+  const dispatch = useDispatch();
   const isSortOpen = Boolean(anchorEl);
   const isFilterOpen = Boolean(filterAnchor);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10; // Set your desired page size
+    const [hasMore, setHasMore] = useState(true);
+    const observer = useRef(null);
+    const maps = useSelector((state) => state.exploreSearch.publishedMaps)
+    const isLoadingMaps = useSelector((state) => state.exploreSearch.isLoadingPublishedMaps);
   const tags = [
     { name: 'u.s.a', id: 1 },
     { name: 'choropleth', id: 2 },
     { name: 'america', id: 3 },
     { name: 'election', id: 4 }
   ];
+
+    useEffect(() => {
+        dispatch(fetchAllPublishedMaps({ page: currentPage, pageSize }));
+    }, [currentPage, pageSize, dispatch]);
+
+    useEffect(() => {
+        const fetchMoreMaps = async () => {
+            if (!isLoadingMaps && hasMore) {
+                const lastMapCard = document.querySelector('.map-card-container > :last-child');
+                if (lastMapCard) {
+                    const rect = lastMapCard.getBoundingClientRect();
+                    if (rect.bottom <= window.innerHeight) {
+                        // Last map card is visible, fetch more maps
+                        console.log('Loading more maps...');
+                        setCurrentPage((prev) => prev + 1);
+                    }
+                }
+            }
+        };
+
+        observer.current = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0];
+                if (entry.isIntersecting) {
+                    fetchMoreMaps();
+                }
+            },
+            { threshold: 0.5 } // Adjust the threshold as needed
+        );
+
+        const lastMapCard = document.querySelector('.map-card-container > :last-child');
+        if (lastMapCard) {
+            observer.current.observe(lastMapCard);
+        }
+
+        return () => observer.current?.disconnect();
+    }, [isLoadingMaps, hasMore]);
 
   const handleSortMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,7 +84,15 @@ export default function ExplorePage() {
   const handleFilterMenuClose = () => {
     setFilterAnchor(null);
   };
-  const handleSearchBar = () => {};
+
+    const renderMaps = () => {
+        if (maps && maps.length > 0) {
+            return maps.map((map) => <MapCard key={map._id} map={map} isDraft = {false}/>);
+        }
+        return <Typography>Empty...</Typography>;
+    };
+
+        const handleSearchBar = () => {};
   return (
     <div className="explorePage">
       <div className="explore-title">
@@ -67,25 +122,14 @@ export default function ExplorePage() {
           >
             Sort
           </Button>
+
         </div>
       </div>
-      {/* <div className="map-card-container">
-        <div className="MapCard">
-          <MapCard></MapCard>
+        <div className="map-card-container">
+            {isLoadingMaps ? <CircularProgress /> : renderMaps()}
+            {hasMore && <div ref={observer}></div>}
         </div>
-        <div className="MapCard">
-          <MapCard></MapCard>
-        </div>
-        <div className="MapCard">
-          <MapCard></MapCard>
-        </div>
-        <div className="MapCard">
-          <MapCard></MapCard>
-        </div>
-        <div className="MapCard">
-          <MapCard></MapCard>
-        </div>
-      </div> */}
+
       <Menu anchorEl={anchorEl} open={isSortOpen} onClose={handleSortMenuClose}>
         <MenuItem onClick={handleSortMenuClose}>Newest</MenuItem>
         <MenuItem onClick={handleSortMenuClose}>Oldest</MenuItem>
@@ -133,7 +177,6 @@ export default function ExplorePage() {
           </div>
         </div>
       </Popover>
-      <CopyRight />
     </div>
   );
 }

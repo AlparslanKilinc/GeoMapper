@@ -1,42 +1,35 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea, CardActions } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+import {CardActionArea, Modal} from '@mui/material';
 import Link from '@mui/material/Link';
-import ShareIcon from '@mui/icons-material/Share';
-import IosShareIcon from '@mui/icons-material/IosShare';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import Chip from '@mui/material/Chip';
-import { Link as RouterLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import PopUp from '../Explore/PopUp.jsx';
-import SharePopUp from '../Explore/SharePopUp.jsx';
-import ForkForm from '../Explore/ForkForm.jsx';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark.js';
-import { getMapGraphicsDataById } from '../../redux-slices/mapGraphicsDataSlice.js';
-import { getMapStylesDataById } from '../../redux-slices/mapStylesSlice.js';
+import { getMapGraphicsDataById,deleteGraphicsDataById } from '../../redux-slices/mapGraphicsDataSlice.js';
+import { getMapStylesDataById, deleteStylesDataById } from '../../redux-slices/mapStylesSlice.js';
 import { getMapMetaDataById } from '../../redux-slices/mapMetadataSlice.js';
 import { fetchGeojsonById } from '../../redux-slices/geoJSONSlice.js';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import {fetchDrafts, fetchUserPublishedMaps, removeMapFromUser, deleteMap} from '../../redux-slices/mapSlice'
+import {useDispatch, useSelector} from 'react-redux';
+import {useLocation, useNavigate} from 'react-router-dom';
 import View from '../MapView/View.jsx';
-
-export default function MapCard({ map }) {
+import MapCardActions from '../MapCardActions.jsx'
+import {getMapComments} from "../../redux-slices/commentsSlice";
+import IconButton from "@mui/material/IconButton";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import {fetchAllPublishedMaps} from "../../redux-slices/exploreSearchSlice.js";
+export default function MapCard({ map, isDraft }) {
   const dispatch = useDispatch();
+  const user = useSelector((state) =>state.auth.user)
   const navigate = useNavigate();
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
-  const [isPopupOpen, setPopupOpen] = useState(false);
-  const [isShareOpen, setShareOpen] = useState(false);
-  const [popUpTitle, setPopUpTitle] = useState('');
-  const [forkForm, setForkForm] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const [bookmarked, setBookmarked] = useState(false);
   const [openView, setOpenView] = useState(false);
+  const [deleteModal, setOpenDeleteModal] = useState(false)
+  const location = useLocation();
+
+
   const {
     title,
     description,
@@ -57,6 +50,13 @@ export default function MapCard({ map }) {
     setOpenView(false);
   };
 
+  const handleOpenDeleteModal = () =>{
+    setOpenDeleteModal(true);
+  }
+  const handleCloseDeleteModal = () =>{
+    setOpenDeleteModal(false);
+  }
+
   const handleMapClick = async () => {
     const draft = publishDate === null;
     if (draft) {
@@ -65,110 +65,32 @@ export default function MapCard({ map }) {
         const mapGraphicsData = await dispatch(getMapGraphicsDataById(graphicsDataId));
         const mapStylesData = await dispatch(getMapStylesDataById(stylesDataId));
         const mapMetaData = await dispatch(getMapMetaDataById(_id));
-        // After all promises have resolved, navigate to the desired route
         navigate('/mapCreation/GraphicsEditor');
       } catch (error) {
-        // Handle any errors that might occur during the dispatch
         console.error('Error loading map data:', error);
       }
     } else {
       setOpenView(true);
+      dispatch(getMapComments(map._id))
     }
   };
 
-  const handleTagClick = () => {
-    console.log('tag was clicked');
-  };
-
-  const handleLike = () => {
-    if (!loggedIn) {
-      setPopUpTitle('To like a map, please create an account');
-      openPopup();
-      return;
-    }
-    if (!liked) {
-      setLiked(true);
-    } else {
-      setLiked(false);
-    }
-  };
-  const handleShare = () => {
-    openShare();
-    return;
-  };
-  const handleFork = () => {
-    if (!loggedIn) {
-      setPopUpTitle('To fork a map, please create an account');
-      openPopup();
-      return;
-    } else {
-      openForkForm();
-    }
-  };
-  const handleBookmark = () => {
-    if (!loggedIn) {
-      setPopUpTitle('To bookmark, please create an account');
-      openPopup();
-      return;
-    }
-    if (!bookmarked) {
-      setBookmarked(true);
-    } else {
-      setBookmarked(false);
-    }
-  };
-  // Popup functions
-  const openPopup = () => {
-    setPopupOpen(true);
-  };
-  const openShare = () => {
-    setShareOpen(true);
-  };
-  const closeShare = () => {
-    setShareOpen(false);
-  };
-  const closePopup = () => {
-    setPopupOpen(false);
-  };
-
-  const openForkForm = () => {
-    setForkForm(true);
-  };
-  const closeForkForm = () => {
-    setForkForm(false);
-  };
-
- const interactionButtons = (
-   <CardActions>
-     <IconButton onClick={handleLike}>
-       {liked ? (
-         <FavoriteIcon className="like" style={{ color: 'red' }} />
-       ) : (
-         <FavoriteBorderIcon className="like" />
-       )}
-     </IconButton>
-
-     <IconButton onClick={handleFork}>
-       <ShareIcon className="export" />
-     </IconButton>
-
-     <IconButton onClick={handleShare}>
-       <IosShareIcon className="share" />
-     </IconButton>
-
-     <IconButton onClick={handleBookmark}>
-       {bookmarked ? (
-         <BookmarkIcon className="bookmarks" style={{ color: '#40e0d0' }} />
-       ) : (
-         <BookmarkBorderIcon className="bookmarks" />
-       )}
-     </IconButton>
-   </CardActions>
- );
+  const handleDeleteMap = async() =>{
+       const mapId = _id
+       const userId = user.id
+       await dispatch(removeMapFromUser( {mapId, userId} ));
+       await dispatch(deleteGraphicsDataById(graphicsDataId));
+       await dispatch(deleteStylesDataById(stylesDataId));
+       await dispatch(deleteMap(_id))
+       await dispatch(fetchDrafts())
+       await dispatch(fetchUserPublishedMaps())
+       await dispatch(fetchAllPublishedMaps())
+       handleCloseDeleteModal();
+  }
 
   return (
     <div className="mapCard">
-      <Card sx={{ maxWidth: 300 }}>
+      <Card sx={{ maxWidth: 300, height: 350 }}>
         <CardActionArea onClick={handleMapClick}>
           <CardMedia component="img" height="200" image={thumbnailUrl} alt="green iguana" />
           <CardContent>
@@ -182,28 +104,55 @@ export default function MapCard({ map }) {
             <Typography gutterBottom variant="h5">
               {title}
             </Typography>
-            <Typography variant="h8" component="div">
-              {description}
-            </Typography>
           </CardContent>
           <div className="tags">
             {tags.map((tag) => (
               <Chip
                 key={tag}
                 label={tag}
-                onClick={handleTagClick}
                 variant="outlined"
                 size="small"
               />
             ))}
           </div>
         </CardActionArea>
-        {publishDate && interactionButtons}
+        {(location.pathname === `/profile`) && (
+            <IconButton
+                onClick={handleOpenDeleteModal}
+            >
+              <DeleteOutlineIcon style={{ color: 'red' }} />
+            </IconButton>
+        )}
+        {(!location.pathname == "/profile") &&  <MapCardActions map = {map} isDraft = {true}/>}
       </Card>
-      {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle} />}
-      {forkForm && <ForkForm open={forkForm} onClose={closeForkForm} />}
-      {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
       <View map={map} open={openView} onClose={handleCloseView} />
+      <Modal open={deleteModal} onClose={handleCloseDeleteModal}>
+        <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 170,
+              height: 60,
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 8
+            }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mt: '-50px', ml: '-50px', mb: '30px' }}>
+            Are you sure you want to delete this map?
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button variant="contained" onClick={handleDeleteMap}>
+              Delete
+            </Button>
+            <Button variant="outlined" onClick={handleCloseDeleteModal}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 }

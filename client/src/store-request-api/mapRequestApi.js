@@ -11,7 +11,6 @@ const api = axios.create({
 
 export const createMap = (map, imageFile) => {
   const formData = new FormData();
-
   // Append map data as JSON. Assuming 'map' is an object
   formData.append('map', JSON.stringify(map));
 
@@ -47,17 +46,27 @@ export const updateMap = (map, imageFile) => {
   });
 };
 export const publishMap = (map) => api.put(`/${map.mapId}/publish`, map);
-
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
+export const deleteGraphicsById = (mapGraphicsId) => api.post('/graphics/deleteGraphics', mapGraphicsId )
 export const updateMapGraphicsDataById = (mapGraphicsId, mapGraphicsData) => api.put(`/graphics/${mapGraphicsId}`, mapGraphicsData);
 export const getMapGraphicsDataById = (mapGraphicsId) => api.get(`/graphics/${mapGraphicsId}`);
 export const saveMapStylesData = (map) => api.post(`/styles`, map);
+
+export const deleteStylesById = (mapStylesId) => api.post('/styles/deleteStyles', mapStylesId)
 export const updateMapStylesDataById = (mapStylesId, mapStylesData) => api.put(`/styles/${mapStylesId}`, mapStylesData);
 export const getMapStylesDataById = (mapStylesId) => api.get(`/styles/${mapStylesId}`);
 export const deleteGeojsonById = (geojsonId) => api.delete(`/geojson/${geojsonId}`);
 
 export const getDrafts = () => api.get(`/drafts`);
 export const getUserPublishedMaps = () => api.get(`/userPublished`);
+
+export const getAllPublishedMaps = (page, pageSize) => api.get(`/allPublished/${page}/${pageSize}`);
+
+export const updateLikes = (likes, mapId, userId) => api.post(`/updateLikes`, {likes, mapId, userId})
+
+export const removeMapFromUser = (userId, mapId) => api.post('/removeMap', {userId, mapId})
+
+export const deleteMap = (mapId) => api.post('/deleteMap', mapId)
 
 const apis = {
   saveMapGraphicsData,
@@ -72,6 +81,12 @@ const apis = {
   updateMap,
   getMapDataById,
   deleteGeojsonById,
-  publishMap
+  publishMap,
+  getAllPublishedMaps,
+  updateLikes,
+  deleteGraphicsById,
+  removeMapFromUser,
+  deleteStylesById,
+  deleteMap
 };
 export default apis;

@@ -169,12 +169,108 @@ const getUserPublishedMaps = async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+const getAllPublishedMaps = async (req, res) => {
+  try {
+    const page = parseInt(req.params.page) || 1;
+    const pageSize = parseInt(req.params.pageSize) || 10;
 
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+
+    const totalMaps = await Map.countDocuments({ publishDate: { $ne: null } });
+
+    const maps = await Map.find({ publishDate: { $ne: null } })
+        .skip(startIndex)
+        .limit(pageSize);
+    if (!maps) {
+      return res.status(404).send({ message: 'Maps not found' });
+    }
+
+    const paginationInfo = {
+      currentPage: page,
+      pageSize: pageSize,
+      totalPages: Math.ceil(totalMaps / pageSize),
+      totalMaps: totalMaps,
+    };
+    res.status(200).send({
+      publishedMaps: maps,
+      pagination: paginationInfo,
+    });
+  } catch (error) {
+    console.error('Error fetching maps:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+};
+
+const updateLikes = async(req, res) =>{
+ try{
+   const { likes, mapId, userId } = req.body;
+   const updatedMap = await Map.findByIdAndUpdate(
+       mapId,
+       { $set: { likes } }, // Set the new value for the likes field
+       { new: true } // Return the updated document
+   );
+   const updatedUser = await User.findByIdAndUpdate(
+       userId,
+       { $push: { likedMaps: updatedMap._id } },
+       { new: true }
+   )
+   res.status(200).send(updatedMap)
+  }catch(error){
+   console.error('Updating likes:', error);
+   res.status(500).send({ message: 'Internal Server Error' });
+ }
+
+};
+
+const removeMapFromUser = async(req, res) =>{
+  try{
+    const { userId, mapId } = req.body;
+    const user = await User.findById(userId);
+      const isMapInDrafted = user.draftedMaps.includes(mapId);
+      const isMapInPublished = user.publishedMaps.includes(mapId);
+      if (isMapInDrafted) {
+        await User.updateOne({ _id: userId }, { $pull: { draftedMaps: mapId } });
+      } else if (isMapInPublished) {
+        await User.updateOne({ _id: userId }, { $pull: { publishedMaps: mapId } });
+      }
+      console.log(user)
+      res.status(200).send({message: "Map Deleted"})
+
+  }catch(error){
+    console.error( error);
+    res.status(500).send({ message: 'Internal Server Error' });
+
+  }
+}
+
+const deleteMap = async(req, res) =>{
+  try{
+    const mapId = req.body
+    const mapToDelete = Object.keys(mapId)[0];
+    console.log("map to deleted")
+    console.log(mapId)
+    console.log(mapToDelete)
+    const deletedMap = await Map.findByIdAndDelete(mapToDelete);
+    if(!deletedMap){
+      return res.status(400).send({message:"Map not found"})
+    }
+    res.status(200).send({message: "Map deleted"})
+  }
+  catch(error){
+    console.error( error);
+    res.status(500).send({ message: 'Internal Server Error' });
+
+  }
+}
 module.exports = {
   createMap,
   getAllDrafts,
   getUserPublishedMaps,
   getMapDataById,
   updateMap,
-  publishMap
+  publishMap,
+  getAllPublishedMaps,
+  updateLikes,
+  removeMapFromUser, deleteMap
 };

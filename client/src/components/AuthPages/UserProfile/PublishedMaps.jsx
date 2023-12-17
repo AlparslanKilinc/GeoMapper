@@ -16,7 +16,7 @@ export default function PublishedMaps() {
 
   const renderPublishedMaps = () => {
     if (publishedMaps && publishedMaps.length > 0) {
-      return publishedMaps.map((map) => <MapCard key={map._id} map={map} />);
+      return publishedMaps.map((map) => <MapCard key={map._id} map={map} isDraft = {false}/>);
     }
     return <Typography>Empty...</Typography>;
   };
