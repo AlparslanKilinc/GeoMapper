@@ -54,6 +54,16 @@ export const deleteMap = createAsyncThunk(
         }
     }
 )
+export const forkMap = createAsyncThunk('maps/forkMap', async (mapData, thunkAPI) => {
+  try {
+    const response = await apis.forkMap(mapData)
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
+});
+
+
 const initialState = {
     mapId: null,
     drafts: [],

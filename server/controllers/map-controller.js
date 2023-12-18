@@ -1,5 +1,8 @@
 const Map = require('../models/map-model'); // assuming you have a Map model
 const User = require('../models/user-model'); // assuming you have a User model
+const Geo  = require('../models/geojson-model');
+const Graphics = require('../models/map-graphicsdata-model');
+const Style = require('../models/map-stylesdata-model');
 const { uploadImage, deleteFileFromGCS } = require('../imageService');
 
 const createMap = async (req, res) => {
@@ -241,6 +244,77 @@ const getAllPublishedMaps = async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+const forkMap = async(req, res) => {
+  console.log("in controller for fork map ");
+  const { mapId, geoDataId, graphicsDataId, stylesDataId, authorId, authorUserName,
+    newAuthorId, newAuthorUserName, newTitle, newDescription} = req.body;
+  try{
+    const originalMap = await Map.findById(mapId);
+    if (!originalMap) {
+      return res.status(404).json({ error: 'Map not found' });
+    }
+    const newMap = {
+      ...originalMap.toObject(),
+      _id: undefined, // Set _id to undefined to create a new document
+      authorId: newAuthorId,
+      authorUserName: newAuthorUserName,
+      likes: 0,
+      forks: 0,
+      comments: [],
+      publishDate: null,
+      title: newTitle,
+      description: newDescription,
+      forkedFrom: {
+        isForked: true,
+        originalMapId: mapId,
+      },
+    };
+    const savedForkedMap = await Map.create(newMap);
+    const newMapId = savedForkedMap._id
+
+   const originalGeo = await Geo.findById(geoDataId);
+   const newGeo = {
+     ...originalGeo.toObject(),
+     _id:undefined,
+     mapId: newMapId
+   }
+   const savedForkedGeo = await Geo.create(newGeo)
+   const newGeoId = savedForkedGeo._id
+
+   const originalGraphics = await Graphics.findById(graphicsDataId);
+   const newGraphics = {
+     ...originalGraphics.toObject(),
+     _id:undefined,
+     mapId: newMapId
+   }
+   const savedForkedGraphics = await Graphics.create(newGraphics)
+   const newGraphicsId = savedForkedGraphics._id
+
+
+   const originalStyle = await Style.findById(stylesDataId);
+   const newStyle = {
+     ...originalStyle.toObject(),
+     _id:undefined,
+     mapId: newMapId
+   }
+  const savedForkedStyles = await Style.create(newStyle);
+  const newStyleId = savedForkedStyles._id
+    newMap.graphicsDataId = newGraphicsId;
+    newMap.stylesDataId = newStyleId;
+    newMap.geoDataId = newGeoId;
+
+    await Map.findByIdAndUpdate(newMapId, newMap, { new: true }); //updates map with all the ids
+
+    const user = await User.findById(newAuthorId);
+    user.draftedMaps.push(newMapId);
+    const updatedUser = await user.save();
+    console.log(newMap)
+
+  }catch(error){
+    console.log(error)
+    res.status(500).send({message: 'Internal Server Error'})
+  }
+}
 module.exports = {
   createMap,
   getAllDrafts,
@@ -251,5 +325,6 @@ module.exports = {
   updateLikes,
   removeMapFromUser,
   deleteMap,
-  getAllPublishedMaps
+  getAllPublishedMaps,
+  forkMap
 };
