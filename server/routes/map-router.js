@@ -6,6 +6,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+router.post('/forkMap', MapController.forkMap)
 router.get('/getAllPublishedMaps', MapController.getAllPublishedMaps)
 const graphicsRouter = require('./graphics-router');
 router.use('/graphics', graphicsRouter);

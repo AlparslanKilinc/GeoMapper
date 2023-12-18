@@ -8,8 +8,41 @@ import Button from "@mui/material/Button";
 import DialogContentText from "@mui/material/DialogContentText";
 import TextField from '@mui/material/TextField';
 import { FormControl, FormLabel } from '@mui/material';
+import {forkMap} from '../../redux-slices/mapSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-export default function ForkForm ({ open, onClose, title}) {
+export default function ForkForm ({ open, onClose, map}) {
+    const user = useSelector((state) => state.auth.user)
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [mapTitle, setMapName] = useState(map.title);
+    const [mapDescription, setDescription] = useState(map.description);
+    const handleFork = () =>{
+        const mapData = {
+            mapId: map._id,
+            geoDataId: map.geoDataId,
+            graphicsDataId: map.graphicsDataId,
+            stylesDataId: map.stylesDataId,
+            authorId: map.authorId,
+            authorUserName: map.authorUserName,
+            newAuthorId: user.id,
+            newAuthorUserName: user.userName,
+            newTitle: mapTitle,
+            newDescription: mapDescription
+        };
+        dispatch(forkMap(mapData))
+        navigate('/profile')
+    }
+
+    const handleTitleChange = (event) => {
+        setMapName(event.target.value);
+    };
+
+    const handleDescriptionChange = (event) => {
+        setDescription(event.target.value);
+    };
+
     return(
         <div id = "fork-form">
             <Dialog open={open} onClose={onClose}>
@@ -42,16 +75,21 @@ export default function ForkForm ({ open, onClose, title}) {
                     </DialogContentText>
                     <FormControl sx = {{mt: '20px'}}>
                         <FormLabel >Map Name*</FormLabel>
-                        <TextField sx = {{
+                        <TextField
+                          value = {mapTitle}
+                          onChange={handleTitleChange}
+                          sx = {{
                             width: 400,
                             mb: '5px'
                         }}></TextField>
                         <FormLabel sx = {{mt: '20px'}}>Description(Optional)</FormLabel>
-                        <TextField  multiline rows={6}  sx = {{
+                        <TextField  multiline rows={6}
+                                    value={mapDescription}
+                                    onChange={handleDescriptionChange}
+                       sx = {{
                             width: 400,
                             mb: '5px'
-
-                        }}></TextField>
+                            }}></TextField>
                         <Button sx = {{
                             backgroundColor: 'var(--main-color)',
                             '&:hover': {backgroundColor: 'var(--dark-color)'},
@@ -59,10 +97,10 @@ export default function ForkForm ({ open, onClose, title}) {
                             width:'75px',
                             mt: '10px',
                             mb: "15px",
-                            borderRadius: '20px'}}>
+                            borderRadius: '20px'}}
+                            onClick = {handleFork}>
                             Fork
                         </Button>
-
 
 
                     </FormControl>

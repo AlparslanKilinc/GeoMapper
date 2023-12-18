@@ -45,6 +45,7 @@ export const updateMap = (map, imageFile) => {
     }
   });
 };
+export const forkMap = (mapData) => api.post('/forkMap', mapData)
 export const getAllPublishedMaps = () => api.get('/getAllPublishedMaps')
 export const publishMap = (map) => api.put(`/${map.mapId}/publish`, map);
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
@@ -86,6 +87,7 @@ const apis = {
   removeMapFromUser,
   deleteStylesById,
   deleteMap,
-  getAllPublishedMaps
+  getAllPublishedMaps,
+  forkMap
 };
 export default apis;

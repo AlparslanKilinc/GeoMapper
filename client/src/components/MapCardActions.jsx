@@ -117,7 +117,7 @@ const MapCardActions = ({map, isDraft}) => {
               )}
           </IconButton>
           {isPopupOpen && <PopUp open={isPopupOpen} onClose={closePopup} title={popUpTitle} />}
-          {forkForm && <ForkForm open={forkForm} onClose={closeForkForm} />}
+          {forkForm && <ForkForm open={forkForm} onClose={closeForkForm} map = {map} />}
           {isShareOpen && <SharePopUp open={isShareOpen} onClose={closeShare} />}
       </CardActions>
   );
