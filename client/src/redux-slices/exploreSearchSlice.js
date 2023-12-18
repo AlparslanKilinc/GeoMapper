@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import apis from '../store-request-api/mapRequestApi';
-import { getMapGraphicsDataById, saveMapGraphicsData, updateMapGraphicsDataById } from './mapGraphicsDataSlice.js';
+
 
 
 const initialState = {
@@ -32,21 +32,20 @@ const initialState = {
   isLoading: false,
   error: null,
   isLoadingPublishedMaps: false,
-    publishedMaps: []
+    publishedMaps: [],
 };
 
 export const getAllPublishedMaps = createAsyncThunk(
   "map/getAllPublishedMaps",
-  async (_, { rejectWithValue }) => {
+  async (sortBy, { rejectWithValue }) => {
     try {
-      const response = await apis.getAllPublishedMaps()
+      const response = await apis.getAllPublishedMaps(sortBy);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
-)
-
+);
 
 const exploreSlice = createSlice({
   name: 'exploreSearch',
@@ -56,9 +55,10 @@ const exploreSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllPublishedMaps.fulfilled, (state,actions) => {
-        state.publishedMaps = actions.payload
-      });
+      .addCase(getAllPublishedMaps.fulfilled, (state, action) => {
+        state.publishedMaps = action.payload;
+        state.isLoadingPublishedMaps = false;
+      })
   }
 });
 export const{

@@ -231,13 +231,32 @@ const deleteMap = async (req, res) => {
 
 const getAllPublishedMaps = async (req, res) => {
   try {
-    const maps = await Map.find({ publishDate: { $ne: null } }).exec();
+    let sortOptions = {};
+
+    if (req.query.sortBy) {
+      const sortBy = req.query.sortBy;
+
+      if (sortBy === 'newest') {
+        sortOptions = { publishDate: -1 }; // Sort by publishDate in descending order (newest first)
+      } else if (sortBy === 'mostLiked') {
+        sortOptions = { likes: -1 }; // Sort by likes in descending order (most liked first)
+      } else if (sortBy === 'leastLiked') {
+        sortOptions = { likes: 1 }; // Sort by likes in descending order (most liked first)
+      }else if (sortBy === 'oldest') {
+        sortOptions = { publishDate: 1 }; // Sort by likes in descending order (most liked first)
+      }
+    }
+    const maps = await Map.find({ publishDate: { $ne: null } })
+      .sort(sortOptions) // Apply the sorting options
+      .lean() // Convert documents to plain JavaScript objects
+      .exec();
     res.status(200).json(maps);
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+
 const forkMap = async (req, res) => {
   const {
     mapId,
