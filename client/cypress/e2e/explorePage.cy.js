@@ -2,11 +2,7 @@ describe('Explore Page', () => {
     beforeEach(() => {
         cy.visit('/explore');
     });
-
-    it('should display the Explore page with the correct title', () => {
-        cy.get('.explore-title h1').should('have.text', 'Explore');
-    });
-
+    
     it('should open and close the Sort menu', () => {
         cy.get('.sort button').click();
         cy.get('.MuiMenu-paper').should('exist');

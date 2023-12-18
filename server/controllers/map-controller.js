@@ -231,13 +231,32 @@ const deleteMap = async (req, res) => {
 
 const getAllPublishedMaps = async (req, res) => {
   try {
-    const maps = await Map.find({ publishDate: { $ne: null } }).exec();
+    let sortOptions = {};
+
+    if (req.query.sortBy) {
+      const sortBy = req.query.sortBy;
+
+      if (sortBy === 'newest') {
+        sortOptions = { publishDate: -1 }; // Sort by publishDate in descending order (newest first)
+      } else if (sortBy === 'mostLiked') {
+        sortOptions = { likes: -1 }; // Sort by likes in descending order (most liked first)
+      } else if (sortBy === 'leastLiked') {
+        sortOptions = { likes: 1 }; // Sort by likes in descending order (most liked first)
+      }else if (sortBy === 'oldest') {
+        sortOptions = { publishDate: 1 }; // Sort by likes in descending order (most liked first)
+      }
+    }
+    const maps = await Map.find({ publishDate: { $ne: null } })
+      .sort(sortOptions) // Apply the sorting options
+      .lean() // Convert documents to plain JavaScript objects
+      .exec();
     res.status(200).json(maps);
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+
 const forkMap = async (req, res) => {
   const {
     mapId,
@@ -314,11 +333,37 @@ const forkMap = async (req, res) => {
     const user = await User.findById(newAuthorId);
     user.draftedMaps.push(newMapId);
     const updatedUser = await user.save();
+
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+
+const search = async(req, res) =>{
+  try{
+    const query = req.query.query
+    const searchResults = await Map.find({
+      $and: [
+        {
+          $or: [
+            { title: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } },
+            { mapGraphicsType: { $regex: query, $options: 'i' } },
+            { authorUserName: { $regex: query, $options: 'i' } },
+          ],
+        },
+        { publishDate: { $ne: null } },
+      ],
+    });
+    res.status(200).json(searchResults);
+  }catch(error){
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+
+}
+
 module.exports = {
   createMap,
   getAllDrafts,
@@ -330,5 +375,6 @@ module.exports = {
   removeMapFromUser,
   deleteMap,
   getAllPublishedMaps,
-  forkMap
+  forkMap,
+  search
 };

@@ -46,7 +46,8 @@ export const updateMap = (map, imageFile) => {
   });
 };
 export const forkMap = (mapData) => api.post('/forkMap', mapData)
-export const getAllPublishedMaps = () => api.get('/getAllPublishedMaps')
+export const search = (query) => api.get('/search', {params: {query}});
+export const getAllPublishedMaps = (sortBy) => api.get('/getAllPublishedMaps', { params: { sortBy } });
 export const publishMap = (map) => api.put(`/${map.mapId}/publish`, map);
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
 export const deleteGraphicsById = (mapGraphicsId) => api.post('/graphics/deleteGraphics', mapGraphicsId )
@@ -88,6 +89,7 @@ const apis = {
   deleteStylesById,
   deleteMap,
   getAllPublishedMaps,
-  forkMap
+  forkMap,
+  search
 };
 export default apis;

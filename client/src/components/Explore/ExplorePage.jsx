@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import '../../styles/explorePage.css';
 import MapCard from './MapCard';
 import Button from '@mui/material/Button';
@@ -11,7 +11,8 @@ import Popover from '@mui/material/Popover';
 import {useDispatch, useSelector} from "react-redux";
 import Typography from "@mui/material/Typography";
 import {CircularProgress} from "@mui/material";
-import {getAllPublishedMaps} from '../../redux-slices/exploreSearchSlice'
+import {getAllPublishedMaps, search} from '../../redux-slices/exploreSearchSlice'
+import Search from '../Explore/SearchBar'
 
 export default function ExplorePage() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -21,17 +22,19 @@ export default function ExplorePage() {
   const isFilterOpen = Boolean(filterAnchor);
   const maps = useSelector((state) => state.exploreSearch.publishedMaps)
   const isLoadingMaps = useSelector((state) => state.exploreSearch.isLoadingPublishedMaps);
+  const [sortBy, setSortBy] = useState('newest');
+
   const tags = [
     { name: 'u.s.a', id: 1 },
     { name: 'choropleth', id: 2 },
     { name: 'america', id: 3 },
     { name: 'election', id: 4 }
   ];
+  useEffect(() => {
+    dispatch(getAllPublishedMaps(sortBy));
+  }, [sortBy]);
 
 
-  useEffect(()=>{
-    dispatch(getAllPublishedMaps())
-  })
   const handleSortMenuOpen = async (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -47,33 +50,44 @@ export default function ExplorePage() {
   const handleFilterMenuClose = () => {
     setFilterAnchor(null);
   };
-
   const handleNewest = () => {
-  }
+    setSortBy('newest');
+    handleSortMenuClose();
+  };
+
+  const handleMostLiked = () => {
+    setSortBy('mostLiked');
+    handleSortMenuClose();
+  };
+
 
   const handleOldest = () =>{
-
+    setSortBy('oldest');
+    handleSortMenuClose();
   }
 
-  const handleMostLiked = () =>{
-
-  }
   const handleLeastLiked = () =>{
-
+    setSortBy('leastLiked');
+    handleSortMenuClose();
   }
+
   const renderMaps = () => {
-    if (maps && maps.length > 0) {
+    if (maps.length > 0) {
       return maps.map((map) => <MapCard key={map._id} map={map} isDraft={false} />);
     }
-    return <Typography>Empty...</Typography>;
+    return <Typography>No Maps Found!</Typography>
   };
 
-  const handleSearchBar = () => {
-  };
+  const onSearch = (query) =>{
+    console.log(query)
+    dispatch(search(query))
+  }
+
+
   return (
     <div className="explorePage">
       <div className="explore-title">
-        <h1>Explore</h1>
+        <Search className = "search" onSearch={onSearch}/>
       </div>
       <div className="filter-sort-buttons">
         <div className="filter">
@@ -156,3 +170,4 @@ export default function ExplorePage() {
     </div>
   );
 }
+
