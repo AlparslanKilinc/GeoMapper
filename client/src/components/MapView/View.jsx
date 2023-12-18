@@ -63,7 +63,7 @@ const View = ({ map, open, onClose }) => {
             </Box>
 
             <Divider />
-            <Box sx={{ flex: 1 }} pr={2} pt={2}>
+            <Box sx={{ flex: 1, maxWidth: '25ch' }} pl={2} pr={2} pt={2}>
               {comments.length === 0 ? (
                 <Typography variant="body1" sx={{ color: 'lightgrey', ml: '25px' }}>
                   Be the first to add a comment!
