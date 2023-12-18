@@ -1,6 +1,6 @@
 const Map = require('../models/map-model'); // assuming you have a Map model
 const User = require('../models/user-model'); // assuming you have a User model
-const Geo  = require('../models/geojson-model');
+const Geo = require('../models/geojson-model');
 const Graphics = require('../models/map-graphicsdata-model');
 const Style = require('../models/map-stylesdata-model');
 const { uploadImage, deleteFileFromGCS } = require('../imageService');
@@ -29,7 +29,6 @@ const createMap = async (req, res) => {
     console.log('savedMap', savedMap);
     // Update the user's draftedMaps array
     await User.findByIdAndUpdate(userId, { $push: { draftedMaps: savedMap._id } });
-
 
     res.status(200).json({ _id: savedMap._id, thumbnailUrl: imageUrl });
   } catch (error) {
@@ -173,67 +172,62 @@ const getUserPublishedMaps = async (req, res) => {
   }
 };
 
-const updateLikes = async(req, res) =>{
- try{
-   const { likes, mapId, userId } = req.body;
-   const updatedMap = await Map.findByIdAndUpdate(
-       mapId,
-       { $set: { likes } }, // Set the new value for the likes field
-       { new: true } // Return the updated document
-   );
-   const updatedUser = await User.findByIdAndUpdate(
-       userId,
-       { $push: { likedMaps: updatedMap._id } },
-       { new: true }
-   )
-   res.status(200).send(updatedMap)
-  }catch(error){
-   console.error('Updating likes:', error);
-   res.status(500).send({ message: 'Internal Server Error' });
- }
-
+const updateLikes = async (req, res) => {
+  try {
+    const { likes, mapId, userId } = req.body;
+    const updatedMap = await Map.findByIdAndUpdate(
+      mapId,
+      { $set: { likes } }, // Set the new value for the likes field
+      { new: true } // Return the updated document
+    );
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { likedMaps: updatedMap._id } },
+      { new: true }
+    );
+    res.status(200).send(updatedMap);
+  } catch (error) {
+    console.error('Updating likes:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
 };
 
-const removeMapFromUser = async(req, res) =>{
-  try{
+const removeMapFromUser = async (req, res) => {
+  try {
     const { userId, mapId } = req.body;
     const user = await User.findById(userId);
-      const isMapInDrafted = user.draftedMaps.includes(mapId);
-      const isMapInPublished = user.publishedMaps.includes(mapId);
-      if (isMapInDrafted) {
-        await User.updateOne({ _id: userId }, { $pull: { draftedMaps: mapId } });
-      } else if (isMapInPublished) {
-        await User.updateOne({ _id: userId }, { $pull: { publishedMaps: mapId } });
-      }
-      console.log(user)
-      res.status(200).send({message: "Map Deleted"})
-
-  }catch(error){
-    console.error( error);
-    res.status(500).send({ message: 'Internal Server Error' });
-
-  }
-}
-
-const deleteMap = async(req, res) =>{
-  try{
-    const mapId = req.body
-    const mapToDelete = Object.keys(mapId)[0];
-    console.log("map to deleted")
-    console.log(mapId)
-    console.log(mapToDelete)
-    const deletedMap = await Map.findByIdAndDelete(mapToDelete);
-    if(!deletedMap){
-      return res.status(400).send({message:"Map not found"})
+    const isMapInDrafted = user.draftedMaps.includes(mapId);
+    const isMapInPublished = user.publishedMaps.includes(mapId);
+    if (isMapInDrafted) {
+      await User.updateOne({ _id: userId }, { $pull: { draftedMaps: mapId } });
+    } else if (isMapInPublished) {
+      await User.updateOne({ _id: userId }, { $pull: { publishedMaps: mapId } });
     }
-    res.status(200).send({message: "Map deleted"})
-  }
-  catch(error){
-    console.error( error);
+    console.log(user);
+    res.status(200).send({ message: 'Map Deleted' });
+  } catch (error) {
+    console.error(error);
     res.status(500).send({ message: 'Internal Server Error' });
-
   }
-}
+};
+
+const deleteMap = async (req, res) => {
+  try {
+    const mapId = req.body;
+    const mapToDelete = Object.keys(mapId)[0];
+    console.log('map to deleted');
+    console.log(mapId);
+    console.log(mapToDelete);
+    const deletedMap = await Map.findByIdAndDelete(mapToDelete);
+    if (!deletedMap) {
+      return res.status(400).send({ message: 'Map not found' });
+    }
+    res.status(200).send({ message: 'Map deleted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+};
 
 const getAllPublishedMaps = async (req, res) => {
   try {
@@ -244,11 +238,20 @@ const getAllPublishedMaps = async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
-const forkMap = async(req, res) => {
-  console.log("in controller for fork map ");
-  const { mapId, geoDataId, graphicsDataId, stylesDataId, authorId, authorUserName,
-    newAuthorId, newAuthorUserName, newTitle, newDescription} = req.body;
-  try{
+const forkMap = async (req, res) => {
+  const {
+    mapId,
+    geoDataId,
+    graphicsDataId,
+    stylesDataId,
+    authorId,
+    authorUserName,
+    newAuthorId,
+    newAuthorUserName,
+    newTitle,
+    newDescription
+  } = req.body;
+  try {
     const originalMap = await Map.findById(mapId);
     if (!originalMap) {
       return res.status(404).json({ error: 'Map not found' });
@@ -266,55 +269,56 @@ const forkMap = async(req, res) => {
       description: newDescription,
       forkedFrom: {
         isForked: true,
-        originalMapId: mapId,
-      },
+        originalMapId: mapId
+      }
     };
     const savedForkedMap = await Map.create(newMap);
-    const newMapId = savedForkedMap._id
+    const newMapId = savedForkedMap._id;
 
-   const originalGeo = await Geo.findById(geoDataId);
-   const newGeo = {
-     ...originalGeo.toObject(),
-     _id:undefined,
-     mapId: newMapId
-   }
-   const savedForkedGeo = await Geo.create(newGeo)
-   const newGeoId = savedForkedGeo._id
+    const originalGeo = await Geo.findById(geoDataId);
 
-   const originalGraphics = await Graphics.findById(graphicsDataId);
-   const newGraphics = {
-     ...originalGraphics.toObject(),
-     _id:undefined,
-     mapId: newMapId
-   }
-   const savedForkedGraphics = await Graphics.create(newGraphics)
-   const newGraphicsId = savedForkedGraphics._id
+    if (originalGeo.toObject().isPrivate) {
+      // only create new entry in db for geojson if it is private otherwise reuse the same one
+      const newGeo = {
+        ...originalGeo.toObject(),
+        _id: undefined,
+        mapId: newMapId
+      };
+      const savedForkedGeo = await Geo.create(newGeo);
+      const newGeoId = savedForkedGeo._id;
+      newMap.geoDataId = newGeoId;
+    }
 
+    const originalGraphics = await Graphics.findById(graphicsDataId);
+    const newGraphics = {
+      ...originalGraphics.toObject(),
+      _id: undefined,
+      mapId: newMapId
+    };
+    const savedForkedGraphics = await Graphics.create(newGraphics);
+    const newGraphicsId = savedForkedGraphics._id;
 
-   const originalStyle = await Style.findById(stylesDataId);
-   const newStyle = {
-     ...originalStyle.toObject(),
-     _id:undefined,
-     mapId: newMapId
-   }
-  const savedForkedStyles = await Style.create(newStyle);
-  const newStyleId = savedForkedStyles._id
+    const originalStyle = await Style.findById(stylesDataId);
+    const newStyle = {
+      ...originalStyle.toObject(),
+      _id: undefined,
+      mapId: newMapId
+    };
+    const savedForkedStyles = await Style.create(newStyle);
+    const newStyleId = savedForkedStyles._id;
     newMap.graphicsDataId = newGraphicsId;
     newMap.stylesDataId = newStyleId;
-    newMap.geoDataId = newGeoId;
 
     await Map.findByIdAndUpdate(newMapId, newMap, { new: true }); //updates map with all the ids
 
     const user = await User.findById(newAuthorId);
     user.draftedMaps.push(newMapId);
     const updatedUser = await user.save();
-    console.log(newMap)
-
-  }catch(error){
-    console.log(error)
-    res.status(500).send({message: 'Internal Server Error'})
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
   }
-}
+};
 module.exports = {
   createMap,
   getAllDrafts,
