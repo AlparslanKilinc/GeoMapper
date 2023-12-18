@@ -7,9 +7,6 @@ const initialState = {
   metaDataList: [],
   searchOptions: {
     sortBy: [{ field: 'likes', order: 'desc' }],
-    limit: 10,
-    offset: 0,
-    page: 1,
     title: {
       value: '',
       matchMode: 'contains'
@@ -33,6 +30,8 @@ const initialState = {
   error: null,
   isLoadingPublishedMaps: false,
     publishedMaps: [],
+  searchResults: []
+
 };
 
 export const getAllPublishedMaps = createAsyncThunk(
@@ -47,6 +46,19 @@ export const getAllPublishedMaps = createAsyncThunk(
   }
 );
 
+export const search = createAsyncThunk(
+  "map/search",
+  async (query, { rejectWithValue }) => {
+    try {
+      const response = await apis.search(query);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+
+)
+
 const exploreSlice = createSlice({
   name: 'exploreSearch',
   initialState,
@@ -58,6 +70,10 @@ const exploreSlice = createSlice({
       .addCase(getAllPublishedMaps.fulfilled, (state, action) => {
         state.publishedMaps = action.payload;
         state.isLoadingPublishedMaps = false;
+      })
+      .addCase(search.fulfilled, (state, action) => {
+        console.log(action.payload)
+          state.publishedMaps = action.payload;
       })
   }
 });

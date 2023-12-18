@@ -333,11 +333,37 @@ const forkMap = async (req, res) => {
     const user = await User.findById(newAuthorId);
     user.draftedMaps.push(newMapId);
     const updatedUser = await user.save();
+
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
   }
 };
+
+const search = async(req, res) =>{
+  try{
+    const query = req.query.query
+    const searchResults = await Map.find({
+      $and: [
+        {
+          $or: [
+            { title: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } },
+            { mapGraphicsType: { $regex: query, $options: 'i' } },
+            { authorUserName: { $regex: query, $options: 'i' } },
+          ],
+        },
+        { publishDate: { $ne: null } },
+      ],
+    });
+    res.status(200).json(searchResults);
+  }catch(error){
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+
+}
+
 module.exports = {
   createMap,
   getAllDrafts,
@@ -349,5 +375,6 @@ module.exports = {
   removeMapFromUser,
   deleteMap,
   getAllPublishedMaps,
-  forkMap
+  forkMap,
+  search
 };

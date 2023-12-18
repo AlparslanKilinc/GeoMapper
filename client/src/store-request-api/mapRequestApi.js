@@ -46,6 +46,7 @@ export const updateMap = (map, imageFile) => {
   });
 };
 export const forkMap = (mapData) => api.post('/forkMap', mapData)
+export const search = (query) => api.get('/search', {params: {query}});
 export const getAllPublishedMaps = (sortBy) => api.get('/getAllPublishedMaps', { params: { sortBy } });
 export const publishMap = (map) => api.put(`/${map.mapId}/publish`, map);
 export const saveMapGraphicsData = (map) => api.post(`/graphics`, map);
@@ -88,6 +89,7 @@ const apis = {
   deleteStylesById,
   deleteMap,
   getAllPublishedMaps,
-  forkMap
+  forkMap,
+  search
 };
 export default apis;

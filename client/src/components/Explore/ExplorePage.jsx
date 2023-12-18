@@ -11,7 +11,8 @@ import Popover from '@mui/material/Popover';
 import {useDispatch, useSelector} from "react-redux";
 import Typography from "@mui/material/Typography";
 import {CircularProgress} from "@mui/material";
-import {getAllPublishedMaps, resetExploreData} from '../../redux-slices/exploreSearchSlice'
+import {getAllPublishedMaps, search} from '../../redux-slices/exploreSearchSlice'
+import Search from '../Explore/SearchBar'
 
 export default function ExplorePage() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -29,9 +30,6 @@ export default function ExplorePage() {
     { name: 'america', id: 3 },
     { name: 'election', id: 4 }
   ];
-  console.log(maps)
-
-
   useEffect(() => {
     dispatch(getAllPublishedMaps(sortBy));
   }, [sortBy]);
@@ -72,19 +70,24 @@ export default function ExplorePage() {
     setSortBy('leastLiked');
     handleSortMenuClose();
   }
+
   const renderMaps = () => {
     if (maps.length > 0) {
       return maps.map((map) => <MapCard key={map._id} map={map} isDraft={false} />);
     }
-    return <Typography>Empty...</Typography>
+    return <Typography>No Maps Found!</Typography>
   };
 
-  const handleSearchBar = () => {
-  };
+  const onSearch = (query) =>{
+    console.log(query)
+    dispatch(search(query))
+  }
+
+
   return (
     <div className="explorePage">
       <div className="explore-title">
-        <h1>Explore</h1>
+        <Search className = "search" onSearch={onSearch}/>
       </div>
       <div className="filter-sort-buttons">
         <div className="filter">
@@ -167,3 +170,4 @@ export default function ExplorePage() {
     </div>
   );
 }
+

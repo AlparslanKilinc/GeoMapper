@@ -4,8 +4,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 import '../../styles/searchBar.css'
 
-export default function SearchBar(){
+export default function SearchBar({onSearch}){
     const [searchQuery, setSearchQuery] = useState("");
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSearch(searchQuery);
+    };
 
     return(
        <div className = "searchBar" >
@@ -21,14 +25,8 @@ export default function SearchBar(){
                    placeholder="Search..."
                    size="small"
                >
-                   <IconButton type="submit" aria-label="search">
-                       <SearchIcon sx={{
-                           color: "var(--main-color)" ,
-                       }}
-                       />
-                   </IconButton>
                </TextField>
-               <IconButton type="submit" aria-label="search">
+               <IconButton type="submit" aria-label="search" onClick = {handleSubmit} >
                    <SearchIcon sx={{
                        color: "var(--main-color)" ,
                    }}
