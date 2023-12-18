@@ -16,10 +16,11 @@ const UserSchema = new Schema({
   publishedMaps: [{ type: ObjectId, ref: 'Map' }],
   draftedMaps: [{ type: ObjectId, ref: 'Map' }],
   bookmarkedMaps: [{ type: ObjectId, ref: 'Map' }],
+  likedMaps: [{type:ObjectId, ref: 'Map', unique: true}],
   profileCreated: { type: Date, default: Date.now },
   bio: { type: String, default: '' },
   profilePicPath: { type: String, default: '' },
-  googleUserId: { type: String, unique: true, default: '' }
+  googleUserId: { type: String, unique: false, default: '' }
 });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -18,7 +18,7 @@ export default function Drafts() {
   
   const renderDrafts = () => {
     if (drafts && drafts.length > 0) {
-      return drafts.map((map) => <MapCard key={map._id} map={map} />);
+      return drafts.map((map) => <MapCard key={map._id} map={map} isDraft = {true} />);
     }
     return <Typography>Empty...</Typography>;
   };

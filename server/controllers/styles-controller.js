@@ -21,4 +21,20 @@ const getMapStylesDataById = async (req, res) => {
   res.json(mapStyles);
 };
 
-module.exports = { saveMapStylesData, updateMapStylesDataById, getMapStylesDataById };
+const deleteMapStylesById = async(req,res) =>{
+  try{
+    const mapStylesIdObject = req.body;
+    const mapStylesId = Object.keys(mapStylesIdObject)[0];
+    const deletedStyles = await StylesModel.findByIdAndDelete(mapStylesId)
+    if(!deletedStyles){
+      return res.status(400).json({message: "Map Styles Not Found"})
+    }
+    res.status(200).json({message: "Map Styles Deleted Successfully"})
+  }catch(error){
+    console.log("error deleteing map graphics " + error)
+    res.status(500).json({message: "Internal Server Error"})
+  }
+
+}
+
+module.exports = { saveMapStylesData, updateMapStylesDataById, getMapStylesDataById, deleteMapStylesById };

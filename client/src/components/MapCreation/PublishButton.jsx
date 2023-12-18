@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useClearStates } from '../MapCreation/useClearStates';
 
+
 export default function PublishButton() {
   const dispatch = useDispatch();
   const navigate = useNavigate();

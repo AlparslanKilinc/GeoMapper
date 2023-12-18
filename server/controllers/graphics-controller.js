@@ -21,5 +21,20 @@ const getMapGraphicsDataById = async (req, res) => {
   res.json(mapGraphics);
 };
 
+const deleteMapGraphicsById = async(req, res) =>{
+  try {
+    const mapGraphicsIdObject = req.body;
+    const mapGraphicsId = Object.keys(mapGraphicsIdObject)[0];
+    const deletedMapGraphics = await GraphicsModel.findByIdAndDelete(mapGraphicsId);
+    if (!deletedMapGraphics) {
+      return res.status(404).json({ message: 'Map graphics not found' });
+    }
+    res.status(200).json({ message: 'Map graphics deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting map graphics:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
 
-module.exports = { saveMapGraphicsData, updateMapGraphicsDataById, getMapGraphicsDataById };
+
+module.exports = { saveMapGraphicsData, updateMapGraphicsDataById, getMapGraphicsDataById, deleteMapGraphicsById };
