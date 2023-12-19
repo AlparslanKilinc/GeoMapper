@@ -1,15 +1,12 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import apis from '../store-request-api/mapRequestApi';
-import { getMapGraphicsDataById, saveMapGraphicsData, updateMapGraphicsDataById } from './mapGraphicsDataSlice.js';
+
 
 
 const initialState = {
   metaDataList: [],
   searchOptions: {
     sortBy: [{ field: 'likes', order: 'desc' }],
-    limit: 10,
-    offset: 0,
-    page: 1,
     title: {
       value: '',
       matchMode: 'contains'
@@ -32,14 +29,30 @@ const initialState = {
   isLoading: false,
   error: null,
   isLoadingPublishedMaps: false,
-    publishedMaps: []
+    publishedMaps: [],
+  searchResults: [],
+  allTags: [],
+  bookmarkedMaps: [],
+
 };
 
 export const getAllPublishedMaps = createAsyncThunk(
   "map/getAllPublishedMaps",
-  async (_, { rejectWithValue }) => {
+  async (sortBy, { rejectWithValue }) => {
     try {
-      const response = await apis.getAllPublishedMaps()
+      const response = await apis.getAllPublishedMaps(sortBy);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const search = createAsyncThunk(
+  "map/search",
+  async (query, { rejectWithValue }) => {
+    try {
+      const response = await apis.search(query);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -47,6 +60,44 @@ export const getAllPublishedMaps = createAsyncThunk(
   }
 )
 
+export const getAllTags = createAsyncThunk(
+  'map/tags',
+        async(_,{rejectWithValue}) =>{
+            try{
+              const response = await apis.getAllTags();
+              return response.data;
+            }catch(error){
+              return rejectWithValue(error.response.data)
+            }
+        }
+)
+
+export const getAllTaggedMaps = createAsyncThunk(
+  'map/getAllTaggedMaps',
+  async(tag, {rejectWithValue}) => {
+    try{
+      const response = await apis.getAllTaggedMaps(tag);
+      return response.data;
+    }   catch(error){
+      return rejectWithValue(error.response.data)
+    }
+
+  }
+)
+
+export const getBookmarkedMaps = createAsyncThunk(
+  'map/getBookmarkedMaps',
+  async(userId, {rejectWithValue}) => {
+    try{
+      const response = await apis.getBookmarkedMaps(userId);
+      console.log(response.data)
+      return response.data;
+    }   catch(error){
+      return rejectWithValue(error.response.data)
+    }
+
+  }
+)
 
 const exploreSlice = createSlice({
   name: 'exploreSearch',
@@ -56,9 +107,24 @@ const exploreSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllPublishedMaps.fulfilled, (state,actions) => {
-        state.publishedMaps = actions.payload
-      });
+      .addCase(getAllPublishedMaps.fulfilled, (state, action) => {
+        state.publishedMaps = action.payload;
+        state.isLoadingPublishedMaps = false;
+      })
+      .addCase(search.fulfilled, (state, action) => {
+        console.log(action.payload)
+          state.publishedMaps = action.payload;
+      })
+      .addCase(getAllTags.fulfilled, (state, action) => {
+        state.allTags = action.payload
+      })
+      .addCase(getAllTaggedMaps.fulfilled, (state, action) => {
+        state.publishedMaps = action.payload
+      })
+      .addCase(getBookmarkedMaps.fulfilled, (state, action ) =>{
+        state.bookmarkedMaps = action.payload
+      })
+
   }
 });
 export const{

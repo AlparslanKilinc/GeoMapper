@@ -20,15 +20,15 @@ import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-export default function MapCard({ map, isDraft }) {
+import {getAllTaggedMaps} from '../../redux-slices/exploreSearchSlice';
+
+export default function MapCard({ map, isDraft, isBookmark }) {
   const dispatch = useDispatch();
   const user = useSelector((state) =>state.auth.user)
   const navigate = useNavigate();
   const [openView, setOpenView] = useState(false);
   const [deleteModal, setOpenDeleteModal] = useState(false)
   const location = useLocation();
-
-
   const {
     title,
     description,
@@ -55,7 +55,10 @@ export default function MapCard({ map, isDraft }) {
   const handleCloseDeleteModal = () =>{
     setOpenDeleteModal(false);
   }
-
+  const handleTagClick = (tag)=>{
+    console.log(tag)
+    dispatch(getAllTaggedMaps(tag))
+  }
   const handleMapClick = async () => {
     const draft = publishDate === null;
     if (draft) {
@@ -88,7 +91,7 @@ export default function MapCard({ map, isDraft }) {
 
   return (
     <div className="mapCard">
-      <Card sx={{ maxWidth: 300, height: 350 }}>
+      <Card sx={{ maxWidth: 300, height: 370 }}>
         <CardActionArea onClick={handleMapClick}>
           <CardMedia component="img" height="200" image={thumbnailUrl} alt="green iguana" />
           <CardContent>
@@ -103,17 +106,18 @@ export default function MapCard({ map, isDraft }) {
               {title}
             </Typography>
           </CardContent>
-          <div className="tags">
-            {tags.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                variant="outlined"
-                size="small"
-              />
-            ))}
-          </div>
         </CardActionArea>
+        <div className="tags" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '-10px' }}>
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              size="medium"
+              style={{ margin: '4px' }}
+              onClick={() => handleTagClick(tag)}
+            />
+          ))}
+        </div>
         {(location.pathname === `/profile`) && (
             <IconButton
                 onClick={handleOpenDeleteModal}
@@ -121,7 +125,7 @@ export default function MapCard({ map, isDraft }) {
               <DeleteOutlineIcon style={{ color: 'red' }} />
             </IconButton>
         )}
-        {!(location.pathname == "/profile") &&  <MapCardActions map = {map} isDraft = {true}/>}
+        {(!isDraft || isBookmark) && <MapCardActions map={map} isDraft={true} />}
       </Card>
       <View map={map} open={openView} onClose={handleCloseView} />
       <Modal open={deleteModal} onClose={handleCloseDeleteModal}>

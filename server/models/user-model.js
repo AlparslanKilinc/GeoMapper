@@ -16,7 +16,7 @@ const UserSchema = new Schema({
   publishedMaps: [{ type: ObjectId, ref: 'Map' }],
   draftedMaps: [{ type: ObjectId, ref: 'Map' }],
   bookmarkedMaps: [{ type: ObjectId, ref: 'Map' }],
-  likedMaps: [{type:ObjectId, ref: 'Map', unique: true}],
+  likedMaps: [{type:ObjectId, ref: 'Map'}],
   profileCreated: { type: Date, default: Date.now },
   bio: { type: String, default: '' },
   profilePicPath: { type: String, default: '' },

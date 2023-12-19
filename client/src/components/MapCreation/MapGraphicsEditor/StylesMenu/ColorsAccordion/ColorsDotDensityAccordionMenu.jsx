@@ -113,7 +113,7 @@ export default function ColorsDotDensityAccordionMenu() {
         sx={{ width: '100%' }}
       >
         <SubMenuTitle title="opacity" />
-        <DebouncedSlider value={fixedOpacity} onChange={handleChangeOpacity} />
+        <DebouncedSlider min={0} max={1} step={0.01} value={fixedOpacity} onChange={handleChangeOpacity} />
       </Box>
 
       <Box

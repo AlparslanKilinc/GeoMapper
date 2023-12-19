@@ -142,6 +142,7 @@ const initialState = {
   regions: [],
   columnTypes: {},
   addedColumns: [],
+  matchKey: '',
   nameByProperty: 'name',
   latByProperty: 'lat',
   lonByProperty: 'lon',
@@ -181,7 +182,7 @@ const mapGraphicsDataSlice = createSlice({
     populateMapGraphics: (state, action) => {
       const mapGraphics = action.payload;
 
-      Object.keys(mapGraphics).forEach(key => {
+      Object.keys(mapGraphics).forEach((key) => {
         if (state.hasOwnProperty(key)) {
           state[key] = mapGraphics[key];
         }
@@ -202,6 +203,9 @@ const mapGraphicsDataSlice = createSlice({
           region[newProperty] = '';
         });
       }
+    },
+    changeMatchKey: (state, action) => {
+      state.matchKey = action.payload;
     },
     deleteProperty: (state, action) => {
       const { propertyToDelete, mapGraphicsType } = action.payload;
@@ -240,6 +244,9 @@ const mapGraphicsDataSlice = createSlice({
       const { data, mapGraphicsType } = action.payload;
       const expectedRegionLength = state.regions.length;
 
+      const nameByProperty = state.nameByProperty;
+      const matchKey = state.matchKey;
+
       data.forEach((row, rowIndex) => {
         // Check and add new properties/columns
         Object.keys(row).forEach((key) => {
@@ -270,16 +277,32 @@ const mapGraphicsDataSlice = createSlice({
           state.points.push(row);
         } else {
           // For regions, merge data into existing rows as new columns
-          if (rowIndex < expectedRegionLength) {
-            const existingRegion = state.regions[rowIndex];
-            for (const key in row) {
-              existingRegion[key] = row[key];
+          // if (rowIndex < expectedRegionLength) {
+          // match each row using the matchKey with nameByProperty
+
+          let idx = rowIndex;
+
+          if (matchKey !== '' && nameByProperty !== '') {
+            idx = state.regions.findIndex((region) => region[nameByProperty] === row[matchKey]);
+            if (row[matchKey] === 'United Kingdom') {
+              console.log('idx', idx);
             }
-          } else {
-            // Handle case where the data row exceeds the existing region rows
-            state.validationMessage = `Row ${rowIndex + 1
-              } exceeds the existing region data length and was not added.`;
           }
+
+          const existingRegion = state.regions[idx];
+          if (!existingRegion) {
+            console.log(row);
+            return;
+          }
+          for (const key in row) {
+            existingRegion[key] = row[key];
+          }
+          // } else {
+          //   // Handle case where the data row exceeds the existing region rows
+          //   state.validationMessage = `Row ${
+          //     rowIndex + 1
+          //   } exceeds the existing region data length and was not added.`;
+          // }
         }
       });
     },
@@ -683,8 +706,9 @@ const mapGraphicsDataSlice = createSlice({
               state.cellValidationErrors[latErrorKey] ||
               state.cellValidationErrors[lonErrorKey]
             ) {
-              message = `⚠️ Error in latitude or longitude at row ${index}: ${state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
-                }`;
+              message = `⚠️ Error in latitude or longitude at row ${index}: ${
+                state.cellValidationErrors[latErrorKey] || state.cellValidationErrors[lonErrorKey]
+              }`;
               hasErrors = true;
               return;
             }
@@ -884,6 +908,7 @@ export const {
   setMaxProperty,
   validateRow,
   changeNameColor,
-  validateAllCells
+  validateAllCells,
+  changeMatchKey
 } = mapGraphicsDataSlice.actions;
 export default mapGraphicsDataSlice.reducer;

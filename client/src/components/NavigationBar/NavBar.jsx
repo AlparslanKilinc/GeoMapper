@@ -10,7 +10,6 @@ import AddIcon from '@mui/icons-material/Add';
 import LoginIcon from '@mui/icons-material/Login';
 import Logo from './Logo.jsx';
 import UserIconMenu from './UserIconMenu';
-import Search from '../Explore/SearchBar.jsx';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -51,7 +50,6 @@ export default function NavBar() {
   const navigate = useNavigate();
   const { clearStatesComplete } = useClearStates();
   const loggedIn = useSelector((state) => state.auth.loggedIn);
-  const isExplorePage = location.pathname == '/explore';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [path, setPath] = useState('');
 
@@ -99,7 +97,6 @@ export default function NavBar() {
       <Toolbar className={'navigationBar'}>
         <Logo openConfirmationModal={openConfirmationModal} setPath={setPath} />
         <div className={'iconContainer'}>
-          {isExplorePage && <Search />}
           <IconButton
             id="exploreButton"
             color="inherit"

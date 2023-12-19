@@ -62,7 +62,18 @@ export const updateLikes = createAsyncThunk(
       }
     }
 )
+export const bookmarkMap = createAsyncThunk(
+  'mapMetadata/bookmarkMap',
+  async({mapId, userId},  {rejectWithValue }) =>{
+    try{
+      const response = await apis.bookmarkMap(mapId, userId);
+      return response.data
+    }catch(error){
+      return rejectWithValue(error.response.data);
+    }
+  }
 
+)
 // Map Metadata Slice
 const mapMetadataInitialState = {
   mapId: null,
@@ -128,6 +139,9 @@ const metaDataSlice = createSlice({
       state.graphicsDataId = action.payload.graphicsDataId;
       state.stylesDataId = action.payload.stylesDataId;
       state.geoDataId = action.payload.geoDataId;
+    },
+    setTagsSlice: (state, action) =>{
+      state.tags = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -186,5 +200,6 @@ export const {
   updateDataIds,
   resetMapMetaDataFromDraft,
   setPublishedDate,
+  setTagsSlice
 } = metaDataSlice.actions;
 export default metaDataSlice.reducer;
