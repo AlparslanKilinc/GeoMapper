@@ -8,7 +8,7 @@
 
 .profile {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   gap: 5rem;
   margin-bottom: 2rem;
 }

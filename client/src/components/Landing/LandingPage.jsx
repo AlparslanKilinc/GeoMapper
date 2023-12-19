@@ -1,46 +1,20 @@
 import React, { useRef } from 'react';
 import '../../styles/landingPage.css';
 import GeoMapperImage from '../../assets/GeoMapperLogo.svg';
-import heatMap from '../../assets/heat_map.png';
-import spikeMap from '../../assets/spike_map.png';
-import symbolMap from '../../assets/symbol_map.png';
-import choroplethMap from '../../assets/choropleth_map.png';
-import dotDensityMap from '../../assets/dot_density_map.png';
 import mapDataJson from '../../mapData.json';
 import { Divider, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import CopyRight from '../Landing/CopyRight';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setMapGraphicsType } from '../../redux-slices/mapMetadataSlice';
 import { MediaCard } from '../MapCreation/TemplateSelection';
 
 export default function LandingPage() {
-  const scrollContainer = useRef(null);
+  const loggedIn = useSelector((state) => state.auth.loggedIn);
   const mapData = mapDataJson.mapData;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const scroll = (scrollOffset) => {
-    scrollContainer.current.scrollLeft += scrollOffset;
-  };
-
-  const getImageSrc = (title) => {
-    switch (title) {
-      case 'Heat Map':
-        return heatMap;
-      case 'Spike Map':
-        return spikeMap;
-      case 'Symbol Map':
-        return symbolMap;
-      case 'Choropleth Map':
-        return choroplethMap;
-      case 'Dot Density Map':
-        return dotDensityMap;
-      default:
-        return null;
-    }
-  };
 
   const handleCreateClick = (mapTitle) => {
     dispatch(setMapGraphicsType(mapTitle));
@@ -63,11 +37,11 @@ export default function LandingPage() {
                 Explore
               </Button>
             </Link>
-            <Link className="link" to={'/register'}>
+            {!loggedIn ? (<Link className="link" to={'/register'}>
               <Button style={{ backgroundColor: '#40E0D0' }} variant="contained" id="register">
                 Register
               </Button>
-            </Link>
+            </Link>) : null}
           </div>
         </div>
         <img className="image" src={GeoMapperImage} alt="logo" />

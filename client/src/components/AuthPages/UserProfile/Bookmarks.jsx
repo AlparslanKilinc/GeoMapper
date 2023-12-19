@@ -14,7 +14,6 @@ export default function Bookmarks(){
 
   useEffect(() => {
     dispatch(getBookmarkedMaps(user.id));
-    console.log(bookmarks)
   }, [user]);
 
   const itemsPerPage = 4; // Number of drafts to display per page
@@ -36,7 +35,7 @@ export default function Bookmarks(){
     }
     return <Typography>Empty...</Typography>;
   }
-  const totalPages = Math.ceil((bookmarks.length || 1) / itemsPerPage);
+  const totalPages = bookmarks ? Math.ceil((bookmarks.length || 1) / itemsPerPage): 1;
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
