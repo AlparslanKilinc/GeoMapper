@@ -10,8 +10,9 @@ import { saveMapStylesData, updateMapStylesDataById } from '../../redux-slices/m
 import { saveMap, updateMapMetaDataById, updateDataIds } from '../../redux-slices/mapMetadataSlice';
 import { createGeojson } from '../../redux-slices/geoJSONSlice';
 import domtoimage from 'dom-to-image';
+import Tooltip from '@mui/material/Tooltip';
 
-export default function SaveButton() {
+export default function SaveButton({ buttonStyle }) {
   const dispatch = useDispatch();
   const geojson = useSelector((state) => state.geojson);
   const mapMetadata = useSelector((state) => state.mapMetadata);
@@ -104,8 +105,10 @@ export default function SaveButton() {
   };
 
   return (
-    <Button variant="outlined" aria-label="save" onClick={saveMapData}>
-      <SaveOutlinedIcon />
-    </Button>
+    <Tooltip title="Save">
+      <Button sx={buttonStyle} variant="outlined" aria-label="save" onClick={saveMapData}>
+        <SaveOutlinedIcon />
+      </Button>
+    </Tooltip>
   );
 }

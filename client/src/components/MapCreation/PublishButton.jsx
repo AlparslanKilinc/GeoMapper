@@ -3,16 +3,16 @@ import { setPublishedDate, publishMap, setTagsSlice } from '../../redux-slices/m
 import { useDispatch, useSelector } from 'react-redux';
 import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button,TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useClearStates } from '../MapCreation/useClearStates';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog from '@mui/material/Dialog';
-import {getAllTags} from '../../redux-slices/exploreSearchSlice'
+import { getAllTags } from '../../redux-slices/exploreSearchSlice'
 import Autocomplete from '@mui/material/Autocomplete';
+import Tooltip from '@mui/material/Tooltip';
 
-
-export default function PublishButton() {
+export default function PublishButton({ buttonStyle }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { clearStatesComplete } = useClearStates();
@@ -57,67 +57,69 @@ export default function PublishButton() {
     setDescription(event.target.value);
   };
 
-const handlePublishMap = async () => {
-  try {
-    const date = new Date();
-    const dateString = date.toLocaleDateString('en-US');
-    await dispatch(setTagsSlice(tags))
-    await dispatch(setPublishedDate(dateString));
-    await dispatch(publishMap());
-    await clearStatesComplete();
-    navigate('/profile');
-  } catch (error) {
-    console.error('Error publishing map:', error);
-  }
-};
+  const handlePublishMap = async () => {
+    try {
+      const date = new Date();
+      const dateString = date.toLocaleDateString('en-US');
+      await dispatch(setTagsSlice(tags))
+      await dispatch(setPublishedDate(dateString));
+      await dispatch(publishMap());
+      await clearStatesComplete();
+      navigate('/profile');
+    } catch (error) {
+      console.error('Error publishing map:', error);
+    }
+  };
 
-return (
-  <div>
-    <Button onClick={handleOpenModal}>
-      <PublishOutlinedIcon />
-    </Button>
-    <Dialog open={isModalOpen} onClose={handleCloseModal} >
-      <DialogTitle>Publish Map</DialogTitle>
-      <DialogContent  sx={{ maxHeight: 'none' }}>
-        <TextField
-          label="Map Title*"
-          value={mapTitle}
-          onChange={handleTitleChange}
-          fullWidth
-          mb={2}
-          sx = {{mb: '20px', mt: '10px'}}
-        />
-        <TextField
-          label="Description (Optional)"
-          multiline
-          rows={5}
-          value={mapDescription}
-          onChange={handleDescriptionChange}
-          fullWidth
-          mb={2}
-          sx = {{mb: '10px'}}
-        />
-        <Autocomplete
-          multiple
-          id="tags"
-          options={allTags}
-          sx = {{mb: '10px'}}
-          freeSolo
-          value={tags}
-          onChange={(event, newValue) => setTags(newValue)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Tags"
-              value={tagInput}
-              onChange={handleTagInputChange}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-              fullWidth
-            />
-          )}
-        />
+  return (
+    <div>
+      <Tooltip title="Publish">
+        <Button sx={buttonStyle} onClick={handleOpenModal}>
+          <PublishOutlinedIcon />
+        </Button>
+      </Tooltip>
+      <Dialog open={isModalOpen} onClose={handleCloseModal} >
+        <DialogTitle>Publish Map</DialogTitle>
+        <DialogContent sx={{ maxHeight: 'none' }}>
+          <TextField
+            label="Map Title*"
+            value={mapTitle}
+            onChange={handleTitleChange}
+            fullWidth
+            mb={2}
+            sx={{ mb: '20px', mt: '10px' }}
+          />
+          <TextField
+            label="Description (Optional)"
+            multiline
+            rows={5}
+            value={mapDescription}
+            onChange={handleDescriptionChange}
+            fullWidth
+            mb={2}
+            sx={{ mb: '10px' }}
+          />
+          <Autocomplete
+            multiple
+            id="tags"
+            options={allTags}
+            sx={{ mb: '10px' }}
+            freeSolo
+            value={tags}
+            onChange={(event, newValue) => setTags(newValue)}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Tags"
+                value={tagInput}
+                onChange={handleTagInputChange}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+                fullWidth
+              />
+            )}
+          />
 
-        {/*<TextField
+          {/*<TextField
           label="Tags"
           value={tagInput}
           onChange={handleTagInputChange}
@@ -135,13 +137,13 @@ return (
             />
           ))}
         </Box>*/}
-        <Button onClick={handlePublishMap} variant = "contained">Publish</Button>
-        <Button onClick={handleCloseModal}>Cancel</Button>
-      </DialogContent>
+          <Button onClick={handlePublishMap} variant="contained">Publish</Button>
+          <Button onClick={handleCloseModal}>Cancel</Button>
+        </DialogContent>
 
-  </Dialog>
+      </Dialog>
 
-</div>
+    </div>
 
-);
+  );
 }

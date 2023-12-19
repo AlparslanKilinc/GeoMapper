@@ -13,6 +13,7 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import SaveButton from './SaveButton';
 import PublishButton from './PublishButton';
+import Tooltip from '@mui/material/Tooltip';
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
@@ -67,16 +68,18 @@ export default function MapBox({ openExportDialog }) {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-              <SaveButton sx={buttonStyle} />
-              {mapMetadataUrl && <PublishButton sx={buttonStyle} />}
-              <Button
-                variant="outlined"
-                aria-label="publish"
-                onClick={openExportDialog}
-                sx={buttonStyle}
-              >
-                <SaveAltIcon />
-              </Button>
+              <SaveButton buttonStyle={buttonStyle} />
+              {mapMetadataUrl && <PublishButton buttonStyle={buttonStyle} />}
+              <Tooltip title="Export">
+                <Button
+                  variant="outlined"
+                  aria-label="publish"
+                  onClick={openExportDialog}
+                  sx={buttonStyle}
+                >
+                  <SaveAltIcon />
+                </Button>
+              </Tooltip>
             </Box>
           </Box>
 
