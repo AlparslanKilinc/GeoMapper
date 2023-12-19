@@ -41,7 +41,7 @@ export default function Drafts() {
   };
 
   return (
-    <div>
+    <div style={{display:'flex', flexDirection:'column', padding:'2rem'}}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
         {isLoadingDrafts ? <CircularProgress /> : renderDrafts()}
       </div>
