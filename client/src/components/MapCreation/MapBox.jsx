@@ -90,7 +90,7 @@ export default function MapBox({ openExportDialog }) {
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
               <SaveButton buttonStyle={buttonStyle} setIsSaved = {setIsSaved} setOpen = {setOpen}/>
-              {mapId && <PublishButton buttonStyle={buttonStyle} setIsSaved = {setIsSaved} setOpen = {setOpen}/>}
+              {mapId && <PublishButton buttonStyle={buttonStyle}/>}
               <Tooltip title="Export">
                 <Button
                   variant="outlined"
