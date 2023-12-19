@@ -74,7 +74,7 @@ export default function ExplorePage() {
   return (
     <div className="explorePage">
       <div className="explore-title">
-        <Search className = "search" onSearch={onSearch} }/>
+        <Search className = "search" onSearch={onSearch}/>
       </div>
       <div className="filter-sort-buttons">
         <div className="sort">
