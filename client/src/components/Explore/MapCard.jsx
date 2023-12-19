@@ -91,7 +91,7 @@ export default function MapCard({ map, isDraft, isBookmark }) {
 
   return (
     <div className="mapCard">
-      <Card sx={{ maxWidth: 300, height: 370 }}>
+      <Card sx={{ width: 300, height: 400 }}>
         <CardActionArea onClick={handleMapClick}>
           <CardMedia component="img" height="200" image={thumbnailUrl} alt="green iguana" />
           <CardContent>

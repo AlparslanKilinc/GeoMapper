@@ -56,7 +56,7 @@ export default function ExplorePage() {
   }
 
   const renderMaps = () => {
-    if (maps.length > 0) {
+    if (maps && maps.length > 0) {
       return maps.map((map) => <MapCard key={map._id} map={map} isDraft={false} isBookmark = {true} />);
     }
     return <Typography>No Maps Found!</Typography>

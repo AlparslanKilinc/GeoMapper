@@ -159,6 +159,7 @@ export default function DataEditorLeftPane() {
         setUploadedColumns(result.meta.fields);
         setUploadedData(result.data);
         setOpen(true);
+        if (!isNotPointMap) dispatch(addDataFromCSVorExcel({ data: result.data, mapGraphicsType }));
       },
       header: true
     });
@@ -175,6 +176,8 @@ export default function DataEditorLeftPane() {
       setUploadedColumns(Object.keys(json[0]));
       setUploadedData(json);
       setOpen(true);
+
+      if (!isNotPointMap) dispatch(addDataFromCSVorExcel({ data: json, mapGraphicsType }));
     };
     reader.readAsArrayBuffer(file);
   };
@@ -254,7 +257,7 @@ export default function DataEditorLeftPane() {
         </div>
       )}
 
-      {open && (
+      {open && isNotPointMap && (
         <AlertComponent
           handleCloseAlert={handleClose}
           autoHideDuration={2000}
