@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ import { createGeojson } from '../../redux-slices/geoJSONSlice';
 import domtoimage from 'dom-to-image';
 import Tooltip from '@mui/material/Tooltip';
 
-export default function SaveButton({ buttonStyle }) {
+export default function SaveButton({ buttonStyle, setIsSaved, setOpen }) {
   const dispatch = useDispatch();
   const geojson = useSelector((state) => state.geojson);
   const mapMetadata = useSelector((state) => state.mapMetadata);
@@ -99,8 +99,12 @@ export default function SaveButton({ buttonStyle }) {
   const saveMapData = async () => {
     if (mapMetadata.mapId) {
       await updateMapData();
+      setIsSaved(true)
+      setOpen(true)
     } else {
       await createMapData();
+      setIsSaved(true)
+      setOpen(true)
     }
   };
 
