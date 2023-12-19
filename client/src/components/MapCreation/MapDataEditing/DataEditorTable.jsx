@@ -72,7 +72,10 @@ export default function DataEditorTable() {
   const [cellErrors, setCellValidationErrors] = useState({});
   const [cellEdits, setCellEdits] = useState({});
   const [isModalOpen, setModalOpen] = useState(false);
+  const [editColumnModalOpen, setEditColumnModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
+  const [editColumnName, setEditColumnName] = useState('');
+  const [columnToEdit, setColumnToEdit] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertSeverity, setAlertSeverity] = useState('');
@@ -107,12 +110,20 @@ export default function DataEditorTable() {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+  const handleOpenEditColumnModal = (selectedColumn) => {
+    setColumnToEdit(selectedColumn);
+    setEditColumnModalOpen(true);
+  };
+
+  const handleCloseEditColumnModal = () => {
+    setEditColumnModalOpen(false);
+  };
 
   // This is the data to be displayed in the table
   let data =
     mapGraphicsType === 'Choropleth Map' ||
-    mapGraphicsType === 'Heat Map' ||
-    mapGraphicsType === 'Dot Density Map'
+      mapGraphicsType === 'Heat Map' ||
+      mapGraphicsType === 'Dot Density Map'
       ? regions
       : Object.values(points);
   // This is to get the column label Displayed on top of the Columns that are assigned to XbyProperty (Name, Color, Lat, Lon)
@@ -262,6 +273,9 @@ export default function DataEditorTable() {
   const handleInputChange = (event) => {
     setNewColumnName(event.target.value);
   };
+  const handleEditColumnNameChange = (event) => {
+    setEditColumnName(event.target.value);
+  };
   const handleRemoveColumn = () => {
     dispatch(
       deleteProperty({ propertyToDelete: columnToDelete, mapGraphicsType: mapGraphicsType })
@@ -281,11 +295,11 @@ export default function DataEditorTable() {
     handleClose();
   };
 
-  const handleEditColumn = (columnName) => {
-    const newColumnName = prompt('Enter new column name:', columnName).trim();
+  const handleEditColumn = () => {
+    handleCloseEditColumnModal();
 
     // Check if the name is non-empty
-    if (!newColumnName) {
+    if (!editColumnName) {
       setAlertMessage('Column name cannot be empty!');
       setAlertSeverity('error');
       setShowAlert(true);
@@ -294,7 +308,7 @@ export default function DataEditorTable() {
     }
 
     // Check if the name is unique
-    if (displayedProperties.includes(newColumnName)) {
+    if (displayedProperties.includes(editColumnName)) {
       setAlertMessage('Column name already exists!');
       setAlertSeverity('error');
       setShowAlert(true);
@@ -303,11 +317,11 @@ export default function DataEditorTable() {
     }
 
     // Check if the name is different from the old name
-    if (newColumnName !== columnName) {
+    if (editColumnName !== columnToEdit) {
       dispatch(
         updateColumnName({
-          oldName: columnName,
-          newName: newColumnName,
+          oldName: columnToEdit,
+          newName: editColumnName,
           mapGraphicsType: mapGraphicsType
         })
       );
@@ -558,7 +572,7 @@ export default function DataEditorTable() {
           </FormControl>
         </MenuItem>
         {isDeletable(selectedColumn) && (
-          <MenuItem onClick={() => handleEditColumn(selectedColumn)}>Edit Column Name</MenuItem>
+          <MenuItem onClick={() => handleOpenEditColumnModal(selectedColumn)}>Edit Column Name</MenuItem>
         )}
         {isDeletable(selectedColumn) && (
           <MenuItem onClick={() => openDeleteModal(selectedColumn)}>Delete Column</MenuItem>
@@ -618,6 +632,40 @@ export default function DataEditorTable() {
               Cancel
             </Button>
           </Box>
+        </Box>
+      </Modal>
+
+      <Modal open={editColumnModalOpen} onClose={handleCloseEditColumnModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 200,
+            height: 60,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start'
+          }}
+        >
+          <Typography variant="h6" component="h2" sx={{ mt: '-50px', ml: '-50px' }}>
+            Enter new column name:
+          </Typography>
+          <TextField
+            id="standard-basic"
+            label="Column name"
+            variant="standard"
+            value={editColumnName}
+            onChange={handleEditColumnNameChange}
+            sx={{ ml: '-50px' }}
+          />
+          <Button variant="outlined" sx={{ ml: '-50px', mt: '10px' }} onClick={handleEditColumn}>
+            Submit
+          </Button>
         </Box>
       </Modal>
 
