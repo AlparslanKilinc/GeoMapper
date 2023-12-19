@@ -17,7 +17,7 @@ import Tooltip from '@mui/material/Tooltip';
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
-  const mapMetadataUrl = useSelector((state) => state.mapMetadata.thumbnailUrl);
+  const mapId = useSelector((state) => state.mapMetadata.mapId);
 
   const colors = useSelector((state) => state.mapStyles.colors);
   const title = useSelector((state) => state.mapMetadata.title);
@@ -69,7 +69,7 @@ export default function MapBox({ openExportDialog }) {
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
               <SaveButton buttonStyle={buttonStyle} />
-              {mapMetadataUrl && <PublishButton buttonStyle={buttonStyle} />}
+              {mapId && <PublishButton buttonStyle={buttonStyle} />}
               <Tooltip title="Export">
                 <Button
                   variant="outlined"

@@ -99,5 +99,5 @@ export const useSaveMap = () => {
       await createMapData();
     }
   };
-  return saveMapData;
+  return {saveMapData, createMapData, updateMapData, captureMapAsFile};
 };
