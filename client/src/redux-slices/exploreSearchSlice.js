@@ -30,7 +30,8 @@ const initialState = {
   error: null,
   isLoadingPublishedMaps: false,
     publishedMaps: [],
-  searchResults: []
+  searchResults: [],
+  allTags: []
 
 };
 
@@ -56,7 +57,31 @@ export const search = createAsyncThunk(
       return rejectWithValue(error.response.data);
     }
   }
+)
 
+export const getAllTags = createAsyncThunk(
+  'map/tags',
+        async(_,{rejectWithValue}) =>{
+            try{
+              const response = await apis.getAllTags();
+              return response.data;
+            }catch(error){
+              return rejectWithValue(error.response.data)
+            }
+        }
+)
+
+export const getAllTaggedMaps = createAsyncThunk(
+  'map/getAllTaggedMaps',
+  async(tag, {rejectWithValue}) => {
+    try{
+      const response = await apis.getAllTaggedMaps(tag);
+      return response.data;
+    }   catch(error){
+      return rejectWithValue(error.response.data)
+    }
+
+  }
 )
 
 const exploreSlice = createSlice({
@@ -74,6 +99,12 @@ const exploreSlice = createSlice({
       .addCase(search.fulfilled, (state, action) => {
         console.log(action.payload)
           state.publishedMaps = action.payload;
+      })
+      .addCase(getAllTags.fulfilled, (state, action) => {
+        state.allTags = action.payload
+      })
+      .addCase(getAllTaggedMaps.fulfilled, (state, action) => {
+        state.publishedMaps = action.payload
       })
   }
 });

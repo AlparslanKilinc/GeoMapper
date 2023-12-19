@@ -361,7 +361,27 @@ const search = async(req, res) =>{
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
   }
+}
 
+const getAllTags = async(req, res) => {
+  try{
+    const allTags = await Map.distinct('tags');
+    res.status(200).json(allTags);
+  }catch(error){
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+const getAllTaggedMaps = async(req, res) => {
+  try{
+    const tag = req.query.tag
+    const taggedMaps = await Map.find({ tags: { $in: [tag] } });
+    res.status(200).json(taggedMaps);
+  }catch(error){
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
 }
 
 module.exports = {
@@ -376,5 +396,7 @@ module.exports = {
   deleteMap,
   getAllPublishedMaps,
   forkMap,
-  search
+  search,
+  getAllTags,
+  getAllTaggedMaps
 };

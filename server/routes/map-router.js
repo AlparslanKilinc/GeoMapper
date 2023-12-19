@@ -9,6 +9,8 @@ const upload = multer({ storage: storage });
 router.post('/forkMap', MapController.forkMap)
 router.get('/getAllPublishedMaps', MapController.getAllPublishedMaps)
 router.get('/search', MapController.search)
+router.get('/allTags', MapController.getAllTags)
+router.get('/getAllTaggedMaps', MapController.getAllTaggedMaps)
 const graphicsRouter = require('./graphics-router');
 router.use('/graphics', graphicsRouter);
 

@@ -20,10 +20,12 @@ export default function SearchBar({onSearch}){
                    onInput={(e) => {
                        setSearchQuery(e.target.value);
                    }}
+                   onChange={(event) => onSearch(event.target.value)}
                    label="Search"
                    variant="outlined"
                    placeholder="Search..."
                    size="small"
+
                >
                </TextField>
                <IconButton type="submit" aria-label="search" onClick = {handleSubmit} >
