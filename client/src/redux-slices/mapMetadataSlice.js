@@ -62,7 +62,18 @@ export const updateLikes = createAsyncThunk(
       }
     }
 )
+export const bookmarkMap = createAsyncThunk(
+  'mapMetadata/bookmarkMap',
+  async({mapId, userId},  {rejectWithValue }) =>{
+    try{
+      const response = await apis.bookmarkMap(mapId, userId);
+      return response.data
+    }catch(error){
+      return rejectWithValue(error.response.data);
+    }
+  }
 
+)
 // Map Metadata Slice
 const mapMetadataInitialState = {
   mapId: null,

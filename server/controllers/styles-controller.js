@@ -2,7 +2,7 @@ const StylesModel = require('../models/map-stylesdata-model.js');
 
 const saveMapStylesData = async (req, res) => {
   const mapStyles = req.body;
-  newPlaylist = new StylesModel(mapStyles);
+  const newPlaylist = new StylesModel(mapStyles);
   const { _id } = await newPlaylist.save();
   res.json({ _id });
 };

@@ -11,7 +11,7 @@ import ForkForm from './Explore/ForkForm.jsx';
 import PopUp from './Explore/PopUp.jsx';
 import SharePopUp from './Explore/SharePopUp.jsx';
 import { CardActions, Box } from '@mui/material';
-import { updateLikes } from '../redux-slices/mapMetadataSlice.js';
+import { updateLikes, bookmarkMap } from '../redux-slices/mapMetadataSlice.js';
 
 const MapCardActions = ({ map, isDraft }) => {
   const dispatch = useDispatch();
@@ -58,7 +58,7 @@ const MapCardActions = ({ map, isDraft }) => {
       openForkForm();
     }
   };
-  const handleBookmark = () => {
+  const handleBookmark = async () => {
     if (!loggedIn) {
       setPopUpTitle('To bookmark, please create an account');
       openPopup();
@@ -66,6 +66,10 @@ const MapCardActions = ({ map, isDraft }) => {
     }
     if (!bookmarked) {
       setBookmarked(true);
+      const mapId = map._id;
+      const userId = user.id;
+      await dispatch(bookmarkMap({ mapId, userId }))
+
     } else {
       setBookmarked(false);
     }
