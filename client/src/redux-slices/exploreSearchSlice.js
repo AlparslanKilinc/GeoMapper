@@ -31,7 +31,8 @@ const initialState = {
   isLoadingPublishedMaps: false,
     publishedMaps: [],
   searchResults: [],
-  allTags: []
+  allTags: [],
+  bookmarkedMaps: [],
 
 };
 
@@ -84,6 +85,20 @@ export const getAllTaggedMaps = createAsyncThunk(
   }
 )
 
+export const getBookmarkedMaps = createAsyncThunk(
+  'map/getBookmarkedMaps',
+  async(userId, {rejectWithValue}) => {
+    try{
+      const response = await apis.getBookmarkedMaps(userId);
+      console.log(response.data)
+      return response.data;
+    }   catch(error){
+      return rejectWithValue(error.response.data)
+    }
+
+  }
+)
+
 const exploreSlice = createSlice({
   name: 'exploreSearch',
   initialState,
@@ -106,6 +121,10 @@ const exploreSlice = createSlice({
       .addCase(getAllTaggedMaps.fulfilled, (state, action) => {
         state.publishedMaps = action.payload
       })
+      .addCase(getBookmarkedMaps.fulfilled, (state, action ) =>{
+        state.bookmarkedMaps = action.payload
+      })
+
   }
 });
 export const{

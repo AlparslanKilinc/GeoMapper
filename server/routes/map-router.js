@@ -11,6 +11,7 @@ router.get('/getAllPublishedMaps', MapController.getAllPublishedMaps)
 router.get('/search', MapController.search)
 router.get('/allTags', MapController.getAllTags)
 router.get('/getAllTaggedMaps', MapController.getAllTaggedMaps)
+router.get('/getBookmarkedMaps', MapController.getBookmarkedMaps)
 const graphicsRouter = require('./graphics-router');
 router.use('/graphics', graphicsRouter);
 
@@ -27,5 +28,7 @@ router.put('/:mapId/publish', auth.verify, MapController.publishMap);
 router.post('/updateLikes', MapController.updateLikes)
 router.post('/removeMap', MapController.removeMapFromUser)
 router.post('/deleteMap', MapController.deleteMap)
+router.post('/bookmarkMap', MapController.bookmarkMap)
+
 
 module.exports = router;

@@ -26,7 +26,7 @@ export default function Drafts() {
       return (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
           {visibleDrafts.map((map) => (
-            <MapCard key={map._id} map={map} isDraft={true} />
+            <MapCard key={map._id} map={map} isDraft={true}  isBookmark = {false}/>
           ))}
         </div>
       );

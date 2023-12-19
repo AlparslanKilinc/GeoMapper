@@ -63,7 +63,6 @@ export const forkMap = createAsyncThunk('maps/forkMap', async (mapData, thunkAPI
   }
 });
 
-
 const initialState = {
     mapId: null,
     drafts: [],

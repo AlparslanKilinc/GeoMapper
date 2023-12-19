@@ -384,6 +384,44 @@ const getAllTaggedMaps = async(req, res) => {
   }
 }
 
+const bookmarkMap = async(req, res) => {
+  console.log("in controller")
+  try {
+    const {mapId, userId } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { bookmarkedMaps : mapId } },
+      { new: true }
+    );
+    console.log(updatedUser)
+    res.status(200).send(updatedUser);
+  } catch (error) {
+    console.error('Bookmarking Maps:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+
+}
+
+const getBookmarkedMaps = async(req, res) =>{
+  try {
+    const userId = req.query.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    const bookmarkedMapIds = user.bookmarkedMaps;
+
+    const bookmarkedMaps = await Map.find({ _id: { $in: bookmarkedMapIds } });
+
+    res.status(200).send(bookmarkedMaps);
+  } catch (error) {
+    console.error('Getting bookmarks:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 module.exports = {
   createMap,
   getAllDrafts,
@@ -398,5 +436,7 @@ module.exports = {
   forkMap,
   search,
   getAllTags,
-  getAllTaggedMaps
+  getAllTaggedMaps,
+  bookmarkMap,
+  getBookmarkedMaps
 };

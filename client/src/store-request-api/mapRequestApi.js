@@ -47,6 +47,7 @@ export const updateMap = (map, imageFile) => {
 };
 export const forkMap = (mapData) => api.post('/forkMap', mapData)
 export const getAllTags = () => api.get('/allTags')
+export const getBookmarkedMaps = (userId) => api.get('/getBookmarkedMaps', {params: {userId}})
 export const getAllTaggedMaps = (tag) => api.get('/getAllTaggedMaps', {params: {tag}});
 export const search = (query) => api.get('/search', {params: {query}});
 export const getAllPublishedMaps = (sortBy) => api.get('/getAllPublishedMaps', { params: { sortBy } });
@@ -66,7 +67,7 @@ export const getDrafts = () => api.get(`/drafts`);
 export const getUserPublishedMaps = () => api.get(`/userPublished`);
 
 export const updateLikes = (likes, mapId, userId) => api.post(`/updateLikes`, {likes, mapId, userId})
-
+export const bookmarkMap = (mapId, userId) => api.post('/bookmarkMap', {mapId, userId})
 export const removeMapFromUser = (userId, mapId) => api.post('/removeMap', {userId, mapId})
 
 export const deleteMap = (mapId) => api.post('/deleteMap', mapId)
@@ -94,6 +95,8 @@ const apis = {
   forkMap,
   search,
   getAllTags,
-  getAllTaggedMaps
+  getAllTaggedMaps,
+  bookmarkMap,
+  getBookmarkedMaps
 };
 export default apis;

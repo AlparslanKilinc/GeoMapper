@@ -22,15 +22,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import {getAllTaggedMaps} from '../../redux-slices/exploreSearchSlice';
 
-export default function MapCard({ map, isDraft }) {
+export default function MapCard({ map, isDraft, isBookmark }) {
   const dispatch = useDispatch();
   const user = useSelector((state) =>state.auth.user)
   const navigate = useNavigate();
   const [openView, setOpenView] = useState(false);
   const [deleteModal, setOpenDeleteModal] = useState(false)
   const location = useLocation();
-
-
   const {
     title,
     description,
@@ -57,13 +55,10 @@ export default function MapCard({ map, isDraft }) {
   const handleCloseDeleteModal = () =>{
     setOpenDeleteModal(false);
   }
-
   const handleTagClick = (tag)=>{
     console.log(tag)
     dispatch(getAllTaggedMaps(tag))
-
   }
-
   const handleMapClick = async () => {
     const draft = publishDate === null;
     if (draft) {
@@ -130,7 +125,7 @@ export default function MapCard({ map, isDraft }) {
               <DeleteOutlineIcon style={{ color: 'red' }} />
             </IconButton>
         )}
-        {!(location.pathname == "/profile") &&  <MapCardActions map = {map} isDraft = {true}/>}
+        {(!isDraft || isBookmark) && <MapCardActions map={map} isDraft={true} />}
       </Card>
       <View map={map} open={openView} onClose={handleCloseView} />
       <Modal open={deleteModal} onClose={handleCloseDeleteModal}>

@@ -24,7 +24,7 @@ export default function PublishedMaps() {
       const visiblePublishedMaps = publishedMaps.slice(startIndex, endIndex);
 
       return visiblePublishedMaps.map((map) => (
-        <MapCard key={map._id} map={map} isDraft={false} />
+        <MapCard key={map._id} map={map} isDraft={false} isBookmark = {false}/>
       ));
     }
     return <Typography>Empty...</Typography>;
