@@ -2,8 +2,12 @@ import React from 'react';
 import { Marker } from 'react-leaflet';
 import shapeIconMap from './shapeIconMap';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedPointKey, setMinProperty, setMaxProperty } from '../../../../../redux-slices/mapGraphicsDataSlice';
-import { changeSelectedShape } from '../../../../../redux-slices/mapStylesSlice'
+import {
+  setSelectedPointKey,
+  setMinProperty,
+  setMaxProperty
+} from '../../../../../redux-slices/mapGraphicsDataSlice';
+import { changeSelectedShape } from '../../../../../redux-slices/mapStylesSlice';
 
 const SymbolLayer = () => {
   const dispatch = useDispatch();
@@ -23,7 +27,7 @@ const SymbolLayer = () => {
 
   let sizeByProperty;
   if (mapGraphicsType === 'Spike Map') {
-    dispatch(changeSelectedShape('spike'))
+    dispatch(changeSelectedShape('spike'));
     sizeByProperty = useSelector((state) => state.mapGraphics.heightByProperty);
   } else {
     sizeByProperty = useSelector((state) => state.mapGraphics.sizeByProperty);
@@ -40,8 +44,8 @@ const SymbolLayer = () => {
   };
 
   const { min, max } = extractSizeValues(points);
-  dispatch(setMinProperty(min))
-  dispatch(setMaxProperty(max))
+  dispatch(setMinProperty(min));
+  dispatch(setMaxProperty(max));
 
   function oldCalculateMarkerSize(value) {
     if (!value) {
@@ -81,14 +85,31 @@ const SymbolLayer = () => {
 
     const size =
       minSymbolSize +
-      ((normalizedValue - normalizedMin) / (normalizedMax - normalizedMin)) * (maxSymbolSize - minSymbolSize);
+      ((normalizedValue - normalizedMin) / (normalizedMax - normalizedMin)) *
+        (maxSymbolSize - minSymbolSize);
 
     return size;
   }
 
+  const opacities = points.map((point) => point[opacityByProperty]);
+
+  function normalizeNumbers(value) {
+    if (!value) return false;
+    const min = Math.min(...opacities);
+    const max = Math.max(...opacities);
+
+    if (min === max) {
+      return fixedOpacity;
+    }
+
+    console.log(min, max, value);
+
+    return (value - min) / (max - min);
+  }
+
   const markers = points.map((point, pointIdx) => {
     const iconSize = calculateMarkerSize(point[sizeByProperty]) || fixedSymbolSize;
-    const opacity = point[opacityByProperty] || fixedOpacity;
+    const opacity = normalizeNumbers(point[opacityByProperty]) || fixedOpacity;
 
     let color = fixedColor;
 

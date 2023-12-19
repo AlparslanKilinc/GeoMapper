@@ -40,16 +40,16 @@ export const getMapGraphicsDataById = createAsyncThunk(
 );
 
 export const deleteGraphicsDataById = createAsyncThunk(
-    'mapGraphics/deleteMapGraphics',
-    async(mapGraphicsId, thunkApi) =>{
-      try {
-        const response = await apis.deleteGraphicsById(mapGraphicsId);
-        return response.data;
-      } catch (error) {
-        return thunkApi.rejectWithValue(error.response.data);
-      }
+  'mapGraphics/deleteMapGraphics',
+  async (mapGraphicsId, thunkApi) => {
+    try {
+      const response = await apis.deleteGraphicsById(mapGraphicsId);
+      return response.data;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
     }
-)
+  }
+);
 
 const isPointInPolygon = (point, geojson) => {
   const turfPoint = turf.point([point.lon, point.lat]);
@@ -469,6 +469,34 @@ const mapGraphicsDataSlice = createSlice({
         height: state.fixedSymbolSize,
         color: state.colorByProperty ? 'default' : action.payload.color
       };
+
+      if (state.colorByProperty) {
+        newPoint[state.colorByProperty] = 'default';
+      }
+
+      if (state.sizeByProperty) {
+        newPoint[state.sizeByProperty] = state.fixedSymbolSize;
+      }
+
+      if (state.heightByProperty) {
+        newPoint[state.heightByProperty] = state.fixedSymbolSize;
+      }
+
+      if (state.opacityByProperty) {
+        newPoint[state.opacityByProperty] = state.fixedOpacity;
+      }
+
+      if (state.nameByProperty) {
+        newPoint[state.nameByProperty] = action.payload.name;
+      }
+
+      if (state.latByProperty) {
+        newPoint[state.latByProperty] = action.payload.lat;
+      }
+
+      if (state.lonByProperty) {
+        newPoint[state.lonByProperty] = action.payload.lon;
+      }
 
       state.points.push(newPoint);
     },
