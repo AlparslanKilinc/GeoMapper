@@ -79,7 +79,6 @@ export default function PublishButton({ buttonStyle }) {
       });
       
       const dateTimeString = dateString + ' ' + timeString;
-     
       await dispatch(setTagsSlice(tags));
       await dispatch(setPublishedDate(dateTimeString));
       await updateMapData();

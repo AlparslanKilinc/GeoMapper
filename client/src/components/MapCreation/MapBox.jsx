@@ -1,26 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useSelector } from 'react-redux';
 import GeoJsonMap from './Map/GeoJsonMap';
 import MapTitleEditor from './MapGraphicsEditor/AnnotateMenu/MapTitleEditor';
 import UndoRedoButtonGroup from './MapGraphicsEditor/UndoRedoButtonGroup';
-import PublishOutlinedIcon from '@mui/icons-material/PublishOutlined';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import Typography from '@mui/material/Typography';
 import LegendWrapper from './MapGraphicsEditor/Legend/LegendWrapper';
-import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import SaveButton from './SaveButton';
 import PublishButton from './PublishButton';
 import Tooltip from '@mui/material/Tooltip';
+import AlertComponent from '../AlertComponent.jsx';
 
 export default function MapBox({ openExportDialog }) {
   const { geojson, isLoadingGeojson } = useSelector((state) => state.geojson);
   const mapId = useSelector((state) => state.mapMetadata.mapId);
-
   const colors = useSelector((state) => state.mapStyles.colors);
   const title = useSelector((state) => state.mapMetadata.title);
+  const [isSaved, setIsSaved] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        setOpen(false);
+      }, 2000);
+    }
+  }, [open]);
 
   const buttonStyle = {
     minWidth: 0,
@@ -44,6 +55,7 @@ export default function MapBox({ openExportDialog }) {
     }
   };
 
+
   return (
     <Box
       component="main"
@@ -54,6 +66,15 @@ export default function MapBox({ openExportDialog }) {
         position: 'relative'
       }}
     >
+      {isSaved && open &&(
+        <AlertComponent
+          handleCloseAlert={handleClose}
+          autoHideDuration={2000}
+          alertSeverity="success"
+          alertMessage="Map Saved!"
+        />
+      )}
+
       {isLoadingGeojson ? (
         <CircularProgress />
       ) : (
@@ -68,16 +89,15 @@ export default function MapBox({ openExportDialog }) {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <MapTitleEditor />
             <Box display="flex" gap={2} sx={{ marginLeft: 'auto', pr: 2 }}>
-              <SaveButton buttonStyle={buttonStyle} />
-              {mapId && <PublishButton buttonStyle={buttonStyle} />}
+              <SaveButton buttonStyle={buttonStyle} setIsSaved = {setIsSaved} setOpen = {setOpen}/>
+              {mapId && <PublishButton buttonStyle={buttonStyle}/>}
               <Tooltip title="Export">
                 <Button
                   variant="outlined"
                   aria-label="publish"
                   onClick={openExportDialog}
-                  sx={buttonStyle}
-                >
-                  <SaveAltIcon />
+                  sx={buttonStyle}>
+                  <SaveAltIcon/>
                 </Button>
               </Tooltip>
             </Box>
@@ -113,6 +133,7 @@ export default function MapBox({ openExportDialog }) {
           )}
         </div>
       )}
+
     </Box>
   );
 }
