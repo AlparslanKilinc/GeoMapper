@@ -20,6 +20,8 @@ import IconButton from "@mui/material/IconButton";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import {getAllTaggedMaps} from '../../redux-slices/exploreSearchSlice';
+
 export default function MapCard({ map, isDraft }) {
   const dispatch = useDispatch();
   const user = useSelector((state) =>state.auth.user)
@@ -56,6 +58,12 @@ export default function MapCard({ map, isDraft }) {
     setOpenDeleteModal(false);
   }
 
+  const handleTagClick = (tag)=>{
+    console.log(tag)
+    dispatch(getAllTaggedMaps(tag))
+
+  }
+
   const handleMapClick = async () => {
     const draft = publishDate === null;
     if (draft) {
@@ -88,7 +96,7 @@ export default function MapCard({ map, isDraft }) {
 
   return (
     <div className="mapCard">
-      <Card sx={{ maxWidth: 300, height: 350 }}>
+      <Card sx={{ maxWidth: 300, height: 370 }}>
         <CardActionArea onClick={handleMapClick}>
           <CardMedia component="img" height="200" image={thumbnailUrl} alt="green iguana" />
           <CardContent>
@@ -103,17 +111,18 @@ export default function MapCard({ map, isDraft }) {
               {title}
             </Typography>
           </CardContent>
-          <div className="tags">
-            {tags.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                variant="outlined"
-                size="small"
-              />
-            ))}
-          </div>
         </CardActionArea>
+        <div className="tags" style={{ display: 'flex', flexWrap: 'wrap', marginTop: '-10px' }}>
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              size="medium"
+              style={{ margin: '4px' }}
+              onClick={() => handleTagClick(tag)}
+            />
+          ))}
+        </div>
         {(location.pathname === `/profile`) && (
             <IconButton
                 onClick={handleOpenDeleteModal}

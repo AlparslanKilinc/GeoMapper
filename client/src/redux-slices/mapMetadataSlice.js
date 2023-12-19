@@ -128,6 +128,9 @@ const metaDataSlice = createSlice({
       state.graphicsDataId = action.payload.graphicsDataId;
       state.stylesDataId = action.payload.stylesDataId;
       state.geoDataId = action.payload.geoDataId;
+    },
+    setTagsSlice: (state, action) =>{
+      state.tags = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -186,5 +189,6 @@ export const {
   updateDataIds,
   resetMapMetaDataFromDraft,
   setPublishedDate,
+  setTagsSlice
 } = metaDataSlice.actions;
 export default metaDataSlice.reducer;

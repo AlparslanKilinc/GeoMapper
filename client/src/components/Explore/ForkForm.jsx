@@ -74,7 +74,7 @@ export default function ForkForm ({ open, onClose, map}) {
                         Required fields are marked with an asterisks (*).
                     </DialogContentText>
                     <FormControl sx = {{mt: '20px'}}>
-                        <FormLabel >Map Name*</FormLabel>
+                        <FormLabel >Map Title*</FormLabel>
                         <TextField
                           value = {mapTitle}
                           onChange={handleTitleChange}
